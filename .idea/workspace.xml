@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8ca5d898-766d-4ea0-b17c-be89a4607a17" name="Default" comment="" />
+    <list default="true" readonly="true" id="8ca5d898-766d-4ea0-b17c-be89a4607a17" name="Default" comment="" />
     <ignored path="robotframework.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -23,29 +23,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="common_resource.txt" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/common_resource.txt">
+      <file leaf-file-name="test_query_translation2.robot" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test_query_translation2.robot">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="26" selection-start="386" selection-end="386" vertical-scroll-proportion="-90.0" vertical-offset="0" max-vertical-offset="690">
+            <state line="3" column="101" selection-start="199" selection-end="199" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="420">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test_query_translation2.txt" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/test_query_translation2.txt">
+      <file leaf-file-name="EntrezLibrary.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/EntrezLibrary.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="194" selection-start="1332" selection-end="1332" vertical-scroll-proportion="0.5152672" vertical-offset="0" max-vertical-offset="786">
+            <state line="10" column="19" selection-start="202" selection-end="202" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="210">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test_query_translation.txt" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test_query_translation.txt">
+      <file leaf-file-name="common_resource.robot" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/common_resource.robot">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="91" selection-start="357" selection-end="357" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="315">
-              <folding />
+            <state line="28" column="36" selection-start="819" selection-end="819" vertical-scroll-proportion="0.52565706" vertical-offset="0" max-vertical-offset="799">
+              <folding>
+                <element signature="e#0#297#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -60,7 +62,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/html_resource.txt" />
         <option value="$PROJECT_DIR$/common_resources.txt" />
         <option value="$PROJECT_DIR$/valid_login.txt" />
         <option value="$PROJECT_DIR$/test_check_search_translation.txt" />
@@ -68,15 +69,21 @@
         <option value="$PROJECT_DIR$/queries.txt" />
         <option value="$PROJECT_DIR$/test_query_translation.tsv" />
         <option value="$PROJECT_DIR$/data.txt" />
+        <option value="$PROJECT_DIR$/pubmedlibrary.py" />
+        <option value="$PROJECT_DIR$/PubMedLibrary.py" />
         <option value="$PROJECT_DIR$/test_query_translation.txt" />
-        <option value="$PROJECT_DIR$/common_resource.txt" />
         <option value="$PROJECT_DIR$/test_query_translation2.txt" />
+        <option value="$PROJECT_DIR$/common_resource.txt" />
+        <option value="$PROJECT_DIR$/test_query_translation.robot" />
+        <option value="$PROJECT_DIR$/test_query_translation2.robot" />
+        <option value="$PROJECT_DIR$/EntrezLibrary.py" />
+        <option value="$PROJECT_DIR$/common_resource.robot" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="153" />
-    <option name="y" value="69" />
+    <option name="y" value="67" />
     <option name="width" value="1455" />
     <option name="height" value="922" />
   </component>
@@ -130,13 +137,18 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="full.screen.before.presentation.mode" value="false" />
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="options.lastSelected" value="com.jetbrains.python.configuration.PythonSdkConfigurable" />
+    <property name="full.screen.before.presentation.mode" value="false" />
+    <property name="options.lastSelected" value="preferences.pluginManager" />
     <property name="last_opened_file_path" value="$USER_HOME$/envs/nose-se/bin/python2.7" />
     <property name="FullScreen" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
+  </component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings />
+    </option>
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -285,6 +297,7 @@
     <option name="IGNORE_EXTERNALS" value="false" />
     <configuration useDefault="true">$USER_HOME$/.subversion</configuration>
     <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
+    <supportedVersion>125</supportedVersion>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -295,7 +308,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="153" y="69" width="1455" height="922" extended-state="0" />
+    <frame x="153" y="67" width="1455" height="922" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -310,11 +323,11 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -331,9 +344,9 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24948454" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
     </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -348,45 +361,89 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/html_resources.txt">
+    <entry file="file://$PROJECT_DIR$/common_resource.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="31" selection-start="809" selection-end="809" vertical-scroll-proportion="-16.2" vertical-offset="0" max-vertical-offset="750">
+        <state line="6" column="28" selection-start="297" selection-end="297" vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="690">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data.txt">
+    <entry file="file://$PROJECT_DIR$/EntrezLibrary.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="0" selection-start="1" selection-end="7192" vertical-scroll-proportion="0.01908397" vertical-offset="0" max-vertical-offset="786">
-          <folding />
+        <state line="5" column="4" selection-start="92" selection-end="126" vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="180">
+          <folding>
+            <element signature="e#0#45#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/queries.txt">
+    <entry file="file://$PROJECT_DIR$/test_query_translation2.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="0" selection-start="0" selection-end="313" vertical-scroll-proportion="0.03816794" vertical-offset="0" max-vertical-offset="786">
+        <state line="17" column="42" selection-start="704" selection-end="704" vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="525">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test_query_translation.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="91" selection-start="357" selection-end="357" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="315">
+        <state line="14" column="7" selection-start="365" selection-end="365" vertical-scroll-proportion="0.0" vertical-offset="210" max-vertical-offset="330">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html_resources.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="31" selection-start="809" selection-end="809" vertical-scroll-proportion="-16.2" vertical-offset="0" max-vertical-offset="750" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_query_translation.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="7" selection-start="365" selection-end="365" vertical-scroll-proportion="0.26282853" vertical-offset="0" max-vertical-offset="799">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/common_resource.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="26" selection-start="386" selection-end="386" vertical-scroll-proportion="-90.0" vertical-offset="0" max-vertical-offset="690">
+        <state line="6" column="28" selection-start="297" selection-end="297" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="690">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_query_translation.robot">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="6" selection-start="176" selection-end="176" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="330">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test_query_translation2.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="194" selection-start="1332" selection-end="1332" vertical-scroll-proportion="0.5152672" vertical-offset="0" max-vertical-offset="786">
+        <state line="19" column="0" selection-start="742" selection-end="742" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="525">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_query_translation2.robot">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="101" selection-start="199" selection-end="199" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="420">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/EntrezLibrary.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="19" selection-start="202" selection-end="202" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="210">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common_resource.robot">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="36" selection-start="819" selection-end="819" vertical-scroll-proportion="0.52565706" vertical-offset="0" max-vertical-offset="799">
+          <folding>
+            <element signature="e#0#297#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

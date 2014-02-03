@@ -1,17 +1,10 @@
 *** Settings ***
 Documentation     Example test cases using the data-driven testing approach.
 ...
-...               Tests use `Calculate` keyword created in this file, that in
-...               turn uses keywords in `CalculatorLibrary`. An exception is
-...               the last test that has a custom _template keyword_.
-...
-...               The data-driven style works well when you need to repeat
-...               the same workflow multiple times.
-...
-...               Notice that one of these tests fails on purpose to show how
-...               failures look like.
+...               Tests use the Search Keyword as the template to the data in the test cases section.
+
 Test Template     Search
-Resource          common_resource.txt
+Resource          common_resource.robot
 
 *** Keywords ***
 Search
