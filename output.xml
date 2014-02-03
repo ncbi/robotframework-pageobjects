@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20140203 12:29:54.623" generator="Robot 2.8.3 (Python 2.7.4 on darwin)">
+<suite source="/Users/cohenaa/PycharmProjects/robotframework/test_query_translation2.txt" id="s1" name="Test Query Translation2">
+<test id="s1-t1" name="QA-1715: by itself, translates as author name">
+<kw type="kw" name="Search">
+<doc></doc>
+<arguments>
+<arg>all mm</arg>
+<arg>all mm[Author]</arg>
+</arguments>
+<kw type="kw" name="common_resource.Open Browser To PubMed Home Page">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="Selenium2Library.Open Browser">
+<doc>Opens a new browser instance to given URL.</doc>
+<arguments>
+<arg>${PUBMED}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<msg timestamp="20140203 12:29:54.797" level="INFO">Opening browser 'phantomjs' to base url 'http://www.ncbi.nlm.nih.gov/pubmed/'</msg>
+<status status="PASS" endtime="20140203 12:29:56.369" starttime="20140203 12:29:54.797"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Maximize Browser Window">
+<doc>Maximizes current browser window.</doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20140203 12:29:56.371" starttime="20140203 12:29:56.369"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Set Selenium Speed">
+<doc>Sets the delay in seconds that is waited after each Selenium command.</doc>
+<arguments>
+<arg>${DELAY}</arg>
+</arguments>
+<status status="PASS" endtime="20140203 12:29:56.372" starttime="20140203 12:29:56.372"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Title Should Be">
+<doc>Verifies that current page title equals `title`.</doc>
+<arguments>
+<arg>${PUBMED_TITLE}</arg>
+</arguments>
+<msg timestamp="20140203 12:29:57.375" level="INFO">Page title is 'Home - PubMed - NCBI'.</msg>
+<status status="PASS" endtime="20140203 12:29:57.375" starttime="20140203 12:29:56.372"></status>
+</kw>
+<status status="PASS" endtime="20140203 12:29:57.376" starttime="20140203 12:29:54.797"></status>
+</kw>
+<kw type="kw" name="common_resource.Search PubMed For">
+<doc></doc>
+<arguments>
+<arg>${query}</arg>
+</arguments>
+<kw type="kw" name="Selenium2Library.Input Text">
+<doc>Types the given `text` into text field identified by `locator`.</doc>
+<arguments>
+<arg>term</arg>
+<arg>${term}</arg>
+</arguments>
+<msg timestamp="20140203 12:29:57.377" level="INFO">Typing text 'all mm' into text field 'term'</msg>
+<status status="PASS" endtime="20140203 12:30:00.452" starttime="20140203 12:29:57.376"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Click Button">
+<doc>Clicks a button identified by `locator`.</doc>
+<arguments>
+<arg>search</arg>
+</arguments>
+<msg timestamp="20140203 12:30:00.452" level="INFO">Clicking button 'search'.</msg>
+<status status="PASS" endtime="20140203 12:30:05.420" starttime="20140203 12:30:00.452"></status>
+</kw>
+<status status="PASS" endtime="20140203 12:30:05.420" starttime="20140203 12:29:57.376"></status>
+</kw>
+<kw type="kw" name="common_resource.Click See More Search Details">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="Selenium2Library.Click Link">
+<doc>Clicks a link identified by locator.</doc>
+<arguments>
+<arg>xpath=id('search_details')/a[@class='seemore']</arg>
+</arguments>
+<msg timestamp="20140203 12:30:05.421" level="INFO">Clicking link 'xpath=id('search_details')/a[@class='seemore']'.</msg>
+<status status="PASS" endtime="20140203 12:30:09.031" starttime="20140203 12:30:05.421"></status>
+</kw>
+<status status="PASS" endtime="20140203 12:30:09.032" starttime="20140203 12:30:05.420"></status>
+</kw>
+<kw type="kw" name="common_resource.Search Details Should Be">
+<doc></doc>
+<arguments>
+<arg>${expected}</arg>
+</arguments>
+<kw type="kw" name="${val} = Selenium2Library.Get Text">
+<doc>Returns the text value of element identified by `locator`.</doc>
+<arguments>
+<arg>DetailsTerm</arg>
+</arguments>
+<msg timestamp="20140203 12:30:11.061" level="INFO">${val} = all mm[Author]</msg>
+<status status="PASS" endtime="20140203 12:30:11.060" starttime="20140203 12:30:09.032"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Should Be Equal">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${val}</arg>
+<arg>${expected}</arg>
+</arguments>
+<msg timestamp="20140203 12:30:11.061" level="INFO">Argument types are:
+&lt;type 'unicode'&gt;
+&lt;type 'unicode'&gt;</msg>
+<status status="PASS" endtime="20140203 12:30:11.061" starttime="20140203 12:30:11.061"></status>
+</kw>
+<status status="PASS" endtime="20140203 12:30:11.062" starttime="20140203 12:30:09.032"></status>
+</kw>
+<kw type="teardown" name="Selenium2Library.Close Browser">
+<doc>Closes the current browser.</doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20140203 12:30:12.070" starttime="20140203 12:30:11.062"></status>
+</kw>
+<status status="PASS" endtime="20140203 12:30:12.070" starttime="20140203 12:29:54.796"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="PASS" endtime="20140203 12:30:12.071" critical="yes" starttime="20140203 12:29:54.795"></status>
+</test>
+<test id="s1-t2" name="IDX-177 QA-1715: with term lipman translates to [All Fields]), author stop word should be ignored in translation">
+<kw type="kw" name="Search">
+<doc></doc>
+<arguments>
+<arg>lipman all mm</arg>
+<arg>lipman[All Fields]</arg>
+</arguments>
+<kw type="kw" name="common_resource.Open Browser To PubMed Home Page">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="Selenium2Library.Open Browser">
+<doc>Opens a new browser instance to given URL.</doc>
+<arguments>
+<arg>${PUBMED}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<msg timestamp="20140203 12:30:12.074" level="INFO">Opening browser 'phantomjs' to base url 'http://www.ncbi.nlm.nih.gov/pubmed/'</msg>
+<status status="PASS" endtime="20140203 12:30:17.394" starttime="20140203 12:30:12.074"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Maximize Browser Window">
+<doc>Maximizes current browser window.</doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20140203 12:30:18.398" starttime="20140203 12:30:17.395"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Set Selenium Speed">
+<doc>Sets the delay in seconds that is waited after each Selenium command.</doc>
+<arguments>
+<arg>${DELAY}</arg>
+</arguments>
+<status status="PASS" endtime="20140203 12:30:18.399" starttime="20140203 12:30:18.398"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Title Should Be">
+<doc>Verifies that current page title equals `title`.</doc>
+<arguments>
+<arg>${PUBMED_TITLE}</arg>
+</arguments>
+<msg timestamp="20140203 12:30:19.402" level="INFO">Page title is 'Home - PubMed - NCBI'.</msg>
+<status status="PASS" endtime="20140203 12:30:19.403" starttime="20140203 12:30:18.399"></status>
+</kw>
+<status status="PASS" endtime="20140203 12:30:19.403" starttime="20140203 12:30:12.073"></status>
+</kw>
+<kw type="kw" name="common_resource.Search PubMed For">
+<doc></doc>
+<arguments>
+<arg>${query}</arg>
+</arguments>
+<kw type="kw" name="Selenium2Library.Input Text">
+<doc>Types the given `text` into text field identified by `locator`.</doc>
+<arguments>
+<arg>term</arg>
+<arg>${term}</arg>
+</arguments>
+<msg timestamp="20140203 12:30:19.404" level="INFO">Typing text 'lipman all mm' into text field 'term'</msg>
+<status status="PASS" endtime="20140203 12:30:22.507" starttime="20140203 12:30:19.404"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Click Button">
+<doc>Clicks a button identified by `locator`.</doc>
+<arguments>
+<arg>search</arg>
+</arguments>
+<msg timestamp="20140203 12:30:22.508" level="INFO">Clicking button 'search'.</msg>
+<status status="PASS" endtime="20140203 12:30:27.823" starttime="20140203 12:30:22.507"></status>
+</kw>
+<status status="PASS" endtime="20140203 12:30:27.823" starttime="20140203 12:30:19.403"></status>
+</kw>
+<kw type="kw" name="common_resource.Click See More Search Details">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="Selenium2Library.Click Link">
+<doc>Clicks a link identified by locator.</doc>
+<arguments>
+<arg>xpath=id('search_details')/a[@class='seemore']</arg>
+</arguments>
+<msg timestamp="20140203 12:30:27.824" level="INFO">Clicking link 'xpath=id('search_details')/a[@class='seemore']'.</msg>
+<status status="PASS" endtime="20140203 12:30:31.334" starttime="20140203 12:30:27.824"></status>
+</kw>
+<status status="PASS" endtime="20140203 12:30:31.335" starttime="20140203 12:30:27.823"></status>
+</kw>
+<kw type="kw" name="common_resource.Search Details Should Be">
+<doc></doc>
+<arguments>
+<arg>${expected}</arg>
+</arguments>
+<kw type="kw" name="${val} = Selenium2Library.Get Text">
+<doc>Returns the text value of element identified by `locator`.</doc>
+<arguments>
+<arg>DetailsTerm</arg>
+</arguments>
+<msg timestamp="20140203 12:30:33.363" level="INFO">${val} = lipman[All Fields]</msg>
+<status status="PASS" endtime="20140203 12:30:33.363" starttime="20140203 12:30:31.336"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Should Be Equal">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${val}</arg>
+<arg>${expected}</arg>
+</arguments>
+<msg timestamp="20140203 12:30:33.364" level="INFO">Argument types are:
+&lt;type 'unicode'&gt;
+&lt;type 'unicode'&gt;</msg>
+<status status="PASS" endtime="20140203 12:30:33.364" starttime="20140203 12:30:33.363"></status>
+</kw>
+<status status="PASS" endtime="20140203 12:30:33.364" starttime="20140203 12:30:31.335"></status>
+</kw>
+<kw type="teardown" name="Selenium2Library.Close Browser">
+<doc>Closes the current browser.</doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20140203 12:30:34.373" starttime="20140203 12:30:33.364"></status>
+</kw>
+<status status="PASS" endtime="20140203 12:30:34.373" starttime="20140203 12:30:12.072"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="PASS" endtime="20140203 12:30:34.374" critical="yes" starttime="20140203 12:30:12.071"></status>
+</test>
+<test id="s1-t3" name="Author Stop Word IDX-177 QA-1715: with author name 'lipman (translates to [Author]), author stop word should be ignored in translation">
+<kw type="kw" name="Search">
+<doc></doc>
+<arguments>
+<arg>lipman d all mm</arg>
+<arg>lipman d[Author] OR lipman d[Investigator]</arg>
+</arguments>
+<kw type="kw" name="common_resource.Open Browser To PubMed Home Page">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="Selenium2Library.Open Browser">
+<doc>Opens a new browser instance to given URL.</doc>
+<arguments>
+<arg>${PUBMED}</arg>
+<arg>${BROWSER}</arg>
+</arguments>
+<msg timestamp="20140203 12:30:34.377" level="INFO">Opening browser 'phantomjs' to base url 'http://www.ncbi.nlm.nih.gov/pubmed/'</msg>
+<status status="PASS" endtime="20140203 12:30:38.923" starttime="20140203 12:30:34.376"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Maximize Browser Window">
+<doc>Maximizes current browser window.</doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20140203 12:30:39.926" starttime="20140203 12:30:38.923"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Set Selenium Speed">
+<doc>Sets the delay in seconds that is waited after each Selenium command.</doc>
+<arguments>
+<arg>${DELAY}</arg>
+</arguments>
+<status status="PASS" endtime="20140203 12:30:39.927" starttime="20140203 12:30:39.927"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Title Should Be">
+<doc>Verifies that current page title equals `title`.</doc>
+<arguments>
+<arg>${PUBMED_TITLE}</arg>
+</arguments>
+<msg timestamp="20140203 12:30:40.931" level="INFO">Page title is 'Home - PubMed - NCBI'.</msg>
+<status status="PASS" endtime="20140203 12:30:40.931" starttime="20140203 12:30:39.927"></status>
+</kw>
+<status status="PASS" endtime="20140203 12:30:40.932" starttime="20140203 12:30:34.376"></status>
+</kw>
+<kw type="kw" name="common_resource.Search PubMed For">
+<doc></doc>
+<arguments>
+<arg>${query}</arg>
+</arguments>
+<kw type="kw" name="Selenium2Library.Input Text">
+<doc>Types the given `text` into text field identified by `locator`.</doc>
+<arguments>
+<arg>term</arg>
+<arg>${term}</arg>
+</arguments>
+<msg timestamp="20140203 12:30:40.933" level="INFO">Typing text 'lipman d all mm' into text field 'term'</msg>
+<status status="PASS" endtime="20140203 12:30:44.047" starttime="20140203 12:30:40.933"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Click Button">
+<doc>Clicks a button identified by `locator`.</doc>
+<arguments>
+<arg>search</arg>
+</arguments>
+<msg timestamp="20140203 12:30:44.048" level="INFO">Clicking button 'search'.</msg>
+<status status="PASS" endtime="20140203 12:30:49.191" starttime="20140203 12:30:44.048"></status>
+</kw>
+<status status="PASS" endtime="20140203 12:30:49.191" starttime="20140203 12:30:40.932"></status>
+</kw>
+<kw type="kw" name="common_resource.Click See More Search Details">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="Selenium2Library.Click Link">
+<doc>Clicks a link identified by locator.</doc>
+<arguments>
+<arg>xpath=id('search_details')/a[@class='seemore']</arg>
+</arguments>
+<msg timestamp="20140203 12:30:49.192" level="INFO">Clicking link 'xpath=id('search_details')/a[@class='seemore']'.</msg>
+<status status="PASS" endtime="20140203 12:30:52.765" starttime="20140203 12:30:49.192"></status>
+</kw>
+<status status="PASS" endtime="20140203 12:30:52.765" starttime="20140203 12:30:49.191"></status>
+</kw>
+<kw type="kw" name="common_resource.Search Details Should Be">
+<doc></doc>
+<arguments>
+<arg>${expected}</arg>
+</arguments>
+<kw type="kw" name="${val} = Selenium2Library.Get Text">
+<doc>Returns the text value of element identified by `locator`.</doc>
+<arguments>
+<arg>DetailsTerm</arg>
+</arguments>
+<msg timestamp="20140203 12:30:54.792" level="INFO">${val} = lipman d[Author] OR lipman d[Investigator]</msg>
+<status status="PASS" endtime="20140203 12:30:54.791" starttime="20140203 12:30:52.766"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Should Be Equal">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${val}</arg>
+<arg>${expected}</arg>
+</arguments>
+<msg timestamp="20140203 12:30:54.792" level="INFO">Argument types are:
+&lt;type 'unicode'&gt;
+&lt;type 'unicode'&gt;</msg>
+<status status="PASS" endtime="20140203 12:30:54.792" starttime="20140203 12:30:54.792"></status>
+</kw>
+<status status="PASS" endtime="20140203 12:30:54.792" starttime="20140203 12:30:52.765"></status>
+</kw>
+<kw type="teardown" name="Selenium2Library.Close Browser">
+<doc>Closes the current browser.</doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20140203 12:30:55.801" starttime="20140203 12:30:54.793"></status>
+</kw>
+<status status="PASS" endtime="20140203 12:30:55.801" starttime="20140203 12:30:34.375"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="PASS" endtime="20140203 12:30:55.802" critical="yes" starttime="20140203 12:30:34.374"></status>
+</test>
+<doc>Example test cases using the data-driven testing approach.
+
+Tests use `Calculate` keyword created in this file, that in
+turn uses keywords in `CalculatorLibrary`. An exception is
+the last test that has a custom _template keyword_.
+
+The data-driven style works well when you need to repeat
+the same workflow multiple times.
+
+Notice that one of these tests fails on purpose to show how
+failures look like.</doc>
+<metadata>
+</metadata>
+<status status="PASS" endtime="20140203 12:30:55.803" starttime="20140203 12:29:54.623"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="0" pass="3">Critical Tests</stat>
+<stat fail="0" pass="3">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="0" pass="3" id="s1" name="Test Query Translation2">Test Query Translation2</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
