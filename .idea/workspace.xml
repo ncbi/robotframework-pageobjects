@@ -41,13 +41,22 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="common_resource.robot" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="common_resource.robot" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/common_resource.robot">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="36" selection-start="819" selection-end="819" vertical-scroll-proportion="0.52565706" vertical-offset="0" max-vertical-offset="799">
+            <state line="28" column="36" selection-start="819" selection-end="819" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="690">
               <folding>
                 <element signature="e#0#297#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="html_resources.txt" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/html_resources.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="1229" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="799">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -361,13 +370,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/common_resource.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="28" selection-start="297" selection-end="297" vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="690">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/EntrezLibrary.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="4" selection-start="92" selection-end="126" vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="180">
@@ -377,49 +379,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test_query_translation2.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="42" selection-start="704" selection-end="704" vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="525">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test_query_translation.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="7" selection-start="365" selection-end="365" vertical-scroll-proportion="0.0" vertical-offset="210" max-vertical-offset="330">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/html_resources.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="31" selection-start="809" selection-end="809" vertical-scroll-proportion="-16.2" vertical-offset="0" max-vertical-offset="750" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test_query_translation.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="7" selection-start="365" selection-end="365" vertical-scroll-proportion="0.26282853" vertical-offset="0" max-vertical-offset="799">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/common_resource.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="28" selection-start="297" selection-end="297" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="690">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test_query_translation.robot">
       <provider selected="true" editor-type-id="text-editor">
         <state line="10" column="6" selection-start="176" selection-end="176" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="330">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test_query_translation2.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="0" selection-start="742" selection-end="742" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="525">
           <folding />
         </state>
       </provider>
@@ -440,10 +402,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/common_resource.robot">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="36" selection-start="819" selection-end="819" vertical-scroll-proportion="0.52565706" vertical-offset="0" max-vertical-offset="799">
+        <state line="28" column="36" selection-start="819" selection-end="819" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="690">
           <folding>
             <element signature="e#0#297#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/html_resources.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="1229" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="799">
+          <folding />
         </state>
       </provider>
     </entry>
