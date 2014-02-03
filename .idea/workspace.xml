@@ -23,19 +23,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="test_query_translation2.robot" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test_query_translation2.robot">
+      <file leaf-file-name="EntrezLibrary.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/EntrezLibrary.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="101" selection-start="199" selection-end="199" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="420">
-              <folding />
+            <state line="11" column="35" selection-start="327" selection-end="327" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="495">
+              <folding>
+                <element signature="e#0#45#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="EntrezLibrary.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/EntrezLibrary.py">
+      <file leaf-file-name="BuiltIn.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/envs/robot/lib/python2.7/site-packages/robot/libraries/BuiltIn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="19" selection-start="202" selection-end="202" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="210">
+            <state line="1119" column="8" selection-start="50200" selection-end="50200" vertical-scroll-proportion="0.0" vertical-offset="16332" max-vertical-offset="40860">
               <folding />
             </state>
           </provider>
@@ -44,7 +46,7 @@
       <file leaf-file-name="common_resource.robot" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/common_resource.robot">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="36" selection-start="819" selection-end="819" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="690">
+            <state line="17" column="13" selection-start="489" selection-end="527" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="510">
               <folding>
                 <element signature="e#0#297#0" expanded="true" />
               </folding>
@@ -52,11 +54,42 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="html_resources.txt" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/html_resources.txt">
+      <file leaf-file-name="_formelement.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/envs/robot/lib/python2.7/site-packages/Selenium2Library/keywords/_formelement.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="1229" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="799">
+            <state line="191" column="8" selection-start="8364" selection-end="8364" vertical-scroll-proportion="0.0" vertical-offset="2584" max-vertical-offset="5610">
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_browsermanagement.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/envs/robot/lib/python2.7/site-packages/Selenium2Library/keywords/_browsermanagement.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="349" column="8" selection-start="15949" selection-end="15949" vertical-scroll-proportion="0.0" vertical-offset="4876" max-vertical-offset="8640">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test_query_translation.robot" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test_query_translation.robot">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="13" column="0" selection-start="338" selection-end="338" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="300">
+              <folding>
+                <element signature="e#0#111#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test_query_translation_data_driven.robot" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/test_query_translation_data_driven.robot">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="14" column="41" selection-start="458" selection-end="458" vertical-scroll-proportion="0.27522936" vertical-offset="0" max-vertical-offset="763">
+              <folding>
+                <element signature="e#0#257#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -71,7 +104,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/common_resources.txt" />
         <option value="$PROJECT_DIR$/valid_login.txt" />
         <option value="$PROJECT_DIR$/test_check_search_translation.txt" />
         <option value="$PROJECT_DIR$/html_resources.txt" />
@@ -83,10 +115,11 @@
         <option value="$PROJECT_DIR$/test_query_translation.txt" />
         <option value="$PROJECT_DIR$/test_query_translation2.txt" />
         <option value="$PROJECT_DIR$/common_resource.txt" />
-        <option value="$PROJECT_DIR$/test_query_translation.robot" />
         <option value="$PROJECT_DIR$/test_query_translation2.robot" />
-        <option value="$PROJECT_DIR$/EntrezLibrary.py" />
         <option value="$PROJECT_DIR$/common_resource.robot" />
+        <option value="$PROJECT_DIR$/EntrezLibrary.py" />
+        <option value="$PROJECT_DIR$/test_query_translation_data_driven.robot" />
+        <option value="$PROJECT_DIR$/test_query_translation.robot" />
       </list>
     </option>
   </component>
@@ -374,45 +407,65 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="4" selection-start="92" selection-end="126" vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="180">
           <folding>
-            <element signature="e#0#45#0" expanded="false" />
+            <element signature="e#0#45#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test_query_translation.robot">
+    <entry file="file://$USER_HOME$/envs/robot/lib/python2.7/site-packages/Selenium2Library/keywords/_formelement.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="6" selection-start="176" selection-end="176" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="330">
+        <state line="191" column="8" selection-start="8364" selection-end="8364" vertical-scroll-proportion="0.0" vertical-offset="2584" max-vertical-offset="5610">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test_query_translation2.robot">
+    <entry file="file://$USER_HOME$/envs/robot/lib/python2.7/site-packages/Selenium2Library/keywords/_browsermanagement.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="101" selection-start="199" selection-end="199" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="420">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/EntrezLibrary.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="19" selection-start="202" selection-end="202" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="210">
+        <state line="349" column="8" selection-start="15949" selection-end="15949" vertical-scroll-proportion="0.0" vertical-offset="4876" max-vertical-offset="8640">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/common_resource.robot">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="36" selection-start="819" selection-end="819" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="690">
+        <state line="17" column="13" selection-start="489" selection-end="527" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="510">
           <folding>
             <element signature="e#0#297#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/html_resources.txt">
+    <entry file="file://$USER_HOME$/envs/robot/lib/python2.7/site-packages/robot/libraries/BuiltIn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="1229" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="799">
+        <state line="1119" column="8" selection-start="50200" selection-end="50200" vertical-scroll-proportion="0.0" vertical-offset="16332" max-vertical-offset="40860">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/EntrezLibrary.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="35" selection-start="327" selection-end="327" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="495">
+          <folding>
+            <element signature="e#0#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_query_translation.robot">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="0" selection-start="338" selection-end="338" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="300">
+          <folding>
+            <element signature="e#0#111#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_query_translation_data_driven.robot">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="41" selection-start="458" selection-end="458" vertical-scroll-proportion="0.27522936" vertical-offset="0" max-vertical-offset="763">
+          <folding>
+            <element signature="e#0#257#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

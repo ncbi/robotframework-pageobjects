@@ -2,15 +2,13 @@
 
 Documentation  A test suite testing Entrez query translations
 ...
-Resource       common_resource.robot
-
+Library       EntrezLibrary
 
 *** Test Cases ***
 
 Test Entrez Search Details
-    Open Browser To PubMed Home Page
-    Search PubMed For  dog
+    Open Pubmed With  phantomjs
+    Search For  dog
     Click See More Search Details
     Search Details Should Be  "dogs"[MeSH Terms] OR "dogs"[All Fields] OR "dog"[All Fields]
-    To Stdout  yaya
-    Close Browser
+    [teardown]  Close Browser

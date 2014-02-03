@@ -20,21 +20,9 @@ ${WELCOME URL}   http://${SERVER}/html/welcome.html
 ${ERROR URL}     http://${SERVER}/html/error.html
 
 
-*** Keywords ***
 
-Open Browser To PubMed Home Page
-    Open Browser  ${PUBMED}  ${BROWSER}
-    Maximize Browser Window
-    Set Selenium Speed  ${DELAY}
-    Title Should Be  ${PUBMED_TITLE}
+
 
 Search PubMed For  [Arguments]  ${term}
     Input Text  term  ${term}
     Click Button  search
-
-Click See More Search Details
-    Click Link  xpath=id('search_details')/a[@class='seemore']
-
-Search Details Should Be  [Arguments]  ${expected}
-    ${val} =  Get Text  DetailsTerm
-    Should Be Equal  ${val}  ${expected}

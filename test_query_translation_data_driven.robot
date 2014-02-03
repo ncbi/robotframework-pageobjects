@@ -4,13 +4,13 @@ Documentation     Example test cases using the data-driven testing approach.
 ...               Tests use the Search Keyword as the template to the data in the test cases section.
 
 Test Template     Search
-Resource          common_resource.robot
+Library           EntrezLibrary
 
 *** Keywords ***
 Search
     [Arguments]    ${query}    ${expected}
-    Open Browser To PubMed Home Page
-    Search PubMed For  ${query}
+    Open PubMed With  phantomjs
+    Search For  ${query}
     Click See More Search Details
     Search Details Should Be  ${expected}
     [teardown]  Close Browser
