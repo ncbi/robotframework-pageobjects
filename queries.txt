@@ -1,3 +1,0 @@
-Active  Search Term	Translated Query	<Comment>
-A	all mm	all mm[Author]	"Author Stop Word IDX-177 QA-1715: by itself, translates as author name"
-A	lipman all mm	lipman[All Fields]	"Author Stop Word IDX-177 QA-1715: with term 'lipman' (translates to [All Fields]), author stop word should be ignored in translation"
