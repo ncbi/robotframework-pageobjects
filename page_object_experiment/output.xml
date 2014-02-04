@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20140204 11:11:30.979" generator="Robot 2.8.3 (Python 2.7.4 on darwin)">
+<suite source="/Users/cohenaa/PycharmProjects/robotframework/page_object_experiment/test_pubmed_to_books.robot" id="s1" name="Test Pubmed To Books">
+<test id="s1-t1" name="Test PubMed To Books">
+<kw type="kw" name="Set Selenium Speed">
+<doc></doc>
+<arguments>
+<arg>1</arg>
+</arguments>
+<msg timestamp="20140204 11:11:31.155" level="FAIL">Multiple keywords with name 'Set Selenium Speed' found.
+Give the full name of the keyword you want to use.
+Found: 'NCBISelenium2Library.Set Selenium Speed' and 'Selenium2Library.Set Selenium Speed'</msg>
+<status status="FAIL" endtime="20140204 11:11:31.155" starttime="20140204 11:11:31.155"></status>
+</kw>
+<kw type="teardown" name="Close Browser">
+<doc></doc>
+<arguments>
+</arguments>
+<msg timestamp="20140204 11:11:31.155" level="FAIL">Multiple keywords with name 'Close Browser' found.
+Give the full name of the keyword you want to use.
+Found: 'NCBISelenium2Library.Close Browser' and 'Selenium2Library.Close Browser'</msg>
+<status status="FAIL" endtime="20140204 11:11:31.155" starttime="20140204 11:11:31.155">Multiple keywords with name 'Close Browser' found.
+Give the full name of the keyword you want to use.
+Found: 'NCBISelenium2Library.Close Browser' and 'Selenium2Library.Close Browser'</status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20140204 11:11:31.156" critical="yes" starttime="20140204 11:11:31.154">Multiple keywords with name 'Set Selenium Speed' found.
+Give the full name of the keyword you want to use.
+Found: 'NCBISelenium2Library.Set Selenium Speed' and 'Selenium2Library.Set Selenium Speed'
+
+Also teardown failed:
+Multiple keywords with name 'Close Browser' found.
+Give the full name of the keyword you want to use.
+Found: 'NCBISelenium2Library.Close Browser' and 'Selenium2Library.Close Browser'</status>
+</test>
+<doc>A test of flow from pubmed to Books, showing how we might properly encapsulate the AUT(s)
+</doc>
+<metadata>
+</metadata>
+<status status="FAIL" endtime="20140204 11:11:31.156" starttime="20140204 11:11:30.979"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="0">Critical Tests</stat>
+<stat fail="1" pass="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="1" pass="0" id="s1" name="Test Pubmed To Books">Test Pubmed To Books</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
