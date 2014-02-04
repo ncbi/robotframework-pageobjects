@@ -8,8 +8,16 @@ Resource      pubmed.robot
 
 Test PubMed To Books
     Set Selenium Speed  1
-    Open Browser    http://www.ncbi.nlm.nih.gov/pubmed  firefox
+    Open Browser    http://www.ncbi.nlm.nih.gov/pubmed  phantomjs
     Search For  breast cancer
     Find Related Data  books
     Click Docsum Item Number  0
+    Title Should Be  Foo
     [teardown]  Close Browser
+
+
+*** Keywords ***
+
+Title Should Be  [Arguments]  ${expected}
+    ${t}  Get Pubmed Title
+    Should Be Equal  ${t}  ${expected}

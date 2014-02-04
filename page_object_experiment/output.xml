@@ -1,45 +1,135 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generated="20140204 11:11:30.979" generator="Robot 2.8.3 (Python 2.7.4 on darwin)">
+<robot generated="20140204 12:06:13.973" generator="Robot 2.8.3 (Python 2.7.4 on darwin)">
 <suite source="/Users/cohenaa/PycharmProjects/robotframework/page_object_experiment/test_pubmed_to_books.robot" id="s1" name="Test Pubmed To Books">
 <test id="s1-t1" name="Test PubMed To Books">
-<kw type="kw" name="Set Selenium Speed">
-<doc></doc>
+<kw type="kw" name="NCBISelenium2Library.Set Selenium Speed">
+<doc>Sets the delay in seconds that is waited after each Selenium command.</doc>
 <arguments>
 <arg>1</arg>
 </arguments>
-<msg timestamp="20140204 11:11:31.155" level="FAIL">Multiple keywords with name 'Set Selenium Speed' found.
-Give the full name of the keyword you want to use.
-Found: 'NCBISelenium2Library.Set Selenium Speed' and 'Selenium2Library.Set Selenium Speed'</msg>
-<status status="FAIL" endtime="20140204 11:11:31.155" starttime="20140204 11:11:31.155"></status>
+<status status="PASS" endtime="20140204 12:06:14.259" starttime="20140204 12:06:14.258"></status>
 </kw>
-<kw type="teardown" name="Close Browser">
+<kw type="kw" name="NCBISelenium2Library.Open Browser">
+<doc>Opens a new browser instance to given URL.</doc>
+<arguments>
+<arg>http://www.ncbi.nlm.nih.gov/pubmed</arg>
+<arg>phantomjs</arg>
+</arguments>
+<msg timestamp="20140204 12:06:14.259" level="INFO">Opening browser 'phantomjs' to base url 'http://www.ncbi.nlm.nih.gov/pubmed'</msg>
+<status status="PASS" endtime="20140204 12:06:19.142" starttime="20140204 12:06:14.259"></status>
+</kw>
+<kw type="kw" name="entrez.Search For">
+<doc></doc>
+<arguments>
+<arg>breast cancer</arg>
+</arguments>
+<kw type="kw" name="NCBISelenium2Library.Input Text">
+<doc>Types the given `text` into text field identified by `locator`.</doc>
+<arguments>
+<arg>term</arg>
+<arg>${term}</arg>
+</arguments>
+<msg timestamp="20140204 12:06:19.144" level="INFO">Typing text 'breast cancer' into text field 'term'</msg>
+<status status="PASS" endtime="20140204 12:06:22.235" starttime="20140204 12:06:19.144"></status>
+</kw>
+<kw type="kw" name="NCBISelenium2Library.Click Button">
+<doc>Clicks a button identified by `locator`.</doc>
+<arguments>
+<arg>search</arg>
+</arguments>
+<msg timestamp="20140204 12:06:22.236" level="INFO">Clicking button 'search'.</msg>
+<status status="PASS" endtime="20140204 12:06:27.990" starttime="20140204 12:06:22.236"></status>
+</kw>
+<status status="PASS" endtime="20140204 12:06:27.990" starttime="20140204 12:06:19.143"></status>
+</kw>
+<kw type="kw" name="pubmed.Find Related Data">
+<doc></doc>
+<arguments>
+<arg>books</arg>
+</arguments>
+<kw type="kw" name="NCBISelenium2Library.Wait Until Element Is Visible">
+<doc>Waits until element specified with `locator` is visible.</doc>
+<arguments>
+<arg>rdDatabase</arg>
+</arguments>
+<status status="PASS" endtime="20140204 12:06:30.017" starttime="20140204 12:06:27.991"></status>
+</kw>
+<kw type="kw" name="NCBISelenium2Library.Select From List By Value">
+<doc>Selects `*values` from list identified by `locator`</doc>
+<arguments>
+<arg>rdDatabase</arg>
+<arg>${value}</arg>
+</arguments>
+<msg timestamp="20140204 12:06:30.018" level="INFO">Selecting value(s) 'books' from list 'rdDatabase'.</msg>
+<status status="PASS" endtime="20140204 12:06:36.109" starttime="20140204 12:06:30.018"></status>
+</kw>
+<kw type="kw" name="NCBISelenium2Library.Wait Until Page Contains">
+<doc>Waits until `text` appears on current page.</doc>
+<arguments>
+<arg>NCBI Bookshelf books that cite the current articles.</arg>
+</arguments>
+<status status="PASS" endtime="20140204 12:06:37.122" starttime="20140204 12:06:36.110"></status>
+</kw>
+<kw type="kw" name="NCBISelenium2Library.Click Button">
+<doc>Clicks a button identified by `locator`.</doc>
+<arguments>
+<arg>rdFind</arg>
+</arguments>
+<msg timestamp="20140204 12:06:37.123" level="INFO">Clicking button 'rdFind'.</msg>
+<status status="PASS" endtime="20140204 12:06:45.094" starttime="20140204 12:06:37.123"></status>
+</kw>
+<status status="PASS" endtime="20140204 12:06:45.094" starttime="20140204 12:06:27.990"></status>
+</kw>
+<kw type="kw" name="NCBISelenium2Library.Click Docsum Item Number">
+<doc></doc>
+<arguments>
+<arg>0</arg>
+</arguments>
+<msg timestamp="20140204 12:06:45.094" level="INFO">Clicking link 'xpath=//div[@class='rprt'][1]//p[@class='title']/a'.</msg>
+<status status="PASS" endtime="20140204 12:06:49.504" starttime="20140204 12:06:45.094"></status>
+</kw>
+<kw type="kw" name="Title Should Be">
+<doc></doc>
+<arguments>
+<arg>Foo</arg>
+</arguments>
+<kw type="kw" name="${t} = PubmedLibrary.Get Pubmed Title">
 <doc></doc>
 <arguments>
 </arguments>
-<msg timestamp="20140204 11:11:31.155" level="FAIL">Multiple keywords with name 'Close Browser' found.
-Give the full name of the keyword you want to use.
-Found: 'NCBISelenium2Library.Close Browser' and 'Selenium2Library.Close Browser'</msg>
-<status status="FAIL" endtime="20140204 11:11:31.155" starttime="20140204 11:11:31.155">Multiple keywords with name 'Close Browser' found.
-Give the full name of the keyword you want to use.
-Found: 'NCBISelenium2Library.Close Browser' and 'Selenium2Library.Close Browser'</status>
+<msg timestamp="20140204 12:06:50.510" level="INFO">${t} = Cited in Books for PubMed (Search breast cancer) - Books - NCBI</msg>
+<status status="PASS" endtime="20140204 12:06:50.509" starttime="20140204 12:06:49.505"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Should Be Equal">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${t}</arg>
+<arg>${expected}</arg>
+</arguments>
+<msg timestamp="20140204 12:06:50.510" level="INFO">Argument types are:
+&lt;type 'unicode'&gt;
+&lt;type 'unicode'&gt;</msg>
+<msg timestamp="20140204 12:06:50.511" level="FAIL">Cited in Books for PubMed (Search breast cancer) - Books - NCBI != Foo</msg>
+<status status="FAIL" endtime="20140204 12:06:50.511" starttime="20140204 12:06:50.510"></status>
+</kw>
+<status status="FAIL" endtime="20140204 12:06:50.512" starttime="20140204 12:06:49.504"></status>
+</kw>
+<kw type="teardown" name="NCBISelenium2Library.Close Browser">
+<doc>Closes the current browser.</doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20140204 12:06:51.521" starttime="20140204 12:06:50.512"></status>
 </kw>
 <doc></doc>
 <tags>
 </tags>
-<status status="FAIL" endtime="20140204 11:11:31.156" critical="yes" starttime="20140204 11:11:31.154">Multiple keywords with name 'Set Selenium Speed' found.
-Give the full name of the keyword you want to use.
-Found: 'NCBISelenium2Library.Set Selenium Speed' and 'Selenium2Library.Set Selenium Speed'
-
-Also teardown failed:
-Multiple keywords with name 'Close Browser' found.
-Give the full name of the keyword you want to use.
-Found: 'NCBISelenium2Library.Close Browser' and 'Selenium2Library.Close Browser'</status>
+<status status="FAIL" endtime="20140204 12:06:51.521" critical="yes" starttime="20140204 12:06:14.258">Cited in Books for PubMed (Search breast cancer) - Books - NCBI != Foo</status>
 </test>
 <doc>A test of flow from pubmed to Books, showing how we might properly encapsulate the AUT(s)
 </doc>
 <metadata>
 </metadata>
-<status status="FAIL" endtime="20140204 11:11:31.156" starttime="20140204 11:11:30.979"></status>
+<status status="FAIL" endtime="20140204 12:06:51.522" starttime="20140204 12:06:13.973"></status>
 </suite>
 <statistics>
 <total>
