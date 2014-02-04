@@ -10,9 +10,9 @@ Library    BooksPageLibrary
 
 Test PubMed To Books
     Open Browser    http://www.ncbi.nlm.nih.gov/pubmed  firefox
-    Search For  breast cancer
+    Search Pubmed For  breast cancer
     Find Related Data  books
-    Click Docsum Item Number  0
+    Click Books Docsum Item Number  0
     Click Table Of Contents
     [teardown]  Close Browser
 

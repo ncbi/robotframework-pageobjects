@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generated="20140204 14:09:32.282" generator="Robot 2.8.3 (Python 2.7.4 on darwin)">
-<suite source="/Users/cohenaa/PycharmProjects/robotframework/page_object_experiment/test_pubmed_to_books.robot" id="s1" name="Test Pubmed To Books">
+<robot generated="20140204 16:24:16.267" generator="Robot 2.8.3 (Python 2.7.2 on linux2)">
+<suite source="/home/frishber/htdocs/projects/rfaaron/page_object_experiment/test_pubmed_to_books.robot" id="s1" name="Test Pubmed To Books">
 <test id="s1-t1" name="Test PubMed To Books">
 <kw type="kw" name="ExposedBrowserSelenium2Library.Open Browser">
 <doc>Opens a new browser instance to given URL.</doc>
@@ -8,31 +8,58 @@
 <arg>http://www.ncbi.nlm.nih.gov/pubmed</arg>
 <arg>firefox</arg>
 </arguments>
-<msg timestamp="20140204 14:09:32.439" level="INFO">Opening browser 'firefox' to base url 'http://www.ncbi.nlm.nih.gov/pubmed'</msg>
-<status status="PASS" endtime="20140204 14:09:34.598" starttime="20140204 14:09:32.439"></status>
+<msg timestamp="20140204 16:24:16.590" level="INFO">Opening browser 'firefox' to base url 'http://www.ncbi.nlm.nih.gov/pubmed'</msg>
+<status status="PASS" endtime="20140204 16:24:19.377" starttime="20140204 16:24:16.590"></status>
 </kw>
-<kw type="kw" name="PubmedPageLibrary.My Dynamic Func">
+<kw type="kw" name="PubmedPageLibrary.Search Pubmed For">
+<doc></doc>
+<arguments>
+<arg>breast cancer</arg>
+</arguments>
+<msg timestamp="20140204 16:24:19.378" level="INFO">Typing text 'breast cancer' into text field 'term'</msg>
+<msg timestamp="20140204 16:24:19.576" level="INFO">Clicking button 'search'.</msg>
+<status status="PASS" endtime="20140204 16:24:20.737" starttime="20140204 16:24:19.377"></status>
+</kw>
+<kw type="kw" name="PubmedPageLibrary.Find Related Data">
+<doc></doc>
+<arguments>
+<arg>books</arg>
+</arguments>
+<msg timestamp="20140204 16:24:21.610" level="INFO">Selecting value(s) 'books' from list 'rdDatabase'.</msg>
+<msg timestamp="20140204 16:24:22.036" level="INFO">Clicking button 'rdFind'.</msg>
+<status status="PASS" endtime="20140204 16:24:26.670" starttime="20140204 16:24:20.737"></status>
+</kw>
+<kw type="kw" name="BooksPageLibrary.Click Books Docsum Item Number">
+<doc></doc>
+<arguments>
+<arg>0</arg>
+</arguments>
+<msg timestamp="20140204 16:24:26.671" level="INFO">Clicking link 'xpath=//div[@class='rprt'][1]//p[@class='title']/a'.</msg>
+<status status="PASS" endtime="20140204 16:24:26.757" starttime="20140204 16:24:26.671"></status>
+</kw>
+<kw type="kw" name="BooksPageLibrary.Click Table Of Contents">
 <doc></doc>
 <arguments>
 </arguments>
-<status status="PASS" endtime="20140204 14:09:34.598" starttime="20140204 14:09:34.598"></status>
+<msg timestamp="20140204 16:24:26.757" level="INFO">Clicking link 'Table of contents'.</msg>
+<status status="PASS" endtime="20140204 16:24:27.991" starttime="20140204 16:24:26.757"></status>
 </kw>
 <kw type="teardown" name="ExposedBrowserSelenium2Library.Close Browser">
 <doc>Closes the current browser.</doc>
 <arguments>
 </arguments>
-<status status="PASS" endtime="20140204 14:09:34.650" starttime="20140204 14:09:34.599"></status>
+<status status="PASS" endtime="20140204 16:24:28.021" starttime="20140204 16:24:27.991"></status>
 </kw>
 <doc></doc>
 <tags>
 </tags>
-<status status="PASS" endtime="20140204 14:09:34.650" critical="yes" starttime="20140204 14:09:32.439"></status>
+<status status="PASS" endtime="20140204 16:24:28.021" critical="yes" starttime="20140204 16:24:16.589"></status>
 </test>
 <doc>A test of flow from pubmed to Books, showing how we might properly encapsulate the AUT(s)
 </doc>
 <metadata>
 </metadata>
-<status status="PASS" endtime="20140204 14:09:34.651" starttime="20140204 14:09:32.282"></status>
+<status status="PASS" endtime="20140204 16:24:28.021" starttime="20140204 16:24:16.267"></status>
 </suite>
 <statistics>
 <total>
