@@ -3,7 +3,7 @@
 Documentation  An attempt at encapsulating the Pubmed Service
 ...
 Resource  entrez.robot
-Library   PubmedLibrary
+Library   PageObjectLibrary
 
 
 *** Keywords ***

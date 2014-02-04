@@ -3,7 +3,7 @@
 Documentation  entrez.robot: An attempt at encapsulating the Pubmed Service
 ...
 
-Library  NCBISelenium2Library
+Library  ExposedBrowserSelenium2Library
 
 *** Keywords ***
 
