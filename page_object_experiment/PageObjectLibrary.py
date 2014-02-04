@@ -1,8 +1,10 @@
 
 from ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
 
+import sys
+class Page
 
-class PageObjectLibrary(object):
+ObjectLibrary(object):
 
     """
     Base RF page object. Imports ExposedBrowserSelenium2Library, which
@@ -17,6 +19,12 @@ class PageObjectLibrary(object):
 
     def __init__(self):
         self.browser = ExposedBrowserSelenium2Library._se_instance
+
+
+        def f():
+            sys.__stdout__.write("from dynamic func")
+
+        self.my_dynamic_func = f
 
     def get_browser(self):
         return self.browser

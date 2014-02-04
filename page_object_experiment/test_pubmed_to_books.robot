@@ -4,6 +4,7 @@ Documentation  A test of flow from pubmed to Books, showing how we might properl
 ...
 Library    ExposedBrowserSelenium2Library
 Library    PubmedPageLibrary
+Library    BooksPageLibrary
 
 *** Test Cases ***
 
@@ -12,4 +13,8 @@ Test PubMed To Books
     Search For  breast cancer
     Find Related Data  books
     Click Docsum Item Number  0
+    Click Table Of Contents
     [teardown]  Close Browser
+
+*** Keywords ***
+

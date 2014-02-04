@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generated="20140204 13:26:43.123" generator="Robot 2.8.3 (Python 2.7.4 on darwin)">
+<robot generated="20140204 14:09:32.282" generator="Robot 2.8.3 (Python 2.7.4 on darwin)">
 <suite source="/Users/cohenaa/PycharmProjects/robotframework/page_object_experiment/test_pubmed_to_books.robot" id="s1" name="Test Pubmed To Books">
 <test id="s1-t1" name="Test PubMed To Books">
 <kw type="kw" name="ExposedBrowserSelenium2Library.Open Browser">
@@ -8,51 +8,31 @@
 <arg>http://www.ncbi.nlm.nih.gov/pubmed</arg>
 <arg>firefox</arg>
 </arguments>
-<msg timestamp="20140204 13:26:43.804" level="INFO">Opening browser 'firefox' to base url 'http://www.ncbi.nlm.nih.gov/pubmed'</msg>
-<status status="PASS" endtime="20140204 13:26:46.134" starttime="20140204 13:26:43.804"></status>
+<msg timestamp="20140204 14:09:32.439" level="INFO">Opening browser 'firefox' to base url 'http://www.ncbi.nlm.nih.gov/pubmed'</msg>
+<status status="PASS" endtime="20140204 14:09:34.598" starttime="20140204 14:09:32.439"></status>
 </kw>
-<kw type="kw" name="PubmedPageLibrary.Search For">
+<kw type="kw" name="PubmedPageLibrary.My Dynamic Func">
 <doc></doc>
 <arguments>
-<arg>breast cancer</arg>
 </arguments>
-<msg timestamp="20140204 13:26:46.135" level="INFO">Typing text 'breast cancer' into text field 'term'</msg>
-<msg timestamp="20140204 13:26:46.296" level="INFO">Clicking button 'search'.</msg>
-<status status="PASS" endtime="20140204 13:26:47.471" starttime="20140204 13:26:46.134"></status>
-</kw>
-<kw type="kw" name="PubmedPageLibrary.Find Related Data">
-<doc></doc>
-<arguments>
-<arg>books</arg>
-</arguments>
-<msg timestamp="20140204 13:26:48.122" level="INFO">Selecting value(s) 'books' from list 'rdDatabase'.</msg>
-<msg timestamp="20140204 13:26:48.502" level="INFO">Clicking button 'rdFind'.</msg>
-<status status="PASS" endtime="20140204 13:26:52.710" starttime="20140204 13:26:47.471"></status>
-</kw>
-<kw type="kw" name="PubmedPageLibrary.Click Docsum Item Number">
-<doc></doc>
-<arguments>
-<arg>0</arg>
-</arguments>
-<msg timestamp="20140204 13:26:52.710" level="INFO">Clicking link 'xpath=//div[@class='rprt'][1]//p[@class='title']/a'.</msg>
-<status status="PASS" endtime="20140204 13:26:54.323" starttime="20140204 13:26:52.710"></status>
+<status status="PASS" endtime="20140204 14:09:34.598" starttime="20140204 14:09:34.598"></status>
 </kw>
 <kw type="teardown" name="ExposedBrowserSelenium2Library.Close Browser">
 <doc>Closes the current browser.</doc>
 <arguments>
 </arguments>
-<status status="PASS" endtime="20140204 13:26:54.362" starttime="20140204 13:26:54.324"></status>
+<status status="PASS" endtime="20140204 14:09:34.650" starttime="20140204 14:09:34.599"></status>
 </kw>
 <doc></doc>
 <tags>
 </tags>
-<status status="PASS" endtime="20140204 13:26:54.362" critical="yes" starttime="20140204 13:26:43.803"></status>
+<status status="PASS" endtime="20140204 14:09:34.650" critical="yes" starttime="20140204 14:09:32.439"></status>
 </test>
 <doc>A test of flow from pubmed to Books, showing how we might properly encapsulate the AUT(s)
 </doc>
 <metadata>
 </metadata>
-<status status="PASS" endtime="20140204 13:26:54.362" starttime="20140204 13:26:43.124"></status>
+<status status="PASS" endtime="20140204 14:09:34.651" starttime="20140204 14:09:32.282"></status>
 </suite>
 <statistics>
 <total>
