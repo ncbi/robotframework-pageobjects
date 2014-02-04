@@ -1,0 +1,19 @@
+*** Settings ***
+Test Template   Assembly Data Download
+Library    Assembly
+
+*** Variables ***
+${assembly-download-data}   xpath=//div[@id = 'ui-portlet_content-1']/ul/li/a
+
+*** Keywords***
+
+Assembly Data Download    [Arguments]    ${acc}
+    Open Browser    http://www.ncbi.nlm.nih.gov/assembly/${acc}
+    Wait Until Page Contains Element    ${assembly-download-data}
+    Click Element   ${assembly-download-data}
+    Source Should Match File    ${acc}.assembly.txt
+    Close Browser
+    
+*** Test Cases ***    Acc
+1   GCF_000001405.24
+2    GCF_000001405.8

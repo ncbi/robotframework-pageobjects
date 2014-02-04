@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20140204 18:38:43.199" generator="Robot 2.8.3 (Python 2.7.2 on linux2)">
+<suite source="/home/frishber/htdocs/projects/rfaaron/examples/assembly/assembly.txt" id="s1" name="Assembly">
+<test id="s1-t1" name="1">
+<kw type="kw" name="Assembly Data Download">
+<doc></doc>
+<arguments>
+<arg>GCF_000001405.24</arg>
+</arguments>
+<kw type="kw" name="Assembly.Open Browser">
+<doc>Opens a new browser instance to given URL.</doc>
+<arguments>
+<arg>http://www.ncbi.nlm.nih.gov/assembly/${acc}</arg>
+</arguments>
+<msg timestamp="20140204 18:38:43.457" level="INFO">Opening browser 'firefox' to base url 'http://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.24'</msg>
+<status status="PASS" endtime="20140204 18:38:47.227" starttime="20140204 18:38:43.456"></status>
+</kw>
+<kw type="kw" name="Assembly.Wait Until Page Contains Element">
+<doc>Waits until element specified with `locator` appears on current page.</doc>
+<arguments>
+<arg>${assembly-download-data}</arg>
+</arguments>
+<status status="PASS" endtime="20140204 18:38:47.264" starttime="20140204 18:38:47.228"></status>
+</kw>
+<kw type="kw" name="Assembly.Click Element">
+<doc>Click element identified by `locator`.</doc>
+<arguments>
+<arg>${assembly-download-data}</arg>
+</arguments>
+<msg timestamp="20140204 18:38:47.265" level="INFO">Clicking element 'xpath=//div[@id = 'ui-portlet_content-1']/ul/li/a'.</msg>
+<status status="PASS" endtime="20140204 18:38:47.412" starttime="20140204 18:38:47.264"></status>
+</kw>
+<kw type="kw" name="Assembly.Source Should Match File">
+<doc>Diff the source of a page against the contents of a baseline file.</doc>
+<arguments>
+<arg>${acc}.assembly.txt</arg>
+</arguments>
+<kw type="kw" name="Assembly.Capture Page Screenshot">
+<doc>Takes a screenshot of the current page and embeds it into the log.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20140204 18:39:01.415" html="yes" level="INFO">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-1.png"&gt;&lt;img src="selenium-screenshot-1.png" width="800px"&gt;&lt;/a&gt;</msg>
+<status status="PASS" endtime="20140204 18:39:01.415" starttime="20140204 18:38:51.937"></status>
+</kw>
+<msg timestamp="20140204 18:39:01.419" level="FAIL">24469 != 24261</msg>
+<status status="FAIL" endtime="20140204 18:39:01.420" starttime="20140204 18:38:47.412"></status>
+</kw>
+<status status="FAIL" endtime="20140204 18:39:01.420" starttime="20140204 18:38:43.456"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20140204 18:39:01.421" critical="yes" starttime="20140204 18:38:43.455">24469 != 24261</status>
+</test>
+<test id="s1-t2" name="2">
+<kw type="kw" name="Assembly Data Download">
+<doc></doc>
+<arguments>
+<arg>GCF_000001405.8</arg>
+</arguments>
+<kw type="kw" name="Assembly.Open Browser">
+<doc>Opens a new browser instance to given URL.</doc>
+<arguments>
+<arg>http://www.ncbi.nlm.nih.gov/assembly/${acc}</arg>
+</arguments>
+<msg timestamp="20140204 18:39:01.422" level="INFO">Opening browser 'firefox' to base url 'http://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.8'</msg>
+<status status="PASS" endtime="20140204 18:39:04.760" starttime="20140204 18:39:01.422"></status>
+</kw>
+<kw type="kw" name="Assembly.Wait Until Page Contains Element">
+<doc>Waits until element specified with `locator` appears on current page.</doc>
+<arguments>
+<arg>${assembly-download-data}</arg>
+</arguments>
+<status status="PASS" endtime="20140204 18:39:04.795" starttime="20140204 18:39:04.760"></status>
+</kw>
+<kw type="kw" name="Assembly.Click Element">
+<doc>Click element identified by `locator`.</doc>
+<arguments>
+<arg>${assembly-download-data}</arg>
+</arguments>
+<msg timestamp="20140204 18:39:04.796" level="INFO">Clicking element 'xpath=//div[@id = 'ui-portlet_content-1']/ul/li/a'.</msg>
+<status status="PASS" endtime="20140204 18:39:04.938" starttime="20140204 18:39:04.795"></status>
+</kw>
+<kw type="kw" name="Assembly.Source Should Match File">
+<doc>Diff the source of a page against the contents of a baseline file.</doc>
+<arguments>
+<arg>${acc}.assembly.txt</arg>
+</arguments>
+<kw type="kw" name="Assembly.Capture Page Screenshot">
+<doc>Takes a screenshot of the current page and embeds it into the log.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20140204 18:39:12.841" html="yes" level="INFO">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-2.png"&gt;&lt;img src="selenium-screenshot-2.png" width="800px"&gt;&lt;/a&gt;</msg>
+<status status="PASS" endtime="20140204 18:39:12.841" starttime="20140204 18:39:09.714"></status>
+</kw>
+<msg timestamp="20140204 18:39:12.842" level="FAIL">15768 != 14244</msg>
+<status status="FAIL" endtime="20140204 18:39:12.842" starttime="20140204 18:39:04.939"></status>
+</kw>
+<status status="FAIL" endtime="20140204 18:39:12.842" starttime="20140204 18:39:01.422"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20140204 18:39:12.843" critical="yes" starttime="20140204 18:39:01.421">15768 != 14244</status>
+</test>
+<doc></doc>
+<metadata>
+</metadata>
+<status status="FAIL" endtime="20140204 18:39:12.843" starttime="20140204 18:38:43.199"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="2" pass="0">Critical Tests</stat>
+<stat fail="2" pass="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="2" pass="0" id="s1" name="Assembly">Assembly</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
