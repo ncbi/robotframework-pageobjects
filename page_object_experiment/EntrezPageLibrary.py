@@ -23,6 +23,7 @@ class EntrezPageLibraryMeta(type):
 class EntrezPageLibraryBase(PageObjectLibrary):
     """
     Methods defined in this class can be used by classes that inherit from EntrezPageLibrary.
+    They are injected by EntrezPageLibraryMeta into classes that extend EntrezPageLibrary.
     """
     def click_pol_docsum_item_number(self, n):
         i = int(n) + 1

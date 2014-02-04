@@ -8,7 +8,6 @@ class PubmedPageLibrary(EntrezPageLibrary):
         self.se.select_from_list_by_value("rdDatabase", dbname)
         self.se.wait_until_page_contains("NCBI Bookshelf books that cite the current articles")
         self.se.click_button("rdFind")
-    #__metaclass__ = EntrezPageLibraryMeta
     
     def __init__(self, *args, **kwargs):
         print self.search_pubmed_for("foo")
