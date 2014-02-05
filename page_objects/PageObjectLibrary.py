@@ -15,6 +15,25 @@ class PageObjectLibrary(object):
     don't inherit from Selenium2Library, instead they simply use the
     browser instance.
     """
+    browser = "firefox"
+    def __init__(self, url=None, open_browser=True):
+        try:
 
-    def __init__(self):
-        self.se = ExposedBrowserSelenium2Library._se_instance
+            # Try to expose The RF's SE instance
+            self.se = ExposedBrowserSelenium2Library._se_instance
+        except AttributeError:
+            # If it doesn't already exist, instantiate first.
+            ExposedBrowserSelenium2Library()
+            self.se = ExposedBrowserSelenium2Library._se_instance
+
+
+        # Allow instantiation of page object without opening a browser
+        if url is not None and open_browser:
+            self.se.open_browser(url, self.browser)
+        elif open_browser and url is None:
+            self.se.open_browser(self.homepage)
+        else:
+            pass
+
+    def close(self):
+        self.se.close_browser()

@@ -6,7 +6,6 @@ from setuptools import setup, find_packages
 reqs = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                     'requirements.txt')
 REQUIRES = filter(None, open(reqs).read().splitlines())
-print REQUIRES
 
 setup(
     name="Robot Experiment",
