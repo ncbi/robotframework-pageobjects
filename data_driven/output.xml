@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generated="20140204 18:36:06.304" generator="Robot 2.8.3 (Python 2.7.2 on linux2)">
-<suite source="/home/frishber/htdocs/projects/rfaaron/data_driven/test_query_translation_data_driven.robot" id="s1" name="Test Query Translation Data Driven">
+<robot generated="20140204 22:20:55.380" generator="Robot 2.8.3 (Python 2.7.4 on darwin)">
+<suite source="/Users/cohenaa/PycharmProjects/rfexp/data_driven/test_query_translation_data_driven.robot" id="s1" name="Test Query Translation Data Driven">
 <test id="s1-t1" name="QA-1715: by itself, translates as author name">
 <kw type="kw" name="Search">
 <doc></doc>
@@ -13,45 +13,45 @@
 <arguments>
 <arg>phantomjs</arg>
 </arguments>
-<msg timestamp="20140204 18:36:06.572" level="INFO">Opening browser 'phantomjs' to base url 'http://www.ncbi.nlm.nih.gov/pubmed'</msg>
-<msg timestamp="20140204 18:36:10.135" level="INFO">Page title is 'Home - PubMed - NCBI'.</msg>
-<status status="PASS" endtime="20140204 18:36:10.135" starttime="20140204 18:36:06.572"></status>
+<msg timestamp="20140204 22:20:55.597" level="INFO">Opening browser 'phantomjs' to base url 'http://www.ncbi.nlm.nih.gov/pubmed'</msg>
+<msg timestamp="20140204 22:20:59.387" level="INFO">Page title is 'Home - PubMed - NCBI'.</msg>
+<status status="PASS" endtime="20140204 22:20:59.387" starttime="20140204 22:20:55.597"></status>
 </kw>
 <kw type="kw" name="EntrezLibrary.Search For">
 <doc></doc>
 <arguments>
 <arg>${query}</arg>
 </arguments>
-<msg timestamp="20140204 18:36:10.136" level="INFO">Typing text 'all mm' into text field 'term'</msg>
-<msg timestamp="20140204 18:36:13.221" level="INFO">Clicking button 'search'.</msg>
-<status status="PASS" endtime="20140204 18:36:18.240" starttime="20140204 18:36:10.136"></status>
+<msg timestamp="20140204 22:20:59.388" level="INFO">Typing text 'all mm' into text field 'term'</msg>
+<msg timestamp="20140204 22:21:02.475" level="INFO">Clicking button 'search'.</msg>
+<status status="PASS" endtime="20140204 22:21:07.581" starttime="20140204 22:20:59.387"></status>
 </kw>
 <kw type="kw" name="EntrezLibrary.Click See More Search Details">
 <doc></doc>
 <arguments>
 </arguments>
-<msg timestamp="20140204 18:36:18.240" level="INFO">Clicking link 'xpath=id('search_details')/a[@class='seemore']'.</msg>
-<status status="PASS" endtime="20140204 18:36:21.847" starttime="20140204 18:36:18.240"></status>
+<msg timestamp="20140204 22:21:07.582" level="INFO">Clicking link 'xpath=id('search_details')/a[@class='seemore']'.</msg>
+<status status="PASS" endtime="20140204 22:21:10.967" starttime="20140204 22:21:07.581"></status>
 </kw>
 <kw type="kw" name="EntrezLibrary.Search Details Should Be">
 <doc></doc>
 <arguments>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140204 18:36:23.878" starttime="20140204 18:36:21.847"></status>
+<status status="PASS" endtime="20140204 22:21:12.993" starttime="20140204 22:21:10.967"></status>
 </kw>
 <kw type="teardown" name="EntrezLibrary.Close Browser">
 <doc>Closes the current browser.</doc>
 <arguments>
 </arguments>
-<status status="PASS" endtime="20140204 18:36:24.887" starttime="20140204 18:36:23.879"></status>
+<status status="PASS" endtime="20140204 22:21:14.002" starttime="20140204 22:21:12.994"></status>
 </kw>
-<status status="PASS" endtime="20140204 18:36:24.888" starttime="20140204 18:36:06.571"></status>
+<status status="PASS" endtime="20140204 22:21:14.002" starttime="20140204 22:20:55.596"></status>
 </kw>
 <doc></doc>
 <tags>
 </tags>
-<status status="PASS" endtime="20140204 18:36:24.888" critical="yes" starttime="20140204 18:36:06.571"></status>
+<status status="PASS" endtime="20140204 22:21:14.002" critical="yes" starttime="20140204 22:20:55.596"></status>
 </test>
 <test id="s1-t2" name="IDX-177 QA-1715: with term lipman translates to [All Fields]), author stop word should be ignored in translation">
 <kw type="kw" name="Search">
@@ -65,25 +65,25 @@
 <arguments>
 <arg>phantomjs</arg>
 </arguments>
-<msg timestamp="20140204 18:36:24.890" level="INFO">Opening browser 'phantomjs' to base url 'http://www.ncbi.nlm.nih.gov/pubmed'</msg>
-<msg timestamp="20140204 18:36:31.429" level="INFO">Page title is 'Home - PubMed - NCBI'.</msg>
-<status status="PASS" endtime="20140204 18:36:31.429" starttime="20140204 18:36:24.890"></status>
+<msg timestamp="20140204 22:21:14.004" level="INFO">Opening browser 'phantomjs' to base url 'http://www.ncbi.nlm.nih.gov/pubmed'</msg>
+<msg timestamp="20140204 22:21:20.490" level="INFO">Page title is 'Home - PubMed - NCBI'.</msg>
+<status status="PASS" endtime="20140204 22:21:20.491" starttime="20140204 22:21:14.004"></status>
 </kw>
 <kw type="kw" name="EntrezLibrary.Search For">
 <doc></doc>
 <arguments>
 <arg>${query}</arg>
 </arguments>
-<msg timestamp="20140204 18:36:31.430" level="INFO">Typing text 'lipman all mm' into text field 'term'</msg>
-<msg timestamp="20140204 18:36:34.521" level="INFO">Clicking button 'search'.</msg>
-<status status="PASS" endtime="20140204 18:36:39.901" starttime="20140204 18:36:31.429"></status>
+<msg timestamp="20140204 22:21:20.491" level="INFO">Typing text 'lipman all mm' into text field 'term'</msg>
+<msg timestamp="20140204 22:21:23.586" level="INFO">Clicking button 'search'.</msg>
+<status status="PASS" endtime="20140204 22:21:28.991" starttime="20140204 22:21:20.491"></status>
 </kw>
 <kw type="kw" name="EntrezLibrary.Click See More Search Details">
 <doc></doc>
 <arguments>
 </arguments>
-<msg timestamp="20140204 18:36:39.902" level="INFO">Clicking link 'xpath=id('search_details')/a[@class='seemore']'.</msg>
-<status status="PASS" endtime="20140204 18:36:43.387" starttime="20140204 18:36:39.901"></status>
+<msg timestamp="20140204 22:21:28.991" level="INFO">Clicking link 'xpath=id('search_details')/a[@class='seemore']'.</msg>
+<status status="PASS" endtime="20140204 22:21:32.474" starttime="20140204 22:21:28.991"></status>
 </kw>
 <kw type="kw" name="EntrezLibrary.Search Details Should Be">
 <doc></doc>
@@ -94,24 +94,24 @@
 <doc>Takes a screenshot of the current page and embeds it into the log.</doc>
 <arguments>
 </arguments>
-<msg timestamp="20140204 18:36:46.627" html="yes" level="INFO">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-1.png"&gt;&lt;img src="selenium-screenshot-1.png" width="800px"&gt;&lt;/a&gt;</msg>
-<status status="PASS" endtime="20140204 18:36:46.627" starttime="20140204 18:36:45.422"></status>
+<msg timestamp="20140204 22:21:35.740" html="yes" level="INFO">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-1.png"&gt;&lt;img src="selenium-screenshot-1.png" width="800px"&gt;&lt;/a&gt;</msg>
+<status status="PASS" endtime="20140204 22:21:35.740" starttime="20140204 22:21:34.501"></status>
 </kw>
-<msg timestamp="20140204 18:36:46.632" level="FAIL">lipman[All Fields] != lipman[Al Fields]</msg>
-<status status="FAIL" endtime="20140204 18:36:46.632" starttime="20140204 18:36:43.387"></status>
+<msg timestamp="20140204 22:21:35.740" level="FAIL">lipman[All Fields] != lipman[Al Fields]</msg>
+<status status="FAIL" endtime="20140204 22:21:35.740" starttime="20140204 22:21:32.475"></status>
 </kw>
 <kw type="teardown" name="EntrezLibrary.Close Browser">
 <doc>Closes the current browser.</doc>
 <arguments>
 </arguments>
-<status status="PASS" endtime="20140204 18:36:47.640" starttime="20140204 18:36:46.632"></status>
+<status status="PASS" endtime="20140204 22:21:36.750" starttime="20140204 22:21:35.741"></status>
 </kw>
-<status status="FAIL" endtime="20140204 18:36:47.641" starttime="20140204 18:36:24.889"></status>
+<status status="FAIL" endtime="20140204 22:21:36.750" starttime="20140204 22:21:14.004"></status>
 </kw>
 <doc></doc>
 <tags>
 </tags>
-<status status="FAIL" endtime="20140204 18:36:47.641" critical="yes" starttime="20140204 18:36:24.888">lipman[All Fields] != lipman[Al Fields]</status>
+<status status="FAIL" endtime="20140204 22:21:36.750" critical="yes" starttime="20140204 22:21:14.003">lipman[All Fields] != lipman[Al Fields]</status>
 </test>
 <test id="s1-t3" name="Author Stop Word IDX-177 QA-1715: with author name 'lipman (translates to [Author]), author stop word should be ignored in translation">
 <kw type="kw" name="Search">
@@ -125,52 +125,52 @@
 <arguments>
 <arg>phantomjs</arg>
 </arguments>
-<msg timestamp="20140204 18:36:47.643" level="INFO">Opening browser 'phantomjs' to base url 'http://www.ncbi.nlm.nih.gov/pubmed'</msg>
-<msg timestamp="20140204 18:36:54.179" level="INFO">Page title is 'Home - PubMed - NCBI'.</msg>
-<status status="PASS" endtime="20140204 18:36:54.180" starttime="20140204 18:36:47.643"></status>
+<msg timestamp="20140204 22:21:36.752" level="INFO">Opening browser 'phantomjs' to base url 'http://www.ncbi.nlm.nih.gov/pubmed'</msg>
+<msg timestamp="20140204 22:21:43.346" level="INFO">Page title is 'Home - PubMed - NCBI'.</msg>
+<status status="PASS" endtime="20140204 22:21:43.346" starttime="20140204 22:21:36.752"></status>
 </kw>
 <kw type="kw" name="EntrezLibrary.Search For">
 <doc></doc>
 <arguments>
 <arg>${query}</arg>
 </arguments>
-<msg timestamp="20140204 18:36:54.181" level="INFO">Typing text 'lipman d all mm' into text field 'term'</msg>
-<msg timestamp="20140204 18:36:57.290" level="INFO">Clicking button 'search'.</msg>
-<status status="PASS" endtime="20140204 18:37:02.309" starttime="20140204 18:36:54.180"></status>
+<msg timestamp="20140204 22:21:43.347" level="INFO">Typing text 'lipman d all mm' into text field 'term'</msg>
+<msg timestamp="20140204 22:21:46.445" level="INFO">Clicking button 'search'.</msg>
+<status status="PASS" endtime="20140204 22:21:51.513" starttime="20140204 22:21:43.347"></status>
 </kw>
 <kw type="kw" name="EntrezLibrary.Click See More Search Details">
 <doc></doc>
 <arguments>
 </arguments>
-<msg timestamp="20140204 18:37:02.309" level="INFO">Clicking link 'xpath=id('search_details')/a[@class='seemore']'.</msg>
-<status status="PASS" endtime="20140204 18:37:05.737" starttime="20140204 18:37:02.309"></status>
+<msg timestamp="20140204 22:21:51.514" level="INFO">Clicking link 'xpath=id('search_details')/a[@class='seemore']'.</msg>
+<status status="PASS" endtime="20140204 22:21:54.940" starttime="20140204 22:21:51.514"></status>
 </kw>
 <kw type="kw" name="EntrezLibrary.Search Details Should Be">
 <doc></doc>
 <arguments>
 <arg>${expected}</arg>
 </arguments>
-<status status="PASS" endtime="20140204 18:37:07.768" starttime="20140204 18:37:05.737"></status>
+<status status="PASS" endtime="20140204 22:21:56.966" starttime="20140204 22:21:54.940"></status>
 </kw>
 <kw type="teardown" name="EntrezLibrary.Close Browser">
 <doc>Closes the current browser.</doc>
 <arguments>
 </arguments>
-<status status="PASS" endtime="20140204 18:37:08.776" starttime="20140204 18:37:07.768"></status>
+<status status="PASS" endtime="20140204 22:21:57.975" starttime="20140204 22:21:56.966"></status>
 </kw>
-<status status="PASS" endtime="20140204 18:37:08.777" starttime="20140204 18:36:47.643"></status>
+<status status="PASS" endtime="20140204 22:21:57.976" starttime="20140204 22:21:36.752"></status>
 </kw>
 <doc></doc>
 <tags>
 </tags>
-<status status="PASS" endtime="20140204 18:37:08.777" critical="yes" starttime="20140204 18:36:47.642"></status>
+<status status="PASS" endtime="20140204 22:21:57.976" critical="yes" starttime="20140204 22:21:36.751"></status>
 </test>
 <doc>Example test cases using the data-driven testing approach.
 
 Tests use the Search Keyword as the template to the data in the test cases section.</doc>
 <metadata>
 </metadata>
-<status status="FAIL" endtime="20140204 18:37:08.778" starttime="20140204 18:36:06.305"></status>
+<status status="FAIL" endtime="20140204 22:21:57.977" starttime="20140204 22:20:55.380"></status>
 </suite>
 <statistics>
 <total>
