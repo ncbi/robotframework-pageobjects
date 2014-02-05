@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20140204 18:30:32.811" generator="Robot 2.8.3 (Python 2.7.2 on linux2)">
+<suite source="/home/frishber/htdocs/projects/rfaaron/examples/basic/test_query_translation.robot" id="s1" name="Test Query Translation">
+<test id="s1-t1" name="Test Entrez Search Details">
+<kw type="kw" name="EntrezLibrary.Open Pubmed With">
+<doc></doc>
+<arguments>
+<arg>phantomjs</arg>
+</arguments>
+<msg timestamp="20140204 18:30:33.125" level="INFO">Opening browser 'phantomjs' to base url 'http://www.ncbi.nlm.nih.gov/pubmed'</msg>
+<msg timestamp="20140204 18:30:36.617" level="INFO">Page title is 'Home - PubMed - NCBI'.</msg>
+<status status="PASS" endtime="20140204 18:30:36.617" starttime="20140204 18:30:33.125"></status>
+</kw>
+<kw type="kw" name="EntrezLibrary.Search For">
+<doc></doc>
+<arguments>
+<arg>dog</arg>
+</arguments>
+<msg timestamp="20140204 18:30:36.618" level="INFO">Typing text 'dog' into text field 'term'</msg>
+<msg timestamp="20140204 18:30:39.727" level="INFO">Clicking button 'search'.</msg>
+<status status="PASS" endtime="20140204 18:30:45.545" starttime="20140204 18:30:36.617"></status>
+</kw>
+<kw type="kw" name="EntrezLibrary.Click See More Search Details">
+<doc></doc>
+<arguments>
+</arguments>
+<msg timestamp="20140204 18:30:45.546" level="INFO">Clicking link 'xpath=id('search_details')/a[@class='seemore']'.</msg>
+<status status="PASS" endtime="20140204 18:30:48.934" starttime="20140204 18:30:45.546"></status>
+</kw>
+<kw type="kw" name="EntrezLibrary.Search Details Should Be">
+<doc></doc>
+<arguments>
+<arg>"dogs"[MeSH Terms] OR "dogs"[All Fields] OR "dog"[All Fields]</arg>
+</arguments>
+<status status="PASS" endtime="20140204 18:30:50.969" starttime="20140204 18:30:48.934"></status>
+</kw>
+<kw type="teardown" name="EntrezLibrary.Close Browser">
+<doc>Closes the current browser.</doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20140204 18:30:51.978" starttime="20140204 18:30:50.969"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="PASS" endtime="20140204 18:30:51.979" critical="yes" starttime="20140204 18:30:33.124"></status>
+</test>
+<doc>A test suite testing Entrez query translations
+</doc>
+<metadata>
+</metadata>
+<status status="PASS" endtime="20140204 18:30:51.979" starttime="20140204 18:30:32.812"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="0" pass="1">Critical Tests</stat>
+<stat fail="0" pass="1">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="0" pass="1" id="s1" name="Test Query Translation">Test Query Translation</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
