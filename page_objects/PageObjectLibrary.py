@@ -18,10 +18,3 @@ class PageObjectLibrary(object):
 
     def __init__(self):
         self.se = ExposedBrowserSelenium2Library._se_instance
-
-
-        def f():
-            sys.__stdout__.write("from dynamic func")
-
-        self.my_dynamic_func = f
-
