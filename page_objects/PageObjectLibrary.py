@@ -1,5 +1,6 @@
 
 from ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
+import inspect
 
 import sys
 
@@ -17,6 +18,8 @@ class PageObjectLibrary(object):
     """
     browser = "firefox"
     def __init__(self, url=None):
+        self.calling_class_name =  self.__class__.__name__.replace("PageLibrary", "").lower()
+
         try:
 
             # Try to expose The RF's SE instance
@@ -25,6 +28,20 @@ class PageObjectLibrary(object):
             # If it doesn't already exist, instantiate first.
             ExposedBrowserSelenium2Library()
             self.se = ExposedBrowserSelenium2Library._se_instance
+
+    def get_keyword_names(self):
+        # Return all method names on the class to expose keywords to Robot Framework
+        keywords = []
+        for name, obj in inspect.getmembers(self):
+            if inspect.ismethod(obj) and not name.startswith("_"):
+                keywords.append("%s_%s" % (name, self.calling_class_name))
+        #print keywords
+        return keywords
+
+    def run_keyword(self, name, args):
+        # Translate back from Robot Framework friendly name to actual method
+        orig_meth = getattr(self, name.replace("_" + self.calling_class_name, ""))
+        return orig_meth(*args)
 
     def open(self, url=None):
         if url:
