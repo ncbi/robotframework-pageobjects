@@ -16,7 +16,7 @@ class PageObjectLibrary(object):
     browser instance.
     """
     browser = "firefox"
-    def __init__(self, url=None, open_browser=True):
+    def __init__(self, url=None):
         try:
 
             # Try to expose The RF's SE instance
@@ -26,14 +26,14 @@ class PageObjectLibrary(object):
             ExposedBrowserSelenium2Library()
             self.se = ExposedBrowserSelenium2Library._se_instance
 
-
-        # Allow instantiation of page object without opening a browser
-        if url is not None and open_browser:
+    def open(self, url=None):
+        if url:
             self.se.open_browser(url, self.browser)
-        elif open_browser and url is None:
-            self.se.open_browser(self.homepage)
+
         else:
-            pass
+            self.se.open_browser(self.homepage, self.browser)
+
+        return self
 
     def close(self):
         self.se.close_browser()
