@@ -1,0 +1,4 @@
+Test Query Translation 'A test suite testing Entrez query translations\n'
+- Test Entrez Search Details '' [  ] :: PASS
+PASS
+

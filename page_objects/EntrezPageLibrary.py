@@ -28,29 +28,16 @@ class EntrezPageLibraryBase(PageObjectLibrary):
     def click_pol_docsum_item_number(self, n):
         i = int(n) + 1
         self.se.click_link("xpath=//div[@class='rprt'][%s]//p[@class='title']/a" % str(i))
-
-    def search_pol_for(self, term):
-        self.se.input_text("term", term)
-        self.se.click_button("search")    
-
-        
-class EntrezPageLibrary(object):
-    """
-    This is the base class for PubmedPageLibrary, BooksPageLibrary, etc.
-    """
-    __metaclass__ = EntrezPageLibraryMeta
-    
-"""
-def base_factory(meta, *bases):
-    return meta("NewBase", bases, {})
-
-class EntrezPageLibrary(base_factory(EntrezPageLibraryMeta)):
-    def click_pol_docsum_item_number(self, n):
-        i = int(n) + 1
-        self.se.click_link("xpath=//div[@class='rprt'][%s]//p[@class='title']/a" % str(i))
+        return self
 
     def search_pol_for(self, term):
         self.se.input_text("term", term)
         self.se.click_button("search")
+        return self
+
+        
+class EntrezPageLibrary(PageObjectLibrary):
+    """
+    This is the base class for PubmedPageLibrary, BooksPageLibrary, etc.
+    """
     __metaclass__ = EntrezPageLibraryMeta
-"""
