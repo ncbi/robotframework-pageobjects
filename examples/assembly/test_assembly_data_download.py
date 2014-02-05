@@ -25,11 +25,3 @@ class TestAssemblyDataDownLoad(unittest.TestCase):
         self.se.click_element(selectors["assembly-dwnload-data"])
         self.se.source_should_match_file(assembly_acc + ".assembly.txt")
         self.se.close_browser()
-        
-    def full_report_download(self, assembly_acc):
-        report_txt = self.se.get_source()
-        report_txt = report_txt.encode("utf-8")
-        baseline_name = assembly_acc + ".assembly.txt"
-        f = open(baseline_name, "r")
-        baseline_txt = f.read().encode("utf-8")
-        asserts.assert_equal(len(report_txt), len(baseline_txt), "Length of the text should match the length of the baseline text.")
