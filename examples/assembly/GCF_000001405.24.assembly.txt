@@ -1,4 +1,4 @@
-# Assembly Name:  GRCh37.p12
+<html xmlns="http://www.w3.org/1999/xhtml"><head><link title="Wrap Long Lines" href="resource://gre-resources/plaintext.css" type="text/css" rel="alternate stylesheet" /></head><body><pre># Assembly Name:  GRCh37.p12
 # Description:    Genome Reference Consortium Human Build 37 patch release 12 (GRCh37.p12)
 # Organism name:  Homo sapiens
 # Taxid:          9606
@@ -14,18 +14,18 @@
 #
 ## Assembly-Units:
 ## GenBank Unit ID	RefSeq Unit ID	Assembly-Unit name
-## GCA_000001305.1	GCF_000001305.13	Primary Assembly
-## GCA_000001315.1	GCF_000001315.1	ALT_REF_LOCI_1
-## GCA_000001325.1	GCF_000001325.2	ALT_REF_LOCI_2
-## GCA_000001335.1	GCF_000001335.1	ALT_REF_LOCI_3
-## GCA_000001345.1	GCF_000001345.1	ALT_REF_LOCI_4
-## GCA_000001355.1	GCF_000001355.1	ALT_REF_LOCI_5
-## GCA_000001365.1	GCF_000001365.2	ALT_REF_LOCI_6
-## GCA_000001375.1	GCF_000001375.1	ALT_REF_LOCI_7
-## GCA_000001385.1	GCF_000001385.1	ALT_REF_LOCI_8
-## GCA_000001395.1	GCF_000001395.1	ALT_REF_LOCI_9
-## GCA_000006015.1	GCF_000006015.1	non-nuclear
-## GCA_000005045.12	GCF_000005045.11	PATCHES
+## 	GCF_000001305.13	Primary Assembly
+## 	GCF_000001315.1	ALT_REF_LOCI_1
+## 	GCF_000001325.2	ALT_REF_LOCI_2
+## 	GCF_000001335.1	ALT_REF_LOCI_3
+## 	GCF_000001345.1	ALT_REF_LOCI_4
+## 	GCF_000001355.1	ALT_REF_LOCI_5
+## 	GCF_000001365.2	ALT_REF_LOCI_6
+## 	GCF_000001375.1	ALT_REF_LOCI_7
+## 	GCF_000001385.1	ALT_REF_LOCI_8
+## 	GCF_000001395.1	ALT_REF_LOCI_9
+## 	GCF_000006015.1	non-nuclear
+## 	GCF_000005045.11	PATCHES
 #
 # Ordered by chromosome/plasmid; the chromosomes/plasmids are followed by
 # unlocalized scaffolds.
@@ -320,3 +320,4 @@ HG1453_PATCH	fix-patch	X	Chromosome	JH806598.1	=	NW_004070888.1	PATCHES
 HG1458_PATCH	fix-patch	X	Chromosome	JH806599.1	=	NW_004070889.1	PATCHES
 HG1459_PATCH	fix-patch	X	Chromosome	JH806600.1	=	NW_004070890.1	PATCHES
 HG1497_PATCH	fix-patch	X	Chromosome	JH159150.2	=	NW_003871103.2	PATCHES
+</pre></body></html>

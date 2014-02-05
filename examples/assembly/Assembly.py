@@ -17,10 +17,6 @@ class Assembly(Selenium2Library):
         Why are we doing this?
         """
         contents = self.get_file_contents(filename)
-        source = self.get_source()
-        d = Differ()
-        result = list(d.compare(source, contents))
-        resultlen = len(result)
-        contentslen = len(contents)
-        asserts.assert_equal(resultlen, contentslen)
+        source = self.get_source().encode("utf-8")
+        asserts.assert_equal(len(source), len(contents), "Length of the text should match the length of the baseline text.")
         
