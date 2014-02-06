@@ -1,5 +1,5 @@
 
-from ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
+from page_objects.common.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
 
 import sys
 
