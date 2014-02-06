@@ -1,63 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generated="20140206 12:31:25.892" generator="Robot 2.8.3 (Python 2.7.2 on linux2)">
+<robot generated="20140206 15:12:27.346" generator="Robot 2.8.3 (Python 2.7.2 on linux2)">
 <suite source="/home/frishber/htdocs/projects/rfaaron/page_objects/pubmed/test_pubmed_to_books.robot" id="s1" name="Test Pubmed To Books">
 <test id="s1-t1" name="Test PubMed To Books">
 <kw type="kw" name="PubmedPageLibrary.Open Pubmed">
 <doc></doc>
 <arguments>
 </arguments>
-<msg timestamp="20140206 12:31:26.256" level="INFO">Opening browser 'firefox' to base url 'http://www.ncbi.nlm.nih.gov/pubmed'</msg>
-<status status="PASS" endtime="20140206 12:31:29.134" starttime="20140206 12:31:26.256"></status>
+<msg timestamp="20140206 15:12:27.627" level="INFO">Opening browser 'firefox' to base url 'http://www.ncbi.nlm.nih.gov/pubmed'</msg>
+<status status="PASS" endtime="20140206 15:12:32.029" starttime="20140206 15:12:27.627"></status>
 </kw>
 <kw type="kw" name="PubmedPageLibrary.Search Pubmed">
 <doc></doc>
 <arguments>
 <arg>breast cancer</arg>
 </arguments>
-<msg timestamp="20140206 12:31:29.135" level="INFO">Typing text 'breast cancer' into text field 'term'</msg>
-<msg timestamp="20140206 12:31:29.325" level="INFO">Clicking button 'search'.</msg>
-<status status="PASS" endtime="20140206 12:31:30.426" starttime="20140206 12:31:29.134"></status>
+<msg timestamp="20140206 15:12:32.030" level="INFO">Typing text 'breast cancer' into text field 'term'</msg>
+<msg timestamp="20140206 15:12:33.699" level="INFO">Clicking button 'search'.</msg>
+<status status="PASS" endtime="20140206 15:12:36.809" starttime="20140206 15:12:32.029"></status>
 </kw>
 <kw type="kw" name="PubmedPageLibrary.Find Related Data From Pubmed In">
 <doc></doc>
 <arguments>
 <arg>books</arg>
 </arguments>
-<msg timestamp="20140206 12:31:31.014" level="INFO">Selecting value(s) 'books' from list 'rdDatabase'.</msg>
-<msg timestamp="20140206 12:31:31.476" level="INFO">Clicking button 'rdFind'.</msg>
-<status status="PASS" endtime="20140206 12:31:35.457" starttime="20140206 12:31:30.427"></status>
+<msg timestamp="20140206 15:12:37.869" level="INFO">Selecting value(s) 'books' from list 'rdDatabase'.</msg>
+<msg timestamp="20140206 15:12:41.607" level="INFO">Clicking button 'rdFind'.</msg>
+<status status="PASS" endtime="20140206 15:12:47.907" starttime="20140206 15:12:36.809"></status>
 </kw>
 <kw type="kw" name="BooksPageLibrary.Click Books Docsum Item">
 <doc></doc>
 <arguments>
 <arg>0</arg>
 </arguments>
-<msg timestamp="20140206 12:31:35.458" level="INFO">Clicking link 'xpath=//div[@class='rprt'][1]//p[@class='title']/a'.</msg>
-<status status="PASS" endtime="20140206 12:31:35.563" starttime="20140206 12:31:35.457"></status>
+<msg timestamp="20140206 15:12:47.908" level="INFO">Clicking link 'xpath=//div[@class='rprt'][1]//p[@class='title']/a'.</msg>
+<status status="PASS" endtime="20140206 15:12:49.509" starttime="20140206 15:12:47.908"></status>
 </kw>
 <kw type="kw" name="BooksPageLibrary.Click Table Of Contents Books">
 <doc></doc>
 <arguments>
 </arguments>
-<msg timestamp="20140206 12:31:35.564" level="INFO">Clicking link 'Table of contents'.</msg>
-<status status="PASS" endtime="20140206 12:31:36.848" starttime="20140206 12:31:35.564"></status>
+<msg timestamp="20140206 15:12:49.509" level="INFO">Clicking link 'Table of contents'.</msg>
+<status status="PASS" endtime="20140206 15:12:51.344" starttime="20140206 15:12:49.509"></status>
 </kw>
 <kw type="kw" name="BooksPageLibrary.Close Books">
 <doc></doc>
 <arguments>
 </arguments>
-<status status="PASS" endtime="20140206 12:31:36.874" starttime="20140206 12:31:36.849"></status>
+<status status="PASS" endtime="20140206 15:12:51.867" starttime="20140206 15:12:51.344"></status>
 </kw>
 <doc></doc>
 <tags>
 </tags>
-<status status="PASS" endtime="20140206 12:31:36.875" critical="yes" starttime="20140206 12:31:26.255"></status>
+<status status="PASS" endtime="20140206 15:12:51.867" critical="yes" starttime="20140206 15:12:27.626"></status>
 </test>
 <doc>A test of flow from pubmed to Books, showing how we might properly encapsulate the AUT(s)
 </doc>
 <metadata>
 </metadata>
-<status status="PASS" endtime="20140206 12:31:36.875" starttime="20140206 12:31:25.893"></status>
+<status status="PASS" endtime="20140206 15:12:51.868" starttime="20140206 15:12:27.347"></status>
 </suite>
 <statistics>
 <total>

@@ -1,22 +1,20 @@
 import unittest
 from nose2.tools import params
-from GeTRM import GeTRM
+from GeTRMPageLibrary import GeTRMPageLibrary as GeTRMPage
 
 
-expected_vals = { "1q24" : "Homo sapiens: GRCh37.p\d+\s+Chr\s1\s\WNC_000001.\d+\W:\s164.7\d+M\s-\s173.6\d+M",
-                 "Neurofibromatosis" : "Homo sapiens: GRCh37.p\d+\s+Chr\s17\s\WNC_000017.\d+\W:\s29.6\d+M\s-\s29.\d+M"} 
+expected_vals = (("1q24", "Homo sapiens: GRCh37.p\d+\s+Chr\s1\s\WNC_000001.\d+\W:\s164.7\d+M\s-\s173.6\d+M"),
+                ("Neurofibromatosis", "Homo sapiens: GRCh37.p\d+\s+Chr\s17\s\WNC_000017.\d+\W:\s29.6\d+M\s-\s29.\d+M")) 
 
 
 
 class GetrmTestCase(unittest.TestCase):
     def setUp(self):
-        self.getrm_page = GeTRM()
+        self.getrm_page = GeTRMPage()
         self.getrm_page.open()
 
-    @params(("1q24", "Homo sapiens: GRCh37.p\d+\s+Chr\s1\s\WNC_000001.\d+\W:\s164.7\d+M\s-\s173.6\d+M"),
-            ("Neurofibromatosis", "Homo sapiens: GRCh37.p\d+\s+Chr\s17\s\WNC_000017.\d+\W:\s29.6\d+M\s-\s29.\d+M"))
+    @params(*expected_vals)
     def test_getrm(self, term, expected_value):
-        #for term, expected_val in expected_vals.iteritems():
         page = self.getrm_page
         page.search(term)
         page.result_arrow_should_exist()

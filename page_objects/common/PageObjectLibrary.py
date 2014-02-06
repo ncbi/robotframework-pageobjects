@@ -87,7 +87,6 @@ class PageObjectLibrary(object):
             if inspect.ismethod(obj) and not name.startswith("_"):
                 keywords.append(self._get_robot_alias(name))
 
-        print keywords
         return keywords
 
     def run_keyword(self, alias, args):
@@ -96,6 +95,7 @@ class PageObjectLibrary(object):
         return orig_meth(*args)
 
     def open(self, url=None):
+        self.se.set_selenium_speed(0.5)
         if url:
             self.se.open_browser(url, self.browser)
 

@@ -12,7 +12,7 @@ selectors = {
     "search-arrow" : "css=img.content-search-go"
 }
 
-class GeTRM(PageObjectLibrary):
+class GeTRMPageLibrary(PageObjectLibrary):
     browser = "firefox"
     homepage =  "http://www.ncbi.nlm.nih.gov/variation/tools/get-rm"
     
