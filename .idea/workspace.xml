@@ -26,7 +26,7 @@
       <file leaf-file-name="EntrezPageLibrary.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/page_objects/EntrezPageLibrary.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="35" column="19" selection-start="1592" selection-end="1592" vertical-scroll-proportion="-21.0" vertical-offset="0" max-vertical-offset="735">
+            <state line="29" column="44" selection-start="1227" selection-end="1227" vertical-scroll-proportion="-17.4" vertical-offset="0" max-vertical-offset="690">
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
@@ -34,39 +34,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ExposedBrowserSelenium2Library.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/page_objects/ExposedBrowserSelenium2Library.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="0" selection-start="425" selection-end="425" vertical-scroll-proportion="-7.8" vertical-offset="0" max-vertical-offset="315">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="test_po.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/page_objects/test_po.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="8" column="42" selection-start="290" selection-end="290" vertical-scroll-proportion="-4.8" vertical-offset="0" max-vertical-offset="270">
-              <folding>
-                <element signature="e#0#15#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_browsermanagement.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/envs/robot/lib/python2.7/site-packages/Selenium2Library/keywords/_browsermanagement.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="57" column="8" selection-start="2046" selection-end="2046" vertical-scroll-proportion="0.0" vertical-offset="496" max-vertical-offset="8640">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="PageObjectLibrary.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/page_objects/PageObjectLibrary.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="29" column="8" selection-start="968" selection-end="968" vertical-scroll-proportion="-17.4" vertical-offset="0" max-vertical-offset="660">
+            <state line="7" column="10" selection-start="114" selection-end="114" vertical-scroll-proportion="-4.2" vertical-offset="0" max-vertical-offset="1635">
               <folding>
                 <element signature="e#1#74#0" expanded="true" />
               </folding>
@@ -74,12 +45,50 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PubmedPageLibrary.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="README.md" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/page_objects/README.md">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="8" column="19" selection-start="123" selection-end="123" vertical-scroll-proportion="0.15463917" vertical-offset="0" max-vertical-offset="776">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test_pubmed_to_books.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/page_objects/test_pubmed_to_books.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="8" column="62" selection-start="299" selection-end="299" vertical-scroll-proportion="-4.2" vertical-offset="0" max-vertical-offset="255">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="EntrezPageLibrary2.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/page_objects/EntrezPageLibrary2.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="24" column="0" selection-start="1028" selection-end="1279" vertical-scroll-proportion="-12.16" vertical-offset="26" max-vertical-offset="825">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test_pubmed_to_books.robot" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/page_objects/test_pubmed_to_books.robot">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="15" column="33" selection-start="425" selection-end="425" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="390">
+              <folding>
+                <element signature="e#0#225#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PubmedPageLibrary.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/page_objects/PubmedPageLibrary.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="33" selection-start="610" selection-end="610" vertical-scroll-proportion="0.29960054" vertical-offset="0" max-vertical-offset="751">
+            <state line="9" column="43" selection-start="322" selection-end="322" vertical-scroll-proportion="-5.4" vertical-offset="0" max-vertical-offset="375">
               <folding>
-                <element signature="e#0#47#0" expanded="true" />
+                <element signature="e#0#60#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -88,7 +97,7 @@
       <file leaf-file-name="BooksPageLibrary.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/page_objects/BooksPageLibrary.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="12" selection-start="124" selection-end="124" vertical-scroll-proportion="-3.0" vertical-offset="0" max-vertical-offset="255">
+            <state line="7" column="31" selection-start="195" selection-end="195" vertical-scroll-proportion="-4.2" vertical-offset="0" max-vertical-offset="255">
               <folding />
             </state>
           </provider>
@@ -104,10 +113,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/page_object_experiment/BooksPageLibrary.py" />
-        <option value="$PROJECT_DIR$/page_object_experiment/PubmedPageLibrary.py" />
-        <option value="$PROJECT_DIR$/page_object_experiment/PageObjectLibrary.py" />
-        <option value="$PROJECT_DIR$/page_object_experiment/test_pubmed_to_books.robot" />
         <option value="$PROJECT_DIR$/setup.py" />
         <option value="$PROJECT_DIR$/page_objects/ExposedBrowserSelenium2Library.py" />
         <option value="$PROJECT_DIR$/page_objects/CustomReporter.py" />
@@ -115,17 +120,21 @@
         <option value="$PROJECT_DIR$/report/EntrezLibrary.py" />
         <option value="$PROJECT_DIR$/report/test_query_translation.robot" />
         <option value="$PROJECT_DIR$/EntrezLibrary.py" />
-        <option value="$PROJECT_DIR$/page_objects/EntrezPageLibrary.py" />
         <option value="$PROJECT_DIR$/page_objects/BooksPageLibrary.py" />
-        <option value="$PROJECT_DIR$/page_objects/PageObjectLibrary.py" />
         <option value="$PROJECT_DIR$/page_objects/test_po.py" />
+        <option value="$PROJECT_DIR$/page_objects/EntrezPageLibrary2.py" />
+        <option value="$PROJECT_DIR$/page_objects/EntrezPageLibrary.py" />
+        <option value="$PROJECT_DIR$/page_objects/test_pubmed_to_books.py" />
+        <option value="$PROJECT_DIR$/page_objects/test_pubmed_to_books.robot" />
         <option value="$PROJECT_DIR$/page_objects/PubmedPageLibrary.py" />
+        <option value="$PROJECT_DIR$/page_objects/PageObjectLibrary.py" />
+        <option value="$PROJECT_DIR$/page_objects/README.md" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="185" />
-    <option name="y" value="28" />
+    <option name="x" value="120" />
+    <option name="y" value="112" />
     <option name="width" value="1455" />
     <option name="height" value="922" />
   </component>
@@ -155,6 +164,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -189,17 +199,16 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="full.screen.before.presentation.mode" value="false" />
     <property name="options.splitter.main.proportions" value="0.3" />
+    <property name="full.screen.before.presentation.mode" value="false" />
     <property name="options.lastSelected" value="preferences.pluginManager" />
     <property name="last_opened_file_path" value="$USER_HOME$/envs/nose-se/bin/python2.7" />
     <property name="FullScreen" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -208,6 +217,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/page_objects" />
       <recent name="$PROJECT_DIR$/page_object_experiment" />
       <recent name="$PROJECT_DIR$" />
     </key>
@@ -369,12 +379,13 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="185" y="28" width="1455" height="922" extended-state="0" />
+    <frame x="120" y="112" width="1455" height="922" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32889965" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24948454" sideWeight="0.6711004" order="1" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -385,7 +396,6 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32889965" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -405,9 +415,9 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24948454" sideWeight="0.6711004" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -422,23 +432,9 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/envs/robot/lib/python2.7/site-packages/robot/libraries/BuiltIn.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1119" column="8" selection-start="50200" selection-end="50200" vertical-scroll-proportion="0.33247423" vertical-offset="16332" max-vertical-offset="40860" />
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/envs/robot/lib/python2.7/site-packages/Selenium2Library/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="6" selection-start="165" selection-end="165" vertical-scroll-proportion="0.13358779" vertical-offset="0" max-vertical-offset="1920">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/setup.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="0" selection-start="238" selection-end="238" vertical-scroll-proportion="0.13565892" vertical-offset="0" max-vertical-offset="774">
-          <folding />
-        </state>
+        <state line="8" column="0" selection-start="238" selection-end="238" vertical-scroll-proportion="0.13565892" vertical-offset="0" max-vertical-offset="774" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/requirements.txt">
@@ -450,11 +446,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/report/CustomReporter.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="34" selection-start="98" selection-end="98" vertical-scroll-proportion="-3.6" vertical-offset="0" max-vertical-offset="540">
-          <folding>
-            <element signature="e#15#30#0" expanded="false" />
-          </folding>
-        </state>
+        <state line="6" column="34" selection-start="98" selection-end="98" vertical-scroll-proportion="-3.6" vertical-offset="0" max-vertical-offset="540" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/report/EntrezLibrary.py">
@@ -475,9 +467,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/EntrezLibrary.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="9" selection-start="374" selection-end="374" vertical-scroll-proportion="0.1744186" vertical-offset="0" max-vertical-offset="774">
-          <folding />
-        </state>
+        <state line="12" column="9" selection-start="374" selection-end="374" vertical-scroll-proportion="0.1744186" vertical-offset="0" max-vertical-offset="774" />
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/envs/robot/lib/python2.7/site-packages/Selenium2Library/keywords/_browsermanagement.py">
@@ -487,62 +477,74 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/page_objects/ExposedBrowserSelenium2Library.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="0" selection-start="425" selection-end="425" vertical-scroll-proportion="0.2596538" vertical-offset="0" max-vertical-offset="751">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/page_objects/EntrezPageLibrary2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="0" selection-start="1028" selection-end="1279" vertical-scroll-proportion="-12.16" vertical-offset="26" max-vertical-offset="825">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/page_objects/BooksPageLibrary.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="31" selection-start="195" selection-end="195" vertical-scroll-proportion="-4.2" vertical-offset="0" max-vertical-offset="255">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/page_objects/EntrezPageLibrary.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="19" selection-start="1592" selection-end="1592" vertical-scroll-proportion="-21.0" vertical-offset="0" max-vertical-offset="735">
+        <state line="29" column="44" selection-start="1227" selection-end="1227" vertical-scroll-proportion="-17.4" vertical-offset="0" max-vertical-offset="690">
           <folding>
             <element signature="e#0#14#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/page_objects/test_pubmed_to_books.robot">
+    <entry file="file://$PROJECT_DIR$/page_objects/test_pubmed_to_books.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="0" selection-start="369" selection-end="493" vertical-scroll-proportion="0.25128865" vertical-offset="0" max-vertical-offset="776">
-          <folding>
-            <element signature="e#0#225#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/page_objects/ExposedBrowserSelenium2Library.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="0" selection-start="425" selection-end="425" vertical-scroll-proportion="-7.8" vertical-offset="0" max-vertical-offset="315">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/page_objects/PageObjectLibrary.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="8" selection-start="968" selection-end="968" vertical-scroll-proportion="-17.4" vertical-offset="0" max-vertical-offset="660">
-          <folding>
-            <element signature="e#1#74#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/page_objects/test_po.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="42" selection-start="290" selection-end="290" vertical-scroll-proportion="-4.8" vertical-offset="0" max-vertical-offset="270">
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/page_objects/BooksPageLibrary.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="12" selection-start="124" selection-end="124" vertical-scroll-proportion="-3.0" vertical-offset="0" max-vertical-offset="255">
+        <state line="8" column="62" selection-start="299" selection-end="299" vertical-scroll-proportion="-4.2" vertical-offset="0" max-vertical-offset="255">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/page_objects/PubmedPageLibrary.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="33" selection-start="610" selection-end="610" vertical-scroll-proportion="0.29960054" vertical-offset="0" max-vertical-offset="751">
+        <state line="9" column="43" selection-start="322" selection-end="322" vertical-scroll-proportion="-5.4" vertical-offset="0" max-vertical-offset="375">
           <folding>
-            <element signature="e#0#47#0" expanded="true" />
+            <element signature="e#0#60#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/page_objects/test_pubmed_to_books.robot">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="33" selection-start="425" selection-end="425" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="390">
+          <folding>
+            <element signature="e#0#225#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/page_objects/PageObjectLibrary.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="10" selection-start="114" selection-end="114" vertical-scroll-proportion="-4.2" vertical-offset="0" max-vertical-offset="1635">
+          <folding>
+            <element signature="e#1#74#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/page_objects/README.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="19" selection-start="123" selection-end="123" vertical-scroll-proportion="0.15463917" vertical-offset="0" max-vertical-offset="776">
+          <folding />
         </state>
       </provider>
     </entry>
