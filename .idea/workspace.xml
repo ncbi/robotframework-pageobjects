@@ -34,13 +34,22 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PageObjectLibrary.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="PageObjectLibrary.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/page_objects/PageObjectLibrary.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="10" selection-start="114" selection-end="114" vertical-scroll-proportion="0.13981359" vertical-offset="0" max-vertical-offset="1635">
+            <state line="7" column="10" selection-start="114" selection-end="114" vertical-scroll-proportion="-4.2" vertical-offset="0" max-vertical-offset="1635">
               <folding>
                 <element signature="e#1#74#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/page_objects/README.md">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="2" selection-start="2" selection-end="2" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="776">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -104,7 +113,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/page_object_experiment/test_pubmed_to_books.robot" />
         <option value="$PROJECT_DIR$/setup.py" />
         <option value="$PROJECT_DIR$/page_objects/ExposedBrowserSelenium2Library.py" />
         <option value="$PROJECT_DIR$/page_objects/CustomReporter.py" />
@@ -120,6 +128,7 @@
         <option value="$PROJECT_DIR$/page_objects/test_pubmed_to_books.robot" />
         <option value="$PROJECT_DIR$/page_objects/PubmedPageLibrary.py" />
         <option value="$PROJECT_DIR$/page_objects/PageObjectLibrary.py" />
+        <option value="$PROJECT_DIR$/page_objects/README.md" />
       </list>
     </option>
   </component>
@@ -423,13 +432,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/envs/robot/lib/python2.7/site-packages/Selenium2Library/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="6" selection-start="165" selection-end="165" vertical-scroll-proportion="0.13358779" vertical-offset="0" max-vertical-offset="1920">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/setup.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="8" column="0" selection-start="238" selection-end="238" vertical-scroll-proportion="0.13565892" vertical-offset="0" max-vertical-offset="774" />
@@ -532,10 +534,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/page_objects/PageObjectLibrary.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="10" selection-start="114" selection-end="114" vertical-scroll-proportion="0.13981359" vertical-offset="0" max-vertical-offset="1635">
+        <state line="7" column="10" selection-start="114" selection-end="114" vertical-scroll-proportion="-4.2" vertical-offset="0" max-vertical-offset="1635">
           <folding>
             <element signature="e#1#74#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/page_objects/README.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="2" selection-start="2" selection-end="2" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="776">
+          <folding />
         </state>
       </provider>
     </entry>
