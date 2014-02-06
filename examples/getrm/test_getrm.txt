@@ -1,8 +1,9 @@
 *** Settings ***
-Library	GeTRM
+Library    Selenium2Library
+Library    GeTRM
 
 *** Variables ***
-${getrm-search}	id=loc-search
+${getrm-search}	   id=loc-search
 ${getrm-result-arrow}	xpath=//table[contains(@class, 'grid-results')]/tbody/tr[1]/td[@class='ctrl']
 ${getrm-header-spans}	xpath=//div[@class='track-header']/span
 ${getrm-search-arrow}	css=img.content-search-go
@@ -18,13 +19,12 @@ Click Result Arrow
 Headers Should Match	${arg}
 	${spanvals} = 	Set Variable	Get Values	${getrm-header-spans}
 	Should Match	${spanvals}	${arg}
-		
-	
+
 *** Test Cases ***
 Test locsearch
 	Set Selenium Timeout	10
 	
-	Open Browser	${base-url}/variation/tools/get-rm	ff
+	Open
 	Clear Element	${getrm-search}
 	Press Key	${getrm-search}	1q24
 
@@ -36,5 +36,5 @@ Test locsearch
 	Comment	Join span vals
 	Headers Should Match	Homo sapiens: GRCh37.p\d+\s+Chr\s1\s\WNC_000001.\d+\W:\s164.7\d+M\s-\s173.6\d+M
 	
-	Close Browser
+	Close
 
