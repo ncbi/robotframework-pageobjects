@@ -11,8 +11,8 @@ Library    BooksPageLibrary
 Test PubMed To Books
     Open Pubmed
     Search Pubmed  breast cancer
-    Find Related Data Pubmed  books
-    Click Docsum Item Number Books  0
+    Find Related Data To Pubmed  books
+    Click Books Docsum Item  0
     Click Table Of Contents Books
     [teardown]  Close Browser
 

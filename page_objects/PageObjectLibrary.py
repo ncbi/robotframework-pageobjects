@@ -17,6 +17,8 @@ class PageObjectLibrary(object):
     browser instance.
     """
     browser = "firefox"
+    _alias_delimiter = "__po__"
+
     def __init__(self, url=None):
         self.calling_class_name =  self.__class__.__name__.replace("PageLibrary", "").lower()
 
@@ -29,18 +31,40 @@ class PageObjectLibrary(object):
             ExposedBrowserSelenium2Library()
             self.se = ExposedBrowserSelenium2Library._se_instance
 
+    def _get_robot_alias(self, name):
+        """
+        Gets an aliased name (with page object class substitued in either at the end
+        or in place of the delimiter given the real method name.
+        """
+        if self._alias_delimiter in name:
+            alias = name.replace(self._alias_delimiter, "_" + self.calling_class_name + "_")
+        else:
+            alias = "%s_%s" % (name, self.calling_class_name)
+
+        return alias
+
+    def _get_name_from_robot_alias(self, alias):
+        """
+        Gets the real method name given a robot alias
+        """
+        if alias.endswith(self.calling_class_name):
+            name = alias.replace("_" + self.calling_class_name, "")
+        else:
+            name = alias.replace("_" + self.calling_class_name + "_", self._alias_delimiter)
+        return name
+
     def get_keyword_names(self):
         # Return all method names on the class to expose keywords to Robot Framework
         keywords = []
         for name, obj in inspect.getmembers(self):
             if inspect.ismethod(obj) and not name.startswith("_"):
-                keywords.append("%s_%s" % (name, self.calling_class_name))
-        #print keywords
+                keywords.append(self._get_robot_alias(name))
+
         return keywords
 
     def run_keyword(self, name, args):
-        # Translate back from Robot Framework friendly name to actual method
-        orig_meth = getattr(self, name.replace("_" + self.calling_class_name, ""))
+        # Translate back from Robot Framework alias to actual method
+        orig_meth = getattr(self,self._get_name_from_robot_alias(name))
         return orig_meth(*args)
 
     def open(self, url=None):
