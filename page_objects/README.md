@@ -14,7 +14,7 @@ Example
 ----
 
 Here's a Robot test case using some page objects. We need to import the ExposedBrowserSelenium2Library and any page
-libraries we are going to use in our test case. This imports in each library's keywords.
+libraries we are going to use in our test case. This imports each library's keywords.
 
 By default, any keywords defined in the page object take the name of the page object class (minus "PageLibrary") and append
 it to the end of the keyword. This makes the test cases more readable.
