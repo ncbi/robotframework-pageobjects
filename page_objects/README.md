@@ -21,8 +21,10 @@ Here's how it works:
 but with the name of the page object (minus "PageLibrary"). This means that when using the page object in Robot,
 "my_keyword" becomes "My Keyword PageObjectName". This enforces readability and consistency in your Robot Framework
 test cases.
+
 - When importing the page object in a unittest TestCase there is no aliasing because the keyword will be predicated
 by the instance. This is typical object-oriented and should be inherently readable (at least for code).
+
 - There's an affordance for when you don't want the page object name to be appended to the keyword in Robot Framework
 . In this case you define your keyword with the "robot_alias" decorator from the PageObjectLibrary. This allows you
 to use a delimiter, "__name__" to tell Robot Framework where to substitute in the page object name.
