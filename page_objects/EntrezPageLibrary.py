@@ -1,5 +1,5 @@
 import inspect
-from PageObjectLibrary import PageObjectLibrary
+from PageObjectLibrary import robot_alias, PageObjectLibrary
 import sys
 
 
@@ -27,7 +27,8 @@ class EntrezPageLibrary(PageObjectLibrary):
     This is the base class for PubmedPageLibrary, BooksPageLibrary, etc.
     """
 
-    def click__po__docsum_item(self, n):
+    @robot_alias("click__name__docsum_item")
+    def click_docsum_item(self, n):
         i = int(n) + 1
         self.se.click_link("xpath=//div[@class='rprt'][%s]//p[@class='title']/a" % str(i))
         return self
