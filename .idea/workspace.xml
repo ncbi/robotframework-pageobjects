@@ -48,7 +48,7 @@
       <file leaf-file-name="README.md" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/page_objects/README.md">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="48" column="0" selection-start="1651" selection-end="1651" vertical-scroll-proportion="0.92783505" vertical-offset="0" max-vertical-offset="810">
+            <state line="3" column="37" selection-start="84" selection-end="84" vertical-scroll-proportion="0.05798969" vertical-offset="0" max-vertical-offset="1110">
               <folding />
             </state>
           </provider>
@@ -57,8 +57,10 @@
       <file leaf-file-name="test_pubmed_to_books.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/page_objects/test_pubmed_to_books.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="12" selection-start="352" selection-end="411" vertical-scroll-proportion="-5.4" vertical-offset="0" max-vertical-offset="255">
-              <folding />
+            <state line="0" column="0" selection-start="0" selection-end="411" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="270">
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -86,7 +88,7 @@
       <file leaf-file-name="PubmedPageLibrary.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/page_objects/PubmedPageLibrary.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="43" selection-start="322" selection-end="322" vertical-scroll-proportion="-5.4" vertical-offset="0" max-vertical-offset="375">
+            <state line="5" column="19" selection-start="172" selection-end="172" vertical-scroll-proportion="-3.0" vertical-offset="0" max-vertical-offset="375">
               <folding>
                 <element signature="e#0#60#0" expanded="true" />
               </folding>
@@ -507,22 +509,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/page_objects/PubmedPageLibrary.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="43" selection-start="322" selection-end="322" vertical-scroll-proportion="-5.4" vertical-offset="0" max-vertical-offset="375">
-          <folding>
-            <element signature="e#0#60#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/page_objects/test_pubmed_to_books.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="12" selection-start="352" selection-end="411" vertical-scroll-proportion="-5.4" vertical-offset="0" max-vertical-offset="255">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/page_objects/test_pubmed_to_books.robot">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="455" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="390">
@@ -541,9 +527,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/page_objects/test_pubmed_to_books.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="411" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="270">
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/page_objects/PubmedPageLibrary.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="19" selection-start="172" selection-end="172" vertical-scroll-proportion="-3.0" vertical-offset="0" max-vertical-offset="375">
+          <folding>
+            <element signature="e#0#60#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/page_objects/README.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="48" column="0" selection-start="1651" selection-end="1651" vertical-scroll-proportion="0.92783505" vertical-offset="0" max-vertical-offset="810">
+        <state line="3" column="37" selection-start="84" selection-end="84" vertical-scroll-proportion="0.05798969" vertical-offset="0" max-vertical-offset="1110">
           <folding />
         </state>
       </provider>

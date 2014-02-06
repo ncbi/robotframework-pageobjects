@@ -1,14 +1,14 @@
 Robot Page Objects API
 ======================
 
-This is a demo of the Robot Page Object API.
+This is a demo of the Robot Selenium2 Page Object API.
 
 Why?
 ----
 
 - Robot is great, but it would be nice to encapsulate page/application logic using standard Python OO techniques
 without losing the readability inherent in typical Robot Framework test cases.
-- It would also be great if we could reuse these Robot page objects in generic unittests
+- It would also be great if we could reuse these Robot page objects in generic unittest Test Cases
 
 Example
 ----
@@ -24,7 +24,7 @@ keyword used in the Test Case. In this case, you will need to use the "robot_ali
 "__name__" delimiter with the name of the page object.
 
 
-Here are some examples:
+Here are some examples. Notice how, in general, the name of the page object comes at the end of each keyword:
 
     # testcase.robot
 
@@ -45,4 +45,24 @@ Here are some examples:
         Click Books Docsum Item  0
         Click Table Of Contents Books
         [teardown]  Close Browser
+
+Here is the same test in a Python unittest TestCase, totally apart from Robot Framework. Notice how here we use the
+object's original methods, and it's still readable because they are predicated by the page object instance:
+
+    import unittest
+    from PubmedPageLibrary import PubmedPageLibrary
+
+    class TestPubmedflows(unittest.TestCase):
+
+        def test_pubmed_to_books(self):
+            pubmed_page = PubmedPageLibrary().open()
+            pubmed_page.search("breast cancer")
+            books_page = pubmed_page.find_related_data_in("books")
+            books_page.click_docsum_item(0)
+            books_page.click_table_of_contents()
+            books_page.close()
+
+
+Check out this directory for the source code of the PageObject base class and some example page objects which use
+PageObjectLibrary.
 
