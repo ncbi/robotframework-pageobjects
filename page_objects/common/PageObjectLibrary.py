@@ -1,4 +1,4 @@
-
+from selenium.webdriver.support.ui import WebDriverWait
 from page_objects.common.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
 import inspect
 
@@ -47,6 +47,10 @@ class PageObjectLibrary(object):
             # If it doesn't already exist, instantiate first.
             ExposedBrowserSelenium2Library()
             self.se = ExposedBrowserSelenium2Library._se_instance
+
+
+    def output(self, data):
+        sys.__stdout__.write(str(data))
 
     def _get_robot_alias(self, name):
         """
@@ -102,3 +106,18 @@ class PageObjectLibrary(object):
 
     def close(self):
         self.se.close_browser()
+
+    def wait_for(self, condition):
+        """
+        Waits for a condition defined by the passed function to become True.
+        """
+        timeout = 10
+        wait = WebDriverWait(self.se._current_browser(), timeout) #TODO: move to default config, allow parameter to this function too
+        def wait_fnc(driver):
+            try:
+                ret = condition()
+            except AssertionError as e:
+                return False
+            else:
+                return ret
+        wait.until(wait_fnc)

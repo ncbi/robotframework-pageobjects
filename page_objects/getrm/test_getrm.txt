@@ -1,0 +1,15 @@
+*** Settings ***
+Library    Selenium2Library
+Library    GeTRM
+
+*** Test Cases ***
+Test locsearch
+	Set Selenium Timeout	10
+	
+	Open Getrm
+	Search Getrm    1q24
+	Getrm Result Arrow Should Exist
+	Go To Getrm Results
+	Getrm Headers Should Match	Homo sapiens: GRCh37.p\\\d+\\\s+Chr\\\s1\\\s\\\WNC_000001.\\\d+\\\W:\\\s164.7\\\d+M\\\s-\\\s173.6\\\d+M
+	Close Getrm
+
