@@ -1,0 +1,5 @@
+PhantomJS is launching GhostDriver...
+[INFO  - 2014-02-06T15:22:22.459Z] GhostDriver - Main - running on port 48990
+[INFO  - 2014-02-06T15:22:23.356Z] Session [7a49fe90-8f42-11e3-9919-5f82b5f5cfee] - CONSTRUCTOR - Desired Capabilities: {"platform":"ANY","browserName":"phantomjs","version":"","javascriptEnabled":true}
+[INFO  - 2014-02-06T15:22:23.356Z] Session [7a49fe90-8f42-11e3-9919-5f82b5f5cfee] - CONSTRUCTOR - Negotiated Capabilities: {"browserName":"phantomjs","version":"1.9.1","driverName":"ghostdriver","driverVersion":"1.0.3","platform":"linux-unknown-64bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2014-02-06T15:22:23.357Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 7a49fe90-8f42-11e3-9919-5f82b5f5cfee

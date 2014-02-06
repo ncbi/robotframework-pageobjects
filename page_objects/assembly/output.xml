@@ -1,0 +1,1211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20140204 18:58:02.911" generator="Robot 2.8.3 (Python 2.7.2 on linux2)">
+<suite source="/home/frishber/htdocs/projects/rfaaron/examples/assembly/assembly.txt" id="s1" name="Assembly">
+<test id="s1-t1" name="1">
+<kw type="kw" name="Assembly Data Download">
+<doc></doc>
+<arguments>
+<arg>GCF_000001405.24</arg>
+</arguments>
+<kw type="kw" name="Assembly.Open Browser">
+<doc>Opens a new browser instance to given URL.</doc>
+<arguments>
+<arg>http://www.ncbi.nlm.nih.gov/assembly/${acc}</arg>
+</arguments>
+<msg timestamp="20140204 18:58:03.155" level="INFO">Opening browser 'firefox' to base url 'http://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.24'</msg>
+<status status="PASS" endtime="20140204 18:58:06.974" starttime="20140204 18:58:03.155"></status>
+</kw>
+<kw type="kw" name="Assembly.Wait Until Page Contains Element">
+<doc>Waits until element specified with `locator` appears on current page.</doc>
+<arguments>
+<arg>${assembly-download-data}</arg>
+</arguments>
+<status status="PASS" endtime="20140204 18:58:07.012" starttime="20140204 18:58:06.975"></status>
+</kw>
+<kw type="kw" name="Assembly.Click Element">
+<doc>Click element identified by `locator`.</doc>
+<arguments>
+<arg>${assembly-download-data}</arg>
+</arguments>
+<msg timestamp="20140204 18:58:07.013" level="INFO">Clicking element 'xpath=//div[@id = 'ui-portlet_content-1']/ul/li/a'.</msg>
+<status status="PASS" endtime="20140204 18:58:07.163" starttime="20140204 18:58:07.012"></status>
+</kw>
+<kw type="kw" name="Assembly.Source Should Match File">
+<doc>Diff the source of a page against the contents of a baseline file.</doc>
+<arguments>
+<arg>${acc}.assembly.txt</arg>
+</arguments>
+<kw type="kw" name="Assembly.Capture Page Screenshot">
+<doc>Takes a screenshot of the current page and embeds it into the log.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20140204 18:58:16.884" html="yes" level="INFO">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-1.png"&gt;&lt;img src="selenium-screenshot-1.png" width="800px"&gt;&lt;/a&gt;</msg>
+<status status="PASS" endtime="20140204 18:58:16.884" starttime="20140204 18:58:07.300"></status>
+</kw>
+<msg timestamp="20140204 18:58:16.889" level="FAIL">&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;&lt;head&gt;&lt;link title="Wrap Long Lines" href="resource://gre-resources/plaintext.css" type="text/css" rel="alternate stylesheet" /&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;# Assembly Name:  GRCh37.p12
+# Description:    Genome Reference Consortium Human Build 37 patch release 12 (GRCh37.p12)
+# Organism name:  Homo sapiens
+# Taxid:          9606
+# Submitter:      Genome Reference Consortium
+# Date: 2013-3-26
+# Assembly type:  haploid-with-alt-loci
+# Release type:   patch
+# Assembly level: Chromosome
+# Genome representation: full
+# GenBank Assembly ID: GCA_000001405.13 (replaced)
+# RefSeq Assembly ID: GCF_000001405.24 (replaced)
+# RefSeq Assembly and GenBank Assemblies Identical: yes
+#
+## Assembly-Units:
+## GenBank Unit ID	RefSeq Unit ID	Assembly-Unit name
+## GCA_000001305.1	GCF_000001305.13	Primary Assembly
+## GCA_000001315.1	GCF_000001315.1	ALT_REF_LOCI_1
+## GCA_000001325.1	GCF_000001325.2	ALT_REF_LOCI_2
+## GCA_000001335.1	GCF_000001335.1	ALT_REF_LOCI_3
+## GCA_000001345.1	GCF_000001345.1	ALT_REF_LOCI_4
+## GCA_000001355.1	GCF_000001355.1	ALT_REF_LOCI_5
+## GCA_000001365.1	GCF_000001365.2	ALT_REF_LOCI_6
+## GCA_000001375.1	GCF_000001375.1	ALT_REF_LOCI_7
+## GCA_000001385.1	GCF_000001385.1	ALT_REF_LOCI_8
+## GCA_000001395.1	GCF_000001395.1	ALT_REF_LOCI_9
+## GCA_000006015.1	GCF_000006015.1	non-nuclear
+## GCA_000005045.12	GCF_000005045.11	PATCHES
+#
+# Ordered by chromosome/plasmid; the chromosomes/plasmids are followed by
+# unlocalized scaffolds.
+# Unplaced scaffolds are listed at the end.
+# RefSeq is equal or derived from GenBank object.
+#
+# Sequence-Name	Sequence-Role	Assigned-Molecule	Assigned-Molecule-Location/Type	GenBank-Accn	Relationship	RefSeq-Accn	Assembly-Unit
+1	assembled-molecule	1	Chromosome	CM000663.1	=	NC_000001.10	Primary Assembly
+2	assembled-molecule	2	Chromosome	CM000664.1	=	NC_000002.11	Primary Assembly
+3	assembled-molecule	3	Chromosome	CM000665.1	=	NC_000003.11	Primary Assembly
+4	assembled-molecule	4	Chromosome	CM000666.1	=	NC_000004.11	Primary Assembly
+5	assembled-molecule	5	Chromosome	CM000667.1	=	NC_000005.9	Primary Assembly
+6	assembled-molecule	6	Chromosome	CM000668.1	=	NC_000006.11	Primary Assembly
+7	assembled-molecule	7	Chromosome	CM000669.1	=	NC_000007.13	Primary Assembly
+8	assembled-molecule	8	Chromosome	CM000670.1	=	NC_000008.10	Primary Assembly
+9	assembled-molecule	9	Chromosome	CM000671.1	=	NC_000009.11	Primary Assembly
+10	assembled-molecule	10	Chromosome	CM000672.1	=	NC_000010.10	Primary Assembly
+11	assembled-molecule	11	Chromosome	CM000673.1	=	NC_000011.9	Primary Assembly
+12	assembled-molecule	12	Chromosome	CM000674.1	=	NC_000012.11	Primary Assembly
+13	assembled-molecule	13	Chromosome	CM000675.1	=	NC_000013.10	Primary Assembly
+14	assembled-molecule	14	Chromosome	CM000676.1	=	NC_000014.8	Primary Assembly
+15	assembled-molecule	15	Chromosome	CM000677.1	=	NC_000015.9	Primary Assembly
+16	assembled-molecule	16	Chromosome	CM000678.1	=	NC_000016.9	Primary Assembly
+17	assembled-molecule	17	Chromosome	CM000679.1	=	NC_000017.10	Primary Assembly
+18	assembled-molecule	18	Chromosome	CM000680.1	=	NC_000018.9	Primary Assembly
+19	assembled-molecule	19	Chromosome	CM000681.1	=	NC_000019.9	Primary Assembly
+20	assembled-molecule	20	Chromosome	CM000682.1	=	NC_000020.10	Primary Assembly
+21	assembled-molecule	21	Chromosome	CM000683.1	=	NC_000021.8	Primary Assembly
+22	assembled-molecule	22	Chromosome	CM000684.1	=	NC_000022.10	Primary Assembly
+X	assembled-molecule	X	Chromosome	CM000685.1	=	NC_000023.10	Primary Assembly
+Y	assembled-molecule	Y	Chromosome	CM000686.1	=	NC_000024.9	Primary Assembly
+HSCHR1_RANDOM_CTG5	unlocalized-scaffold	1	Chromosome	GL000191.1	=	NT_113878.1	Primary Assembly
+HSCHR1_RANDOM_CTG12	unlocalized-scaffold	1	Chromosome	GL000192.1	=	NT_167207.1	Primary Assembly
+HSCHR4_RANDOM_CTG2	unlocalized-scaffold	4	Chromosome	GL000193.1	=	NT_113885.1	Primary Assembly
+HSCHR4_RANDOM_CTG3	unlocalized-scaffold	4	Chromosome	GL000194.1	=	NT_113888.1	Primary Assembly
+HSCHR7_RANDOM_CTG1	unlocalized-scaffold	7	Chromosome	GL000195.1	=	NT_113901.1	Primary Assembly
+HSCHR8_RANDOM_CTG1	unlocalized-scaffold	8	Chromosome	GL000196.1	=	NT_113909.1	Primary Assembly
+HSCHR8_RANDOM_CTG4	unlocalized-scaffold	8	Chromosome	GL000197.1	=	NT_113907.1	Primary Assembly
+HSCHR9_RANDOM_CTG1	unlocalized-scaffold	9	Chromosome	GL000198.1	=	NT_113914.1	Primary Assembly
+HSCHR9_RANDOM_CTG2	unlocalized-scaffold	9	Chromosome	GL000199.1	=	NT_113916.2	Primary Assembly
+HSCHR9_RANDOM_CTG4	unlocalized-scaffold	9	Chromosome	GL000200.1	=	NT_113915.1	Primary Assembly
+HSCHR9_RANDOM_CTG5	unlocalized-scaffold	9	Chromosome	GL000201.1	=	NT_113911.1	Primary Assembly
+HSCHR11_RANDOM_CTG2	unlocalized-scaffold	11	Chromosome	GL000202.1	=	NT_113921.2	Primary Assembly
+HSCHR17_RANDOM_CTG1	unlocalized-scaffold	17	Chromosome	GL000203.1	=	NT_113941.1	Primary Assembly
+HSCHR17_RANDOM_CTG2	unlocalized-scaffold	17	Chromosome	GL000204.1	=	NT_113943.1	Primary Assembly
+HSCHR17_RANDOM_CTG3	unlocalized-scaffold	17	Chromosome	GL000205.1	=	NT_113930.1	Primary Assembly
+HSCHR17_RANDOM_CTG4	unlocalized-scaffold	17	Chromosome	GL000206.1	=	NT_113945.1	Primary Assembly
+HSCHR18_RANDOM_CTG1	unlocalized-scaffold	18	Chromosome	GL000207.1	=	NT_113947.1	Primary Assembly
+HSCHR19_RANDOM_CTG1	unlocalized-scaffold	19	Chromosome	GL000208.1	=	NT_113948.1	Primary Assembly
+HSCHR19_RANDOM_CTG2	unlocalized-scaffold	19	Chromosome	GL000209.1	=	NT_113949.1	Primary Assembly
+HSCHR21_RANDOM_CTG9	unlocalized-scaffold	21	Chromosome	GL000210.1	=	NT_113950.2	Primary Assembly
+HSCHRUN_RANDOM_CTG1	unplaced-scaffold	na	na	GL000211.1	=	NT_113961.1	Primary Assembly
+HSCHRUN_RANDOM_CTG2	unplaced-scaffold	na	na	GL000212.1	=	NT_113923.1	Primary Assembly
+HSCHRUN_RANDOM_CTG3	unplaced-scaffold	na	na	GL000213.1	=	NT_167208.1	Primary Assembly
+HSCHRUN_RANDOM_CTG4	unplaced-scaffold	na	na	GL000214.1	=	NT_167209.1	Primary Assembly
+HSCHRUN_RANDOM_CTG5	unplaced-scaffold	na	na	GL000215.1	=	NT_167210.1	Primary Assembly
+HSCHRUN_RANDOM_CTG6	unplaced-scaffold	na	na	GL000216.1	=	NT_167211.1	Primary Assembly
+HSCHRUN_RANDOM_CTG7	unplaced-scaffold	na	na	GL000217.1	=	NT_167212.1	Primary Assembly
+HSCHRUN_RANDOM_CTG9	unplaced-scaffold	na	na	GL000218.1	=	NT_113889.1	Primary Assembly
+HSCHRUN_RANDOM_CTG10	unplaced-scaffold	na	na	GL000219.1	=	NT_167213.1	Primary Assembly
+HSCHRUN_RANDOM_CTG11	unplaced-scaffold	na	na	GL000220.1	=	NT_167214.1	Primary Assembly
+HSCHRUN_RANDOM_CTG13	unplaced-scaffold	na	na	GL000221.1	=	NT_167215.1	Primary Assembly
+HSCHRUN_RANDOM_CTG14	unplaced-scaffold	na	na	GL000222.1	=	NT_167216.1	Primary Assembly
+HSCHRUN_RANDOM_CTG15	unplaced-scaffold	na	na	GL000223.1	=	NT_167217.1	Primary Assembly
+HSCHRUN_RANDOM_CTG16	unplaced-scaffold	na	na	GL000224.1	=	NT_167218.1	Primary Assembly
+HSCHRUN_RANDOM_CTG17	unplaced-scaffold	na	na	GL000225.1	=	NT_167219.1	Primary Assembly
+HSCHRUN_RANDOM_CTG19	unplaced-scaffold	na	na	GL000226.1	=	NT_167220.1	Primary Assembly
+HSCHRUN_RANDOM_CTG20	unplaced-scaffold	na	na	GL000227.1	=	NT_167221.1	Primary Assembly
+HSCHRUN_RANDOM_CTG21	unplaced-scaffold	na	na	GL000228.1	=	NT_167222.1	Primary Assembly
+HSCHRUN_RANDOM_CTG22	unplaced-scaffold	na	na	GL000229.1	=	NT_167223.1	Primary Assembly
+HSCHRUN_RANDOM_CTG23	unplaced-scaffold	na	na	GL000230.1	=	NT_167224.1	Primary Assembly
+HSCHRUN_RANDOM_CTG24	unplaced-scaffold	na	na	GL000231.1	=	NT_167225.1	Primary Assembly
+HSCHRUN_RANDOM_CTG25	unplaced-scaffold	na	na	GL000232.1	=	NT_167226.1	Primary Assembly
+HSCHRUN_RANDOM_CTG26	unplaced-scaffold	na	na	GL000233.1	=	NT_167227.1	Primary Assembly
+HSCHRUN_RANDOM_CTG27	unplaced-scaffold	na	na	GL000234.1	=	NT_167228.1	Primary Assembly
+HSCHRUN_RANDOM_CTG28	unplaced-scaffold	na	na	GL000235.1	=	NT_167229.1	Primary Assembly
+HSCHRUN_RANDOM_CTG29	unplaced-scaffold	na	na	GL000236.1	=	NT_167230.1	Primary Assembly
+HSCHRUN_RANDOM_CTG30	unplaced-scaffold	na	na	GL000237.1	=	NT_167231.1	Primary Assembly
+HSCHRUN_RANDOM_CTG31	unplaced-scaffold	na	na	GL000238.1	=	NT_167232.1	Primary Assembly
+HSCHRUN_RANDOM_CTG32	unplaced-scaffold	na	na	GL000239.1	=	NT_167233.1	Primary Assembly
+HSCHRUN_RANDOM_CTG33	unplaced-scaffold	na	na	GL000240.1	=	NT_167234.1	Primary Assembly
+HSCHRUN_RANDOM_CTG34	unplaced-scaffold	na	na	GL000241.1	=	NT_167235.1	Primary Assembly
+HSCHRUN_RANDOM_CTG35	unplaced-scaffold	na	na	GL000242.1	=	NT_167236.1	Primary Assembly
+HSCHRUN_RANDOM_CTG36	unplaced-scaffold	na	na	GL000243.1	=	NT_167237.1	Primary Assembly
+HSCHRUN_RANDOM_CTG37	unplaced-scaffold	na	na	GL000244.1	=	NT_167238.1	Primary Assembly
+HSCHRUN_RANDOM_CTG38	unplaced-scaffold	na	na	GL000245.1	=	NT_167239.1	Primary Assembly
+HSCHRUN_RANDOM_CTG39	unplaced-scaffold	na	na	GL000246.1	=	NT_167240.1	Primary Assembly
+HSCHRUN_RANDOM_CTG40	unplaced-scaffold	na	na	GL000247.1	=	NT_167241.1	Primary Assembly
+HSCHRUN_RANDOM_CTG41	unplaced-scaffold	na	na	GL000248.1	=	NT_167242.1	Primary Assembly
+HSCHRUN_RANDOM_CTG42	unplaced-scaffold	na	na	GL000249.1	=	NT_167243.1	Primary Assembly
+HSCHR6_MHC_APD_CTG1	alt-scaffold	6	Chromosome	GL000250.1	=	NT_167244.1	ALT_REF_LOCI_1
+HSCHR6_MHC_COX_CTG1	alt-scaffold	6	Chromosome	GL000251.1	=	NT_113891.2	ALT_REF_LOCI_2
+HSCHR6_MHC_DBB_CTG1	alt-scaffold	6	Chromosome	GL000252.1	=	NT_167245.1	ALT_REF_LOCI_3
+HSCHR6_MHC_MANN_CTG1	alt-scaffold	6	Chromosome	GL000253.1	=	NT_167246.1	ALT_REF_LOCI_4
+HSCHR6_MHC_MCF_CTG1	alt-scaffold	6	Chromosome	GL000254.1	=	NT_167247.1	ALT_REF_LOCI_5
+HSCHR6_MHC_QBL_CTG1	alt-scaffold	6	Chromosome	GL000255.1	=	NT_167248.1	ALT_REF_LOCI_6
+HSCHR6_MHC_SSTO_CTG1	alt-scaffold	6	Chromosome	GL000256.1	=	NT_167249.1	ALT_REF_LOCI_7
+HSCHR4_1_CTG9	alt-scaffold	4	Chromosome	GL000257.1	=	NT_167250.1	ALT_REF_LOCI_8
+HSCHR17_1_CTG5	alt-scaffold	17	Chromosome	GL000258.1	=	NT_167251.1	ALT_REF_LOCI_9
+MT	assembled-molecule	MT	Mitochondrion	J01415.2	=	NC_012920.1	non-nuclear
+HG989_PATCH	fix-patch	1	Chromosome	GL949741.1	=	NW_003571030.1	PATCHES
+HG1287_PATCH	fix-patch	1	Chromosome	JH636052.4	=	NW_003871055.3	PATCHES
+HG1292_PATCH	fix-patch	1	Chromosome	JH636053.2	=	NW_003871056.2	PATCHES
+HG1472_PATCH	fix-patch	1	Chromosome	JH806574.1	=	NW_004070864.1	PATCHES
+HSCHR1_1_CTG31	novel-patch	1	Chromosome	GL383518.1	=	NW_003315905.1	PATCHES
+HSCHR1_2_CTG31	novel-patch	1	Chromosome	GL383519.1	=	NW_003315906.1	PATCHES
+HSCHR1_3_CTG31	novel-patch	1	Chromosome	GL383520.1	=	NW_003315907.1	PATCHES
+HG999_1_PATCH	fix-patch	1	Chromosome	GL383516.1	=	NW_003315903.1	PATCHES
+HG999_2_PATCH	fix-patch	1	Chromosome	GL383517.1	=	NW_003315904.1	PATCHES
+HG1293_PATCH	fix-patch	1	Chromosome	JH636054.1	=	NW_003871057.1	PATCHES
+HG1471_PATCH	fix-patch	1	Chromosome	JH806573.1	=	NW_004070863.1	PATCHES
+HG1473_PATCH	fix-patch	1	Chromosome	JH806575.1	=	NW_004070865.1	PATCHES
+HSCHR2_1_CTG1	novel-patch	2	Chromosome	GL383521.1	=	NW_003315908.1	PATCHES
+HG686_PATCH	fix-patch	2	Chromosome	GL877871.1	=	NW_003571032.1	PATCHES
+HG953_PATCH	fix-patch	2	Chromosome	KB663603.1	=	NW_004504299.1	PATCHES
+HSCHR2_1_CTG12	novel-patch	2	Chromosome	GL383522.1	=	NW_003315909.1	PATCHES
+HSCHR2_2_CTG12	novel-patch	2	Chromosome	GL582966.2	=	NW_003571033.2	PATCHES
+HG1007_PATCH	fix-patch	2	Chromosome	GL877870.2	=	NW_003571031.1	PATCHES
+HSCHR3_1_CTG1	novel-patch	3	Chromosome	JH636055.1	=	NW_003871060.1	PATCHES
+HG186_PATCH	fix-patch	3	Chromosome	GL383523.1	=	NW_003315910.1	PATCHES
+HG280_PATCH	fix-patch	3	Chromosome	GL383524.1	=	NW_003315911.1	PATCHES
+HG991_PATCH	fix-patch	3	Chromosome	GL383525.1	=	NW_003315912.1	PATCHES
+HG1091_PATCH	fix-patch	3	Chromosome	JH159131.1	=	NW_003871058.1	PATCHES
+HG325_PATCH	fix-patch	3	Chromosome	JH159132.1	=	NW_003871059.1	PATCHES
+HSCHR3_1_CTG2_1	novel-patch	3	Chromosome	GL383526.1	=	NW_003315913.1	PATCHES
+HSCHR4_1_CTG6	novel-patch	4	Chromosome	GL383528.1	=	NW_003315915.1	PATCHES
+HSCHR4_2_CTG9	novel-patch	4	Chromosome	GL383529.1	=	NW_003315916.1	PATCHES
+HG706_PATCH	fix-patch	4	Chromosome	GL582967.1	=	NW_003571035.1	PATCHES
+HSCHR4_1_CTG12	novel-patch	4	Chromosome	GL383527.1	=	NW_003315914.1	PATCHES
+HG1032_PATCH	fix-patch	4	Chromosome	GL877872.1	=	NW_003571034.1	PATCHES
+HSCHR5_1_CTG1	novel-patch	5	Chromosome	GL339449.2	=	NW_003315917.2	PATCHES
+HSCHR5_1_CTG2	novel-patch	5	Chromosome	GL383530.1	=	NW_003315918.1	PATCHES
+HSCHR5_2_CTG1	novel-patch	5	Chromosome	GL383532.1	=	NW_003315920.1	PATCHES
+HSCHR5_3_CTG1	novel-patch	5	Chromosome	GL949742.1	=	NW_003571036.1	PATCHES
+HG1063_PATCH	fix-patch	5	Chromosome	JH159133.1	=	NW_003871061.1	PATCHES
+HSCHR5_1_CTG5	novel-patch	5	Chromosome	GL383531.1	=	NW_003315919.1	PATCHES
+HG1322_PATCH	fix-patch	6	Chromosome	JH636057.1	=	NW_003871063.1	PATCHES
+HG27_PATCH	fix-patch	6	Chromosome	JH806576.1	=	NW_004070866.1	PATCHES
+HSCHR6_1_CTG5	novel-patch	6	Chromosome	GL383533.1	=	NW_003315921.1	PATCHES
+HG1304_PATCH	fix-patch	6	Chromosome	JH636056.1	=	NW_003871062.1	PATCHES
+HG357_PATCH	fix-patch	6	Chromosome	KB663604.1	=	NW_004504300.1	PATCHES
+HSCHR6_2_CTG5	novel-patch	6	Chromosome	KB021644.1	=	NW_004166862.1	PATCHES
+HG115_PATCH	fix-patch	7	Chromosome	GL582968.1	=	NW_003571037.1	PATCHES
+HG14_PATCH	fix-patch	7	Chromosome	GL582969.1	=	NW_003571038.1	PATCHES
+HG736_PATCH	fix-patch	7	Chromosome	GL582970.1	=	NW_003571039.1	PATCHES
+HG946_PATCH	fix-patch	7	Chromosome	GL582972.1	=	NW_003571041.1	PATCHES
+HG1257_PATCH	fix-patch	7	Chromosome	JH159134.2	=	NW_003871064.1	PATCHES
+HG1308_PATCH	fix-patch	7	Chromosome	JH636058.1	=	NW_003871065.1	PATCHES
+HSCHR7_1_CTG6	novel-patch	7	Chromosome	GL383534.2	=	NW_003315922.2	PATCHES
+HG7_PATCH	fix-patch	7	Chromosome	GL582971.1	=	NW_003571040.1	PATCHES
+HG104_HG975_PATCH	fix-patch	8	Chromosome	GL383535.1	=	NW_003315923.1	PATCHES
+HG243_PATCH	fix-patch	8	Chromosome	GL383536.1	=	NW_003315924.1	PATCHES
+HG19_PATCH	fix-patch	8	Chromosome	GL949743.1	=	NW_003571042.1	PATCHES
+HG418_PATCH	fix-patch	8	Chromosome	JH159135.1	=	NW_003871066.1	PATCHES
+HSCHR9_1_CTG1	novel-patch	9	Chromosome	GL383539.1	=	NW_003315928.1	PATCHES
+HG962_PATCH	fix-patch	9	Chromosome	JH636059.1	=	NW_003871067.1	PATCHES
+HSCHR9_1_CTG35	novel-patch	9	Chromosome	GL383540.1	=	NW_003315929.1	PATCHES
+HSCHR9_2_CTG35	novel-patch	9	Chromosome	GL383541.1	=	NW_003315930.1	PATCHES
+HSCHR9_3_CTG35	novel-patch	9	Chromosome	GL383542.1	=	NW_003315931.1	PATCHES
+HG79_PATCH	fix-patch	9	Chromosome	GL339450.1	=	NW_003315925.1	PATCHES
+HG998_1_PATCH	fix-patch	9	Chromosome	GL383537.1	=	NW_003315926.1	PATCHES
+HG998_2_PATCH	fix-patch	9	Chromosome	GL383538.1	=	NW_003315927.1	PATCHES
+HG1500_PATCH	fix-patch	9	Chromosome	JH806577.1	=	NW_004070867.1	PATCHES
+HG1501_PATCH	fix-patch	9	Chromosome	JH806578.1	=	NW_004070868.1	PATCHES
+HG1502_PATCH	fix-patch	9	Chromosome	JH806579.1	=	NW_004070869.1	PATCHES
+HG50_PATCH	fix-patch	9	Chromosome	KB663605.1	=	NW_004504301.1	PATCHES
+HG544_PATCH	fix-patch	10	Chromosome	GL383543.1	=	NW_003315932.1	PATCHES
+HG905_PATCH	fix-patch	10	Chromosome	GL877873.1	=	NW_003571043.1	PATCHES
+HG871_PATCH	fix-patch	10	Chromosome	JH636060.1	=	NW_003871071.1	PATCHES
+HSCHR10_1_CTG2	novel-patch	10	Chromosome	GL383545.1	=	NW_003315934.1	PATCHES
+HSCHR10_1_CTG5	novel-patch	10	Chromosome	GL383546.1	=	NW_003315935.1	PATCHES
+HG995_PATCH	fix-patch	10	Chromosome	GL383544.1	=	NW_003315933.1	PATCHES
+HG1211_PATCH	fix-patch	10	Chromosome	JH591181.2	=	NW_003871068.1	PATCHES
+HG311_PATCH	fix-patch	10	Chromosome	JH591182.1	=	NW_003871069.1	PATCHES
+HG339_PATCH	fix-patch	10	Chromosome	JH591183.1	=	NW_003871070.1	PATCHES
+HG1479_PATCH	fix-patch	10	Chromosome	JH806580.1	=	NW_004070870.1	PATCHES
+HG1074_PATCH	fix-patch	10	Chromosome	KB663606.1	=	NW_004504302.1	PATCHES
+HG256_PATCH	fix-patch	11	Chromosome	JH591184.1	=	NW_003871075.1	PATCHES
+HG873_PATCH	fix-patch	11	Chromosome	JH591185.1	=	NW_003871082.1	PATCHES
+HSCHR11_1_CTG1_1	novel-patch	11	Chromosome	GL383547.1	=	NW_003315936.1	PATCHES
+HG281_PATCH	fix-patch	11	Chromosome	GL582973.1	=	NW_003571045.1	PATCHES
+HG142_HG150_NOVEL_TEST	novel-patch	11	Chromosome	JH159136.1	=	NW_003871073.1	PATCHES
+HG151_NOVEL_TEST	novel-patch	11	Chromosome	JH159137.1	=	NW_003871074.1	PATCHES
+HG536_PATCH	fix-patch	11	Chromosome	GL949744.1	=	NW_003571046.1	PATCHES
+HG299_PATCH	fix-patch	11	Chromosome	JH159138.1	=	NW_003871076.1	PATCHES
+HG305_PATCH	fix-patch	11	Chromosome	JH159139.1	=	NW_003871077.1	PATCHES
+HG306_PATCH	fix-patch	11	Chromosome	JH159140.1	=	NW_003871078.1	PATCHES
+HG348_PATCH	fix-patch	11	Chromosome	JH159141.2	=	NW_003871079.1	PATCHES
+HG388_HG400_PATCH	fix-patch	11	Chromosome	JH159142.2	=	NW_003871080.1	PATCHES
+HG414_PATCH	fix-patch	11	Chromosome	JH159143.1	=	NW_003871081.1	PATCHES
+HG122_PATCH	fix-patch	11	Chromosome	JH720443.1	=	NW_003871072.1	PATCHES
+HG865_PATCH	fix-patch	11	Chromosome	JH806581.1	=	NW_004070871.1	PATCHES
+HG858_PATCH	fix-patch	12	Chromosome	GL582974.1	=	NW_003571048.1	PATCHES
+HSCHR12_1_CTG1	novel-patch	12	Chromosome	GL877875.1	=	NW_003571049.1	PATCHES
+HG344_PATCH	fix-patch	12	Chromosome	JH720444.1	=	NW_003871083.1	PATCHES
+HSCHR12_1_CTG2	novel-patch	12	Chromosome	GL383549.1	=	NW_003315938.1	PATCHES
+HSCHR12_1_CTG2_1	novel-patch	12	Chromosome	GL383550.1	=	NW_003315939.1	PATCHES
+HSCHR12_2_CTG2_1	novel-patch	12	Chromosome	GL383552.1	=	NW_003315941.1	PATCHES
+HSCHR12_3_CTG2_1	novel-patch	12	Chromosome	GL383553.2	=	NW_003315942.2	PATCHES
+HSCHR12_2_CTG2	novel-patch	12	Chromosome	GL877876.1	=	NW_003571050.1	PATCHES
+HG1133_PATCH	novel-patch	12	Chromosome	GL949745.1	=	NW_003571047.1	PATCHES
+HG1595_PATCH	fix-patch	12	Chromosome	KB663607.1	=	NW_004504303.1	PATCHES
+HSCHR12_1_CTG5	novel-patch	12	Chromosome	GL383551.1	=	NW_003315940.1	PATCHES
+HG996_PATCH	fix-patch	12	Chromosome	GL383548.1	=	NW_003315937.1	PATCHES
+HG531_PATCH	fix-patch	13	Chromosome	GL582975.1	=	NW_003571051.1	PATCHES
+HG1592_PATCH	fix-patch	14	Chromosome	KB021645.1	=	NW_004166863.1	PATCHES
+HSCHR15_1_CTG4	novel-patch	15	Chromosome	GL383554.1	=	NW_003315943.1	PATCHES
+HSCHR15_1_CTG8	novel-patch	15	Chromosome	GL383555.1	=	NW_003315944.1	PATCHES
+HG971_PATCH	fix-patch	15	Chromosome	JH720445.1	=	NW_003871084.1	PATCHES
+HSCHR16_1_CTG3_1	novel-patch	16	Chromosome	GL383556.1	=	NW_003315945.1	PATCHES
+HG1208_PATCH	fix-patch	16	Chromosome	JH720446.1	=	NW_003871085.1	PATCHES
+HSCHR16_2_CTG3_1	novel-patch	16	Chromosome	GL383557.1	=	NW_003315946.1	PATCHES
+HG417_PATCH	fix-patch	17	Chromosome	JH806582.1	=	NW_004070872.1	PATCHES
+HSCHR17_1_CTG1	novel-patch	17	Chromosome	GL383563.1	=	NW_003315952.1	PATCHES
+HG745_PATCH	fix-patch	17	Chromosome	GL383559.1	=	NW_003315948.1	PATCHES
+HG75_PATCH	fix-patch	17	Chromosome	GL383560.1	=	NW_003315949.1	PATCHES
+HG987_PATCH	fix-patch	17	Chromosome	GL383561.1	=	NW_003315950.1	PATCHES
+HG990_PATCH	fix-patch	17	Chromosome	GL383562.1	=	NW_003315951.1	PATCHES
+HG883_PATCH	fix-patch	17	Chromosome	JH159145.1	=	NW_003871090.1	PATCHES
+HG385_PATCH	fix-patch	17	Chromosome	KB021646.1	=	NW_004166864.1	PATCHES
+HSCHR17_1_CTG4	novel-patch	17	Chromosome	GL383564.1	=	NW_003315953.1	PATCHES
+HSCHR17_4_CTG4	novel-patch	17	Chromosome	JH159146.1	=	NW_003871091.1	PATCHES
+HSCHR17_5_CTG4	novel-patch	17	Chromosome	JH159147.1	=	NW_003871092.1	PATCHES
+HSCHR17_6_CTG4	novel-patch	17	Chromosome	JH159148.1	=	NW_003871093.1	PATCHES
+HG183_PATCH	fix-patch	17	Chromosome	GL383558.1	=	NW_003315947.1	PATCHES
+HG185_PATCH	fix-patch	17	Chromosome	GL582976.1	=	NW_003571052.1	PATCHES
+HG747_PATCH	fix-patch	17	Chromosome	JH159144.1	=	NW_003871088.1	PATCHES
+HG1146_PATCH	fix-patch	17	Chromosome	JH720447.1	=	NW_003871086.1	PATCHES
+HSCHR17_2_CTG4	novel-patch	17	Chromosome	GL383565.1	=	NW_003315954.1	PATCHES
+HSCHR17_3_CTG4	novel-patch	17	Chromosome	GL383566.1	=	NW_003315955.1	PATCHES
+HG748_PATCH	fix-patch	17	Chromosome	JH591186.1	=	NW_003871089.1	PATCHES
+HG271_PATCH	fix-patch	17	Chromosome	JH636061.1	=	NW_003871087.1	PATCHES
+HSCHR18_1_CTG1_1	novel-patch	18	Chromosome	GL383567.1	=	NW_003315956.1	PATCHES
+HSCHR18_1_CTG2	novel-patch	18	Chromosome	GL383568.1	=	NW_003315957.1	PATCHES
+HSCHR18_1_CTG2_1	novel-patch	18	Chromosome	GL383569.1	=	NW_003315958.1	PATCHES
+HSCHR18_2_CTG1_1	novel-patch	18	Chromosome	GL383570.1	=	NW_003315959.1	PATCHES
+HSCHR18_2_CTG2	novel-patch	18	Chromosome	GL383571.1	=	NW_003315960.1	PATCHES
+HSCHR18_2_CTG2_1	novel-patch	18	Chromosome	GL383572.1	=	NW_003315961.1	PATCHES
+HG730_PATCH	fix-patch	19	Chromosome	GL582977.1	=	NW_003571053.1	PATCHES
+HG729_PATCH	fix-patch	19	Chromosome	JH159149.1	=	NW_003871094.1	PATCHES
+HSCHR19_1_CTG3	novel-patch	19	Chromosome	GL383573.1	=	NW_003315962.1	PATCHES
+HSCHR19_1_CTG3_1	novel-patch	19	Chromosome	GL383574.1	=	NW_003315963.1	PATCHES
+HSCHR19_2_CTG3	novel-patch	19	Chromosome	GL383575.2	=	NW_003315964.2	PATCHES
+HSCHR19_3_CTG3	novel-patch	19	Chromosome	GL383576.1	=	NW_003315965.1	PATCHES
+HG1079_PATCH	fix-patch	19	Chromosome	KB021647.1	=	NW_004166865.1	PATCHES
+HSCHR19LRC_COX1_CTG1	novel-patch	19	Chromosome	GL949746.1	=	NW_003571054.1	PATCHES
+HSCHR19LRC_COX2_CTG1	novel-patch	19	Chromosome	GL949747.1	=	NW_003571055.1	PATCHES
+HSCHR19LRC_LRC_I_CTG1	novel-patch	19	Chromosome	GL949748.1	=	NW_003571056.1	PATCHES
+HSCHR19LRC_LRC_J_CTG1	novel-patch	19	Chromosome	GL949749.1	=	NW_003571057.1	PATCHES
+HSCHR19LRC_LRC_S_CTG1	novel-patch	19	Chromosome	GL949750.1	=	NW_003571058.1	PATCHES
+HSCHR19LRC_LRC_T_CTG1	novel-patch	19	Chromosome	GL949751.1	=	NW_003571059.1	PATCHES
+HSCHR19LRC_PGF1_CTG1	novel-patch	19	Chromosome	GL949752.1	=	NW_003571060.1	PATCHES
+HSCHR19LRC_PGF2_CTG1	novel-patch	19	Chromosome	GL949753.1	=	NW_003571061.1	PATCHES
+HSCHR20_1_CTG1	novel-patch	20	Chromosome	GL383577.1	=	NW_003315966.1	PATCHES
+HG506_HG507_HG1000_PATCH	fix-patch	20	Chromosome	GL582979.2	=	NW_003571063.2	PATCHES
+HG144_PATCH	fix-patch	20	Chromosome	JH720448.1	=	NW_003871095.1	PATCHES
+HG944_PATCH	fix-patch	20	Chromosome	KB663608.1	=	NW_004504304.1	PATCHES
+HSCHR21_1_CTG1_1	novel-patch	21	Chromosome	GL383578.1	=	NW_003315967.1	PATCHES
+HSCHR21_2_CTG1_1	novel-patch	21	Chromosome	GL383579.1	=	NW_003315968.1	PATCHES
+HSCHR21_3_CTG1_1	novel-patch	21	Chromosome	GL383580.1	=	NW_003315969.1	PATCHES
+HSCHR21_4_CTG1_1	novel-patch	21	Chromosome	GL383581.1	=	NW_003315970.1	PATCHES
+HG329_PATCH	fix-patch	22	Chromosome	JH720449.1	=	NW_003871096.1	PATCHES
+HG1486_PATCH	fix-patch	22	Chromosome	JH806583.1	=	NW_004070873.1	PATCHES
+HG1487_PATCH	fix-patch	22	Chromosome	JH806584.1	=	NW_004070874.1	PATCHES
+HG1488_PATCH	fix-patch	22	Chromosome	JH806585.1	=	NW_004070875.1	PATCHES
+HSCHR22_1_CTG1	novel-patch	22	Chromosome	GL383582.2	=	NW_003315971.2	PATCHES
+HSCHR22_1_CTG2	novel-patch	22	Chromosome	GL383583.1	=	NW_003315972.1	PATCHES
+HSCHR22_2_CTG1	novel-patch	22	Chromosome	KB663609.1	=	NW_004504305.1	PATCHES
+HG497_PATCH	fix-patch	22	Chromosome	JH806586.1	=	NW_004070876.1	PATCHES
+HG480_HG481_PATCH	fix-patch	X	Chromosome	GL877877.1	=	NW_003571064.1	PATCHES
+HG1423_PATCH	fix-patch	X	Chromosome	JH720451.1	=	NW_003871098.1	PATCHES
+HG1424_PATCH	fix-patch	X	Chromosome	JH720452.1	=	NW_003871099.1	PATCHES
+HG1435_PATCH	fix-patch	X	Chromosome	JH806589.1	=	NW_004070879.1	PATCHES
+HG29_PATCH	fix-patch	X	Chromosome	KB021648.1	=	NW_004166866.1	PATCHES
+HG1436_HG1432_PATCH	fix-patch	X	Chromosome	JH806590.2	=	NW_004070880.2	PATCHES
+HG1433_PATCH	fix-patch	X	Chromosome	JH806587.1	=	NW_004070877.1	PATCHES
+HG1437_PATCH	fix-patch	X	Chromosome	JH806591.1	=	NW_004070881.1	PATCHES
+HG1438_PATCH	fix-patch	X	Chromosome	JH806592.1	=	NW_004070882.1	PATCHES
+HG1425_PATCH	fix-patch	X	Chromosome	JH720453.1	=	NW_003871100.1	PATCHES
+HG1426_PATCH	fix-patch	X	Chromosome	JH720454.3	=	NW_003871101.3	PATCHES
+HG1439_PATCH	fix-patch	X	Chromosome	JH806593.1	=	NW_004070883.1	PATCHES
+HG1440_PATCH	fix-patch	X	Chromosome	JH806594.1	=	NW_004070884.1	PATCHES
+HG1441_PATCH	fix-patch	X	Chromosome	JH806595.1	=	NW_004070885.1	PATCHES
+HG375_PATCH	fix-patch	X	Chromosome	JH720455.1	=	NW_003871102.1	PATCHES
+HG1434_PATCH	fix-patch	X	Chromosome	JH806588.1	=	NW_004070878.1	PATCHES
+HG1462_PATCH	fix-patch	X	Chromosome	JH806601.1	=	NW_004070891.1	PATCHES
+HG1463_PATCH	fix-patch	X	Chromosome	JH806602.1	=	NW_004070892.1	PATCHES
+HG1490_PATCH	fix-patch	X	Chromosome	JH806603.1	=	NW_004070893.1	PATCHES
+HG1442_PATCH	fix-patch	X	Chromosome	JH806596.1	=	NW_004070886.1	PATCHES
+HG1443_HG1444_PATCH	fix-patch	X	Chromosome	JH806597.1	=	NW_004070887.1	PATCHES
+HG1453_PATCH	fix-patch	X	Chromosome	JH806598.1	=	NW_004070888.1	PATCHES
+HG1458_PATCH	fix-patch	X	Chromosome	JH806599.1	=	NW_004070889.1	PATCHES
+HG1459_PATCH	fix-patch	X	Chromosome	JH806600.1	=	NW_004070890.1	PATCHES
+HG1497_PATCH	fix-patch	X	Chromosome	JH159150.2	=	NW_003871103.2	PATCHES
+&lt;/pre&gt;&lt;/body&gt;&lt;/html&gt; != # Assembly Name:  GRCh37.p12
+# Description:    Genome Reference Consortium Human Build 37 patch release 12 (GRCh37.p12)
+# Organism name:  Homo sapiens
+# Taxid:          9606
+# Submitter:      Genome Reference Consortium
+# Date: 2013-3-26
+# Assembly type:  haploid-with-alt-loci
+# Release type:   patch
+# Assembly level: Chromosome
+# Genome representation: full
+# GenBank Assembly ID: GCA_000001405.13 (replaced)
+# RefSeq Assembly ID: GCF_000001405.24 (replaced)
+# RefSeq Assembly and GenBank Assemblies Identical: yes
+#
+## Assembly-Units:
+## GenBank Unit ID	RefSeq Unit ID	Assembly-Unit name
+## GCA_000001305.1	GCF_000001305.13	Primary Assembly
+## GCA_000001315.1	GCF_000001315.1	ALT_REF_LOCI_1
+## GCA_000001325.1	GCF_000001325.2	ALT_REF_LOCI_2
+## GCA_000001335.1	GCF_000001335.1	ALT_REF_LOCI_3
+## GCA_000001345.1	GCF_000001345.1	ALT_REF_LOCI_4
+## GCA_000001355.1	GCF_000001355.1	ALT_REF_LOCI_5
+## GCA_000001365.1	GCF_000001365.2	ALT_REF_LOCI_6
+## GCA_000001375.1	GCF_000001375.1	ALT_REF_LOCI_7
+## GCA_000001385.1	GCF_000001385.1	ALT_REF_LOCI_8
+## GCA_000001395.1	GCF_000001395.1	ALT_REF_LOCI_9
+## GCA_000006015.1	GCF_000006015.1	non-nuclear
+## GCA_000005045.12	GCF_000005045.11	PATCHES
+#
+# Ordered by chromosome/plasmid; the chromosomes/plasmids are followed by
+# unlocalized scaffolds.
+# Unplaced scaffolds are listed at the end.
+# RefSeq is equal or derived from GenBank object.
+#
+# Sequence-Name	Sequence-Role	Assigned-Molecule	Assigned-Molecule-Location/Type	GenBank-Accn	Relationship	RefSeq-Accn	Assembly-Unit
+1	assembled-molecule	1	Chromosome	CM000663.1	=	NC_000001.10	Primary Assembly
+2	assembled-molecule	2	Chromosome	CM000664.1	=	NC_000002.11	Primary Assembly
+3	assembled-molecule	3	Chromosome	CM000665.1	=	NC_000003.11	Primary Assembly
+4	assembled-molecule	4	Chromosome	CM000666.1	=	NC_000004.11	Primary Assembly
+5	assembled-molecule	5	Chromosome	CM000667.1	=	NC_000005.9	Primary Assembly
+6	assembled-molecule	6	Chromosome	CM000668.1	=	NC_000006.11	Primary Assembly
+7	assembled-molecule	7	Chromosome	CM000669.1	=	NC_000007.13	Primary Assembly
+8	assembled-molecule	8	Chromosome	CM000670.1	=	NC_000008.10	Primary Assembly
+9	assembled-molecule	9	Chromosome	CM000671.1	=	NC_000009.11	Primary Assembly
+10	assembled-molecule	10	Chromosome	CM000672.1	=	NC_000010.10	Primary Assembly
+11	assembled-molecule	11	Chromosome	CM000673.1	=	NC_000011.9	Primary Assembly
+12	assembled-molecule	12	Chromosome	CM000674.1	=	NC_000012.11	Primary Assembly
+13	assembled-molecule	13	Chromosome	CM000675.1	=	NC_000013.10	Primary Assembly
+14	assembled-molecule	14	Chromosome	CM000676.1	=	NC_000014.8	Primary Assembly
+15	assembled-molecule	15	Chromosome	CM000677.1	=	NC_000015.9	Primary Assembly
+16	assembled-molecule	16	Chromosome	CM000678.1	=	NC_000016.9	Primary Assembly
+17	assembled-molecule	17	Chromosome	CM000679.1	=	NC_000017.10	Primary Assembly
+18	assembled-molecule	18	Chromosome	CM000680.1	=	NC_000018.9	Primary Assembly
+19	assembled-molecule	19	Chromosome	CM000681.1	=	NC_000019.9	Primary Assembly
+20	assembled-molecule	20	Chromosome	CM000682.1	=	NC_000020.10	Primary Assembly
+21	assembled-molecule	21	Chromosome	CM000683.1	=	NC_000021.8	Primary Assembly
+22	assembled-molecule	22	Chromosome	CM000684.1	=	NC_000022.10	Primary Assembly
+X	assembled-molecule	X	Chromosome	CM000685.1	=	NC_000023.10	Primary Assembly
+Y	assembled-molecule	Y	Chromosome	CM000686.1	=	NC_000024.9	Primary Assembly
+HSCHR1_RANDOM_CTG5	unlocalized-scaffold	1	Chromosome	GL000191.1	=	NT_113878.1	Primary Assembly
+HSCHR1_RANDOM_CTG12	unlocalized-scaffold	1	Chromosome	GL000192.1	=	NT_167207.1	Primary Assembly
+HSCHR4_RANDOM_CTG2	unlocalized-scaffold	4	Chromosome	GL000193.1	=	NT_113885.1	Primary Assembly
+HSCHR4_RANDOM_CTG3	unlocalized-scaffold	4	Chromosome	GL000194.1	=	NT_113888.1	Primary Assembly
+HSCHR7_RANDOM_CTG1	unlocalized-scaffold	7	Chromosome	GL000195.1	=	NT_113901.1	Primary Assembly
+HSCHR8_RANDOM_CTG1	unlocalized-scaffold	8	Chromosome	GL000196.1	=	NT_113909.1	Primary Assembly
+HSCHR8_RANDOM_CTG4	unlocalized-scaffold	8	Chromosome	GL000197.1	=	NT_113907.1	Primary Assembly
+HSCHR9_RANDOM_CTG1	unlocalized-scaffold	9	Chromosome	GL000198.1	=	NT_113914.1	Primary Assembly
+HSCHR9_RANDOM_CTG2	unlocalized-scaffold	9	Chromosome	GL000199.1	=	NT_113916.2	Primary Assembly
+HSCHR9_RANDOM_CTG4	unlocalized-scaffold	9	Chromosome	GL000200.1	=	NT_113915.1	Primary Assembly
+HSCHR9_RANDOM_CTG5	unlocalized-scaffold	9	Chromosome	GL000201.1	=	NT_113911.1	Primary Assembly
+HSCHR11_RANDOM_CTG2	unlocalized-scaffold	11	Chromosome	GL000202.1	=	NT_113921.2	Primary Assembly
+HSCHR17_RANDOM_CTG1	unlocalized-scaffold	17	Chromosome	GL000203.1	=	NT_113941.1	Primary Assembly
+HSCHR17_RANDOM_CTG2	unlocalized-scaffold	17	Chromosome	GL000204.1	=	NT_113943.1	Primary Assembly
+HSCHR17_RANDOM_CTG3	unlocalized-scaffold	17	Chromosome	GL000205.1	=	NT_113930.1	Primary Assembly
+HSCHR17_RANDOM_CTG4	unlocalized-scaffold	17	Chromosome	GL000206.1	=	NT_113945.1	Primary Assembly
+HSCHR18_RANDOM_CTG1	unlocalized-scaffold	18	Chromosome	GL000207.1	=	NT_113947.1	Primary Assembly
+HSCHR19_RANDOM_CTG1	unlocalized-scaffold	19	Chromosome	GL000208.1	=	NT_113948.1	Primary Assembly
+HSCHR19_RANDOM_CTG2	unlocalized-scaffold	19	Chromosome	GL000209.1	=	NT_113949.1	Primary Assembly
+HSCHR21_RANDOM_CTG9	unlocalized-scaffold	21	Chromosome	GL000210.1	=	NT_113950.2	Primary Assembly
+HSCHRUN_RANDOM_CTG1	unplaced-scaffold	na	na	GL000211.1	=	NT_113961.1	Primary Assembly
+HSCHRUN_RANDOM_CTG2	unplaced-scaffold	na	na	GL000212.1	=	NT_113923.1	Primary Assembly
+HSCHRUN_RANDOM_CTG3	unplaced-scaffold	na	na	GL000213.1	=	NT_167208.1	Primary Assembly
+HSCHRUN_RANDOM_CTG4	unplaced-scaffold	na	na	GL000214.1	=	NT_167209.1	Primary Assembly
+HSCHRUN_RANDOM_CTG5	unplaced-scaffold	na	na	GL000215.1	=	NT_167210.1	Primary Assembly
+HSCHRUN_RANDOM_CTG6	unplaced-scaffold	na	na	GL000216.1	=	NT_167211.1	Primary Assembly
+HSCHRUN_RANDOM_CTG7	unplaced-scaffold	na	na	GL000217.1	=	NT_167212.1	Primary Assembly
+HSCHRUN_RANDOM_CTG9	unplaced-scaffold	na	na	GL000218.1	=	NT_113889.1	Primary Assembly
+HSCHRUN_RANDOM_CTG10	unplaced-scaffold	na	na	GL000219.1	=	NT_167213.1	Primary Assembly
+HSCHRUN_RANDOM_CTG11	unplaced-scaffold	na	na	GL000220.1	=	NT_167214.1	Primary Assembly
+HSCHRUN_RANDOM_CTG13	unplaced-scaffold	na	na	GL000221.1	=	NT_167215.1	Primary Assembly
+HSCHRUN_RANDOM_CTG14	unplaced-scaffold	na	na	GL000222.1	=	NT_167216.1	Primary Assembly
+HSCHRUN_RANDOM_CTG15	unplaced-scaffold	na	na	GL000223.1	=	NT_167217.1	Primary Assembly
+HSCHRUN_RANDOM_CTG16	unplaced-scaffold	na	na	GL000224.1	=	NT_167218.1	Primary Assembly
+HSCHRUN_RANDOM_CTG17	unplaced-scaffold	na	na	GL000225.1	=	NT_167219.1	Primary Assembly
+HSCHRUN_RANDOM_CTG19	unplaced-scaffold	na	na	GL000226.1	=	NT_167220.1	Primary Assembly
+HSCHRUN_RANDOM_CTG20	unplaced-scaffold	na	na	GL000227.1	=	NT_167221.1	Primary Assembly
+HSCHRUN_RANDOM_CTG21	unplaced-scaffold	na	na	GL000228.1	=	NT_167222.1	Primary Assembly
+HSCHRUN_RANDOM_CTG22	unplaced-scaffold	na	na	GL000229.1	=	NT_167223.1	Primary Assembly
+HSCHRUN_RANDOM_CTG23	unplaced-scaffold	na	na	GL000230.1	=	NT_167224.1	Primary Assembly
+HSCHRUN_RANDOM_CTG24	unplaced-scaffold	na	na	GL000231.1	=	NT_167225.1	Primary Assembly
+HSCHRUN_RANDOM_CTG25	unplaced-scaffold	na	na	GL000232.1	=	NT_167226.1	Primary Assembly
+HSCHRUN_RANDOM_CTG26	unplaced-scaffold	na	na	GL000233.1	=	NT_167227.1	Primary Assembly
+HSCHRUN_RANDOM_CTG27	unplaced-scaffold	na	na	GL000234.1	=	NT_167228.1	Primary Assembly
+HSCHRUN_RANDOM_CTG28	unplaced-scaffold	na	na	GL000235.1	=	NT_167229.1	Primary Assembly
+HSCHRUN_RANDOM_CTG29	unplaced-scaffold	na	na	GL000236.1	=	NT_167230.1	Primary Assembly
+HSCHRUN_RANDOM_CTG30	unplaced-scaffold	na	na	GL000237.1	=	NT_167231.1	Primary Assembly
+HSCHRUN_RANDOM_CTG31	unplaced-scaffold	na	na	GL000238.1	=	NT_167232.1	Primary Assembly
+HSCHRUN_RANDOM_CTG32	unplaced-scaffold	na	na	GL000239.1	=	NT_167233.1	Primary Assembly
+HSCHRUN_RANDOM_CTG33	unplaced-scaffold	na	na	GL000240.1	=	NT_167234.1	Primary Assembly
+HSCHRUN_RANDOM_CTG34	unplaced-scaffold	na	na	GL000241.1	=	NT_167235.1	Primary Assembly
+HSCHRUN_RANDOM_CTG35	unplaced-scaffold	na	na	GL000242.1	=	NT_167236.1	Primary Assembly
+HSCHRUN_RANDOM_CTG36	unplaced-scaffold	na	na	GL000243.1	=	NT_167237.1	Primary Assembly
+HSCHRUN_RANDOM_CTG37	unplaced-scaffold	na	na	GL000244.1	=	NT_167238.1	Primary Assembly
+HSCHRUN_RANDOM_CTG38	unplaced-scaffold	na	na	GL000245.1	=	NT_167239.1	Primary Assembly
+HSCHRUN_RANDOM_CTG39	unplaced-scaffold	na	na	GL000246.1	=	NT_167240.1	Primary Assembly
+HSCHRUN_RANDOM_CTG40	unplaced-scaffold	na	na	GL000247.1	=	NT_167241.1	Primary Assembly
+HSCHRUN_RANDOM_CTG41	unplaced-scaffold	na	na	GL000248.1	=	NT_167242.1	Primary Assembly
+HSCHRUN_RANDOM_CTG42	unplaced-scaffold	na	na	GL000249.1	=	NT_167243.1	Primary Assembly
+HSCHR6_MHC_APD_CTG1	alt-scaffold	6	Chromosome	GL000250.1	=	NT_167244.1	ALT_REF_LOCI_1
+HSCHR6_MHC_COX_CTG1	alt-scaffold	6	Chromosome	GL000251.1	=	NT_113891.2	ALT_REF_LOCI_2
+HSCHR6_MHC_DBB_CTG1	alt-scaffold	6	Chromosome	GL000252.1	=	NT_167245.1	ALT_REF_LOCI_3
+HSCHR6_MHC_MANN_CTG1	alt-scaffold	6	Chromosome	GL000253.1	=	NT_167246.1	ALT_REF_LOCI_4
+HSCHR6_MHC_MCF_CTG1	alt-scaffold	6	Chromosome	GL000254.1	=	NT_167247.1	ALT_REF_LOCI_5
+HSCHR6_MHC_QBL_CTG1	alt-scaffold	6	Chromosome	GL000255.1	=	NT_167248.1	ALT_REF_LOCI_6
+HSCHR6_MHC_SSTO_CTG1	alt-scaffold	6	Chromosome	GL000256.1	=	NT_167249.1	ALT_REF_LOCI_7
+HSCHR4_1_CTG9	alt-scaffold	4	Chromosome	GL000257.1	=	NT_167250.1	ALT_REF_LOCI_8
+HSCHR17_1_CTG5	alt-scaffold	17	Chromosome	GL000258.1	=	NT_167251.1	ALT_REF_LOCI_9
+MT	assembled-molecule	MT	Mitochondrion	J01415.2	=	NC_012920.1	non-nuclear
+HG989_PATCH	fix-patch	1	Chromosome	GL949741.1	=	NW_003571030.1	PATCHES
+HG1287_PATCH	fix-patch	1	Chromosome	JH636052.4	=	NW_003871055.3	PATCHES
+HG1292_PATCH	fix-patch	1	Chromosome	JH636053.2	=	NW_003871056.2	PATCHES
+HG1472_PATCH	fix-patch	1	Chromosome	JH806574.1	=	NW_004070864.1	PATCHES
+HSCHR1_1_CTG31	novel-patch	1	Chromosome	GL383518.1	=	NW_003315905.1	PATCHES
+HSCHR1_2_CTG31	novel-patch	1	Chromosome	GL383519.1	=	NW_003315906.1	PATCHES
+HSCHR1_3_CTG31	novel-patch	1	Chromosome	GL383520.1	=	NW_003315907.1	PATCHES
+HG999_1_PATCH	fix-patch	1	Chromosome	GL383516.1	=	NW_003315903.1	PATCHES
+HG999_2_PATCH	fix-patch	1	Chromosome	GL383517.1	=	NW_003315904.1	PATCHES
+HG1293_PATCH	fix-patch	1	Chromosome	JH636054.1	=	NW_003871057.1	PATCHES
+HG1471_PATCH	fix-patch	1	Chromosome	JH806573.1	=	NW_004070863.1	PATCHES
+HG1473_PATCH	fix-patch	1	Chromosome	JH806575.1	=	NW_004070865.1	PATCHES
+HSCHR2_1_CTG1	novel-patch	2	Chromosome	GL383521.1	=	NW_003315908.1	PATCHES
+HG686_PATCH	fix-patch	2	Chromosome	GL877871.1	=	NW_003571032.1	PATCHES
+HG953_PATCH	fix-patch	2	Chromosome	KB663603.1	=	NW_004504299.1	PATCHES
+HSCHR2_1_CTG12	novel-patch	2	Chromosome	GL383522.1	=	NW_003315909.1	PATCHES
+HSCHR2_2_CTG12	novel-patch	2	Chromosome	GL582966.2	=	NW_003571033.2	PATCHES
+HG1007_PATCH	fix-patch	2	Chromosome	GL877870.2	=	NW_003571031.1	PATCHES
+HSCHR3_1_CTG1	novel-patch	3	Chromosome	JH636055.1	=	NW_003871060.1	PATCHES
+HG186_PATCH	fix-patch	3	Chromosome	GL383523.1	=	NW_003315910.1	PATCHES
+HG280_PATCH	fix-patch	3	Chromosome	GL383524.1	=	NW_003315911.1	PATCHES
+HG991_PATCH	fix-patch	3	Chromosome	GL383525.1	=	NW_003315912.1	PATCHES
+HG1091_PATCH	fix-patch	3	Chromosome	JH159131.1	=	NW_003871058.1	PATCHES
+HG325_PATCH	fix-patch	3	Chromosome	JH159132.1	=	NW_003871059.1	PATCHES
+HSCHR3_1_CTG2_1	novel-patch	3	Chromosome	GL383526.1	=	NW_003315913.1	PATCHES
+HSCHR4_1_CTG6	novel-patch	4	Chromosome	GL383528.1	=	NW_003315915.1	PATCHES
+HSCHR4_2_CTG9	novel-patch	4	Chromosome	GL383529.1	=	NW_003315916.1	PATCHES
+HG706_PATCH	fix-patch	4	Chromosome	GL582967.1	=	NW_003571035.1	PATCHES
+HSCHR4_1_CTG12	novel-patch	4	Chromosome	GL383527.1	=	NW_003315914.1	PATCHES
+HG1032_PATCH	fix-patch	4	Chromosome	GL877872.1	=	NW_003571034.1	PATCHES
+HSCHR5_1_CTG1	novel-patch	5	Chromosome	GL339449.2	=	NW_003315917.2	PATCHES
+HSCHR5_1_CTG2	novel-patch	5	Chromosome	GL383530.1	=	NW_003315918.1	PATCHES
+HSCHR5_2_CTG1	novel-patch	5	Chromosome	GL383532.1	=	NW_003315920.1	PATCHES
+HSCHR5_3_CTG1	novel-patch	5	Chromosome	GL949742.1	=	NW_003571036.1	PATCHES
+HG1063_PATCH	fix-patch	5	Chromosome	JH159133.1	=	NW_003871061.1	PATCHES
+HSCHR5_1_CTG5	novel-patch	5	Chromosome	GL383531.1	=	NW_003315919.1	PATCHES
+HG1322_PATCH	fix-patch	6	Chromosome	JH636057.1	=	NW_003871063.1	PATCHES
+HG27_PATCH	fix-patch	6	Chromosome	JH806576.1	=	NW_004070866.1	PATCHES
+HSCHR6_1_CTG5	novel-patch	6	Chromosome	GL383533.1	=	NW_003315921.1	PATCHES
+HG1304_PATCH	fix-patch	6	Chromosome	JH636056.1	=	NW_003871062.1	PATCHES
+HG357_PATCH	fix-patch	6	Chromosome	KB663604.1	=	NW_004504300.1	PATCHES
+HSCHR6_2_CTG5	novel-patch	6	Chromosome	KB021644.1	=	NW_004166862.1	PATCHES
+HG115_PATCH	fix-patch	7	Chromosome	GL582968.1	=	NW_003571037.1	PATCHES
+HG14_PATCH	fix-patch	7	Chromosome	GL582969.1	=	NW_003571038.1	PATCHES
+HG736_PATCH	fix-patch	7	Chromosome	GL582970.1	=	NW_003571039.1	PATCHES
+HG946_PATCH	fix-patch	7	Chromosome	GL582972.1	=	NW_003571041.1	PATCHES
+HG1257_PATCH	fix-patch	7	Chromosome	JH159134.2	=	NW_003871064.1	PATCHES
+HG1308_PATCH	fix-patch	7	Chromosome	JH636058.1	=	NW_003871065.1	PATCHES
+HSCHR7_1_CTG6	novel-patch	7	Chromosome	GL383534.2	=	NW_003315922.2	PATCHES
+HG7_PATCH	fix-patch	7	Chromosome	GL582971.1	=	NW_003571040.1	PATCHES
+HG104_HG975_PATCH	fix-patch	8	Chromosome	GL383535.1	=	NW_003315923.1	PATCHES
+HG243_PATCH	fix-patch	8	Chromosome	GL383536.1	=	NW_003315924.1	PATCHES
+HG19_PATCH	fix-patch	8	Chromosome	GL949743.1	=	NW_003571042.1	PATCHES
+HG418_PATCH	fix-patch	8	Chromosome	JH159135.1	=	NW_003871066.1	PATCHES
+HSCHR9_1_CTG1	novel-patch	9	Chromosome	GL383539.1	=	NW_003315928.1	PATCHES
+HG962_PATCH	fix-patch	9	Chromosome	JH636059.1	=	NW_003871067.1	PATCHES
+HSCHR9_1_CTG35	novel-patch	9	Chromosome	GL383540.1	=	NW_003315929.1	PATCHES
+HSCHR9_2_CTG35	novel-patch	9	Chromosome	GL383541.1	=	NW_003315930.1	PATCHES
+HSCHR9_3_CTG35	novel-patch	9	Chromosome	GL383542.1	=	NW_003315931.1	PATCHES
+HG79_PATCH	fix-patch	9	Chromosome	GL339450.1	=	NW_003315925.1	PATCHES
+HG998_1_PATCH	fix-patch	9	Chromosome	GL383537.1	=	NW_003315926.1	PATCHES
+HG998_2_PATCH	fix-patch	9	Chromosome	GL383538.1	=	NW_003315927.1	PATCHES
+HG1500_PATCH	fix-patch	9	Chromosome	JH806577.1	=	NW_004070867.1	PATCHES
+HG1501_PATCH	fix-patch	9	Chromosome	JH806578.1	=	NW_004070868.1	PATCHES
+HG1502_PATCH	fix-patch	9	Chromosome	JH806579.1	=	NW_004070869.1	PATCHES
+HG50_PATCH	fix-patch	9	Chromosome	KB663605.1	=	NW_004504301.1	PATCHES
+HG544_PATCH	fix-patch	10	Chromosome	GL383543.1	=	NW_003315932.1	PATCHES
+HG905_PATCH	fix-patch	10	Chromosome	GL877873.1	=	NW_003571043.1	PATCHES
+HG871_PATCH	fix-patch	10	Chromosome	JH636060.1	=	NW_003871071.1	PATCHES
+HSCHR10_1_CTG2	novel-patch	10	Chromosome	GL383545.1	=	NW_003315934.1	PATCHES
+HSCHR10_1_CTG5	novel-patch	10	Chromosome	GL383546.1	=	NW_003315935.1	PATCHES
+HG995_PATCH	fix-patch	10	Chromosome	GL383544.1	=	NW_003315933.1	PATCHES
+HG1211_PATCH	fix-patch	10	Chromosome	JH591181.2	=	NW_003871068.1	PATCHES
+HG311_PATCH	fix-patch	10	Chromosome	JH591182.1	=	NW_003871069.1	PATCHES
+HG339_PATCH	fix-patch	10	Chromosome	JH591183.1	=	NW_003871070.1	PATCHES
+HG1479_PATCH	fix-patch	10	Chromosome	JH806580.1	=	NW_004070870.1	PATCHES
+HG1074_PATCH	fix-patch	10	Chromosome	KB663606.1	=	NW_004504302.1	PATCHES
+HG256_PATCH	fix-patch	11	Chromosome	JH591184.1	=	NW_003871075.1	PATCHES
+HG873_PATCH	fix-patch	11	Chromosome	JH591185.1	=	NW_003871082.1	PATCHES
+HSCHR11_1_CTG1_1	novel-patch	11	Chromosome	GL383547.1	=	NW_003315936.1	PATCHES
+HG281_PATCH	fix-patch	11	Chromosome	GL582973.1	=	NW_003571045.1	PATCHES
+HG142_HG150_NOVEL_TEST	novel-patch	11	Chromosome	JH159136.1	=	NW_003871073.1	PATCHES
+HG151_NOVEL_TEST	novel-patch	11	Chromosome	JH159137.1	=	NW_003871074.1	PATCHES
+HG536_PATCH	fix-patch	11	Chromosome	GL949744.1	=	NW_003571046.1	PATCHES
+HG299_PATCH	fix-patch	11	Chromosome	JH159138.1	=	NW_003871076.1	PATCHES
+HG305_PATCH	fix-patch	11	Chromosome	JH159139.1	=	NW_003871077.1	PATCHES
+HG306_PATCH	fix-patch	11	Chromosome	JH159140.1	=	NW_003871078.1	PATCHES
+HG348_PATCH	fix-patch	11	Chromosome	JH159141.2	=	NW_003871079.1	PATCHES
+HG388_HG400_PATCH	fix-patch	11	Chromosome	JH159142.2	=	NW_003871080.1	PATCHES
+HG414_PATCH	fix-patch	11	Chromosome	JH159143.1	=	NW_003871081.1	PATCHES
+HG122_PATCH	fix-patch	11	Chromosome	JH720443.1	=	NW_003871072.1	PATCHES
+HG865_PATCH	fix-patch	11	Chromosome	JH806581.1	=	NW_004070871.1	PATCHES
+HG858_PATCH	fix-patch	12	Chromosome	GL582974.1	=	NW_003571048.1	PATCHES
+HSCHR12_1_CTG1	novel-patch	12	Chromosome	GL877875.1	=	NW_003571049.1	PATCHES
+HG344_PATCH	fix-patch	12	Chromosome	JH720444.1	=	NW_003871083.1	PATCHES
+HSCHR12_1_CTG2	novel-patch	12	Chromosome	GL383549.1	=	NW_003315938.1	PATCHES
+HSCHR12_1_CTG2_1	novel-patch	12	Chromosome	GL383550.1	=	NW_003315939.1	PATCHES
+HSCHR12_2_CTG2_1	novel-patch	12	Chromosome	GL383552.1	=	NW_003315941.1	PATCHES
+HSCHR12_3_CTG2_1	novel-patch	12	Chromosome	GL383553.2	=	NW_003315942.2	PATCHES
+HSCHR12_2_CTG2	novel-patch	12	Chromosome	GL877876.1	=	NW_003571050.1	PATCHES
+HG1133_PATCH	novel-patch	12	Chromosome	GL949745.1	=	NW_003571047.1	PATCHES
+HG1595_PATCH	fix-patch	12	Chromosome	KB663607.1	=	NW_004504303.1	PATCHES
+HSCHR12_1_CTG5	novel-patch	12	Chromosome	GL383551.1	=	NW_003315940.1	PATCHES
+HG996_PATCH	fix-patch	12	Chromosome	GL383548.1	=	NW_003315937.1	PATCHES
+HG531_PATCH	fix-patch	13	Chromosome	GL582975.1	=	NW_003571051.1	PATCHES
+HG1592_PATCH	fix-patch	14	Chromosome	KB021645.1	=	NW_004166863.1	PATCHES
+HSCHR15_1_CTG4	novel-patch	15	Chromosome	GL383554.1	=	NW_003315943.1	PATCHES
+HSCHR15_1_CTG8	novel-patch	15	Chromosome	GL383555.1	=	NW_003315944.1	PATCHES
+HG971_PATCH	fix-patch	15	Chromosome	JH720445.1	=	NW_003871084.1	PATCHES
+HSCHR16_1_CTG3_1	novel-patch	16	Chromosome	GL383556.1	=	NW_003315945.1	PATCHES
+HG1208_PATCH	fix-patch	16	Chromosome	JH720446.1	=	NW_003871085.1	PATCHES
+HSCHR16_2_CTG3_1	novel-patch	16	Chromosome	GL383557.1	=	NW_003315946.1	PATCHES
+HG417_PATCH	fix-patch	17	Chromosome	JH806582.1	=	NW_004070872.1	PATCHES
+HSCHR17_1_CTG1	novel-patch	17	Chromosome	GL383563.1	=	NW_003315952.1	PATCHES
+HG745_PATCH	fix-patch	17	Chromosome	GL383559.1	=	NW_003315948.1	PATCHES
+HG75_PATCH	fix-patch	17	Chromosome	GL383560.1	=	NW_003315949.1	PATCHES
+HG987_PATCH	fix-patch	17	Chromosome	GL383561.1	=	NW_003315950.1	PATCHES
+HG990_PATCH	fix-patch	17	Chromosome	GL383562.1	=	NW_003315951.1	PATCHES
+HG883_PATCH	fix-patch	17	Chromosome	JH159145.1	=	NW_003871090.1	PATCHES
+HG385_PATCH	fix-patch	17	Chromosome	KB021646.1	=	NW_004166864.1	PATCHES
+HSCHR17_1_CTG4	novel-patch	17	Chromosome	GL383564.1	=	NW_003315953.1	PATCHES
+HSCHR17_4_CTG4	novel-patch	17	Chromosome	JH159146.1	=	NW_003871091.1	PATCHES
+HSCHR17_5_CTG4	novel-patch	17	Chromosome	JH159147.1	=	NW_003871092.1	PATCHES
+HSCHR17_6_CTG4	novel-patch	17	Chromosome	JH159148.1	=	NW_003871093.1	PATCHES
+HG183_PATCH	fix-patch	17	Chromosome	GL383558.1	=	NW_003315947.1	PATCHES
+HG185_PATCH	fix-patch	17	Chromosome	GL582976.1	=	NW_003571052.1	PATCHES
+HG747_PATCH	fix-patch	17	Chromosome	JH159144.1	=	NW_003871088.1	PATCHES
+HG1146_PATCH	fix-patch	17	Chromosome	JH720447.1	=	NW_003871086.1	PATCHES
+HSCHR17_2_CTG4	novel-patch	17	Chromosome	GL383565.1	=	NW_003315954.1	PATCHES
+HSCHR17_3_CTG4	novel-patch	17	Chromosome	GL383566.1	=	NW_003315955.1	PATCHES
+HG748_PATCH	fix-patch	17	Chromosome	JH591186.1	=	NW_003871089.1	PATCHES
+HG271_PATCH	fix-patch	17	Chromosome	JH636061.1	=	NW_003871087.1	PATCHES
+HSCHR18_1_CTG1_1	novel-patch	18	Chromosome	GL383567.1	=	NW_003315956.1	PATCHES
+HSCHR18_1_CTG2	novel-patch	18	Chromosome	GL383568.1	=	NW_003315957.1	PATCHES
+HSCHR18_1_CTG2_1	novel-patch	18	Chromosome	GL383569.1	=	NW_003315958.1	PATCHES
+HSCHR18_2_CTG1_1	novel-patch	18	Chromosome	GL383570.1	=	NW_003315959.1	PATCHES
+HSCHR18_2_CTG2	novel-patch	18	Chromosome	GL383571.1	=	NW_003315960.1	PATCHES
+HSCHR18_2_CTG2_1	novel-patch	18	Chromosome	GL383572.1	=	NW_003315961.1	PATCHES
+HG730_PATCH	fix-patch	19	Chromosome	GL582977.1	=	NW_003571053.1	PATCHES
+HG729_PATCH	fix-patch	19	Chromosome	JH159149.1	=	NW_003871094.1	PATCHES
+HSCHR19_1_CTG3	novel-patch	19	Chromosome	GL383573.1	=	NW_003315962.1	PATCHES
+HSCHR19_1_CTG3_1	novel-patch	19	Chromosome	GL383574.1	=	NW_003315963.1	PATCHES
+HSCHR19_2_CTG3	novel-patch	19	Chromosome	GL383575.2	=	NW_003315964.2	PATCHES
+HSCHR19_3_CTG3	novel-patch	19	Chromosome	GL383576.1	=	NW_003315965.1	PATCHES
+HG1079_PATCH	fix-patch	19	Chromosome	KB021647.1	=	NW_004166865.1	PATCHES
+HSCHR19LRC_COX1_CTG1	novel-patch	19	Chromosome	GL949746.1	=	NW_003571054.1	PATCHES
+HSCHR19LRC_COX2_CTG1	novel-patch	19	Chromosome	GL949747.1	=	NW_003571055.1	PATCHES
+HSCHR19LRC_LRC_I_CTG1	novel-patch	19	Chromosome	GL949748.1	=	NW_003571056.1	PATCHES
+HSCHR19LRC_LRC_J_CTG1	novel-patch	19	Chromosome	GL949749.1	=	NW_003571057.1	PATCHES
+HSCHR19LRC_LRC_S_CTG1	novel-patch	19	Chromosome	GL949750.1	=	NW_003571058.1	PATCHES
+HSCHR19LRC_LRC_T_CTG1	novel-patch	19	Chromosome	GL949751.1	=	NW_003571059.1	PATCHES
+HSCHR19LRC_PGF1_CTG1	novel-patch	19	Chromosome	GL949752.1	=	NW_003571060.1	PATCHES
+HSCHR19LRC_PGF2_CTG1	novel-patch	19	Chromosome	GL949753.1	=	NW_003571061.1	PATCHES
+HSCHR20_1_CTG1	novel-patch	20	Chromosome	GL383577.1	=	NW_003315966.1	PATCHES
+HG506_HG507_HG1000_PATCH	fix-patch	20	Chromosome	GL582979.2	=	NW_003571063.2	PATCHES
+HG144_PATCH	fix-patch	20	Chromosome	JH720448.1	=	NW_003871095.1	PATCHES
+HG944_PATCH	fix-patch	20	Chromosome	KB663608.1	=	NW_004504304.1	PATCHES
+HSCHR21_1_CTG1_1	novel-patch	21	Chromosome	GL383578.1	=	NW_003315967.1	PATCHES
+HSCHR21_2_CTG1_1	novel-patch	21	Chromosome	GL383579.1	=	NW_003315968.1	PATCHES
+HSCHR21_3_CTG1_1	novel-patch	21	Chromosome	GL383580.1	=	NW_003315969.1	PATCHES
+HSCHR21_4_CTG1_1	novel-patch	21	Chromosome	GL383581.1	=	NW_003315970.1	PATCHES
+HG329_PATCH	fix-patch	22	Chromosome	JH720449.1	=	NW_003871096.1	PATCHES
+HG1486_PATCH	fix-patch	22	Chromosome	JH806583.1	=	NW_004070873.1	PATCHES
+HG1487_PATCH	fix-patch	22	Chromosome	JH806584.1	=	NW_004070874.1	PATCHES
+HG1488_PATCH	fix-patch	22	Chromosome	JH806585.1	=	NW_004070875.1	PATCHES
+HSCHR22_1_CTG1	novel-patch	22	Chromosome	GL383582.2	=	NW_003315971.2	PATCHES
+HSCHR22_1_CTG2	novel-patch	22	Chromosome	GL383583.1	=	NW_003315972.1	PATCHES
+HSCHR22_2_CTG1	novel-patch	22	Chromosome	KB663609.1	=	NW_004504305.1	PATCHES
+HG497_PATCH	fix-patch	22	Chromosome	JH806586.1	=	NW_004070876.1	PATCHES
+HG480_HG481_PATCH	fix-patch	X	Chromosome	GL877877.1	=	NW_003571064.1	PATCHES
+HG1423_PATCH	fix-patch	X	Chromosome	JH720451.1	=	NW_003871098.1	PATCHES
+HG1424_PATCH	fix-patch	X	Chromosome	JH720452.1	=	NW_003871099.1	PATCHES
+HG1435_PATCH	fix-patch	X	Chromosome	JH806589.1	=	NW_004070879.1	PATCHES
+HG29_PATCH	fix-patch	X	Chromosome	KB021648.1	=	NW_004166866.1	PATCHES
+HG1436_HG1432_PATCH	fix-patch	X	Chromosome	JH806590.2	=	NW_004070880.2	PATCHES
+HG1433_PATCH	fix-patch	X	Chromosome	JH806587.1	=	NW_004070877.1	PATCHES
+HG1437_PATCH	fix-patch	X	Chromosome	JH806591.1	=	NW_004070881.1	PATCHES
+HG1438_PATCH	fix-patch	X	Chromosome	JH806592.1	=	NW_004070882.1	PATCHES
+HG1425_PATCH	fix-patch	X	Chromosome	JH720453.1	=	NW_003871100.1	PATCHES
+HG1426_PATCH	fix-patch	X	Chromosome	JH720454.3	=	NW_003871101.3	PATCHES
+HG1439_PATCH	fix-patch	X	Chromosome	JH806593.1	=	NW_004070883.1	PATCHES
+HG1440_PATCH	fix-patch	X	Chromosome	JH806594.1	=	NW_004070884.1	PATCHES
+HG1441_PATCH	fix-patch	X	Chromosome	JH806595.1	=	NW_004070885.1	PATCHES
+HG375_PATCH	fix-patch	X	Chromosome	JH720455.1	=	NW_003871102.1	PATCHES
+HG1434_PATCH	fix-patch	X	Chromosome	JH806588.1	=	NW_004070878.1	PATCHES
+HG1462_PATCH	fix-patch	X	Chromosome	JH806601.1	=	NW_004070891.1	PATCHES
+HG1463_PATCH	fix-patch	X	Chromosome	JH806602.1	=	NW_004070892.1	PATCHES
+HG1490_PATCH	fix-patch	X	Chromosome	JH806603.1	=	NW_004070893.1	PATCHES
+HG1442_PATCH	fix-patch	X	Chromosome	JH806596.1	=	NW_004070886.1	PATCHES
+HG1443_HG1444_PATCH	fix-patch	X	Chromosome	JH806597.1	=	NW_004070887.1	PATCHES
+HG1453_PATCH	fix-patch	X	Chromosome	JH806598.1	=	NW_004070888.1	PATCHES
+HG1458_PATCH	fix-patch	X	Chromosome	JH806599.1	=	NW_004070889.1	PATCHES
+HG1459_PATCH	fix-patch	X	Chromosome	JH806600.1	=	NW_004070890.1	PATCHES
+HG1497_PATCH	fix-patch	X	Chromosome	JH159150.2	=	NW_003871103.2	PATCHES
+</msg>
+<status status="FAIL" endtime="20140204 18:58:16.891" starttime="20140204 18:58:07.163"></status>
+</kw>
+<status status="FAIL" endtime="20140204 18:58:16.891" starttime="20140204 18:58:03.154"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20140204 18:58:16.892" critical="yes" starttime="20140204 18:58:03.154">&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;&lt;head&gt;&lt;link title="Wrap Long Lines" href="resource://gre-resources/plaintext.css" type="text/css" rel="alternate stylesheet" /&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;# Assembly Name:  GRCh37.p12
+# Description:    Genome Reference Consortium Human Build 37 patch release 12 (GRCh37.p12)
+# Organism name:  Homo sapiens
+# Taxid:          9606
+# Submitter:      Genome Reference Consortium
+# Date: 2013-3-26
+# Assembly type:  haploid-with-alt-loci
+# Release type:   patch
+# Assembly level: Chromosome
+# Genome representation: full
+# GenBank Assembly ID: GCA_000001405.13 (replaced)
+# RefSeq Assembly ID: GCF_000001405.24 (replaced)
+# RefSeq Assembly and GenBank Assemblies Identical: yes
+#
+## Assembly-Units:
+## GenBank Unit ID	RefSeq Unit ID	Assembly-Unit name
+## GCA_000001305.1	GCF_000001305.13	Primary Assembly
+    [ Message content over the limit has been removed. ]
+...436_HG1432_PATCH	fix-patch	X	Chromosome	JH806590.2	=	NW_004070880.2	PATCHES
+HG1433_PATCH	fix-patch	X	Chromosome	JH806587.1	=	NW_004070877.1	PATCHES
+HG1437_PATCH	fix-patch	X	Chromosome	JH806591.1	=	NW_004070881.1	PATCHES
+HG1438_PATCH	fix-patch	X	Chromosome	JH806592.1	=	NW_004070882.1	PATCHES
+HG1425_PATCH	fix-patch	X	Chromosome	JH720453.1	=	NW_003871100.1	PATCHES
+HG1426_PATCH	fix-patch	X	Chromosome	JH720454.3	=	NW_003871101.3	PATCHES
+HG1439_PATCH	fix-patch	X	Chromosome	JH806593.1	=	NW_004070883.1	PATCHES
+HG1440_PATCH	fix-patch	X	Chromosome	JH806594.1	=	NW_004070884.1	PATCHES
+HG1441_PATCH	fix-patch	X	Chromosome	JH806595.1	=	NW_004070885.1	PATCHES
+HG375_PATCH	fix-patch	X	Chromosome	JH720455.1	=	NW_003871102.1	PATCHES
+HG1434_PATCH	fix-patch	X	Chromosome	JH806588.1	=	NW_004070878.1	PATCHES
+HG1462_PATCH	fix-patch	X	Chromosome	JH806601.1	=	NW_004070891.1	PATCHES
+HG1463_PATCH	fix-patch	X	Chromosome	JH806602.1	=	NW_004070892.1	PATCHES
+HG1490_PATCH	fix-patch	X	Chromosome	JH806603.1	=	NW_004070893.1	PATCHES
+HG1442_PATCH	fix-patch	X	Chromosome	JH806596.1	=	NW_004070886.1	PATCHES
+HG1443_HG1444_PATCH	fix-patch	X	Chromosome	JH806597.1	=	NW_004070887.1	PATCHES
+HG1453_PATCH	fix-patch	X	Chromosome	JH806598.1	=	NW_004070888.1	PATCHES
+HG1458_PATCH	fix-patch	X	Chromosome	JH806599.1	=	NW_004070889.1	PATCHES
+HG1459_PATCH	fix-patch	X	Chromosome	JH806600.1	=	NW_004070890.1	PATCHES
+HG1497_PATCH	fix-patch	X	Chromosome	JH159150.2	=	NW_003871103.2	PATCHES</status>
+</test>
+<test id="s1-t2" name="2">
+<kw type="kw" name="Assembly Data Download">
+<doc></doc>
+<arguments>
+<arg>GCF_000001405.8</arg>
+</arguments>
+<kw type="kw" name="Assembly.Open Browser">
+<doc>Opens a new browser instance to given URL.</doc>
+<arguments>
+<arg>http://www.ncbi.nlm.nih.gov/assembly/${acc}</arg>
+</arguments>
+<msg timestamp="20140204 18:58:16.894" level="INFO">Opening browser 'firefox' to base url 'http://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.8'</msg>
+<status status="PASS" endtime="20140204 18:58:20.298" starttime="20140204 18:58:16.894"></status>
+</kw>
+<kw type="kw" name="Assembly.Wait Until Page Contains Element">
+<doc>Waits until element specified with `locator` appears on current page.</doc>
+<arguments>
+<arg>${assembly-download-data}</arg>
+</arguments>
+<status status="PASS" endtime="20140204 18:58:20.335" starttime="20140204 18:58:20.298"></status>
+</kw>
+<kw type="kw" name="Assembly.Click Element">
+<doc>Click element identified by `locator`.</doc>
+<arguments>
+<arg>${assembly-download-data}</arg>
+</arguments>
+<msg timestamp="20140204 18:58:20.335" level="INFO">Clicking element 'xpath=//div[@id = 'ui-portlet_content-1']/ul/li/a'.</msg>
+<status status="PASS" endtime="20140204 18:58:20.475" starttime="20140204 18:58:20.335"></status>
+</kw>
+<kw type="kw" name="Assembly.Source Should Match File">
+<doc>Diff the source of a page against the contents of a baseline file.</doc>
+<arguments>
+<arg>${acc}.assembly.txt</arg>
+</arguments>
+<kw type="kw" name="Assembly.Capture Page Screenshot">
+<doc>Takes a screenshot of the current page and embeds it into the log.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20140204 18:58:24.124" html="yes" level="INFO">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-2.png"&gt;&lt;img src="selenium-screenshot-2.png" width="800px"&gt;&lt;/a&gt;</msg>
+<status status="PASS" endtime="20140204 18:58:24.125" starttime="20140204 18:58:20.993"></status>
+</kw>
+<msg timestamp="20140204 18:58:24.126" level="FAIL">&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;&lt;head&gt;&lt;link title="Wrap Long Lines" href="resource://gre-resources/plaintext.css" type="text/css" rel="alternate stylesheet" /&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;# Assembly Name:  NCBI33
+# Description:    NCBI33 with the DR51 &amp;amp; DR52 alternate MHC haplotype scaffolds in alt-locus assembly-units
+# Organism name:  Homo sapiens
+# Taxid:          9606
+# Submitter:      International Human Genome Sequencing Consortium
+# Date: 2003-4-12
+# Assembly type:  haploid-with-alt-loci
+# Release type:   major
+# Assembly level: Chromosome
+# Genome representation: full
+# RefSeq Assembly ID: GCF_000001405.8 (replaced)
+#
+## Assembly-Units:
+## GenBank Unit ID	RefSeq Unit ID	Assembly-Unit name
+## 	GCF_000001305.8	Primary Assembly
+## 	GCF_000330965.1	DR51
+## 	GCF_000330975.1	DR52
+#
+# Ordered by chromosome/plasmid; the chromosomes/plasmids are followed by
+# unlocalized scaffolds.
+# Unplaced scaffolds are listed at the end.
+# RefSeq is equal or derived from GenBank object.
+#
+# Sequence-Name	Sequence-Role	Assigned-Molecule	Assigned-Molecule-Location/Type	GenBank-Accn	Relationship	RefSeq-Accn	Assembly-Unit
+1	assembled-molecule	1	Chromosome	na	&amp;lt;&amp;gt;	NC_000001.4	Primary Assembly
+2	assembled-molecule	2	Chromosome	na	&amp;lt;&amp;gt;	GPC_000001061.1	Primary Assembly
+3	assembled-molecule	3	Chromosome	na	&amp;lt;&amp;gt;	NC_000003.5	Primary Assembly
+4	assembled-molecule	4	Chromosome	na	&amp;lt;&amp;gt;	NC_000004.5	Primary Assembly
+5	assembled-molecule	5	Chromosome	na	&amp;lt;&amp;gt;	NC_000005.4	Primary Assembly
+6	assembled-molecule	6	Chromosome	na	&amp;lt;&amp;gt;	NC_000006.5	Primary Assembly
+7	assembled-molecule	7	Chromosome	na	&amp;lt;&amp;gt;	NC_000007.7	Primary Assembly
+8	assembled-molecule	8	Chromosome	na	&amp;lt;&amp;gt;	NC_000008.5	Primary Assembly
+9	assembled-molecule	9	Chromosome	na	&amp;lt;&amp;gt;	NC_000009.5	Primary Assembly
+10	assembled-molecule	10	Chromosome	na	&amp;lt;&amp;gt;	NC_000010.4	Primary Assembly
+11	assembled-molecule	11	Chromosome	na	&amp;lt;&amp;gt;	NC_000011.4	Primary Assembly
+12	assembled-molecule	12	Chromosome	na	&amp;lt;&amp;gt;	NC_000012.5	Primary Assembly
+13	assembled-molecule	13	Chromosome	na	&amp;lt;&amp;gt;	NC_000013.5	Primary Assembly
+14	assembled-molecule	14	Chromosome	na	&amp;lt;&amp;gt;	NC_000014.4	Primary Assembly
+15	assembled-molecule	15	Chromosome	na	&amp;lt;&amp;gt;	NC_000015.4	Primary Assembly
+16	assembled-molecule	16	Chromosome	na	&amp;lt;&amp;gt;	NC_000016.4	Primary Assembly
+17	assembled-molecule	17	Chromosome	na	&amp;lt;&amp;gt;	NC_000017.5	Primary Assembly
+18	assembled-molecule	18	Chromosome	na	&amp;lt;&amp;gt;	NC_000018.4	Primary Assembly
+19	assembled-molecule	19	Chromosome	na	&amp;lt;&amp;gt;	NC_000019.5	Primary Assembly
+20	assembled-molecule	20	Chromosome	na	&amp;lt;&amp;gt;	NC_000020.5	Primary Assembly
+21	assembled-molecule	21	Chromosome	na	&amp;lt;&amp;gt;	NC_000021.3	Primary Assembly
+22	assembled-molecule	22	Chromosome	na	&amp;lt;&amp;gt;	NC_000022.4	Primary Assembly
+X	assembled-molecule	X	Chromosome	na	&amp;lt;&amp;gt;	NC_000023.4	Primary Assembly
+Y	assembled-molecule	Y	Chromosome	na	&amp;lt;&amp;gt;	NC_000024.3	Primary Assembly
+Hs1_77437_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077388.2	Primary Assembly
+Hs1_78012_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077943.1	Primary Assembly
+Hs1_78013_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077944.1	Primary Assembly
+Hs1_78014_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077945.1	Primary Assembly
+Hs1_78015_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077946.1	Primary Assembly
+Hs1_78016_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077947.1	Primary Assembly
+Hs1_78017_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077948.1	Primary Assembly
+Hs1_78018_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077949.1	Primary Assembly
+Hs1_78019_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077950.1	Primary Assembly
+Hs1_78020_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077951.1	Primary Assembly
+Hs1_78021_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077952.1	Primary Assembly
+Hs1_78022_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077953.1	Primary Assembly
+Hs1_78023_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077954.1	Primary Assembly
+Hs1_78024_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077955.1	Primary Assembly
+Hs1_78025_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077956.1	Primary Assembly
+Hs1_78026_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077957.1	Primary Assembly
+Hs1_78027_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077958.1	Primary Assembly
+Hs1_78028_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077959.1	Primary Assembly
+Hs1_78029_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077960.1	Primary Assembly
+Hs1_78030_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077961.1	Primary Assembly
+Hs1_78031_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077962.1	Primary Assembly
+Hs1_78032_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077963.1	Primary Assembly
+Hs1_78033_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077964.1	Primary Assembly
+Hs1_78034_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077965.1	Primary Assembly
+Hs1_78035_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077966.1	Primary Assembly
+Hs1_78036_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077967.1	Primary Assembly
+Hs1_78037_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077968.1	Primary Assembly
+Hs1_78038_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077969.1	Primary Assembly
+Hs1_78039_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077970.1	Primary Assembly
+Hs1_78040_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077971.1	Primary Assembly
+Hs1_78041_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077972.1	Primary Assembly
+Hs1_78042_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077973.1	Primary Assembly
+Hs1_78043_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077974.1	Primary Assembly
+Hs1_78044_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077975.1	Primary Assembly
+Hs1_78045_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077976.1	Primary Assembly
+Hs1_78046_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077977.1	Primary Assembly
+Hs1_78047_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077978.1	Primary Assembly
+Hs1_78048_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077979.1	Primary Assembly
+Hs1_78049_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077980.2	Primary Assembly
+Hs1_78050_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077981.1	Primary Assembly
+Hs1_78051_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077982.1	Primary Assembly
+Hs1_78052_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077983.1	Primary Assembly
+Hs1_78053_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077984.1	Primary Assembly
+Hs1_78054_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077985.1	Primary Assembly
+Hs1_78055_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077986.1	Primary Assembly
+Hs1_78056_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077987.1	Primary Assembly
+Hs1_78057_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077988.1	Primary Assembly
+Hs1_78058_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077989.1	Primary Assembly
+Hs1_78059_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077990.1	Primary Assembly
+Hs1_78060_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077991.1	Primary Assembly
+Hs1_78061_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077992.1	Primary Assembly
+Hs1_78062_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077993.1	Primary Assembly
+Hs1_78063_33	unlocalized-scaffold	1	Chromosome	na	&amp;lt;&amp;gt;	NT_077994.1	Primary Assembly
+Hs2_78064_33	unlocalized-scaffold	2	Chromosome	na	&amp;lt;&amp;gt;	NT_077995.1	Primary Assembly
+Hs2_78065_33	unlocalized-scaffold	2	Chromosome	na	&amp;lt;&amp;gt;	NT_077996.1	Primary Assembly
+Hs2_78066_33	unlocalized-scaffold	2	Chromosome	na	&amp;lt;&amp;gt;	NT_077997.1	Primary Assembly
+Hs2_78067_33	unlocalized-scaffold	2	Chromosome	na	&amp;lt;&amp;gt;	NT_077998.1	Primary Assembly
+Hs2_78068_33	unlocalized-scaffold	2	Chromosome	na	&amp;lt;&amp;gt;	NT_077999.1	Primary Assembly
+Hs2_78069_33	unlocalized-scaffold	2	Chromosome	na	&amp;lt;&amp;gt;	NT_078000.1	Primary Assembly
+Hs2_78070_33	unlocalized-scaffold	2	Chromosome	na	&amp;lt;&amp;gt;	NT_078001.1	Primary Assembly
+Hs2_78071_33	unlocalized-scaffold	2	Chromosome	na	&amp;lt;&amp;gt;	NT_078002.1	Primary Assembly
+Hs2_78072_33	unlocalized-scaffold	2	Chromosome	na	&amp;lt;&amp;gt;	NT_078003.1	Primary Assembly
+Hs2_78073_33	unlocalized-scaffold	2	Chromosome	na	&amp;lt;&amp;gt;	NT_078004.1	Primary Assembly
+Hs2_78074_33	unlocalized-scaffold	2	Chromosome	na	&amp;lt;&amp;gt;	NT_078005.1	Primary Assembly
+Hs3_78076_33	unlocalized-scaffold	3	Chromosome	na	&amp;lt;&amp;gt;	NT_078007.1	Primary Assembly
+Hs3_78077_33	unlocalized-scaffold	3	Chromosome	na	&amp;lt;&amp;gt;	NT_078008.1	Primary Assembly
+Hs4_77488_33	unlocalized-scaffold	4	Chromosome	na	&amp;lt;&amp;gt;	NT_077439.2	Primary Assembly
+Hs4_78079_33	unlocalized-scaffold	4	Chromosome	na	&amp;lt;&amp;gt;	NT_078010.1	Primary Assembly
+Hs4_78080_33	unlocalized-scaffold	4	Chromosome	na	&amp;lt;&amp;gt;	NT_078011.1	Primary Assembly
+Hs4_78081_33	unlocalized-scaffold	4	Chromosome	na	&amp;lt;&amp;gt;	NT_078012.1	Primary Assembly
+Hs4_78082_33	unlocalized-scaffold	4	Chromosome	na	&amp;lt;&amp;gt;	NT_078013.1	Primary Assembly
+Hs4_78083_33	unlocalized-scaffold	4	Chromosome	na	&amp;lt;&amp;gt;	NT_078014.1	Primary Assembly
+Hs4_78084_33	unlocalized-scaffold	4	Chromosome	na	&amp;lt;&amp;gt;	NT_078015.1	Primary Assembly
+Hs4_78085_33	unlocalized-scaffold	4	Chromosome	na	&amp;lt;&amp;gt;	NT_078016.1	Primary Assembly
+Hs4_78086_33	unlocalized-scaffold	4	Chromosome	na	&amp;lt;&amp;gt;	NT_078017.1	Primary Assembly
+Hs6_78089_33	unlocalized-scaffold	6	Chromosome	na	&amp;lt;&amp;gt;	NT_078020.1	Primary Assembly
+Hs6_78090_33	unlocalized-scaffold	6	Chromosome	na	&amp;lt;&amp;gt;	NT_078021.1	Primary Assembly
+Hs6_78091_33	unlocalized-scaffold	6	Chromosome	na	&amp;lt;&amp;gt;	NT_078022.1	Primary Assembly
+Hs6_78092_33	unlocalized-scaffold	6	Chromosome	na	&amp;lt;&amp;gt;	NT_078023.1	Primary Assembly
+Hs6_78093_33	unlocalized-scaffold	6	Chromosome	na	&amp;lt;&amp;gt;	NT_078024.1	Primary Assembly
+Hs6_78094_33	unlocalized-scaffold	6	Chromosome	na	&amp;lt;&amp;gt;	NT_078025.1	Primary Assembly
+Hs6_78095_33	unlocalized-scaffold	6	Chromosome	na	&amp;lt;&amp;gt;	NT_078026.1	Primary Assembly
+Hs6_78096_33	unlocalized-scaffold	6	Chromosome	na	&amp;lt;&amp;gt;	NT_078027.1	Primary Assembly
+Hs7_78098_33	unlocalized-scaffold	7	Chromosome	na	&amp;lt;&amp;gt;	NT_078029.1	Primary Assembly
+Hs7_78099_33	unlocalized-scaffold	7	Chromosome	na	&amp;lt;&amp;gt;	NT_078030.1	Primary Assembly
+Hs7_78100_33	unlocalized-scaffold	7	Chromosome	na	&amp;lt;&amp;gt;	NT_078031.1	Primary Assembly
+Hs7_78101_33	unlocalized-scaffold	7	Chromosome	na	&amp;lt;&amp;gt;	NT_078032.1	Primary Assembly
+Hs7_78102_33	unlocalized-scaffold	7	Chromosome	na	&amp;lt;&amp;gt;	NT_078033.1	Primary Assembly
+Hs7_78103_33	unlocalized-scaffold	7	Chromosome	na	&amp;lt;&amp;gt;	NT_078034.1	Primary Assembly
+Hs7_78104_33	unlocalized-scaffold	7	Chromosome	na	&amp;lt;&amp;gt;	NT_078035.1	Primary Assembly
+Hs8_78107_33	unlocalized-scaffold	8	Chromosome	na	&amp;lt;&amp;gt;	NT_078038.1	Primary Assembly
+Hs8_78108_33	unlocalized-scaffold	8	Chromosome	na	&amp;lt;&amp;gt;	NT_078039.1	Primary Assembly
+Hs9_78142_33	unlocalized-scaffold	9	Chromosome	na	&amp;lt;&amp;gt;	NT_078073.1	Primary Assembly
+Hs9_78143_33	unlocalized-scaffold	9	Chromosome	na	&amp;lt;&amp;gt;	NT_078074.1	Primary Assembly
+Hs9_78144_33	unlocalized-scaffold	9	Chromosome	na	&amp;lt;&amp;gt;	NT_078075.1	Primary Assembly
+Hs9_78145_33	unlocalized-scaffold	9	Chromosome	na	&amp;lt;&amp;gt;	NT_078076.1	Primary Assembly
+Hs9_78146_33	unlocalized-scaffold	9	Chromosome	na	&amp;lt;&amp;gt;	NT_078077.1	Primary Assembly
+Hs9_78147_33	unlocalized-scaffold	9	Chromosome	na	&amp;lt;&amp;gt;	NT_078078.1	Primary Assembly
+Hs9_78148_33	unlocalized-scaffold	9	Chromosome	na	&amp;lt;&amp;gt;	NT_078079.1	Primary Assembly
+Hs9_78149_33	unlocalized-scaffold	9	Chromosome	na	&amp;lt;&amp;gt;	NT_078080.1	Primary Assembly
+Hs9_78150_33	unlocalized-scaffold	9	Chromosome	na	&amp;lt;&amp;gt;	NT_078081.1	Primary Assembly
+Hs9_78151_33	unlocalized-scaffold	9	Chromosome	na	&amp;lt;&amp;gt;	NT_078082.1	Primary Assembly
+Hs9_78152_33	unlocalized-scaffold	9	Chromosome	na	&amp;lt;&amp;gt;	NT_078083.1	Primary Assembly
+Hs10_78154_33	unlocalized-scaffold	10	Chromosome	na	&amp;lt;&amp;gt;	NT_078085.1	Primary Assembly
+Hs10_78155_33	unlocalized-scaffold	10	Chromosome	na	&amp;lt;&amp;gt;	NT_078086.1	Primary Assembly
+Hs10_78156_33	unlocalized-scaffold	10	Chromosome	na	&amp;lt;&amp;gt;	NT_078087.1	Primary Assembly
+Hs11_35298_33	unlocalized-scaffold	11	Chromosome	na	&amp;lt;&amp;gt;	NT_035136.1	Primary Assembly
+Hs12_35428_33	unlocalized-scaffold	12	Chromosome	na	&amp;lt;&amp;gt;	NT_035266.2	Primary Assembly
+Hs12_78159_33	unlocalized-scaffold	12	Chromosome	na	&amp;lt;&amp;gt;	NT_078090.1	Primary Assembly
+Hs12_78160_33	unlocalized-scaffold	12	Chromosome	na	&amp;lt;&amp;gt;	NT_078091.1	Primary Assembly
+Hs13_78161_33	unlocalized-scaffold	13	Chromosome	na	&amp;lt;&amp;gt;	NT_078092.1	Primary Assembly
+Hs13_78162_33	unlocalized-scaffold	13	Chromosome	na	&amp;lt;&amp;gt;	NT_078093.1	Primary Assembly
+Hs15_78166_33	unlocalized-scaffold	15	Chromosome	na	&amp;lt;&amp;gt;	NT_078097.1	Primary Assembly
+Hs15_78167_33	unlocalized-scaffold	15	Chromosome	na	&amp;lt;&amp;gt;	NT_078098.1	Primary Assembly
+Hs16_37919_33	unlocalized-scaffold	16	Chromosome	na	&amp;lt;&amp;gt;	NT_037915.1	Primary Assembly
+Hs17_78170_33	unlocalized-scaffold	17	Chromosome	na	&amp;lt;&amp;gt;	NT_078101.1	Primary Assembly
+Hs17_78171_33	unlocalized-scaffold	17	Chromosome	na	&amp;lt;&amp;gt;	NT_078102.1	Primary Assembly
+Hs19_78172_33	unlocalized-scaffold	19	Chromosome	na	&amp;lt;&amp;gt;	NT_078103.1	Primary Assembly
+Hs19_78173_33	unlocalized-scaffold	19	Chromosome	na	&amp;lt;&amp;gt;	NT_078104.1	Primary Assembly
+HsX_77864_33	unlocalized-scaffold	X	Chromosome	na	&amp;lt;&amp;gt;	NT_077815.2	Primary Assembly
+HsX_78178_33	unlocalized-scaffold	X	Chromosome	na	&amp;lt;&amp;gt;	NT_078109.1	Primary Assembly
+HsX_78179_33	unlocalized-scaffold	X	Chromosome	na	&amp;lt;&amp;gt;	NT_078110.1	Primary Assembly
+HsX_78180_33	unlocalized-scaffold	X	Chromosome	na	&amp;lt;&amp;gt;	NT_078111.1	Primary Assembly
+HsX_78181_33	unlocalized-scaffold	X	Chromosome	na	&amp;lt;&amp;gt;	NT_078112.1	Primary Assembly
+HsX_78182_33	unlocalized-scaffold	X	Chromosome	na	&amp;lt;&amp;gt;	NT_078113.1	Primary Assembly
+HsX_78183_33	unlocalized-scaffold	X	Chromosome	na	&amp;lt;&amp;gt;	NT_078114.1	Primary Assembly
+HsX_78184_33	unlocalized-scaffold	X	Chromosome	na	&amp;lt;&amp;gt;	NT_078115.1	Primary Assembly
+HsX_78185_33	unlocalized-scaffold	X	Chromosome	na	&amp;lt;&amp;gt;	NT_078116.1	Primary Assembly
+HsX_78186_33	unlocalized-scaffold	X	Chromosome	na	&amp;lt;&amp;gt;	NT_078117.1	Primary Assembly
+HsX_78187_33	unlocalized-scaffold	X	Chromosome	na	&amp;lt;&amp;gt;	NT_078118.1	Primary Assembly
+HsX_78188_33	unlocalized-scaffold	X	Chromosome	na	&amp;lt;&amp;gt;	NT_078119.1	Primary Assembly
+HsX_78189_33	unlocalized-scaffold	X	Chromosome	na	&amp;lt;&amp;gt;	NT_078120.1	Primary Assembly
+HsX_78190_33	unlocalized-scaffold	X	Chromosome	na	&amp;lt;&amp;gt;	NT_078121.1	Primary Assembly
+HsY_78191_33	unlocalized-scaffold	Y	Chromosome	na	&amp;lt;&amp;gt;	NT_078122.1	Primary Assembly
+HsUn_78192_33	unplaced-scaffold	na	na	na	&amp;lt;&amp;gt;	NT_078123.1	Primary Assembly
+HsUn_78193_33	unplaced-scaffold	na	na	na	&amp;lt;&amp;gt;	NT_078124.1	Primary Assembly
+HsUn_78194_33	unplaced-scaffold	na	na	na	&amp;lt;&amp;gt;	NT_078125.1	Primary Assembly
+HsUn_78195_33	unplaced-scaffold	na	na	na	&amp;lt;&amp;gt;	NT_078126.1	Primary Assembly
+Hs6_35036_33	alt-scaffold	6	Chromosome	na	&amp;lt;&amp;gt;	NT_034874.2	DR51
+Hs6_34106_33	alt-scaffold	6	Chromosome	na	&amp;lt;&amp;gt;	NT_033951.3	DR52
+&lt;/pre&gt;&lt;/body&gt;&lt;/html&gt; != # Assembly Name:  NCBI33
+# Description:    NCBI33 with the DR51 &amp; DR52 alternate MHC haplotype scaffolds in alt-locus assembly-units
+# Organism name:  Homo sapiens
+# Taxid:          9606
+# Submitter:      International Human Genome Sequencing Consortium
+# Date: 2003-4-12
+# Assembly type:  haploid-with-alt-loci
+# Release type:   major
+# Assembly level: Chromosome
+# Genome representation: full
+# RefSeq Assembly ID: GCF_000001405.8 (replaced)
+#
+## Assembly-Units:
+## GenBank Unit ID	RefSeq Unit ID	Assembly-Unit name
+## 	GCF_000001305.8	Primary Assembly
+## 	GCF_000330965.1	DR51
+## 	GCF_000330975.1	DR52
+#
+# Ordered by chromosome/plasmid; the chromosomes/plasmids are followed by
+# unlocalized scaffolds.
+# Unplaced scaffolds are listed at the end.
+# RefSeq is equal or derived from GenBank object.
+#
+# Sequence-Name	Sequence-Role	Assigned-Molecule	Assigned-Molecule-Location/Type	GenBank-Accn	Relationship	RefSeq-Accn	Assembly-Unit
+1	assembled-molecule	1	Chromosome	na	&lt;&gt;	NC_000001.4	Primary Assembly
+2	assembled-molecule	2	Chromosome	na	&lt;&gt;	GPC_000001061.1	Primary Assembly
+3	assembled-molecule	3	Chromosome	na	&lt;&gt;	NC_000003.5	Primary Assembly
+4	assembled-molecule	4	Chromosome	na	&lt;&gt;	NC_000004.5	Primary Assembly
+5	assembled-molecule	5	Chromosome	na	&lt;&gt;	NC_000005.4	Primary Assembly
+6	assembled-molecule	6	Chromosome	na	&lt;&gt;	NC_000006.5	Primary Assembly
+7	assembled-molecule	7	Chromosome	na	&lt;&gt;	NC_000007.7	Primary Assembly
+8	assembled-molecule	8	Chromosome	na	&lt;&gt;	NC_000008.5	Primary Assembly
+9	assembled-molecule	9	Chromosome	na	&lt;&gt;	NC_000009.5	Primary Assembly
+10	assembled-molecule	10	Chromosome	na	&lt;&gt;	NC_000010.4	Primary Assembly
+11	assembled-molecule	11	Chromosome	na	&lt;&gt;	NC_000011.4	Primary Assembly
+12	assembled-molecule	12	Chromosome	na	&lt;&gt;	NC_000012.5	Primary Assembly
+13	assembled-molecule	13	Chromosome	na	&lt;&gt;	NC_000013.5	Primary Assembly
+14	assembled-molecule	14	Chromosome	na	&lt;&gt;	NC_000014.4	Primary Assembly
+15	assembled-molecule	15	Chromosome	na	&lt;&gt;	NC_000015.4	Primary Assembly
+16	assembled-molecule	16	Chromosome	na	&lt;&gt;	NC_000016.4	Primary Assembly
+17	assembled-molecule	17	Chromosome	na	&lt;&gt;	NC_000017.5	Primary Assembly
+18	assembled-molecule	18	Chromosome	na	&lt;&gt;	NC_000018.4	Primary Assembly
+19	assembled-molecule	19	Chromosome	na	&lt;&gt;	NC_000019.5	Primary Assembly
+20	assembled-molecule	20	Chromosome	na	&lt;&gt;	NC_000020.5	Primary Assembly
+21	assembled-molecule	21	Chromosome	na	&lt;&gt;	NC_000021.3	Primary Assembly
+22	assembled-molecule	22	Chromosome	na	&lt;&gt;	NC_000022.4	Primary Assembly
+X	assembled-molecule	X	Chromosome	na	&lt;&gt;	NC_000023.4	Primary Assembly
+Y	assembled-molecule	Y	Chromosome	na	&lt;&gt;	NC_000024.3	Primary Assembly
+Hs1_77437_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077388.2	Primary Assembly
+Hs1_78012_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077943.1	Primary Assembly
+Hs1_78013_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077944.1	Primary Assembly
+Hs1_78014_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077945.1	Primary Assembly
+Hs1_78015_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077946.1	Primary Assembly
+Hs1_78016_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077947.1	Primary Assembly
+Hs1_78017_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077948.1	Primary Assembly
+Hs1_78018_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077949.1	Primary Assembly
+Hs1_78019_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077950.1	Primary Assembly
+Hs1_78020_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077951.1	Primary Assembly
+Hs1_78021_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077952.1	Primary Assembly
+Hs1_78022_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077953.1	Primary Assembly
+Hs1_78023_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077954.1	Primary Assembly
+Hs1_78024_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077955.1	Primary Assembly
+Hs1_78025_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077956.1	Primary Assembly
+Hs1_78026_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077957.1	Primary Assembly
+Hs1_78027_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077958.1	Primary Assembly
+Hs1_78028_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077959.1	Primary Assembly
+Hs1_78029_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077960.1	Primary Assembly
+Hs1_78030_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077961.1	Primary Assembly
+Hs1_78031_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077962.1	Primary Assembly
+Hs1_78032_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077963.1	Primary Assembly
+Hs1_78033_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077964.1	Primary Assembly
+Hs1_78034_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077965.1	Primary Assembly
+Hs1_78035_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077966.1	Primary Assembly
+Hs1_78036_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077967.1	Primary Assembly
+Hs1_78037_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077968.1	Primary Assembly
+Hs1_78038_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077969.1	Primary Assembly
+Hs1_78039_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077970.1	Primary Assembly
+Hs1_78040_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077971.1	Primary Assembly
+Hs1_78041_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077972.1	Primary Assembly
+Hs1_78042_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077973.1	Primary Assembly
+Hs1_78043_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077974.1	Primary Assembly
+Hs1_78044_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077975.1	Primary Assembly
+Hs1_78045_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077976.1	Primary Assembly
+Hs1_78046_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077977.1	Primary Assembly
+Hs1_78047_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077978.1	Primary Assembly
+Hs1_78048_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077979.1	Primary Assembly
+Hs1_78049_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077980.2	Primary Assembly
+Hs1_78050_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077981.1	Primary Assembly
+Hs1_78051_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077982.1	Primary Assembly
+Hs1_78052_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077983.1	Primary Assembly
+Hs1_78053_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077984.1	Primary Assembly
+Hs1_78054_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077985.1	Primary Assembly
+Hs1_78055_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077986.1	Primary Assembly
+Hs1_78056_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077987.1	Primary Assembly
+Hs1_78057_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077988.1	Primary Assembly
+Hs1_78058_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077989.1	Primary Assembly
+Hs1_78059_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077990.1	Primary Assembly
+Hs1_78060_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077991.1	Primary Assembly
+Hs1_78061_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077992.1	Primary Assembly
+Hs1_78062_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077993.1	Primary Assembly
+Hs1_78063_33	unlocalized-scaffold	1	Chromosome	na	&lt;&gt;	NT_077994.1	Primary Assembly
+Hs2_78064_33	unlocalized-scaffold	2	Chromosome	na	&lt;&gt;	NT_077995.1	Primary Assembly
+Hs2_78065_33	unlocalized-scaffold	2	Chromosome	na	&lt;&gt;	NT_077996.1	Primary Assembly
+Hs2_78066_33	unlocalized-scaffold	2	Chromosome	na	&lt;&gt;	NT_077997.1	Primary Assembly
+Hs2_78067_33	unlocalized-scaffold	2	Chromosome	na	&lt;&gt;	NT_077998.1	Primary Assembly
+Hs2_78068_33	unlocalized-scaffold	2	Chromosome	na	&lt;&gt;	NT_077999.1	Primary Assembly
+Hs2_78069_33	unlocalized-scaffold	2	Chromosome	na	&lt;&gt;	NT_078000.1	Primary Assembly
+Hs2_78070_33	unlocalized-scaffold	2	Chromosome	na	&lt;&gt;	NT_078001.1	Primary Assembly
+Hs2_78071_33	unlocalized-scaffold	2	Chromosome	na	&lt;&gt;	NT_078002.1	Primary Assembly
+Hs2_78072_33	unlocalized-scaffold	2	Chromosome	na	&lt;&gt;	NT_078003.1	Primary Assembly
+Hs2_78073_33	unlocalized-scaffold	2	Chromosome	na	&lt;&gt;	NT_078004.1	Primary Assembly
+Hs2_78074_33	unlocalized-scaffold	2	Chromosome	na	&lt;&gt;	NT_078005.1	Primary Assembly
+Hs3_78076_33	unlocalized-scaffold	3	Chromosome	na	&lt;&gt;	NT_078007.1	Primary Assembly
+Hs3_78077_33	unlocalized-scaffold	3	Chromosome	na	&lt;&gt;	NT_078008.1	Primary Assembly
+Hs4_77488_33	unlocalized-scaffold	4	Chromosome	na	&lt;&gt;	NT_077439.2	Primary Assembly
+Hs4_78079_33	unlocalized-scaffold	4	Chromosome	na	&lt;&gt;	NT_078010.1	Primary Assembly
+Hs4_78080_33	unlocalized-scaffold	4	Chromosome	na	&lt;&gt;	NT_078011.1	Primary Assembly
+Hs4_78081_33	unlocalized-scaffold	4	Chromosome	na	&lt;&gt;	NT_078012.1	Primary Assembly
+Hs4_78082_33	unlocalized-scaffold	4	Chromosome	na	&lt;&gt;	NT_078013.1	Primary Assembly
+Hs4_78083_33	unlocalized-scaffold	4	Chromosome	na	&lt;&gt;	NT_078014.1	Primary Assembly
+Hs4_78084_33	unlocalized-scaffold	4	Chromosome	na	&lt;&gt;	NT_078015.1	Primary Assembly
+Hs4_78085_33	unlocalized-scaffold	4	Chromosome	na	&lt;&gt;	NT_078016.1	Primary Assembly
+Hs4_78086_33	unlocalized-scaffold	4	Chromosome	na	&lt;&gt;	NT_078017.1	Primary Assembly
+Hs6_78089_33	unlocalized-scaffold	6	Chromosome	na	&lt;&gt;	NT_078020.1	Primary Assembly
+Hs6_78090_33	unlocalized-scaffold	6	Chromosome	na	&lt;&gt;	NT_078021.1	Primary Assembly
+Hs6_78091_33	unlocalized-scaffold	6	Chromosome	na	&lt;&gt;	NT_078022.1	Primary Assembly
+Hs6_78092_33	unlocalized-scaffold	6	Chromosome	na	&lt;&gt;	NT_078023.1	Primary Assembly
+Hs6_78093_33	unlocalized-scaffold	6	Chromosome	na	&lt;&gt;	NT_078024.1	Primary Assembly
+Hs6_78094_33	unlocalized-scaffold	6	Chromosome	na	&lt;&gt;	NT_078025.1	Primary Assembly
+Hs6_78095_33	unlocalized-scaffold	6	Chromosome	na	&lt;&gt;	NT_078026.1	Primary Assembly
+Hs6_78096_33	unlocalized-scaffold	6	Chromosome	na	&lt;&gt;	NT_078027.1	Primary Assembly
+Hs7_78098_33	unlocalized-scaffold	7	Chromosome	na	&lt;&gt;	NT_078029.1	Primary Assembly
+Hs7_78099_33	unlocalized-scaffold	7	Chromosome	na	&lt;&gt;	NT_078030.1	Primary Assembly
+Hs7_78100_33	unlocalized-scaffold	7	Chromosome	na	&lt;&gt;	NT_078031.1	Primary Assembly
+Hs7_78101_33	unlocalized-scaffold	7	Chromosome	na	&lt;&gt;	NT_078032.1	Primary Assembly
+Hs7_78102_33	unlocalized-scaffold	7	Chromosome	na	&lt;&gt;	NT_078033.1	Primary Assembly
+Hs7_78103_33	unlocalized-scaffold	7	Chromosome	na	&lt;&gt;	NT_078034.1	Primary Assembly
+Hs7_78104_33	unlocalized-scaffold	7	Chromosome	na	&lt;&gt;	NT_078035.1	Primary Assembly
+Hs8_78107_33	unlocalized-scaffold	8	Chromosome	na	&lt;&gt;	NT_078038.1	Primary Assembly
+Hs8_78108_33	unlocalized-scaffold	8	Chromosome	na	&lt;&gt;	NT_078039.1	Primary Assembly
+Hs9_78142_33	unlocalized-scaffold	9	Chromosome	na	&lt;&gt;	NT_078073.1	Primary Assembly
+Hs9_78143_33	unlocalized-scaffold	9	Chromosome	na	&lt;&gt;	NT_078074.1	Primary Assembly
+Hs9_78144_33	unlocalized-scaffold	9	Chromosome	na	&lt;&gt;	NT_078075.1	Primary Assembly
+Hs9_78145_33	unlocalized-scaffold	9	Chromosome	na	&lt;&gt;	NT_078076.1	Primary Assembly
+Hs9_78146_33	unlocalized-scaffold	9	Chromosome	na	&lt;&gt;	NT_078077.1	Primary Assembly
+Hs9_78147_33	unlocalized-scaffold	9	Chromosome	na	&lt;&gt;	NT_078078.1	Primary Assembly
+Hs9_78148_33	unlocalized-scaffold	9	Chromosome	na	&lt;&gt;	NT_078079.1	Primary Assembly
+Hs9_78149_33	unlocalized-scaffold	9	Chromosome	na	&lt;&gt;	NT_078080.1	Primary Assembly
+Hs9_78150_33	unlocalized-scaffold	9	Chromosome	na	&lt;&gt;	NT_078081.1	Primary Assembly
+Hs9_78151_33	unlocalized-scaffold	9	Chromosome	na	&lt;&gt;	NT_078082.1	Primary Assembly
+Hs9_78152_33	unlocalized-scaffold	9	Chromosome	na	&lt;&gt;	NT_078083.1	Primary Assembly
+Hs10_78154_33	unlocalized-scaffold	10	Chromosome	na	&lt;&gt;	NT_078085.1	Primary Assembly
+Hs10_78155_33	unlocalized-scaffold	10	Chromosome	na	&lt;&gt;	NT_078086.1	Primary Assembly
+Hs10_78156_33	unlocalized-scaffold	10	Chromosome	na	&lt;&gt;	NT_078087.1	Primary Assembly
+Hs11_35298_33	unlocalized-scaffold	11	Chromosome	na	&lt;&gt;	NT_035136.1	Primary Assembly
+Hs12_35428_33	unlocalized-scaffold	12	Chromosome	na	&lt;&gt;	NT_035266.2	Primary Assembly
+Hs12_78159_33	unlocalized-scaffold	12	Chromosome	na	&lt;&gt;	NT_078090.1	Primary Assembly
+Hs12_78160_33	unlocalized-scaffold	12	Chromosome	na	&lt;&gt;	NT_078091.1	Primary Assembly
+Hs13_78161_33	unlocalized-scaffold	13	Chromosome	na	&lt;&gt;	NT_078092.1	Primary Assembly
+Hs13_78162_33	unlocalized-scaffold	13	Chromosome	na	&lt;&gt;	NT_078093.1	Primary Assembly
+Hs15_78166_33	unlocalized-scaffold	15	Chromosome	na	&lt;&gt;	NT_078097.1	Primary Assembly
+Hs15_78167_33	unlocalized-scaffold	15	Chromosome	na	&lt;&gt;	NT_078098.1	Primary Assembly
+Hs16_37919_33	unlocalized-scaffold	16	Chromosome	na	&lt;&gt;	NT_037915.1	Primary Assembly
+Hs17_78170_33	unlocalized-scaffold	17	Chromosome	na	&lt;&gt;	NT_078101.1	Primary Assembly
+Hs17_78171_33	unlocalized-scaffold	17	Chromosome	na	&lt;&gt;	NT_078102.1	Primary Assembly
+Hs19_78172_33	unlocalized-scaffold	19	Chromosome	na	&lt;&gt;	NT_078103.1	Primary Assembly
+Hs19_78173_33	unlocalized-scaffold	19	Chromosome	na	&lt;&gt;	NT_078104.1	Primary Assembly
+HsX_77864_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_077815.2	Primary Assembly
+HsX_78178_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078109.1	Primary Assembly
+HsX_78179_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078110.1	Primary Assembly
+HsX_78180_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078111.1	Primary Assembly
+HsX_78181_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078112.1	Primary Assembly
+HsX_78182_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078113.1	Primary Assembly
+HsX_78183_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078114.1	Primary Assembly
+HsX_78184_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078115.1	Primary Assembly
+HsX_78185_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078116.1	Primary Assembly
+HsX_78186_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078117.1	Primary Assembly
+HsX_78187_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078118.1	Primary Assembly
+HsX_78188_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078119.1	Primary Assembly
+HsX_78189_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078120.1	Primary Assembly
+HsX_78190_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078121.1	Primary Assembly
+HsY_78191_33	unlocalized-scaffold	Y	Chromosome	na	&lt;&gt;	NT_078122.1	Primary Assembly
+HsUn_78192_33	unplaced-scaffold	na	na	na	&lt;&gt;	NT_078123.1	Primary Assembly
+HsUn_78193_33	unplaced-scaffold	na	na	na	&lt;&gt;	NT_078124.1	Primary Assembly
+HsUn_78194_33	unplaced-scaffold	na	na	na	&lt;&gt;	NT_078125.1	Primary Assembly
+HsUn_78195_33	unplaced-scaffold	na	na	na	&lt;&gt;	NT_078126.1	Primary Assembly
+Hs6_35036_33	alt-scaffold	6	Chromosome	na	&lt;&gt;	NT_034874.2	DR51
+Hs6_34106_33	alt-scaffold	6	Chromosome	na	&lt;&gt;	NT_033951.3	DR52
+</msg>
+<status status="FAIL" endtime="20140204 18:58:24.127" starttime="20140204 18:58:20.475"></status>
+</kw>
+<status status="FAIL" endtime="20140204 18:58:24.128" starttime="20140204 18:58:16.893"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20140204 18:58:24.128" critical="yes" starttime="20140204 18:58:16.892">&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;&lt;head&gt;&lt;link title="Wrap Long Lines" href="resource://gre-resources/plaintext.css" type="text/css" rel="alternate stylesheet" /&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;# Assembly Name:  NCBI33
+# Description:    NCBI33 with the DR51 &amp;amp; DR52 alternate MHC haplotype scaffolds in alt-locus assembly-units
+# Organism name:  Homo sapiens
+# Taxid:          9606
+# Submitter:      International Human Genome Sequencing Consortium
+# Date: 2003-4-12
+# Assembly type:  haploid-with-alt-loci
+# Release type:   major
+# Assembly level: Chromosome
+# Genome representation: full
+# RefSeq Assembly ID: GCF_000001405.8 (replaced)
+#
+## Assembly-Units:
+## GenBank Unit ID	RefSeq Unit ID	Assembly-Unit name
+## 	GCF_000001305.8	Primary Assembly
+## 	GCF_000330965.1	DR51
+## 	GCF_000330975.1	DR52
+    [ Message content over the limit has been removed. ]
+HsX_78185_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078116.1	Primary Assembly
+HsX_78186_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078117.1	Primary Assembly
+HsX_78187_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078118.1	Primary Assembly
+HsX_78188_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078119.1	Primary Assembly
+HsX_78189_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078120.1	Primary Assembly
+HsX_78190_33	unlocalized-scaffold	X	Chromosome	na	&lt;&gt;	NT_078121.1	Primary Assembly
+HsY_78191_33	unlocalized-scaffold	Y	Chromosome	na	&lt;&gt;	NT_078122.1	Primary Assembly
+HsUn_78192_33	unplaced-scaffold	na	na	na	&lt;&gt;	NT_078123.1	Primary Assembly
+HsUn_78193_33	unplaced-scaffold	na	na	na	&lt;&gt;	NT_078124.1	Primary Assembly
+HsUn_78194_33	unplaced-scaffold	na	na	na	&lt;&gt;	NT_078125.1	Primary Assembly
+HsUn_78195_33	unplaced-scaffold	na	na	na	&lt;&gt;	NT_078126.1	Primary Assembly
+Hs6_35036_33	alt-scaffold	6	Chromosome	na	&lt;&gt;	NT_034874.2	DR51
+Hs6_34106_33	alt-scaffold	6	Chromosome	na	&lt;&gt;	NT_033951.3	DR52</status>
+</test>
+<doc></doc>
+<metadata>
+</metadata>
+<status status="FAIL" endtime="20140204 18:58:24.129" starttime="20140204 18:58:02.911"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="2" pass="0">Critical Tests</stat>
+<stat fail="2" pass="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="2" pass="0" id="s1" name="Assembly">Assembly</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

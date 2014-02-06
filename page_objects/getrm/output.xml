@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20140206 14:29:14.519" generator="Robot 2.8.3 (Python 2.7.2 on linux2)">
+<suite source="/home/frishber/htdocs/projects/rfaaron/page_objects/getrm/test_getrm.txt" id="s1" name="Test Getrm">
+<test id="s1-t1" name="Test locsearch">
+<kw type="kw" name="Selenium2Library.Set Selenium Timeout">
+<doc>Sets the timeout in seconds used by various keywords.</doc>
+<arguments>
+<arg>10</arg>
+</arguments>
+<status status="PASS" endtime="20140206 14:29:14.790" starttime="20140206 14:29:14.789"></status>
+</kw>
+<kw type="kw" name="GeTRM.Open Getrm">
+<doc></doc>
+<arguments>
+</arguments>
+<msg timestamp="20140206 14:29:14.790" level="INFO">Opening browser 'firefox' to base url 'http://www.ncbi.nlm.nih.gov/variation/tools/get-rm'</msg>
+<status status="PASS" endtime="20140206 14:29:19.359" starttime="20140206 14:29:14.790"></status>
+</kw>
+<kw type="kw" name="GeTRM.Search Getrm">
+<doc></doc>
+<arguments>
+<arg>1q24</arg>
+</arguments>
+<msg timestamp="20140206 14:29:19.509" level="INFO">Clicking element 'css=img.content-search-go'.</msg>
+<status status="PASS" endtime="20140206 14:29:20.005" starttime="20140206 14:29:19.359"></status>
+</kw>
+<kw type="kw" name="GeTRM.Getrm Result Arrow Should Exist">
+<doc></doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20140206 14:29:20.026" starttime="20140206 14:29:20.005"></status>
+</kw>
+<kw type="kw" name="GeTRM.Go To Getrm Results">
+<doc></doc>
+<arguments>
+</arguments>
+<msg timestamp="20140206 14:29:20.027" level="INFO">Clicking element 'xpath=//table[contains(@class, 'grid-results')]/tbody/tr[1]/td[@class='ctrl']'.</msg>
+<status status="PASS" endtime="20140206 14:29:21.517" starttime="20140206 14:29:20.027"></status>
+</kw>
+<kw type="kw" name="GeTRM.Getrm Headers Should Match">
+<doc></doc>
+<arguments>
+<arg>Homo sapiens: GRCh37.p\\\d+\\\s+Chr\\\s1\\\s\\\WNC_000001.\\\d+\\\W:\\\s164.7\\\d+M\\\s-\\\s173.6\\\d+M</arg>
+</arguments>
+<status status="PASS" endtime="20140206 14:29:21.923" starttime="20140206 14:29:21.518"></status>
+</kw>
+<kw type="kw" name="GeTRM.Close Getrm">
+<doc></doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20140206 14:29:21.947" starttime="20140206 14:29:21.923"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="PASS" endtime="20140206 14:29:21.947" critical="yes" starttime="20140206 14:29:14.788"></status>
+</test>
+<doc></doc>
+<metadata>
+</metadata>
+<status status="PASS" endtime="20140206 14:29:21.948" starttime="20140206 14:29:14.519"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="0" pass="1">Critical Tests</stat>
+<stat fail="0" pass="1">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="0" pass="1" id="s1" name="Test Getrm">Test Getrm</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

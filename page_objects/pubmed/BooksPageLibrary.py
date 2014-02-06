@@ -1,4 +1,4 @@
-from EntrezPageLibrary import EntrezPageLibrary
+from page_objects.common.EntrezPageLibrary import EntrezPageLibrary
 
 
 class BooksPageLibrary(EntrezPageLibrary):

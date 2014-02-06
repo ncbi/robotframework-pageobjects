@@ -1,4 +1,4 @@
-from EntrezPageLibrary import robot_alias, EntrezPageLibrary
+from page_objects.common.EntrezPageLibrary import robot_alias, EntrezPageLibrary
 from BooksPageLibrary import BooksPageLibrary
 
 
