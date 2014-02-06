@@ -1,15 +1,19 @@
 *** Settings ***
 Library    Selenium2Library
 Library    GeTRM
+Test Template	Test locsearch
 
-*** Test Cases ***
-Test locsearch
+*** Keywords ***
+Test locsearch	[Arguments]	${term}    ${expected_value}
 	Set Selenium Timeout	10
 	
 	Open Getrm
-	Search Getrm    1q24
+	Search Getrm    ${term}
 	Getrm Result Arrow Should Exist
 	Go To Getrm Results
-	Getrm Headers Should Match	Homo sapiens: GRCh37.p\\\d+\\\s+Chr\\\s1\\\s\\\WNC_000001.\\\d+\\\W:\\\s164.7\\\d+M\\\s-\\\s173.6\\\d+M
+	Getrm Headers Should Match	${expected_value}
 	Close Getrm
 
+*** Test Cases ***
+1	1q24	Homo sapiens: GRCh37.p\\\d+\\\s+Chr\\\s1\\\s\\\WNC_000001.\\\d+\\\W:\\\s164.7\\\d+M\\\s-\\\s173.6\\\d+M
+2	Neurofibromatosis	Homo sapiens: GRCh37.p\\\d+\\\s+Chr\\\s17\\\s\\\WNC_000017.\\\d+\\\W:\\\s29.6\\\d+M\\\s-\\\s29.\\\d+M
