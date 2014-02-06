@@ -17,6 +17,7 @@ Here's a Robot test case using some page objects. We need to import the ExposedB
 libraries we are going to use in our test case. This imports each library's keywords.
 
 Here's how it works:
+
 - By default, any keywords defined in the page object class are aliased to the same keyword name,
 but with the name of the page object (minus "PageLibrary"). This means that when using the page object in Robot,
 "my_keyword" becomes "My Keyword PageObjectName". This enforces readability and consistency in your Robot Framework
