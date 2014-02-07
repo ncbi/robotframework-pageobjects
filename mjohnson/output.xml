@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20140207 18:21:21.050" generator="Robot 2.8.3 (Python 2.7.4 on darwin)">
+<suite source="/Users/mjohnson/Projects/ift/rfexp/mjohnson/annotation_reports.robot" id="s1" name="Annotation Reports">
+<test id="s1-t1" name="Test Report Open">
+<kw type="kw" name="${species} = BuiltIn.Set Variable">
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<arguments>
+<arg>Apis_mellifera</arg>
+</arguments>
+<msg timestamp="20140207 18:21:23.579" level="INFO">${species} = Apis_mellifera</msg>
+<status status="PASS" endtime="20140207 18:21:23.579" starttime="20140207 18:21:23.578"></status>
+</kw>
+<kw type="kw" name="${build} = BuiltIn.Set Variable">
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<arguments>
+<arg>102</arg>
+</arguments>
+<msg timestamp="20140207 18:21:23.579" level="INFO">${build} = 102</msg>
+<status status="PASS" endtime="20140207 18:21:23.579" starttime="20140207 18:21:23.579"></status>
+</kw>
+<kw type="kw" name="AnnotationReportPageLibrary.Open Annotationreport">
+<doc></doc>
+<arguments>
+<arg>${species}</arg>
+<arg>${build}</arg>
+</arguments>
+<msg timestamp="20140207 18:21:23.579" level="INFO">Opening browser 'firefox' to base url 'http://www.ncbi.nlm.nih.gov/genome/annotation_euk/Apis_mellifera/102/'</msg>
+<status status="PASS" endtime="20140207 18:21:39.718" starttime="20140207 18:21:23.579"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Assign Id To Element">
+<doc>Assigns a temporary identifier to element specified by `locator`.</doc>
+<arguments>
+<arg>css=#BuildInfo</arg>
+<arg>H1</arg>
+</arguments>
+<msg timestamp="20140207 18:21:39.719" level="INFO">Assigning temporary id 'H1' to element 'css=#BuildInfo'</msg>
+<kw type="kw" name="Selenium2Library.Capture Page Screenshot">
+<doc>Takes a screenshot of the current page and embeds it into the log.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20140207 18:21:39.979" level="FAIL">No browser is open</msg>
+<status status="FAIL" endtime="20140207 18:21:39.979" starttime="20140207 18:21:39.720"></status>
+</kw>
+<msg timestamp="20140207 18:21:39.979" level="WARN">Keyword 'Capture Page Screenshot' could not be run on failure: No browser is open</msg>
+<msg timestamp="20140207 18:21:40.073" level="FAIL">No browser is open</msg>
+<status status="FAIL" endtime="20140207 18:21:40.073" starttime="20140207 18:21:39.719"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20140207 18:21:40.073" critical="yes" starttime="20140207 18:21:23.578">No browser is open</status>
+</test>
+<doc></doc>
+<metadata>
+</metadata>
+<status status="FAIL" endtime="20140207 18:21:40.074" starttime="20140207 18:21:21.050"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="0">Critical Tests</stat>
+<stat fail="1" pass="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="1" pass="0" id="s1" name="Annotation Reports">Annotation Reports</stat>
+</suite>
+</statistics>
+<errors>
+<msg timestamp="20140207 18:21:39.979" level="WARN">Keyword 'Capture Page Screenshot' could not be run on failure: No browser is open</msg>
+</errors>
+</robot>
