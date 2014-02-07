@@ -1,5 +1,6 @@
 import unittest
-from PubmedPageLibrary import PubmedPageLibrary
+from pageobjects.PubmedPageLibrary import PubmedPageLibrary
+
 
 class TestPubmedflows(unittest.TestCase):
 
