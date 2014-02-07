@@ -1,4 +1,5 @@
-git+https://stash.ncbi.nlm.nih.gov/scm/ift/ift-core.git@v0.4
 robotframework==2.8.3
 robotframework-selenium2library==1.5.0
+nose
+nose2
 
