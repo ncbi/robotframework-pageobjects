@@ -1,7 +1,7 @@
-Robot Page Objects API
+Robot Experiment & Page Objects API
 ======================
 
-This is a demo of the Robot Selenium2 Page Object API.
+This is the home of the Robot Framework experiment repo.
 
 Why?
 ----
