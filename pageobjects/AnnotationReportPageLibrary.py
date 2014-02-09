@@ -4,7 +4,6 @@ import time
 class AnnotationReportPageLibrary(PageObjectLibrary):
     homepage = "http://www.ncbi.nlm.nih.gov/genome/annotation_euk"
 
-    @robot_alias("open__name__")
     def open(self, species, build):
         url = self.homepage + "/" + species + "/" + build + "/"
         self.species = species

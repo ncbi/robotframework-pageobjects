@@ -49,7 +49,6 @@ class PageObjectLibrary(object):
             ExposedBrowserSelenium2Library()
             self.se = ExposedBrowserSelenium2Library._se_instance
 
-
     def output(self, data):
         sys.__stdout__.write(str(data))
 
