@@ -1,5 +1,6 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from pageobjects.base.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
+from robot.libraries.BuiltIn import BuiltIn
 import inspect
 
 import sys
@@ -39,16 +40,23 @@ class PageObjectLibrary(object):
 
     def __init__(self, url=None):
         self.calling_class_name =  self.__class__.__name__.replace("PageLibrary", "").lower()
-
+        se = BuiltIn().get_library_instance("Selenium2Library")
+        if se is not None:
+            self.se = se
+        else:
+            ExposedBrowserSelenium2Library()
+            self.se = ExposedBrowserSelenium2Library._se_instance
+        """
         try:
 
             # Try to expose The RF's SE instance
-            self.se = ExposedBrowserSelenium2Library._se_instance
+            #self.se = ExposedBrowserSelenium2Library._se_instance
+            
         except AttributeError:
             # If it doesn't already exist, instantiate first.
             ExposedBrowserSelenium2Library()
             self.se = ExposedBrowserSelenium2Library._se_instance
-
+        """
     def output(self, data):
         sys.__stdout__.write(str(data))
 
