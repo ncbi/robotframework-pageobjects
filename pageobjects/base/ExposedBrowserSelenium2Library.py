@@ -1,5 +1,5 @@
 from Selenium2Library import Selenium2Library
-
+import sys
 
 class ExposedBrowserSelenium2Library(Selenium2Library):
 

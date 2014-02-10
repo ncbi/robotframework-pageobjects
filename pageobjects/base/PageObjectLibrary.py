@@ -1,5 +1,6 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from pageobjects.base.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
+from robot.libraries.BuiltIn import BuiltIn
 import inspect
 
 import sys
@@ -39,20 +40,45 @@ class PageObjectLibrary(object):
 
     def __init__(self, url=None):
 
-        # Look for a name attribute. If one exists, use that for the keyword alias,
-        # otherwise use the page object class name minus "PageLibrary".
-        try:
-            self.pageobject_name = self.name
-        except AttributeError:
-            self.pageobject_name = self.__class__.__name__.replace("PageLibrary", "").lower()
+        self.se = self._get_se_instance()
+        self.pageobject_name = self._get_pageobject_name()
 
+    def _get_se_instance(self):
+
+        """
+        Gets the Selenoim2Library instance (which interfaces with SE)
+        First it looks for an se2lib instance defined in Robot,
+        which exists if a test has included a SE2Library.
+
+        If the Se2Library is not included directly, then it looks for the
+        instance stored on exposedbrowserselib, and if that's not found, it
+        creates the instance.
+        """
         try:
-            # Try to expose The RF's SE instance
-            self.se = ExposedBrowserSelenium2Library._se_instance
+            se = BuiltIn().get_library_instance("Selenium2Library")
+        except (RuntimeError, AttributeError):
+            # We didn't find an instance in Robot, so see if one has been created by another Page Object.
+            try:
+                se = ExposedBrowserSelenium2Library._se_instance
+            except AttributeError:
+                # Create the instance
+                ExposedBrowserSelenium2Library()
+                se = ExposedBrowserSelenium2Library._se_instance
+        return se
+
+    def _get_pageobject_name(self):
+
+        """
+        Gets the name that will be appended to keywords when using
+        Robot by looking at the name attribute of the page object class.
+        If no "name" attribute is defined, appends the name of the page object
+        class.
+        """
+        try:
+            pageobject_name = self.name
         except AttributeError:
-            # If it doesn't already exist, instantiate first.
-            ExposedBrowserSelenium2Library()
-            self.se = ExposedBrowserSelenium2Library._se_instance
+            pageobject_name = self.__class__.__name__.replace("PageLibrary", "").lower()
+        return pageobject_name
 
 
     def output(self, data):
