@@ -15,9 +15,9 @@ First Things First
 ------------------
 
 Take a look at
-    - [Robot Framework's Quick Start Guide](http://robotframework.googlecode
+- [Robot Framework's Quick Start Guide](http://robotframework.googlecode
 .com/hg/doc/quickstart/quickstart.html) to get an idea of what Robot Framework is
-    - [Selenium2Library](http://rtomac.github.io/robotframework-selenium2library/doc/Selenium2Library.html).
+- [Selenium2Library](http://rtomac.github.io/robotframework-selenium2library/doc/Selenium2Library.html).
 to learn how Robot Framework can drive Selenium2.
 
 Example
