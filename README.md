@@ -22,6 +22,47 @@ Example
 Here's a Robot test case using some page objects. We need to import any page objects libraries we need in our test
 case. **Note**: If we want to use standard Selenium2Library keywords, we need to also include Selenium2Library.
 
+    # test_pubmed_to_books.robot
+    *** Settings ***
+
+    Documentation  A test of flow from pubmed to Books, showing how we might properly encapsulate the AUT(s)
+    ...
+    Library    PubmedPageLibrary
+    Library    BooksPageLibrary
+
+    *** Test Cases ***
+
+    Test PubMed To Books
+        Open Pubmed
+        Search Pubmed  breast cancer
+        Find Related Data From Pubmed In  books
+        Click Books Docsum Item  0
+        Click Table Of Contents Books
+        Close Books
+
+Note that there are no assertions; this is just to show you how the page objects work.
+
+Here is the PubmedLibrary page object:
+
+    # PubmedPageLibrary.py
+    from pageobjects.base.EntrezPageLibrary import robot_alias, EntrezPageLibrary
+    from BooksPageLibrary import BooksPageLibrary
+
+
+    class PubmedPageLibrary(EntrezPageLibrary):
+        name = "pubmed"
+        homepage = "http://www.ncbi.nlm.nih.gov/pubmed"
+
+        @robot_alias("find_related_data_from__name__in")
+        def find_related_data_in(self, dbname):
+            self.se.wait_until_element_is_visible("rdDatabase")
+            self.se.select_from_list_by_value("rdDatabase", dbname)
+            self.se.wait_until_page_contains("NCBI Bookshelf books that cite the current articles")
+            self.se.click_button("rdFind")
+
+            # For demo purpose, hardcode the type of page returned
+            return BooksPageLibrary()
+
 Here's how it works:
 
 - By default, any keywords defined in the page object class are aliased to the same keyword name,

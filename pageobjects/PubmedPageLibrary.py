@@ -15,6 +15,3 @@ class PubmedPageLibrary(EntrezPageLibrary):
 
         # For demo purpose, hardcode the type of page returned
         return BooksPageLibrary()
-    
-    def __init__(self, *args, **kwargs):
-        return super(PubmedPageLibrary, self).__init__(*args, **kwargs)
