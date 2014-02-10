@@ -8,15 +8,16 @@ Why?
 
 - Robot is great, but it would be nice to encapsulate page/application logic using standard Python OO techniques
 without losing the readability inherent in typical Robot Framework test cases.
-- It would also be great if we could reuse these Robot page objects in generic unittest Test Cases
+- It would also be great if we could reuse these Robot page objects, decoupled from Robot Framework.
 
 
 First Things First
 ------------------
 
-Take a look at [Robot Framework's Quick Start Guide](http://robotframework.googlecode
-.com/hg/doc/quickstart/quickstart.html) to get an idea of what Robot Framework is,
-combined with [Selenium2Library](http://rtomac.github.io/robotframework-selenium2library/doc/Selenium2Library.html).
+Take a look at
+    - [Robot Framework's Quick Start Guide](http://robotframework.googlecode
+.com/hg/doc/quickstart/quickstart.html) to get an idea of what Robot Framework is
+    - [Selenium2Library](http://rtomac.github.io/robotframework-selenium2library/doc/Selenium2Library.html).
 to learn how Robot Framework can drive Selenium2.
 
 Example
