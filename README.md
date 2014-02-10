@@ -13,8 +13,7 @@ without losing the readability inherent in typical Robot Framework test cases.
 First Things First
 ------------------
 
-Take a look at [http://robotframework.googlecode.com/hg/doc/quickstart/quickstart.html](Robot Framework Quickstart
-Guide)
+Take a look at [I'm an inline-style link](https://www.google.com)
 
 Example
 ----
