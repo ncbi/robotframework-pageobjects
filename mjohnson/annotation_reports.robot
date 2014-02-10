@@ -1,4 +1,5 @@
 *** Settings ***
+Library  Selenium2Library
 Library	AnnotationReportPageLibrary
 
 *** Test Cases ***
