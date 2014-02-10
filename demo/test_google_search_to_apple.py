@@ -10,6 +10,7 @@ class TestGoogleSearch(unittest.TestCase):
     def test_google_search_to_apple(self):
         result_page = self.google_page.search("apple computers")
         result_page.click_result(1)
+        result_page.se.title_should_be("Apple")
 
     def tearDown(self):
         self.google_page.close()
