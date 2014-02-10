@@ -9,11 +9,18 @@ Why?
 without losing the readability inherent in typical Robot Framework test cases.
 - It would also be great if we could reuse these Robot page objects in generic unittest Test Cases
 
+
+First Things First
+------------------
+
+Take a look at [http://robotframework.googlecode.com/hg/doc/quickstart/quickstart.html](Robot Framework Quickstart
+Guide)
+
 Example
 ----
 
-Here's a Robot test case using some page objects. We need to import the ExposedBrowserSelenium2Library and any page
-libraries we are going to use in our test case. This imports each library's keywords.
+Here's a Robot test case using some page objects. We need to import any page objects libraries we need in our test
+case. *Note*: If we want to use standard Selenium2Library keywords, we need to also include Selenium2Library.
 
 Here's how it works:
 
