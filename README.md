@@ -1,6 +1,7 @@
-Robot Experiment & Page Objects API
-===================================
+Robot Framework/Selenium2Library Page Objects
+==================
 
+Adds the concept of Page Objects to Robot Framework & Selenium2Library.
 
 Why?
 ----
@@ -13,7 +14,10 @@ without losing the readability inherent in typical Robot Framework test cases.
 First Things First
 ------------------
 
-Take a look at [Robot Framework's Quick Start Guide](http://robotframework.googlecode.com/hg/doc/quickstart/quickstart.html)
+Take a look at [Robot Framework's Quick Start Guide](http://robotframework.googlecode
+.com/hg/doc/quickstart/quickstart.html) to get an idea of what Robot Framework is,
+combined with [Selenium2Library](http://rtomac.github.io/robotframework-selenium2library/doc/Selenium2Library.html).
+to learn how Robot Framework can drive Selenium2.
 
 Example
 ----
