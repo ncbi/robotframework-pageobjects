@@ -1,14 +1,9 @@
 Robot Framework/Selenium2Library Page Objects
 ==================
 
-Adds the concept of Page Objects to Robot Framework & Selenium2Library.
-
-Why?
-----
-
-- Robot is great, but it would be nice to encapsulate page/application logic using standard Python OO techniques
-without losing the readability inherent in typical Robot Framework test cases.
-- It would also be great if we could reuse these Robot page objects, decoupled from Robot Framework.
+Adds the concept of Page Objects to Robot Framework & Selenium2Library. Page objects can work independently of Robot
+Framework allowing you to encapsulate page logic in Robot Framework testcases or outsides of Robot Framework (eg.
+Python unittest test cases).
 
 
 First Things First
