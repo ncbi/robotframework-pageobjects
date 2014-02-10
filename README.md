@@ -27,7 +27,7 @@ case. **Note**: If we want to use standard Selenium2Library keywords, we need to
 
     Documentation  A test of flow from pubmed to Books, showing how we might properly encapsulate the AUT(s)
     ...
-    Library    PubmedPageLibrary
+    Library    GooglePageLibrary
     Library    BooksPageLibrary
 
     *** Test Cases ***
@@ -62,6 +62,10 @@ Here is the PubmedLibrary page object:
 
             # For demo purpose, hardcode the type of page returned
             return BooksPageLibrary()
+
+...and the EntrezPageLibrary PubmedPageLibrary extends:
+
+
 
 Here's how it works:
 
