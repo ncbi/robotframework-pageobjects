@@ -38,10 +38,15 @@ class PageObjectLibrary(object):
     _aliases = {}
 
     def __init__(self, url=None):
-        self.calling_class_name =  self.__class__.__name__.replace("PageLibrary", "").lower()
+
+        # Look for a name attribute. If one exists, use that for the keyword alias,
+        # otherwise use the page object class name minus "PageLibrary".
+        try:
+            self.pageobject_name = self.name
+        except AttributeError:
+            self.pageobject_name = self.__class__.__name__.replace("PageLibrary", "").lower()
 
         try:
-
             # Try to expose The RF's SE instance
             self.se = ExposedBrowserSelenium2Library._se_instance
         except AttributeError:
@@ -61,11 +66,11 @@ class PageObjectLibrary(object):
 
         # Look through the alias dict, return the aliased name for Robot
         if name in PageObjectLibrary._aliases:
-            ret = PageObjectLibrary._aliases[name].replace(self._alias_delimiter, "_" + self.calling_class_name + "_")
+            ret = PageObjectLibrary._aliases[name].replace(self._alias_delimiter, "_" + self.pageobject_name + "_")
 
         else:
             # By default, page object name is appended to keyword
-            ret = "%s_%s" % (name, self.calling_class_name)
+            ret = "%s_%s" % (name, self.pageobject_name)
 
         return ret
 
@@ -76,10 +81,10 @@ class PageObjectLibrary(object):
         # Look for a stub matching the alias in the aliases dict.
         # If we find one, return the original func name.
         for fname, stub in PageObjectLibrary._aliases.iteritems():
-            if alias == stub.replace(self._alias_delimiter, "_" + self.calling_class_name + "_"):
+            if alias == stub.replace(self._alias_delimiter, "_" + self.pageobject_name + "_"):
                 return fname
         # We didn't find a match, so take the class name off the end.
-        return alias.replace("_" + self.calling_class_name, "")
+        return alias.replace("_" + self.pageobject_name, "")
 
     def get_keyword_names(self):
         # Return all method names on the class to expose keywords to Robot Framework
