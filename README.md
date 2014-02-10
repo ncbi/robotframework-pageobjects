@@ -20,7 +20,7 @@ Example
 ----
 
 Here's a Robot test case using some page objects. We need to import any page objects libraries we need in our test
-case. *Note*: If we want to use standard Selenium2Library keywords, we need to also include Selenium2Library.
+case. **Note**: If we want to use standard Selenium2Library keywords, we need to also include Selenium2Library.
 
 Here's how it works:
 
