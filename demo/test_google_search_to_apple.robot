@@ -3,8 +3,8 @@
 Documentation  Tests searching Google and ending up on Apple.
 ...
 Library    Selenium2Library
-Library    GooglePageLibrary
-Library    GoogleResultPageLibrary
+Library    pageobjects.google.Page
+Library    pageobjects.google.ResultPage
 
 *** Test Cases ***
 

@@ -22,9 +22,13 @@ class Page(PageObjectLibrary):
     def search(self, term):
         self.se.input_text("xpath=//input[@name='q']", term)
         self.se.click_element("gs_htif0")
-
+        return ResultPage()
 
 class ResultPage(Page):
+
+    """
+    A Google Result page. Inherits from Google Page.
+    """
     name = "Google Result Page"
 
     @robot_alias("on__name__click_result")
