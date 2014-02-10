@@ -10,4 +10,4 @@ Test Report Open
      Assign Id To Element	css=#BuildInfo	H1
      Element Should Contain	H1              ${species}
      Element Should Contain	H1              ${build}
-     Close AnnotationReport
+     [Teardown]  Close AnnotationReport
