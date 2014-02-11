@@ -16,8 +16,8 @@ Take a look at:
 to learn how Robot Framework can drive Selenium2.
 - [Page Object Pattern](http://martinfowler.com/bliki/PageObject.html)
 
-Example
-----
+How it Works
+------------
 
 Here's a Robot test case using some page objects. We need to import any page objects libraries we need in our test
 case. **Note**: If we want to use standard Selenium2Library keywords, we need to also include Selenium2Library. This
