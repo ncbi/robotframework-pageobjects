@@ -2,6 +2,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from pageobjects.base.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
 from robot.libraries.BuiltIn import BuiltIn
 import inspect
+import re
 
 import sys
 
@@ -75,9 +76,10 @@ class PageObjectLibrary(object):
         class.
         """
         try:
-            pageobject_name = self.name
+            pageobject_name = re.sub(r"\s+", "_", self.name)
         except AttributeError:
             pageobject_name = self.__class__.__name__.replace("PageLibrary", "").lower()
+
         return pageobject_name
 
 
