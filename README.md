@@ -40,90 +40,79 @@ code is in demos/test_google_search_to_apple.robot:
         Title Should Be  Apple
         [Teardown]  Close Google
 
+Here's a regular, unittest test case using the same page object:
+
+    import unittest
+    from pageobjects import google
+
+
+    class TestGoogleSearch(unittest.TestCase):
+
+        def setUp(self):
+            self.google_page = google.Page().open()
+
+        def test_google_search_to_apple(self):
+            result_page = self.google_page.search("apple computers")
+            result_page.click_result(1)
+
+            # This call to .se will go away when we import
+            # se methods into the page object.
+            result_page.se.title_should_be("Apple")
+
+        def tearDown(self):
+            self.google_page.close()
+
+    unittest.main()
+
 
 Here is the Google page object. It is designed to be the base class of all Google page objects and is in pageobjects
 /google.py:
 
-
-    # PubmedPageLibrary.py
-    from pageobjects.base.EntrezPageLibrary import robot_alias, EntrezPageLibrary
-    from BooksPageLibrary import BooksPageLibrary
+    from pageobjects.base.PageObjectLibrary import PageObjectLibrary, robot_alias
 
 
-    class PubmedPageLibrary(EntrezPageLibrary):
-        name = "pubmed"
-        homepage = "http://www.ncbi.nlm.nih.gov/pubmed"
+    class Page(PageObjectLibrary):
 
-        @robot_alias("find_related_data_from__name__in")
-        def find_related_data_in(self, dbname):
-            self.se.wait_until_element_is_visible("rdDatabase")
-            self.se.select_from_list_by_value("rdDatabase", dbname)
-            self.se.wait_until_page_contains("NCBI Bookshelf books that cite the current articles")
-            self.se.click_button("rdFind")
+        """
+        Base Google Page
 
-            # For demo purpose, hardcode the type of page returned
-            return BooksPageLibrary()
+        For example, search() works on any google page.
+        """
+        homepage = "http://www.google.com"
 
-...and the EntrezPageLibrary PubmedPageLibrary extends:
+        # name attribute tells Robot Keywords what name to put
+        # after the defined method. So, def foo.. aliases to "Foo Google".
+        # If no name is defined, the name will be the name of the page object
+        # class.
+        name = "Google"
 
+        # By default, page object methods
+        # map in Robot Framework to method name + class name.
+        # Eg. Search Google  term. But we can use robot_alias decorator
+        # with the __name__ token to map the page object name to
+        # wherever you want in the method. So this would become
+        # Search Google For  term.
+        @robot_alias("search__name__for")
+        def search(self, term):
+            self.se.input_text("xpath=//input[@name='q']", term)
+            self.se.click_element("gs_htif0")
+            return ResultPage()
 
+Here's the Google Result page object:
 
-Here's how it works:
+    class ResultPage(Page):
 
-- By default, any keywords defined in the page object class are aliased to the same keyword name,
-but with the name of the page object (minus "PageLibrary"). This means that when using the page object in Robot,
-"my_keyword" becomes "My Keyword PageObjectName". This enforces readability and consistency in your Robot Framework
-test cases.
+        """
+        A Google Result page. Inherits from Google Page.
+        """
+        name = "Google Result Page"
 
-- When importing the page object in a unittest TestCase there is no aliasing because the keyword will be predicated
-by the instance. This is typical object-oriented and should be inherently readable (at least for code).
-
-- There's an affordance for when you don't want the page object name to be appended to the keyword in Robot Framework
-. In this case you define your keyword with the "robot_alias" decorator from the PageObjectLibrary. This allows you
-to use a delimiter, "__name__" to tell Robot Framework where to substitute in the page object name.
-
-Here are some examples. Notice how, in general, the name of the page object comes at the end of each keyword. And
-notice how readable both examples are. The core logic and Selenium code is all encapsulated in the page objects,
-in both the Robot Framework example and the unittest example.
-
-    # testcase.robot
-
-     *** Settings ***
-
-    Documentation  A test of flow from pubmed to Books, showing how we might properly encapsulate the AUT(s)
-    ...
-    Library    ExposedBrowserSelenium2Library
-    Library    PubmedPageLibrary
-    Library    BooksPageLibrary
-
-    *** Test Cases ***
-
-    Test PubMed To Books
-        Open Pubmed
-        Search Pubmed  breast cancer
-        Find Related Data From Pubmed In  books
-        Click Books Docsum Item  0
-        Click Table Of Contents Books
-        [teardown]  Close Browser
-
-Here is the same test in a Python unittest TestCase, totally apart from Robot Framework. Notice how here we use the
-object's original methods, and it's still readable because they are predicated by the page object instance:
-
-    # testcase.py
-    import unittest
-    from PubmedPageLibrary import PubmedPageLibrary
-
-    class TestPubmedflows(unittest.TestCase):
-
-        def test_pubmed_to_books(self):
-            pubmed_page = PubmedPageLibrary().open()
-            pubmed_page.search("breast cancer")
-            books_page = pubmed_page.find_related_data_in("books")
-            books_page.click_docsum_item(0)
-            books_page.click_table_of_contents()
-            books_page.close()
-
-
-Check out this directory for the source code of the PageObject base class and some example page objects which use
-PageObjectLibrary.
+        # This will become "On Google Result Page Click Result"
+        @robot_alias("on__name__click_result")
+        def click_result(self, i):
+            els = self.se._element_find("xpath=//h3[@class='r']/a[not(ancestor::table)]", False, False, tag="a")
+            try:
+                els[int(i)].click()
+            except IndexError:
+                raise Exception("No result found")
 

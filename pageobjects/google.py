@@ -10,6 +10,11 @@ class Page(PageObjectLibrary):
     For example, search() works on any google page.
     """
     homepage = "http://www.google.com"
+
+    # name attribute tells Robot Keywords what name to put
+    # after the defined method. So, def foo.. aliases to "Foo Google".
+    # If no name is defined, the name will be the name of the page object
+    # class.
     name = "Google"
 
     # By default, page object methods
@@ -31,6 +36,7 @@ class ResultPage(Page):
     """
     name = "Google Result Page"
 
+    # This will become "On Google Result Page Click Result"
     @robot_alias("on__name__click_result")
     def click_result(self, i):
         els = self.se._element_find("xpath=//h3[@class='r']/a[not(ancestor::table)]", False, False, tag="a")
