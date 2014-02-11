@@ -40,7 +40,7 @@ code is in demos/test_google_search_to_apple.robot:
         Title Should Be  Apple
         [Teardown]  Close Google
 
-Here's a regular, unittest test case using the same page object:
+Here's a regular, unittest test case using the same page object. This code is in demos/test_google_search_to_apple.py:
 
     import unittest
     from pageobjects import google
@@ -98,8 +98,9 @@ Here is the Google page object. It is designed to be the base class of all Googl
             self.se.click_element("gs_htif0")
             return ResultPage()
 
-Here's the Google Result page object:
+Here's the Google Result page object. It's also in pageobjects/google.py:
 
+    ...
     class ResultPage(Page):
 
         """
