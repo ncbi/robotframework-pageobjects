@@ -13,5 +13,5 @@ Test PubMed To Books
     Find Related Data From Pubmed In  books
     Click Books Docsum Item  0
     Click Table Of Contents Books
-    Close Books
+    [Teardown]  Close Books
 

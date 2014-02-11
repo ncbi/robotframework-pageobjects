@@ -4,7 +4,7 @@ from BooksPageLibrary import BooksPageLibrary
 
 class PubmedPageLibrary(EntrezPageLibrary):
     name = "pubmed"
-    homepage = "http://www.ncbi.nlm.nih.gov/pubmed"
+    homepage = "/pubmed"
 
     @robot_alias("find_related_data_from__name__in")
     def find_related_data_in(self, dbname):

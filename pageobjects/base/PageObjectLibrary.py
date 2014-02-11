@@ -1,6 +1,8 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from pageobjects.base.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
 from robot.libraries.BuiltIn import BuiltIn
+from optionhandler import OptionHandler
+
 import inspect
 import re
 
@@ -43,6 +45,11 @@ class PageObjectLibrary(object):
 
         self.se = self._get_se_instance()
         self.pageobject_name = self._get_pageobject_name()
+        self._option_handler = OptionHandler()
+        self.baseurl = self._option_handler.get("baseurl")
+
+        # This is created for each page object..but it doesn't need to be.
+        #self.output(self._option_handler._opts)
 
     def _get_se_instance(self):
 
@@ -128,14 +135,30 @@ class PageObjectLibrary(object):
         orig_meth = getattr(self, self._get_funcname_from_robot_alias(alias))
         return orig_meth(*args)
 
-    def open(self, url=None):
-        self.se.set_selenium_speed(0.5)
+    def _get_url(self, url=None):
+        """
+        Gets the url to open for the page object's open method,
+        depending on whether
+        baseurl is set, url is passed etc.
+        """
         if url:
-            self.se.open_browser(url, self.browser)
-
+            # URL is passed, if base url set, prefix it
+            if self.baseurl:
+                ret = self.baseurl + url
+            else:
+                ret = url
         else:
-            self.se.open_browser(self.homepage, self.browser)
+            if self.baseurl:
+                # If no url passed and base url, then go to base url + homepage
+                ret = self.baseurl + self.homepage
+            else:
+                if not self.homepage.startswith("http"):
+                    raise Exception("Home page '%s' is invalid. You must Set a baseurl" % self.homepage)
+        return ret
 
+    def open(self, url=None):
+
+        self.se.open_browser(self._get_url(url), self.browser)
         return self
 
     def close(self):
