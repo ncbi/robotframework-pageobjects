@@ -10,7 +10,7 @@ class Page(PageObjectLibrary):
     For example, search() works on any google page.
     """
     homepage = "http://www.google.com"
-    name = "Google Homepage"
+    name = "Google"
 
     # By default, page object methods
     # map in Robot Framework to method name + class name.

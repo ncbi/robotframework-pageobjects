@@ -20,29 +20,30 @@ Example
 ----
 
 Here's a Robot test case using some page objects. We need to import any page objects libraries we need in our test
-case. **Note**: If we want to use standard Selenium2Library keywords, we need to also include Selenium2Library.
+case. **Note**: If we want to use standard Selenium2Library keywords, we need to also include Selenium2Library. This
+code is in demos/test_google_search_to_apple.robot:
 
-    # test_pubmed_to_books.robot
     *** Settings ***
 
-    Documentation  A test of flow from pubmed to Books, showing how we might properly encapsulate the AUT(s)
+    Documentation  Tests searching Google and ending up on Apple.
     ...
-    Library    GooglePageLibrary
-    Library    BooksPageLibrary
+    Library    Selenium2Library
+    Library    pageobjects.google.Page
+    Library    pageobjects.google.ResultPage
 
     *** Test Cases ***
 
-    Test PubMed To Books
-        Open Pubmed
-        Search Pubmed  breast cancer
-        Find Related Data From Pubmed In  books
-        Click Books Docsum Item  0
-        Click Table Of Contents Books
-        Close Books
+    Test Google To Apple
+        Open Google
+        Search Google For  Apple Computers
+        On Google Result Page Click Result  1
+        Title Should Be  Apple
+        [Teardown]  Close Google
 
-Note that there are no assertions; this is just to show you how the page objects work.
 
-Here is the PubmedLibrary page object:
+Here is the Google page object. It is designed to be the base class of all Google page objects and is in pageobjects
+/google.py:
+
 
     # PubmedPageLibrary.py
     from pageobjects.base.EntrezPageLibrary import robot_alias, EntrezPageLibrary
