@@ -1,10 +1,12 @@
 import re
 import os
 import imp
+import sys
 
 # Our page objects should be used independently of Robot Framework
 try:
     from robot.libraries.BuiltIn import BuiltIn
+    from robot.api import logger
 except ImportError:
     pass
 
@@ -18,18 +20,22 @@ class OptionHandler(object):
 
     _instance = None
     _opts = {}
+    _new_called = 0
 
     def __new__(cls, *args, **kwargs):
 
         # Singleton pattern...
         if cls._instance is None:
             cls._instance = super(OptionHandler, cls).__new__(cls, *args, **kwargs)
+            cls._new_called += 1
 
         return cls._instance
 
     def __init__(self):
-        if self._instance is None:
+
+        if self._new_called == 1:
             try:
+
                 self._opts = BuiltIn().get_variables()
 
             except AttributeError:
