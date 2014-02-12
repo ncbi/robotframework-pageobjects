@@ -88,7 +88,6 @@ def robot_alias(stub):
     """
     return _Keywords.robot_alias(stub)
 
-
 class _S2LWrapper(object):
     """
     Defines the methods to be used in PageObjectLibrary that interact with Selenium2Library.
@@ -147,11 +146,12 @@ class _BaseActions(_S2LWrapper):
     def __init__(self, *args, **kwargs):
         super(_BaseActions, self).__init__(*args, **kwargs)
         self._option_handler = OptionHandler()
-        self.selenium_speed = self._option_handler.get("selenium_speed") or .25
+        self.selenium_speed = self._option_handler.get("selenium_speed") or .5
         self.set_selenium_speed(self.selenium_speed)
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
 
+        
 
     def resolve_url(self, url=None):
         """
@@ -172,7 +172,7 @@ class _BaseActions(_S2LWrapper):
                 ret = self.baseurl + self.homepage
             else:
                 if not self.homepage.startswith("http"):
-                    raise Exception("Home page '%s' is invalid. You must Set a baseurl" % self.homepage)
+                    raise Exception("Home page '%s' is invalid. You must set a baseurl" % self.homepage)
                 else:
                     ret = self.homepage
         return ret

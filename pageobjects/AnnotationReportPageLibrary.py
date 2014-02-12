@@ -2,7 +2,7 @@ from pageobjects.base.PageObjectLibrary import PageObjectLibrary, robot_alias
 import time
 
 class AnnotationReportPageLibrary(PageObjectLibrary):
-    homepage = "http://www.ncbi.nlm.nih.gov/genome/annotation_euk"
+    homepage = "/genome/annotation_euk"
 
     def open(self, species, build):
         url = self.homepage + "/" + species + "/" + build + "/"

@@ -28,7 +28,6 @@ class GeTRMPageLibrary(PageObjectLibrary):
 
     @robot_alias("go_to__name__results")
     def go_to_results(self):
-        #self.se.mouse_over(selectors["result-arrow"])
         self.click_element(selectors["result-arrow"])
         return self
 
@@ -42,7 +41,6 @@ class GeTRMPageLibrary(PageObjectLibrary):
     def headers_should_match(self, expected_value):
         self.wait_for(lambda: self._get_values(selectors["header-spans"]).strip() != "")
         value = self._get_values(selectors["header-spans"])
-        #asserts.assert_equal(value, expected_value)
         search_result = re.search(expected_value, value)
         asserts.assert_true(search_result is not None,
                             "Headers should look like %s but got %s instead" % (expected_value, value))

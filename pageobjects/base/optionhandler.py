@@ -18,19 +18,25 @@ class OptionHandler(object):
 
     _instance = None
     _opts = {}
+    _new_called = 0
 
     def __new__(cls, *args, **kwargs):
+
+        # Singleton pattern...
         if cls._instance is None:
             cls._instance = super(OptionHandler, cls).__new__(cls, *args, **kwargs)
+            cls._new_called += 1
 
         return cls._instance
 
     def __init__(self):
-        try:
-            self._opts = BuiltIn().get_variables()
 
-        except AttributeError:
-            self._opts = self._get_opts_no_robot()
+        if self._new_called == 1:
+            try:
+                self._opts = BuiltIn().get_variables()
+
+            except AttributeError:
+                self._opts = self._get_opts_no_robot()
 
     def _get_opts_no_robot(self):
 
@@ -48,7 +54,7 @@ class OptionHandler(object):
         ret = {}
         # Trying to call outside Robot Framework
         # Configire with environment variables
-        var_file_path = os.environ["PO_VAR_FILE"]
+        var_file_path = os.environ.get("PO_VAR_FILE", None)
         if var_file_path:
             abs_var_file_path = os.path.abspath(var_file_path)
             try:
