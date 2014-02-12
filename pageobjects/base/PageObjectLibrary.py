@@ -3,7 +3,9 @@ import re
 import sys
 
 from selenium.webdriver.support.ui import WebDriverWait
+
 from robot.libraries.BuiltIn import BuiltIn
+from robot.api import logger as robot_logger
 
 from pageobjects.base.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
 from optionhandler import OptionHandler
@@ -51,6 +53,7 @@ class PageObjectLibrary(object):
         self.se.set_selenium_speed(self.selenium_speed)
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
+        self.logger = robot_logger
 
 
         # This is created for each page object..but it doesn't need to be.
