@@ -134,7 +134,29 @@ or
 
     $ pybot --variablefile=/path/to/vars.py mytest.robot
 
+Keep in mind that variables set on the command-line override those in the variable file.
+
 #### Outside Robot
 
-foo
+Outside of Robot, use environment variables to set options (unittest frameworks like unittest are not really designed
+with changable configuration in mind, so it's hard to pass options on the command-line without coupling it to a
+particular runner). All environment variables must be uppercase and prefixed with "PO_":
+
+You can set individual options:
+
+    $ export PO_BROWSER=firefox
+
+or you can set options in a variable file, like in Robot:
+
+    $ export PO_VAR_FILE=path/to/vars.py
+
+Individual "PO_" environment variables override any set in a variable file.
+
+### Options Defined by Page Objects
+
+- browser: which browser to use.
+- baseurl: which URL to base open calls with. For example if you set your page object's homepage with self.homepage
+to a relative URL, like "/search", you can set your baseurl to "http://www.example.com". A call to your page object's
+ open method will open at "http://www.example.com/search".
+
 
