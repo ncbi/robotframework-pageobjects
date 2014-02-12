@@ -1,12 +1,10 @@
 import re
 import os
 import imp
-import sys
 
 # Our page objects should be used independently of Robot Framework
 try:
     from robot.libraries.BuiltIn import BuiltIn
-    from robot.api import logger
 except ImportError:
     pass
 
@@ -35,7 +33,6 @@ class OptionHandler(object):
 
         if self._new_called == 1:
             try:
-
                 self._opts = BuiltIn().get_variables()
 
             except AttributeError:
