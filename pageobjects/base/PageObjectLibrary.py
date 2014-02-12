@@ -1,12 +1,12 @@
-from selenium.webdriver.support.ui import WebDriverWait
-from pageobjects.base.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
-from robot.libraries.BuiltIn import BuiltIn
-from optionhandler import OptionHandler
-
 import inspect
 import re
-
 import sys
+
+from selenium.webdriver.support.ui import WebDriverWait
+from robot.libraries.BuiltIn import BuiltIn
+
+from pageobjects.base.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
+from optionhandler import OptionHandler
 
 
 def robot_alias(stub):
@@ -18,6 +18,7 @@ def robot_alias(stub):
     TODO: find a better way to store the aliases, maybe as a class decorator.
     TODO: Pull logic of getting aliases out into where the dictionary is handled.
     """
+
     def makefunc(f):
         PageObjectLibrary._aliases[f.__name__] = stub
         return f
@@ -26,7 +27,6 @@ def robot_alias(stub):
 
 
 class PageObjectLibrary(object):
-
     """
     Base RF page object. Imports ExposedBrowserSelenium2Library, which
     in turn exposes the browser object for use.
@@ -118,7 +118,7 @@ class PageObjectLibrary(object):
         for fname, stub in PageObjectLibrary._aliases.iteritems():
             if alias == stub.replace(self._alias_delimiter, "_" + self.pageobject_name + "_"):
                 return fname
-        # We didn't find a match, so take the class name off the end.
+            # We didn't find a match, so take the class name off the end.
         return alias.replace("_" + self.pageobject_name, "")
 
     def get_keyword_names(self):
@@ -153,13 +153,17 @@ class PageObjectLibrary(object):
                 # If no url passed and base url, then go to base url + homepage
                 ret = self.baseurl + self.homepage
             else:
+                print "no base url"
                 if not self.homepage.startswith("http"):
                     raise Exception("Home page '%s' is invalid. You must Set a baseurl" % self.homepage)
+                else:
+                    ret = self.homepage
         return ret
 
     def open(self, url=None):
-
         self.se.open_browser(self.resolve_url(url), self.browser)
+        self.se.delete_all_cookies()
+
         return self
 
     def close(self):
@@ -170,7 +174,9 @@ class PageObjectLibrary(object):
         Waits for a condition defined by the passed function to become True.
         """
         timeout = 10
-        wait = WebDriverWait(self.se._current_browser(), timeout) #TODO: move to default config, allow parameter to this function too
+        wait = WebDriverWait(self.se._current_browser(),
+                             timeout) #TODO: move to default config, allow parameter to this function too
+
         def wait_fnc(driver):
             try:
                 ret = condition()
@@ -178,4 +184,5 @@ class PageObjectLibrary(object):
                 return False
             else:
                 return ret
+
         wait.until(wait_fnc)
