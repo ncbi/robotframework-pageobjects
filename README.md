@@ -1,13 +1,11 @@
-Robot Framework/Selenium2Library Page Objects
-=============================================
+# Robot Framework/Selenium2Library Page Objects
 
 Adds the concept of Page Objects to Robot Framework & Selenium2Library. Page objects can work independently of Robot
 Framework allowing you to encapsulate page logic in Robot Framework testcases or outsides of Robot Framework (eg.
 Python unittest test cases).
 
 
-First Things First
-------------------
+## First Things First
 
 Take a look at:
 
@@ -16,30 +14,7 @@ Take a look at:
 to learn how Robot Framework can drive Selenium2.
 - [Page Object Pattern](http://martinfowler.com/bliki/PageObject.html)
 
-Setting Options
----------------
-
-We need to be able to set options for page objects in both the Robot Framework context and outside that context.
-
-
-### In Robot
-
-For page objects being used in Robot Framework, follow the Robot standard,
-which is to use [variables](http://robotframework.googlecode.com/hg/doc/userguide/RobotFrameworkUserGuide.html?r=2.8.4#creating-variables)
-either on the command line or using a variable file:
-
-    $ pybot --variable=browser:firefox --variable=baseurl:http://www.example.com mytest.robot
-
-or
-
-    $ pybot --variablefile=/path/to/vars.py mytest.robot
-
-### Outside Robot
-
-foo
-
-How it Works
-------------
+## How it Works
 
 Here's a Robot test case using some page objects. We need to import any page objects libraries we need in our test
 case. **Note**: If we want to use standard Selenium2Library keywords, we need to also include Selenium2Library. This
@@ -138,4 +113,26 @@ Here's the Google Result page object. It's also in pageobjects/google.py:
                 els[int(i)].click()
             except IndexError:
                 raise Exception("No result found")
+
+
+### Setting Options
+
+We need to be able to set options for page objects in both the Robot Framework context and outside that context.
+
+
+#### In Robot
+
+For page objects being used in Robot Framework, follow the Robot standard,
+which is to use [variables](http://robotframework.googlecode.com/hg/doc/userguide/RobotFrameworkUserGuide.html?r=2.8.4#creating-variables)
+either on the command line or using a variable file:
+
+    $ pybot --variable=browser:firefox --variable=baseurl:http://www.example.com mytest.robot
+
+or
+
+    $ pybot --variablefile=/path/to/vars.py mytest.robot
+
+#### Outside Robot
+
+foo
 
