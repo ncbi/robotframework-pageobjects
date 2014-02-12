@@ -20,17 +20,20 @@ class OptionHandler(object):
     _opts = {}
 
     def __new__(cls, *args, **kwargs):
+
+        # Singleton pattern...
         if cls._instance is None:
             cls._instance = super(OptionHandler, cls).__new__(cls, *args, **kwargs)
 
         return cls._instance
 
     def __init__(self):
-        try:
-            self._opts = BuiltIn().get_variables()
+        if self._instance is None:
+            try:
+                self._opts = BuiltIn().get_variables()
 
-        except AttributeError:
-            self._opts = self._get_opts_no_robot()
+            except AttributeError:
+                self._opts = self._get_opts_no_robot()
 
     def _get_opts_no_robot(self):
 
