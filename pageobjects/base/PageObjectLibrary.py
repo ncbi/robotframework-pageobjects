@@ -162,7 +162,7 @@ class PageObjectLibrary(object):
                 ret = self.baseurl + self.homepage
             else:
                 if not self.homepage.startswith("http"):
-                    raise Exception("Home page '%s' is invalid. You must Set a baseurl" % self.homepage)
+                    raise Exception("Home page '%s' is invalid. You must set a baseurl" % self.homepage)
                 else:
                     ret = self.homepage
         return ret
