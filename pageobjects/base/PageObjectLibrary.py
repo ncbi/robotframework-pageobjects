@@ -37,7 +37,6 @@ class PageObjectLibrary(object):
     don't inherit from Selenium2Library, instead they simply use the
     browser instance.
     """
-    browser = "firefox"
     _alias_delimiter = "__name__"
     _aliases = {}
 
@@ -47,6 +46,7 @@ class PageObjectLibrary(object):
         self.pageobject_name = self._get_pageobject_name()
         self._option_handler = OptionHandler()
         self.baseurl = self._option_handler.get("baseurl")
+        self.browser = self._option_handler.get("browser") or "phantomjs"
 
         # This is created for each page object..but it doesn't need to be.
         #self.output(self._option_handler._opts)
@@ -135,11 +135,12 @@ class PageObjectLibrary(object):
         orig_meth = getattr(self, self._get_funcname_from_robot_alias(alias))
         return orig_meth(*args)
 
-    def _get_url(self, url=None):
+    def resolve_url(self, url=None):
         """
-        Gets the url to open for the page object's open method,
-        depending on whether
+        Resolves the url to open for the page object's open method, depending on whether
         baseurl is set, url is passed etc.
+
+        :param url: The URL, whether relative or absolute to resolve.
         """
         if url:
             # URL is passed, if base url set, prefix it
@@ -158,7 +159,7 @@ class PageObjectLibrary(object):
 
     def open(self, url=None):
 
-        self.se.open_browser(self._get_url(url), self.browser)
+        self.se.open_browser(self.resolve_url(url), self.browser)
         return self
 
     def close(self):
