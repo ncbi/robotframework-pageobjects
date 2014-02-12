@@ -11,6 +11,6 @@ Library    pageobjects.google.ResultPage
 Test Google To Apple
     Open Google
     Search Google For  Apple Computers
-    #On Google Result Page Click Result  1
-    #Title Should Be  Apple
+    On Google Result Page Click Result  1
+    Title Should Be  Apple
     [Teardown]  Close Google

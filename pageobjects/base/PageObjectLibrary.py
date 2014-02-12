@@ -43,10 +43,15 @@ class PageObjectLibrary(object):
     def __init__(self, url=None):
 
         self.se = self._get_se_instance()
+
+        # This should be paramterized
         self.pageobject_name = self._get_pageobject_name()
         self._option_handler = OptionHandler()
+        self.selenium_speed = self._option_handler.get("selenium_speed") or .25
+        self.se.set_selenium_speed(self.selenium_speed)
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
+
 
         # This is created for each page object..but it doesn't need to be.
         #self.output(self._option_handler._opts)
@@ -153,7 +158,6 @@ class PageObjectLibrary(object):
                 # If no url passed and base url, then go to base url + homepage
                 ret = self.baseurl + self.homepage
             else:
-                print "no base url"
                 if not self.homepage.startswith("http"):
                     raise Exception("Home page '%s' is invalid. You must Set a baseurl" % self.homepage)
                 else:
