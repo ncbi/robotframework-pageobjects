@@ -1,10 +1,12 @@
-from selenium.webdriver.support.ui import WebDriverWait
-from pageobjects.base.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
-from robot.libraries.BuiltIn import BuiltIn
 import inspect
 import re
-
 import sys
+
+from selenium.webdriver.support.ui import WebDriverWait
+from robot.libraries.BuiltIn import BuiltIn
+
+from pageobjects.base.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
+from optionhandler import OptionHandler
 
 
 class _Keywords(object):
@@ -25,11 +27,9 @@ class _Keywords(object):
         Gets an aliased name (with page object class substitued in either at the end
         or in place of the delimiter given the real method name.
         """
-
         # Look through the alias dict, return the aliased name for Robot
         if name in cls._aliases:
             ret = cls._aliases[name].replace(cls._alias_delimiter, "_" + pageobject_name + "_")
-
         else:
             # By default, page object name is appended to keyword
             ret = "%s_%s" % (name, pageobject_name)
@@ -95,8 +95,12 @@ class _S2LWrapper(object):
     """
     
     def __init__(self, *args, **kwargs):
+        super(_S2LWrapper, self).__init__(*args, **kwargs)
         self._se = self._get_se_instance()
         
+        # This is created for each page object..but it doesn't need to be.
+        #self.output(self._option_handler._opts)
+
     
     def __getattr__(self, name):
         """
@@ -110,7 +114,6 @@ class _S2LWrapper(object):
             # Pass along an AttributeError as though it came from this object.
             raise AttributeError("%r object has no attribute %r" % (self.__class__.__name__, name))
         return attr
-
 
     def _get_se_instance(self):
 
@@ -137,18 +140,46 @@ class _S2LWrapper(object):
         return se
 
 
-class _BaseActions(object):
+class _BaseActions(_S2LWrapper):
     """
     Helper class that defines actions for PageObjectLibrary
     """
+    def __init__(self, *args, **kwargs):
+        super(_BaseActions, self).__init__(*args, **kwargs)
+        self._option_handler = OptionHandler()
+        self.selenium_speed = self._option_handler.get("selenium_speed") or .25
+        self.set_selenium_speed(self.selenium_speed)
+        self.baseurl = self._option_handler.get("baseurl")
+        self.browser = self._option_handler.get("browser") or "phantomjs"
+
+
+    def resolve_url(self, url=None):
+        """
+        Resolves the url to open for the page object's open method, depending on whether
+        baseurl is set, url is passed etc.
+
+        :param url: The URL, whether relative or absolute to resolve.
+        """
+        if url:
+            # URL is passed, if base url set, prefix it
+            if self.baseurl:
+                ret = self.baseurl + url
+            else:
+                ret = url
+        else:
+            if self.baseurl:
+                # If no url passed and base url, then go to base url + homepage
+                ret = self.baseurl + self.homepage
+            else:
+                if not self.homepage.startswith("http"):
+                    raise Exception("Home page '%s' is invalid. You must Set a baseurl" % self.homepage)
+                else:
+                    ret = self.homepage
+        return ret
 
     def open(self, url=None):
-        if url:
-            self.open_browser(url, self.browser)
-
-        else:
-            self.open_browser(self.homepage, self.browser)
-
+        self.open_browser(self.resolve_url(url), self.browser)
+        self.delete_all_cookies()
         return self
 
     def close(self):
@@ -192,7 +223,7 @@ class _BaseActions(object):
         return self._find_element(locator, first_only=False, **kwargs)
     
 
-class PageObjectLibrary(_S2LWrapper, _BaseActions):
+class PageObjectLibrary(_BaseActions):
 
     """
     Base RF page object. Imports ExposedBrowserSelenium2Library, which
@@ -208,8 +239,8 @@ class PageObjectLibrary(_S2LWrapper, _BaseActions):
     
 
     def __init__(self, *args, **kwargs):
-        self.pageobject_name = self._get_pageobject_name()
         super(PageObjectLibrary, self).__init__(*args, **kwargs)
+        self.pageobject_name = self._get_pageobject_name()
 
     def _get_pageobject_name(self):
 
@@ -242,3 +273,5 @@ class PageObjectLibrary(_S2LWrapper, _BaseActions):
         # Translate back from Robot Framework alias to actual method
         orig_meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, self.pageobject_name))
         return orig_meth(*args)
+
+
