@@ -1,5 +1,6 @@
 
 from pageobjects.base.PageObjectLibrary import PageObjectLibrary, robot_alias
+from selenium.webdriver.common.keys import Keys
 
 
 class Page(PageObjectLibrary):
@@ -27,7 +28,7 @@ class Page(PageObjectLibrary):
     def search(self, term):
         
         self.se.input_text("xpath=//input[@name='q']", term)
-        self.se.click_element("gs_htif0")
+        self.se.click_element("xpath=//input[@name='btnG']")
         return ResultPage()
 
 class ResultPage(Page):
@@ -40,7 +41,7 @@ class ResultPage(Page):
     # This will become "On Google Result Page Click Result"
     @robot_alias("on__name__click_result")
     def click_result(self, i):
-        els = self.se._element_find("xpath=//h3[@class='r']/a[not(ancestor::table)]", False, False, tag="a")
+        els = self.se._element_find("xpath=//ol/li/h3[@class='r']/a", False, False, tag="a")
         try:
             els[int(i)].click()
         except IndexError:

@@ -12,5 +12,5 @@ Test Google To Apple
     Open Google
     Search Google For  Apple Computers
     On Google Result Page Click Result  1
-    Title Should Be  Apple
+    Page Should Contain  Apple
     [Teardown]  Close Google
