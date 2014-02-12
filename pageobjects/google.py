@@ -25,6 +25,7 @@ class Page(PageObjectLibrary):
     # Search Google For  term.
     @robot_alias("search__name__for")
     def search(self, term):
+        
         self.se.input_text("xpath=//input[@name='q']", term)
         self.se.click_element("gs_htif0")
         return ResultPage()

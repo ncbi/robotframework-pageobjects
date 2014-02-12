@@ -1,10 +1,12 @@
-from selenium.webdriver.support.ui import WebDriverWait
-from pageobjects.base.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
-from robot.libraries.BuiltIn import BuiltIn
 import inspect
 import re
-
 import sys
+
+from selenium.webdriver.support.ui import WebDriverWait
+from robot.libraries.BuiltIn import BuiltIn
+
+from pageobjects.base.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
+from optionhandler import OptionHandler
 
 
 def robot_alias(stub):
@@ -16,6 +18,7 @@ def robot_alias(stub):
     TODO: find a better way to store the aliases, maybe as a class decorator.
     TODO: Pull logic of getting aliases out into where the dictionary is handled.
     """
+
     def makefunc(f):
         PageObjectLibrary._aliases[f.__name__] = stub
         return f
@@ -24,7 +27,6 @@ def robot_alias(stub):
 
 
 class PageObjectLibrary(object):
-
     """
     Base RF page object. Imports ExposedBrowserSelenium2Library, which
     in turn exposes the browser object for use.
@@ -35,14 +37,24 @@ class PageObjectLibrary(object):
     don't inherit from Selenium2Library, instead they simply use the
     browser instance.
     """
-    browser = "firefox"
     _alias_delimiter = "__name__"
     _aliases = {}
 
     def __init__(self, url=None):
 
         self.se = self._get_se_instance()
+
+        # This should be paramterized
         self.pageobject_name = self._get_pageobject_name()
+        self._option_handler = OptionHandler()
+        self.selenium_speed = self._option_handler.get("selenium_speed") or .5
+        self.se.set_selenium_speed(self.selenium_speed)
+        self.baseurl = self._option_handler.get("baseurl")
+        self.browser = self._option_handler.get("browser") or "phantomjs"
+
+
+        # This is created for each page object..but it doesn't need to be.
+        #self.output(self._option_handler._opts)
 
     def _get_se_instance(self):
 
@@ -111,7 +123,7 @@ class PageObjectLibrary(object):
         for fname, stub in PageObjectLibrary._aliases.iteritems():
             if alias == stub.replace(self._alias_delimiter, "_" + self.pageobject_name + "_"):
                 return fname
-        # We didn't find a match, so take the class name off the end.
+            # We didn't find a match, so take the class name off the end.
         return alias.replace("_" + self.pageobject_name, "")
 
     def get_keyword_names(self):
@@ -128,13 +140,33 @@ class PageObjectLibrary(object):
         orig_meth = getattr(self, self._get_funcname_from_robot_alias(alias))
         return orig_meth(*args)
 
-    def open(self, url=None):
-        self.se.set_selenium_speed(0.5)
-        if url:
-            self.se.open_browser(url, self.browser)
+    def resolve_url(self, url=None):
+        """
+        Resolves the url to open for the page object's open method, depending on whether
+        baseurl is set, url is passed etc.
 
+        :param url: The URL, whether relative or absolute to resolve.
+        """
+        if url:
+            # URL is passed, if base url set, prefix it
+            if self.baseurl:
+                ret = self.baseurl + url
+            else:
+                ret = url
         else:
-            self.se.open_browser(self.homepage, self.browser)
+            if self.baseurl:
+                # If no url passed and base url, then go to base url + homepage
+                ret = self.baseurl + self.homepage
+            else:
+                if not self.homepage.startswith("http"):
+                    raise Exception("Home page '%s' is invalid. You must set a baseurl" % self.homepage)
+                else:
+                    ret = self.homepage
+        return ret
+
+    def open(self, url=None):
+        self.se.open_browser(self.resolve_url(url), self.browser)
+        self.se.delete_all_cookies()
 
         return self
 
@@ -146,7 +178,9 @@ class PageObjectLibrary(object):
         Waits for a condition defined by the passed function to become True.
         """
         timeout = 10
-        wait = WebDriverWait(self.se._current_browser(), timeout) #TODO: move to default config, allow parameter to this function too
+        wait = WebDriverWait(self.se._current_browser(),
+                             timeout) #TODO: move to default config, allow parameter to this function too
+
         def wait_fnc(driver):
             try:
                 ret = condition()
@@ -154,4 +188,5 @@ class PageObjectLibrary(object):
                 return False
             else:
                 return ret
+
         wait.until(wait_fnc)

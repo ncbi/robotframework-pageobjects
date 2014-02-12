@@ -1,13 +1,22 @@
-Robot Framework/Selenium2Library Page Objects
-=============================================
+# Robot Framework/Selenium2Library Page Objects
+
+## Contents
+
+(Apparently README.md cannot have internal anchor links...ughh)
+
+1. Background
+2. How it Works
+    * Setting Options
+        * In Robot
+        * Outside Robot
+    * Options Defined by Page Objects
 
 Adds the concept of Page Objects to Robot Framework & Selenium2Library. Page objects can work independently of Robot
 Framework allowing you to encapsulate page logic in Robot Framework testcases or outsides of Robot Framework (eg.
 Python unittest test cases).
 
 
-First Things First
-------------------
+## Background
 
 Take a look at:
 
@@ -16,8 +25,7 @@ Take a look at:
 to learn how Robot Framework can drive Selenium2.
 - [Page Object Pattern](http://martinfowler.com/bliki/PageObject.html)
 
-How it Works
-------------
+## How it Works
 
 Here's a Robot test case using some page objects. We need to import any page objects libraries we need in our test
 case. **Note**: If we want to use standard Selenium2Library keywords, we need to also include Selenium2Library. This
@@ -98,7 +106,7 @@ Here is the Google page object. It is designed to be the base class of all Googl
             self.se.click_element("gs_htif0")
             return ResultPage()
 
-Here's the Google Result page object. It's also in pageobjects/google.py:
+Here's the Google Result page object. It's also in `pageobjects/google.py`:
 
     ...
     class ResultPage(Page):
@@ -116,4 +124,58 @@ Here's the Google Result page object. It's also in pageobjects/google.py:
                 els[int(i)].click()
             except IndexError:
                 raise Exception("No result found")
+
+
+### Setting Options
+
+We need to be able to set options for page objects in both the Robot Framework context and outside that context,
+such as which browser to use to open the page, and the baseurl to use (in order to easily switch executation between
+environments).
+
+
+#### In Robot
+
+For page objects being used in Robot Framework, follow the Robot standard,
+which is to use [variables](http://robotframework.googlecode.com/hg/doc/userguide/RobotFrameworkUserGuide.html?r=2.8.4#creating-variables)
+either on the command line or using a variable file:
+
+    $ pybot --variable=browser:firefox --variable=baseurl:http://www.example.com mytest.robot
+
+The `--variable` option must come right after pybot.
+
+or
+
+    $ pybot --variablefile=/path/to/vars.py mytest.robot
+
+The `--variablefile` option is a path to a python module which defines variables in the module's namespace.
+Variables can set as complexly as you want, as long as they are in the module's namespace. Keep in
+mind that variables set on the command-line override those in the variable file.
+
+#### Outside Robot
+
+Outside of Robot, use environment variables to set options (unittest frameworks like unittest are not really designed
+with changable configuration in mind, so it's hard to pass options on the command-line without coupling it to a
+particular runner). All environment variables must be uppercase and prefixed with "PO_":
+
+You can set individual options:
+
+    $ export PO_BROWSER=firefox
+
+or you can set options in a variable file, like in Robot:
+
+    $ export PO_VAR_FILE=path/to/vars.py
+
+Individual "PO_" environment variables override any set in a variable file.
+
+### Options Defined by Page Objects
+
+- `browser` (PO_BROWSER): which browser to use. Defaults to "phantomjs".
+- `baseurl` (PO_BASEURL): which URL to base open calls with. For example if you set your page object's homepage with
+self
+.homepage
+to a relative URL, like "/search", you can set your baseurl to "http://www.example.com". A call to your page object's
+ open method will open at "http://www.example.com/search".
+ - `selenium_speed` (PO_SELENIIM_SPEED): The speed between Selenium commands. Use this to slow down the page actions,
+ which is useful when, for example, it takes a few moments for something to load via AJAX.
+
 
