@@ -54,7 +54,7 @@ class OptionHandler(object):
         ret = {}
         # Trying to call outside Robot Framework
         # Configire with environment variables
-        var_file_path = os.environ["PO_VAR_FILE"]
+        var_file_path = os.environ.get("PO_VAR_FILE", None)
         if var_file_path:
             abs_var_file_path = os.path.abspath(var_file_path)
             try:
