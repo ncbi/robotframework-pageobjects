@@ -10,9 +10,6 @@ class AnnotationReportPageLibrary(PageObjectLibrary):
         self.build = build
         return super(AnnotationReportPageLibrary, self).open(url)
 
-#    def check_header(self):
-#        self.se.element_should_contain("css=#BuildInfo", species)
-
     def wait(self, time):
         time.sleep(int(time))
     
