@@ -117,7 +117,9 @@ Here's the Google Result page object. It's also in pageobjects/google.py:
 
 ### Setting Options
 
-We need to be able to set options for page objects in both the Robot Framework context and outside that context.
+We need to be able to set options for page objects in both the Robot Framework context and outside that context,
+such as which browser to use to open the page, and the baseurl to use (in order to easily switch executation between
+environments).
 
 
 #### In Robot
