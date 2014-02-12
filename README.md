@@ -16,6 +16,28 @@ Take a look at:
 to learn how Robot Framework can drive Selenium2.
 - [Page Object Pattern](http://martinfowler.com/bliki/PageObject.html)
 
+Setting Options
+---------------
+
+We need to be able to set options for page objects in both the Robot Framework context and outside that context.
+
+
+### In Robot
+
+For page objects being used in Robot Framework, follow the Robot standard,
+which is to use [variables](http://robotframework.googlecode.com/hg/doc/userguide/RobotFrameworkUserGuide.html?r=2.8.4#creating-variables)
+either on the command line or using a variable file:
+
+    $ pybot --variable=browser:firefox --variable=baseurl:http://www.example.com mytest.robot
+
+or
+
+    $ pybot --variablefile=/path/to/vars.py mytest.robot
+
+### Outside Robot
+
+foo
+
 How it Works
 ------------
 
