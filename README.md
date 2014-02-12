@@ -95,7 +95,7 @@ Here is the Google page object. It is designed to be the base class of all Googl
             self.se.click_element("gs_htif0")
             return ResultPage()
 
-Here's the Google Result page object. It's also in pageobjects/google.py:
+Here's the Google Result page object. It's also in `pageobjects/google.py`:
 
     ...
     class ResultPage(Page):
@@ -130,7 +130,7 @@ either on the command line or using a variable file:
 
     $ pybot --variable=browser:firefox --variable=baseurl:http://www.example.com mytest.robot
 
-The --variable option must come right after pybot.
+The `--variable` option must come right after pybot.
 
 or
 
@@ -158,12 +158,13 @@ Individual "PO_" environment variables override any set in a variable file.
 
 ### Options Defined by Page Objects
 
-- browser (PO_BROWSER): which browser to use. Defaults to "phantomjs".
-- baseurl (PO_BASEURL): which URL to base open calls with. For example if you set your page object's homepage with self
+- `browser` (PO_BROWSER): which browser to use. Defaults to "phantomjs".
+- `baseurl` (PO_BASEURL): which URL to base open calls with. For example if you set your page object's homepage with
+self
 .homepage
 to a relative URL, like "/search", you can set your baseurl to "http://www.example.com". A call to your page object's
  open method will open at "http://www.example.com/search".
- - seleniumspeed (PO_SELENIIM_SPEED): The speed between Selenium commands. Use this to slow down the page actions,
+ - `selenium_speed` (PO_SELENIIM_SPEED): The speed between Selenium commands. Use this to slow down the page actions,
  which is useful when, for example, it takes a few moments for something to load via AJAX.
 
 
