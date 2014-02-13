@@ -113,7 +113,9 @@ class _Keywords(object):
 
         By default, the name of the page object class is appended to the page
         object method such that given a page object class name of GooglePageLibrary, its
-        `search` method would become a "Search Google" keyword.
+        `search` method would become a "Search Google" keyword. If a "name" attribute is
+        set on the page object instance, the value is used instead of the page object
+        class name.
 
         But you can decorate the method and pass in any name, and it will be aliased
         according to what name is passed in. You can use the "__name__" delimeter to
