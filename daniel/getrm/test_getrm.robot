@@ -1,5 +1,6 @@
 *** Settings ***
 Library    GeTRMPageLibrary
+Library    Selenium2Library
 Test Template	Test locsearch
 
 *** Keywords ***
