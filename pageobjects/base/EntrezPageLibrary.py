@@ -9,11 +9,11 @@ class EntrezPageLibrary(PageObjectLibrary):
     @robot_alias("click__name__docsum_item")
     def click_docsum_item(self, n):
         i = int(n) + 1
-        self.se.click_link("xpath=//div[@class='rprt'][%s]//p[@class='title']/a" % str(i))
+        self.click_link("xpath=//div[@class='rprt'][%s]//p[@class='title']/a" % str(i))
         return self
 
     def search(self, term):
-        self.se.input_text("term", term)
-        self.se.click_button("search")
+        self.input_text("term", term)
+        self.click_button("search")
         return self
 

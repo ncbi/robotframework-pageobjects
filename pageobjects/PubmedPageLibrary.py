@@ -8,10 +8,10 @@ class PubmedPageLibrary(EntrezPageLibrary):
 
     @robot_alias("find_related_data_from__name__in")
     def find_related_data_in(self, dbname):
-        self.se.wait_until_element_is_visible("rdDatabase")
-        self.se.select_from_list_by_value("rdDatabase", dbname)
-        self.se.wait_until_page_contains("NCBI Bookshelf books that cite the current articles")
-        self.se.click_button("rdFind")
+        self.wait_until_element_is_visible("rdDatabase")
+        self.select_from_list_by_value("rdDatabase", dbname)
+        self.wait_until_page_contains("NCBI Bookshelf books that cite the current articles")
+        self.click_button("rdFind")
 
         # For demo purpose, hardcode the type of page returned
         return BooksPageLibrary()
