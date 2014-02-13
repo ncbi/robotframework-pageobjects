@@ -11,8 +11,8 @@ class Page(PageObjectLibrary):
 
     @robot_alias("search__name__for")
     def search(self, term):
-        self._se.input_text("q", "search term")
-        self._se.click_element("go")
+        self.input_text("q", "search term")
+        self.click_element("go")
         return ResultPage()
 
 
