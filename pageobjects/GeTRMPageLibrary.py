@@ -19,22 +19,21 @@ class GeTRMPageLibrary(PageObjectLibrary):
     homepage = "/variation/tools/get-rm"
 
     def search(self, term):
-        rm_search_box = self.se._element_find(selectors["search"], True, True)
+        rm_search_box = self.find_element(selectors["search"])
         rm_search_box.clear()
         rm_search_box.send_keys(term)
-        self.se.click_element(selectors["search-arrow"])
-        self.se.wait_until_page_contains_element(selectors["result-arrow"])
+        self.click_element(selectors["search-arrow"])
+        self.wait_until_page_contains_element(selectors["result-arrow"])
         return self
 
     @robot_alias("go_to__name__results")
     def go_to_results(self):
-        #self.se.mouse_over(selectors["result-arrow"])
-        self.se.click_element(selectors["result-arrow"])
+        self.click_element(selectors["result-arrow"])
         return self
 
     @robot_alias("__name__result_arrow_should_exist")
     def result_arrow_should_exist(self):
-        search_arrow = self.se._element_find(selectors["result-arrow"], True, False)
+        search_arrow = self.find_element(selectors["result-arrow"], required=False)
         asserts.assert_true(search_arrow is not None and search_arrow.is_displayed(), "Search arrow should be visible.")
         return self
 
@@ -42,14 +41,13 @@ class GeTRMPageLibrary(PageObjectLibrary):
     def headers_should_match(self, expected_value):
         self.wait_for(lambda: self._get_values(selectors["header-spans"]).strip() != "")
         value = self._get_values(selectors["header-spans"])
-        #asserts.assert_equal(value, expected_value)
         search_result = re.search(expected_value, value)
         asserts.assert_true(search_result is not None,
                             "Headers should look like %s but got %s instead" % (expected_value, value))
         return self
 
     def _get_values(self, locator, tag=None):
-        element = self.se._element_find(locator, False, False, tag=tag)
+        element = self.find_elements(locator, required=False, tag=tag)
         if element is None:
             return ""
         elif not isinstance(element, list) and not isinstance(element, tuple):
