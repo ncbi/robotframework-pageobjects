@@ -403,8 +403,6 @@ class PageObjectLibrary(_BaseActions):
             if inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
                 keywords.append(_Keywords.get_robot_alias(name, self.pageobject_name))
 
-
-
         return keywords
 
     def run_keyword(self, alias, args):
