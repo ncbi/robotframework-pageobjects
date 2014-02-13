@@ -1,6 +1,26 @@
+"""
+.. module:: PageObjectLibrary
+   :platform: Unix, Mac, Windows
+   :synopsis: Classes related to base page objects which can be used in the Robot Framework runner
+   or outside the runner with plain unittest test cases. The base page object uses Robot Framework's
+   Selenium2Library to interface with Selenium2 (Webdriver).
+
+   How it works:
+
+       - All page objects should inherit from :class:`PageObjectLibrary`.
+       - :class:`PageObjectLibrary` inherits from :class:`_BaseActions`, which defines some important
+       actions for all page objects.
+       - :class:`_BaseActions` inherits from :class:`_S2LWrapper`, which in turn is responsible for
+       1) getting the Selenium2Library instance, 2) interacting with Selenium2Library
+       and 3) exposing Selenium2Library keywords to the page object instance.
+
+
+.. moduleauthor:: Daniel Frishberg, Aaron Cohen <daniel.frishberg@nih.gov>, <aaron.cohen@nih.gov>
+
+"""
+
 import inspect
 import re
-import sys
 
 from selenium.webdriver.support.ui import WebDriverWait
 from robot.libraries.BuiltIn import BuiltIn
@@ -11,15 +31,17 @@ from optionhandler import OptionHandler
 
 class _Keywords(object):
     """
-    Handler class for keyword aliases. Maybe there's a better name for it.
-    It provides two methods, which are exposed as decorators: robot_alias and not_keyword.
-    These decorators can be used in page libraries to designate aliases for keywords,
-    or to designate methods that should not be exposed as keywords.
+    Class to isolate functionality related to
+    keyword aliases.
+
+    It provides two methods, which are exposed as decorators: `robot_alias` and `not_keyword`.
+    These decorators can be used in derived page libraries to designate aliases for keywords,
+    or to designate page object methods that should not be exposed as keywords.
     """
     _exclusions = {}
     _aliases = {}
     _alias_delimiter = "__name__"
-    
+
     @classmethod
     def is_method_excluded(cls, name):
         """
@@ -29,12 +51,13 @@ class _Keywords(object):
         :returns: boolean
         """
         return cls._exclusions.get(name, False)
-    
+
     @classmethod
     def get_robot_alias(cls, name, pageobject_name):
         """
         Gets an aliased name (with page object class substitued in either at the end
         or in place of the delimiter given the real method name.
+
         :param name: The name of the method
         :type name: str
         :returns: str
@@ -63,9 +86,9 @@ class _Keywords(object):
         for fname, stub in cls._aliases.iteritems():
             if alias == stub.replace(cls._alias_delimiter, "_" + pageobject_name + "_"):
                 return fname
-        # We didn't find a match, so take the class name off the end.
+            # We didn't find a match, so take the class name off the end.
         return alias.replace("_" + pageobject_name, "")
-    
+
     @classmethod
     def not_keyword(cls, f):
         """
@@ -78,31 +101,58 @@ class _Keywords(object):
         """
         cls._exclusions[f.__name__] = True
         return f
-    
+
     @classmethod
     def robot_alias(cls, stub):
         """
-        Method to map stubbed name to actual function. Wrapped by robot_alias function
-        as a decorator. Sets the _aliases dict which is used in get_functname_from_robot_alias
-        and get_robot_alias.
+         A decorator. When a page object method is decorated with this
+        the keyword exposed to Robot Framework is set to the name passed in.
+
+        This is useful to change the aliasing from the page object method name
+        to the Robot Keyword that's exposed.
+
+        By default, the name of the page object class is appended to the page
+        object method such that given a page object class name of GooglePageLibrary, its
+        `search` method would become a "Search Google" keyword.
+
+        But you can decorate the method and pass in any name, and it will be aliased
+        according to what name is passed in. You can use the "__name__" delimeter to
+        easily substitute the page object name (defined by a "name" atttribute set on
+        the page object) into the keyword. For example::
+
+            ...
+            @robot_alias("search__name__for")
+            def search(self, url):
+                ...
+
+        ...would alias the `search` method to "Search Google For".
+
         :param stub: The name of the original function (optionally containing a placeholder)
         :type stub: str
         :returns: callable
         """
+
         def makefunc(f):
             cls._aliases[f.__name__] = stub
             return f
 
         return makefunc
 
+
 def not_keyword(f):
     """
-    Decorator function to wrap _Keywords.not_keyword
+    Decorator function to wrap _Keywords.not_keyword.
+
+    Use this to tell Robot not to expose the decorated method
+    as a keyword.
+
     :param f: The function to designate as not a keyword
     :type f: callable
     :returns: callable
     """
     return _Keywords.not_keyword(f)
+
+
 def robot_alias(stub):
     """
     Decorator function to wrap _Keywords.robot_alias
@@ -111,6 +161,7 @@ def robot_alias(stub):
     :returns: callable
     """
     return _Keywords.robot_alias(stub)
+
 
 class _S2LWrapper(object):
     """
@@ -125,18 +176,18 @@ class _S2LWrapper(object):
     simply use the browser instance.
     
     """
-    
+
     def __init__(self, *args, **kwargs):
         """
         Initialize the Selenium2Library instance.
         """
         super(_S2LWrapper, self).__init__(*args, **kwargs)
         self._se = self._get_se_instance()
-        
+
         # This is created for each page object..but it doesn't need to be.
         #self.output(self._option_handler._opts)
 
-    
+
     def __getattr__(self, name):
         """
         Override the built-in __getattr__ method so that we expose
@@ -145,8 +196,8 @@ class _S2LWrapper(object):
         """
         try:
             attr = getattr(object.__getattribute__(self, "_se"), name)
-        except Exception as e:        
-            # Pass along an AttributeError as though it came from this object.
+        except Exception as e:
+        # Pass along an AttributeError as though it came from this object.
             raise AttributeError("%r object has no attribute %r" % (self.__class__.__name__, name))
         return attr
 
@@ -179,6 +230,7 @@ class _BaseActions(_S2LWrapper):
     """
     Helper class that defines actions for PageObjectLibrary
     """
+
     def __init__(self, *args, **kwargs):
         """
         Initializes the options used by the actions defined in this class.
@@ -216,16 +268,19 @@ class _BaseActions(_S2LWrapper):
                     ret = self.homepage
         return ret
 
-    def open(self, url=None):
+    def open(self, url=None, delete_cookies=True):
         """
         Wrapper for Selenium2Library's open_browser() that calls resolve_url for url logic and self.browser.
         It also deletes cookies after opening the browser.
         :param url: Optionally specify a URL. If not passed in, resolve_url will default to the page object's homepage.
         :type url: str
+        :param delete_cookies: If set to False, does not delete browser's cookies when called.
+        :type delete_cookies: Boolean
         :returns: _BaseActions instance
         """
         self.open_browser(self.resolve_url(url), self.browser)
-        self.delete_all_cookies()
+        if delete_cookies:
+            self.delete_all_cookies()
         return self
 
     def close(self):
@@ -243,7 +298,9 @@ class _BaseActions(_S2LWrapper):
         :returns: None
         """
         timeout = 10
-        wait = WebDriverWait(self._current_browser(), timeout) #TODO: move to default config, allow parameter to this function too
+        wait = WebDriverWait(self._current_browser(),
+                             timeout) #TODO: move to default config, allow parameter to this function too
+
         def wait_fnc(driver):
             try:
                 ret = condition()
@@ -251,6 +308,7 @@ class _BaseActions(_S2LWrapper):
                 return False
             else:
                 return ret
+
         wait.until(wait_fnc)
 
     def _find_element(self, locator, first_only=True, required=True, **kwargs):
@@ -278,7 +336,7 @@ class _BaseActions(_S2LWrapper):
         :returns: WebElement instance
         """
         return self._find_element(locator, **kwargs)
-    
+
     @not_keyword
     def find_elements(self, locator, **kwargs):
         """
@@ -291,10 +349,9 @@ class _BaseActions(_S2LWrapper):
         :returns: WebElement instance
         """
         return self._find_element(locator, first_only=False, **kwargs)
-    
+
 
 class PageObjectLibrary(_BaseActions):
-
     """
     Base RF page object.
 
@@ -305,7 +362,6 @@ class PageObjectLibrary(_BaseActions):
     This class then provides the behavior used by the RF's dynamic API.
     """
     browser = "firefox"
-    
 
     def __init__(self, *args, **kwargs):
         """
@@ -329,16 +385,6 @@ class PageObjectLibrary(_BaseActions):
             pageobject_name = self.__class__.__name__.replace("PageLibrary", "").lower()
 
         return pageobject_name
-
-    def output(self, data):
-        """
-        Output the provided data to stdout. We have to do this because print results are captured
-        by RF.
-        :param data: The data to output. data can be anything that can be converted to a str.
-        :type data: object
-        :returns: None
-        """
-        sys.__stdout__.write("\n%s" % str(data))
 
     def get_keyword_names(self):
         """
