@@ -9,4 +9,5 @@ Library    widget.Page
 
 Test Widget Site
     Open Widget Page
+    Search Widget Page For  cool thing
     [Teardown]  Close Widget Page
