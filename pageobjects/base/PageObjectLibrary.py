@@ -27,6 +27,7 @@ from robot.libraries.BuiltIn import BuiltIn
 
 from pageobjects.base.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
 from optionhandler import OptionHandler
+import sys
 
 
 class _Keywords(object):
@@ -189,6 +190,8 @@ class _S2LWrapper(object):
         # This is created for each page object..but it doesn't need to be.
         #self.output(self._option_handler._opts)
 
+    def start_suite(self, *args, **kwargs):
+        sys.__stdout__.write("\nyay")
 
     def __getattr__(self, name):
         """
@@ -217,14 +220,18 @@ class _S2LWrapper(object):
         try:
             se = BuiltIn().get_library_instance("Selenium2Library")
         except (RuntimeError, AttributeError):
-            # We didn't find an instance in Robot, so see if one has been created by another Page Object.
             try:
-                # TODO: Pull this logic into ExposedBrowserSelenium2Library
-                se = ExposedBrowserSelenium2Library._se_instance
-            except AttributeError:
-                # Create the instance
-                ExposedBrowserSelenium2Library()
-                se = ExposedBrowserSelenium2Library._se_instance
+                BuiltIn().import_library("Selenium2Library")
+                se = BuiltIn().get_library_instance("Selenium2Library")
+            except: # We're not running in Robot
+                # We didn't find an instance in Robot, so see if one has been created by another Page Object.
+                try:
+                    # TODO: Pull this logic into ExposedBrowserSelenium2Library
+                    se = ExposedBrowserSelenium2Library._se_instance
+                except AttributeError:
+                    # Create the instance
+                    ExposedBrowserSelenium2Library()
+                    se = ExposedBrowserSelenium2Library._se_instance
         return se
 
 
