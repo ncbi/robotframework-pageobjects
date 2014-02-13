@@ -27,7 +27,6 @@ from robot.libraries.BuiltIn import BuiltIn
 
 from pageobjects.base.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
 from optionhandler import OptionHandler
-import sys
 
 
 class _Keywords(object):
@@ -186,12 +185,6 @@ class _S2LWrapper(object):
         """
         super(_S2LWrapper, self).__init__(*args, **kwargs)
         self._se = self._get_se_instance()
-
-        # This is created for each page object..but it doesn't need to be.
-        #self.output(self._option_handler._opts)
-
-    def start_suite(self, *args, **kwargs):
-        sys.__stdout__.write("\nyay")
 
     def __getattr__(self, name):
         """
