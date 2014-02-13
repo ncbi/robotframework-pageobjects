@@ -1,16 +1,12 @@
 *** Settings ***
 
-Documentation  Tests searching Google and ending up on Apple.
+Documentation  Tests for Robot Framework Page Object package.
 ...
 Library    Selenium2Library
-Library    pageobjects.google.Page
-Library    pageobjects.google.ResultPage
+Library    widget.Page
 
 *** Test Cases ***
 
-Test Google To Apple
-    Open Google
-    Search Google For  Apple Computers
-    On Google Result Page Click Result  1
-    Page Should Contain  Apple
-    [Teardown]  Close Google
+Test Widget Site
+    Open Widget Page
+    [Teardown]  Close Widget Page

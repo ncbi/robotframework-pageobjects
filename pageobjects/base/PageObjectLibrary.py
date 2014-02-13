@@ -266,7 +266,7 @@ class _BaseActions(_S2LWrapper):
                 # If no url passed and base url, then go to base url + homepage
                 ret = self.baseurl + self.homepage
             else:
-                if not self.homepage.startswith("http"):
+                if not self.homepage[:5] in ["http:", "file:"]:
                     raise Exception("Home page '%s' is invalid. You must set a baseurl" % self.homepage)
                 else:
                     ret = self.homepage
@@ -402,6 +402,8 @@ class PageObjectLibrary(_BaseActions):
         for name, obj in inspect.getmembers(self):
             if inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
                 keywords.append(_Keywords.get_robot_alias(name, self.pageobject_name))
+
+
 
         return keywords
 
