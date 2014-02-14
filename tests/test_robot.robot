@@ -2,7 +2,6 @@
 
 Documentation  Tests for Robot Framework Page Object package.
 ...
-Library    Selenium2Library
 Library    widget.Page
 Library    widget.SearchResultPage
 
