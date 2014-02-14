@@ -13,10 +13,10 @@ class Page(PageObjectLibrary):
     def search(self, term):
         self.input_text("q", "search term")
         self.click_element("go")
-        return ResultPage()
+        return SearchResultPage()
 
 
-class ResultPage(Page):
+class SearchResultPage(Page):
     name = "Widget Search Result Page"
 
     @robot_alias("__name__should_have_results")
