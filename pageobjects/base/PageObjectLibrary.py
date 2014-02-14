@@ -30,7 +30,7 @@ from robot import api as robot_api
 from pageobjects.base.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
 from optionhandler import OptionHandler
 
-thismod = __name__
+this_module_name = __name__
 import logging
 
 
@@ -190,7 +190,6 @@ class _S2LWrapper(object):
         """
         # This call to object's __init__ shouldn't be here, right?
         #super(_S2LWrapper, self).__init__(*args, **kwargs)
-        self.log_opened = False
         self._se = self._get_se_instance()
 
     def __getattr__(self, name):
@@ -207,16 +206,12 @@ class _S2LWrapper(object):
         return attr
 
     def _get_logger_outside_robot(self):
-        print self.log_opened
-        if not self.log_opened:
-            print "open logger"
-            logger = logging.getLogger(thismod)
-            logger.setLevel(logging.INFO)
-            fh = logging.FileHandler("po_log.txt", mode="w")
-            fh.setLevel(logging.INFO)
-            logger.addHandler(fh)
-            self.log_opened = True
-            return logger
+        logger = logging.getLogger(this_module_name)
+        logger.setLevel(logging.INFO)
+        fh = logging.FileHandler("po_log.txt")
+        fh.setLevel(logging.INFO)
+        logger.addHandler(fh)
+        return logger
 
     def _get_se_instance(self):
 
@@ -295,6 +290,13 @@ class _BaseActions(_S2LWrapper):
                     ret = self.homepage
         return ret
 
+    def _log(self, *args):
+        """
+        Logs either to Robot or to a file if outside robot. If logging to a file,
+        prints each argument delimited by tabs.
+        """
+        self.logger.info("\t".join(args))
+
     def open(self, url=None, delete_cookies=True):
         """
         Wrapper for Selenium2Library's open_browser() that calls resolve_url for url logic and self.browser.
@@ -305,15 +307,13 @@ class _BaseActions(_S2LWrapper):
         :type delete_cookies: Boolean
         :returns: _BaseActions instance
         """
-        self.open_browser(self.resolve_url(url), self.browser)
+        resolved_url = self.resolve_url(url)
+        self.open_browser(resolved_url, self.browser)
 
         # Probably don't need this check here. We should log no matter
         # what and the user sets the log level. When we take this check out
         # also take out of base class __init__ parameter.
-
-        self.logger.info("open\t%s\t%s\t%s" % (self.name, type(self._current_browser()),
-                                                             self.resolve_url(
-                url)))
+        self._log("open", self.name, str(self._current_browser()), resolved_url)
 
         if delete_cookies:
             self.delete_all_cookies()

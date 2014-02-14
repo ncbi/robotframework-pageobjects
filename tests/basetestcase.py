@@ -6,6 +6,7 @@ from xml.dom.minidom import parse
 import re
 import os
 
+log_path = os.path.dirname(os.path.realpath(__file__)) + "/po_log.txt"
 
 class BaseTestCase(unittest.TestCase):
     """
@@ -18,7 +19,27 @@ class BaseTestCase(unittest.TestCase):
     base_file_url = None
 
     def setUp(self):
-        pass
+        try:
+            os.unlink(log_path)
+        except OSError:
+            pass
+
+        # Unset all PO_ env variables, but save them so we can restore them in teardown
+        self.original_po_vars = {}
+        for key in os.environ.keys():
+            if key.startswith("PO_"):
+                self.original_po_vars[key] = os.environ[key]
+                del os.environ[key]
+
+    def tearDown(self):
+        # Restore envs
+        for key in self.original_po_vars:
+            os.environ[key] = self.original_po_vars[key]
+
+        try:
+            os.unlink(log_path)
+        except OSError:
+            self.fail("No po_log was created")
 
     def get_base_file_url(self):
         """
@@ -115,7 +136,7 @@ class BaseTestCase(unittest.TestCase):
     def assert_run(self, run,
                           expected_returncode=0, expected_tests_ran=None,
                           expected_tests_failed=None, expected_tests_warned=None, expected_run_status=None,
-                          search_output=None
+                          search_output=None, expected_browser=None
     ):
         """
         Makes general assertions about a program run based on return code
@@ -158,4 +179,13 @@ class BaseTestCase(unittest.TestCase):
                                  "string: '%s' not found in stdout when running %s" % (
                                      search_output, run.cmd))
 
+        if expected_browser:
+            try:
+                log = open("po_log.txt")
+                log_fields = log.read().split("\t")
+            except (OSError, IOError), e:
+                self.fail("Problem reading log: %s" % e )
 
+            logged_browser = log_fields[2]
+            self.assertTrue(expected_browser.lower() in logged_browser.lower(), "Unexpected browser. Expected %s, "
+                                                                               "got %s" % (expected_browser, logged_browser))

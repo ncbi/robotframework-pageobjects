@@ -6,8 +6,7 @@ class TestGoogleSearch(unittest.TestCase):
 
     def test_search(self):
 
-        # Log for tests...
-        widget_page = widget.Page(log=True)
+        widget_page = widget.Page()
         widget_page.open()
         self.widget_search_result_page = widget_page.search("search term")
         self.widget_search_result_page.should_have_results(3)
