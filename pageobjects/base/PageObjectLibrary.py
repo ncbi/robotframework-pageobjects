@@ -25,12 +25,13 @@ import re
 from selenium.webdriver.support.ui import WebDriverWait
 
 from robot.libraries.BuiltIn import BuiltIn
-from robot.api import logger as robot_logger
+from robot import api as robot_api
 
 from pageobjects.base.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
 from optionhandler import OptionHandler
+
+thismod = __name__
 import logging
-po_logger = logging.getLogger(__name__)
 
 
 class _Keywords(object):
@@ -189,19 +190,8 @@ class _S2LWrapper(object):
         """
         # This call to object's __init__ shouldn't be here, right?
         #super(_S2LWrapper, self).__init__(*args, **kwargs)
-
-        # Set up logger
-        try:
-            self.log = kwargs["log"]
-            po_logger.setLevel(logging.INFO)
-            fh = logging.FileHandler("po_log.txt", mode="w")
-            fh.setLevel(logging.INFO)
-            po_logger.addHandler(fh)
-        except KeyError:
-            self.log = False
-
+        self.log_opened = False
         self._se = self._get_se_instance()
-        self.logger = robot_logger
 
     def __getattr__(self, name):
         """
@@ -212,9 +202,21 @@ class _S2LWrapper(object):
         try:
             attr = getattr(object.__getattribute__(self, "_se"), name)
         except Exception as e:
-        # Pass along an AttributeError as though it came from this object.
+            # Pass along an AttributeError as though it came from this object.
             raise AttributeError("%r object has no attribute %r" % (self.__class__.__name__, name))
         return attr
+
+    def _get_logger_outside_robot(self):
+        print self.log_opened
+        if not self.log_opened:
+            print "open logger"
+            logger = logging.getLogger(thismod)
+            logger.setLevel(logging.INFO)
+            fh = logging.FileHandler("po_log.txt", mode="w")
+            fh.setLevel(logging.INFO)
+            logger.addHandler(fh)
+            self.log_opened = True
+            return logger
 
     def _get_se_instance(self):
 
@@ -233,8 +235,14 @@ class _S2LWrapper(object):
             try:
                 BuiltIn().import_library("Selenium2Library")
                 se = BuiltIn().get_library_instance("Selenium2Library")
+
+                # If in Robot, use Robot's logger
+                self.logger = robot_api.logger
             except: # We're not running in Robot
                 # We didn't find an instance in Robot, so see if one has been created by another Page Object.
+                # Set up logger
+                self.logger = self._get_logger_outside_robot()
+
                 try:
                     # TODO: Pull this logic into ExposedBrowserSelenium2Library
                     se = ExposedBrowserSelenium2Library._se_instance
@@ -302,8 +310,8 @@ class _BaseActions(_S2LWrapper):
         # Probably don't need this check here. We should log no matter
         # what and the user sets the log level. When we take this check out
         # also take out of base class __init__ parameter.
-        if self.log:
-            po_logger.info("open\t%s\t%s\t%s" % (self.name, type(self._current_browser()),
+
+        self.logger.info("open\t%s\t%s\t%s" % (self.name, type(self._current_browser()),
                                                              self.resolve_url(
                 url)))
 
