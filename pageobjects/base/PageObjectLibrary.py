@@ -24,14 +24,11 @@ import re
 
 from selenium.webdriver.support.ui import WebDriverWait
 
-from robot.libraries.BuiltIn import BuiltIn
-from robot import api as robot_api
 
-from pageobjects.base.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
+from .context import Context
 from optionhandler import OptionHandler
 
 this_module_name = __name__
-import logging
 
 
 class _Keywords(object):
@@ -188,9 +185,8 @@ class _S2LWrapper(object):
         """
         Initialize the Selenium2Library instance.
         """
-        # This call to object's __init__ shouldn't be here, right?
-        #super(_S2LWrapper, self).__init__(*args, **kwargs)
-        self._se = self._get_se_instance()
+        self._se = Context().get_se_instance()
+        self._logger = Context().get_logger(this_module_name)
 
     def __getattr__(self, name):
         """
@@ -205,13 +201,6 @@ class _S2LWrapper(object):
             raise AttributeError("%r object has no attribute %r" % (self.__class__.__name__, name))
         return attr
 
-    def _get_logger_outside_robot(self):
-        logger = logging.getLogger(this_module_name)
-        logger.setLevel(logging.INFO)
-        fh = logging.FileHandler("po_log.txt")
-        fh.setLevel(logging.INFO)
-        logger.addHandler(fh)
-        return logger
 
     def _get_se_instance(self):
 
@@ -231,16 +220,8 @@ class _S2LWrapper(object):
                 BuiltIn().import_library("Selenium2Library")
                 se = BuiltIn().get_library_instance("Selenium2Library")
 
-                # If in Robot, use Robot's logger
-                robot_api.logger.info("here", also_console="here")
-
-                # TODO: Exception here if I do self.logger = ... why?
-                PageObjectLibrary.logger = robot_api.logger
             except: # We're not running in Robot
                 # We didn't find an instance in Robot, so see if one has been created by another Page Object.
-                # Set up logger
-                self.logger = self._get_logger_outside_robot()
-
                 try:
                     # TODO: Pull this logic into ExposedBrowserSelenium2Library
                     se = ExposedBrowserSelenium2Library._se_instance
@@ -298,7 +279,7 @@ class _BaseActions(_S2LWrapper):
         Logs either to Robot or to a file if outside robot. If logging to a file,
         prints each argument delimited by tabs.
         """
-        self.logger.info("\t".join(args))
+        self._logger.info("\t".join(args))
 
     def open(self, url=None, delete_cookies=True):
         """

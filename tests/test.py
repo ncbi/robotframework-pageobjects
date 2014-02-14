@@ -1,7 +1,7 @@
 from basetestcase import BaseTestCase
 import os
 log_path = os.path.dirname(os.path.realpath(__file__)) + "/po_log.txt"
-
+import unittest
 
 class TestBrowser(BaseTestCase):
     """
@@ -28,7 +28,8 @@ class TestBrowser(BaseTestCase):
         self.assert_run(run, search_output="PASS", expected_browser="firefox")
 
 
-
+if __name__ == "__main__":
+    unittest.main()
 
 
 
