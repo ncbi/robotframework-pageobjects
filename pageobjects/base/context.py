@@ -1,5 +1,6 @@
 from .ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
 from robot.libraries.BuiltIn import BuiltIn
+from robot.running.context import EXECUTION_CONTEXTS
 
 class Context(object):
     """
@@ -20,6 +21,9 @@ class Context(object):
             cls._new_called += 1
 
         return cls._instance
+    
+    def in_robot(self):
+        return EXECUTION_CONTEXTS.current is not None
     
     def get_se_instance(self):
 

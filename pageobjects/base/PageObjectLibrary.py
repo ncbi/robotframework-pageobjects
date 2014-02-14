@@ -18,6 +18,7 @@
 .. moduleauthor:: Daniel Frishberg, Aaron Cohen <daniel.frishberg@nih.gov>, <aaron.cohen@nih.gov>
 
 """
+import sys
 
 import inspect
 import re
@@ -29,6 +30,7 @@ from robot.api import logger as robot_logger
 from .context import Context
 from optionhandler import OptionHandler
 
+from Selenium2Library.keywords.keywordgroup import decorator, KeywordGroupMetaClass, _run_on_failure_decorator
 
 class _Keywords(object):
     """
@@ -201,17 +203,42 @@ class _S2LWrapper(object):
         return attr
 
 
-
-class _BaseActions(_S2LWrapper):
+class _KeywordGroupMetaClass(KeywordGroupMetaClass):
     """
-    Helper class that defines actions for PageObjectLibrary
+    Extending the metaclass Selenium2Library uses to wrap all keywords in
+    a decorator to invoke the _run_on_failure method. Not good that we are
+    referring to _run_on_failure_decorator, but I don't see another way to
+    make this work other than writing our own decorator that copies the code.
+    """
+    def __new__(cls, clsname, bases, dict):
+        """
+        Loops through the methods in this class and decorates them. Here we want to
+        exclude run_keyword and get_keyword_names, since they're API methods.
+        """
+        if decorator:
+            for name, method in dict.items():
+                import sys
+                sys.__stdout__.write(name)
+                if not name.startswith('_') and inspect.isroutine(method) and name not in ("get_keyword_names", "run_keyword"):
+                    # TODO: Consider a better way to exclude methods from this decorator.
+                    dict[name] = decorator(_run_on_failure_decorator, method)
+        return type.__new__(cls, clsname, bases, dict)
+
+class _KeywordGroup(object):
+    __metaclass__ = _KeywordGroupMetaClass
+
+
+class _BaseActions(_S2LWrapper, _KeywordGroup):
+    """
+    Helper class that defines actions for PageObjectLibrary.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, run_on_failure_method="capture_page_screenshot", *args, **kwargs):
         """
         Initializes the options used by the actions defined in this class.
         """
         super(_BaseActions, self).__init__(*args, **kwargs)
+        self._run_on_failure_method = getattr(self, run_on_failure_method)
         self._option_handler = OptionHandler()
         self.selenium_speed = self._option_handler.get("selenium_speed") or .5
         self.set_selenium_speed(self.selenium_speed)
@@ -327,6 +354,39 @@ class _BaseActions(_S2LWrapper):
         return self._find_element(locator, first_only=False, **kwargs)
 
 
+    def _run_on_failure(self):
+        """
+        Override Selenium2Library's _run_on_failure():
+        If we're in Robot, just fall back to S2L's behavior.
+        If we're outside Robot, then we need to call our own
+        method, which is "capture_page_screenshot" by default.
+        
+        TODO: The S2L _run_on_failure method still gets called when an
+        S2L action fails (including the _run_on_failure_method() call
+        if that's an S2L method like capture_page_screenshot),
+        because the decorator calls _run_on_failure() on the method's instance,
+        which is actually self._se and not this instance--because
+        __getattr__ calls self._se's methods.
+        
+        Solve this problem.
+        """
+        if Context().in_robot():
+            sys.__stdout__.write("\nFOO")
+            import traceback
+            #traceback.print_stack(limit=4)
+            #sys.__stdout__.write(str("\n".join(traceback.format_stack(limit=8))))
+            self._se._run_on_failure()
+        else:
+            sys.__stdout__.write("\nBAR")
+            if self._run_on_failure_method is not None:
+                try:
+                    self._run_on_failure_method()
+                except Exception, err:
+                    pass
+                    #self._se._run_on_failure_error(err)
+
+
+
 class PageObjectLibrary(_BaseActions):
     """
     Base RF page object.
@@ -336,6 +396,9 @@ class PageObjectLibrary(_BaseActions):
     used by this class and its descendents.
     
     This class then provides the behavior used by the RF's dynamic API.
+    Optional constructor arguments:
+    run_on_failure_method: If specified, you can indicate what action should
+    be taken when an action fails.
     """
     browser = "firefox"
 
@@ -389,5 +452,4 @@ class PageObjectLibrary(_BaseActions):
         # Translate back from Robot Framework alias to actual method
         orig_meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, self.pageobject_name))
         return orig_meth(*args)
-
-
+    
