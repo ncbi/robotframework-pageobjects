@@ -29,6 +29,8 @@ from robot.api import logger as robot_logger
 
 from pageobjects.base.ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
 from optionhandler import OptionHandler
+import logging
+po_logger = logging.getLogger(__name__)
 
 
 class _Keywords(object):
@@ -185,8 +187,21 @@ class _S2LWrapper(object):
         """
         Initialize the Selenium2Library instance.
         """
-        super(_S2LWrapper, self).__init__(*args, **kwargs)
+        # This call to object's __init__ shouldn't be here, right?
+        #super(_S2LWrapper, self).__init__(*args, **kwargs)
+
+        # Set up logger
+        try:
+            self.log = kwargs["log"]
+            po_logger.setLevel(logging.INFO)
+            fh = logging.FileHandler("po_log.txt", mode="w")
+            fh.setLevel(logging.INFO)
+            po_logger.addHandler(fh)
+        except KeyError:
+            self.log = False
+
         self._se = self._get_se_instance()
+        self.logger = robot_logger
 
     def __getattr__(self, name):
         """
@@ -283,6 +298,15 @@ class _BaseActions(_S2LWrapper):
         :returns: _BaseActions instance
         """
         self.open_browser(self.resolve_url(url), self.browser)
+
+        # Probably don't need this check here. We should log no matter
+        # what and the user sets the log level. When we take this check out
+        # also take out of base class __init__ parameter.
+        if self.log:
+            po_logger.info("open\t%s\t%s\t%s" % (self.name, type(self._current_browser()),
+                                                             self.resolve_url(
+                url)))
+
         if delete_cookies:
             self.delete_all_cookies()
         return self

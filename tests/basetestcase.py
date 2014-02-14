@@ -67,9 +67,11 @@ class BaseTestCase(unittest.TestCase):
                 self.xmldoc = xmldoc
 
             def __repr__(self):
-                return "<run object: cmd: '%s', returncode: %s, rid: %s, xmldoc: %s>" % (self.cmd,
+                return "<run object: cmd: '%s', returncode: %s, rid: %s, xmldoc: %s, output: %s>" % (self.cmd,
                                                                                                self.returncode,
-                                                                                               self.rid, self.xmldoc)
+                                                                                               self.rid, self.xmldoc,
+                                                                                               self.output[0:25]
+                                                                                               .replace("\n", ""))
 
         cmd = program + " " + " ".join(args) + " "
 
@@ -110,59 +112,50 @@ class BaseTestCase(unittest.TestCase):
 
         return Ret(cmd, code, out, rid, xmldoc=dom)
 
-    def assert_sanity_run(self, sanityrun,
+    def assert_run(self, run,
                           expected_returncode=0, expected_tests_ran=None,
                           expected_tests_failed=None, expected_tests_warned=None, expected_run_status=None,
                           search_output=None
     ):
         """
-        Makes general assertions about a sanity run based on return code
+        Makes general assertions about a program run based on return code
         and strings written to stdout. Always checks if run was 0
         return code.
 
-        :param sanityrun: The object returned by runsanity()
+        :param run: The object returned by runsanity()
         :param expected_returncode: expected returncode
         :param expected_tests_ran: number of tests ran
         :param expected_tests_failed: number of tests failed
          :param expected_run_status: Final status of sanity run. "OK", "FAIL" or "WARN"
         :param search_output: Text to assert is present in stdout of run. Provide  regular expression
         """
-        returncode = sanityrun.returncode
+        returncode = run.returncode
 
         self.assertEquals(expected_returncode, returncode,
                           "Return code was %s, expecting %s with the command: '%s'" % (
-                              returncode, expected_returncode, sanityrun.cmd))
+                              returncode, expected_returncode, run.cmd))
         if expected_tests_ran:
-            self.assertTrue("Ran %s test" % expected_tests_ran in sanityrun.output, "Didn't get %s tests ran when "
+            self.assertTrue("Ran %s test" % expected_tests_ran in run.output, "Didn't get %s tests ran when "
                                                                                     "running '%s'" % (
                                                                                         expected_tests_ran,
-                                                                                        sanityrun.cmd))
+                                                                                        run.cmd))
         if expected_tests_failed:
-            self.assertTrue("failures=%s" % expected_tests_failed in sanityrun.output,
+            self.assertTrue("failures=%s" % expected_tests_failed in run.output,
                             "Did not find %s expected failures when running %s." % (expected_tests_failed,
-                                                                                    sanityrun.cmd))
+                                                                                    run.cmd))
         if expected_tests_warned:
-            self.assertTrue("warnings=%s" % expected_tests_warned in sanityrun.output, "Did not find %s "
+            self.assertTrue("warnings=%s" % expected_tests_warned in run.output, "Did not find %s "
                                                                                        "expected warns when "
                                                                                        "running '%s'" % (
                                                                                            expected_tests_warned,
-                                                                                           sanityrun.cmd))
+                                                                                           run.cmd))
         if expected_run_status:
-            self.assertIsNotNone(re.search("\n" + expected_run_status.upper() + "( \(.+?\))?$", sanityrun.output),
+            self.assertIsNotNone(re.search("\n" + expected_run_status.upper() + "( \(.+?\))?$", run.output),
                                  "Expected run status of %s not "
-                                 "found when running %s" % (expected_run_status, sanityrun.cmd))
+                                 "found when running %s" % (expected_run_status, run.cmd))
         if search_output:
-            self.assertIsNotNone(re.search(search_output, sanityrun.output),
+            self.assertIsNotNone(re.search(search_output, run.output),
                                  "string: '%s' not found in stdout when running %s" % (
-                                     search_output, sanityrun.cmd))
+                                     search_output, run.cmd))
 
-    def get_text_content(self, node):
-        """
-        Returns text content of a node when using minidom
-
-        """
-        if node.nodeType in (node.TEXT_NODE, node.CDATA_SECTION_NODE):
-            return node.nodeValue
-        else:
-            return ''.join(self.get_text_content(n) for n in node.childNodes)
 
