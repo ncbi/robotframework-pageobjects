@@ -183,9 +183,11 @@ class BaseTestCase(unittest.TestCase):
             try:
                 log = open("po_log.txt")
                 log_fields = log.read().split("\t")
-            except (OSError, IOError), e:
-                self.fail("Problem reading log: %s" % e )
-
-            logged_browser = log_fields[2]
-            self.assertTrue(expected_browser.lower() in logged_browser.lower(), "Unexpected browser. Expected %s, "
+                logged_browser = log_fields[2]
+                self.assertTrue(expected_browser.lower() in logged_browser.lower(), "Unexpected browser. Expected %s, "
                                                                                "got %s" % (expected_browser, logged_browser))
+            except (OSError, IOError), e:
+                #self.fail("Problem reading log: %s" % e )
+                robot_log = open("log.html")
+                self.assertTrue(expected_browser in robot_log.read(), "Unexpected browser. Expected %s, got something else")
+

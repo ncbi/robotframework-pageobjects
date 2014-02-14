@@ -232,7 +232,10 @@ class _S2LWrapper(object):
                 se = BuiltIn().get_library_instance("Selenium2Library")
 
                 # If in Robot, use Robot's logger
-                self.logger = robot_api.logger
+                robot_api.logger.info("here", also_console="here")
+
+                # TODO: Exception here if I do self.logger = ... why?
+                PageObjectLibrary.logger = robot_api.logger
             except: # We're not running in Robot
                 # We didn't find an instance in Robot, so see if one has been created by another Page Object.
                 # Set up logger

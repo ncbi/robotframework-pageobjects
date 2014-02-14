@@ -17,11 +17,15 @@ class TestBrowser(BaseTestCase):
     def test_unittest_single_env_var_run_in_firefox(self):
         os.environ["PO_BROWSER"] = "firefox"
         run = self.run_program("python test_unittest.py")
-        self.assert_run(run, expected_run_status="OK", expected_browser="firefox")
+        self.assert_run(run, search_output="OK", expected_browser="firefox")
 
     def test_robot_default_should_run_in_phantomjs(self):
         run = self.run_program("pybot test_robot.robot")
-        self.assert_run(run, expected_run_status="OK", expected_browser="phantomjs")
+        self.assert_run(run, search_output="PASS", expected_browser="phantomjs")
+
+    def test_robot_variable_set_should_run_in_firefox(self):
+        run = self.run_program("pybot --variable=browser:firefox test_robot.robot")
+        self.assert_run(run, search_output="PASS", expected_browser="firefox")
 
 
 
