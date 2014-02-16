@@ -24,10 +24,11 @@ import re
 
 from selenium.webdriver.support.ui import WebDriverWait
 
-from robot.api import logger as robot_logger
 
 from .context import Context
 from optionhandler import OptionHandler
+
+this_module_name = __name__
 
 
 class _Keywords(object):
@@ -184,8 +185,8 @@ class _S2LWrapper(object):
         """
         Initialize the Selenium2Library instance.
         """
-        super(_S2LWrapper, self).__init__(*args, **kwargs)
         self._se = Context().get_se_instance()
+        self._logger = Context().get_logger(this_module_name)
 
     def __getattr__(self, name):
         """
@@ -196,10 +197,39 @@ class _S2LWrapper(object):
         try:
             attr = getattr(object.__getattribute__(self, "_se"), name)
         except Exception as e:
-        # Pass along an AttributeError as though it came from this object.
+            # Pass along an AttributeError as though it came from this object.
             raise AttributeError("%r object has no attribute %r" % (self.__class__.__name__, name))
         return attr
 
+
+    def _get_se_instance(self):
+
+        """
+        Gets the Selenoim2Library instance (which interfaces with SE)
+        First it looks for an se2lib instance defined in Robot,
+        which exists if a test has included a SE2Library.
+
+        If the Se2Library is not included directly, then it looks for the
+        instance stored on exposedbrowserselib, and if that's not found, it
+        creates the instance.
+        """
+        try:
+            se = BuiltIn().get_library_instance("Selenium2Library")
+        except (RuntimeError, AttributeError):
+            try:
+                BuiltIn().import_library("Selenium2Library")
+                se = BuiltIn().get_library_instance("Selenium2Library")
+
+            except: # We're not running in Robot
+                # We didn't find an instance in Robot, so see if one has been created by another Page Object.
+                try:
+                    # TODO: Pull this logic into ExposedBrowserSelenium2Library
+                    se = ExposedBrowserSelenium2Library._se_instance
+                except AttributeError:
+                    # Create the instance
+                    ExposedBrowserSelenium2Library()
+                    se = ExposedBrowserSelenium2Library._se_instance
+        return se
 
 
 class _BaseActions(_S2LWrapper):
@@ -238,11 +268,18 @@ class _BaseActions(_S2LWrapper):
                 # If no url passed and base url, then go to base url + homepage
                 ret = self.baseurl + self.homepage
             else:
-                if not self.homepage.startswith("http"):
+                if not self.homepage[:5] in ["http:", "file:"]:
                     raise Exception("Home page '%s' is invalid. You must set a baseurl" % self.homepage)
                 else:
                     ret = self.homepage
         return ret
+
+    def _log(self, *args):
+        """
+        Logs either to Robot or to a file if outside robot. If logging to a file,
+        prints each argument delimited by tabs.
+        """
+        self._logger.info("\t".join(args))
 
     def open(self, url=None, delete_cookies=True):
         """
@@ -254,7 +291,14 @@ class _BaseActions(_S2LWrapper):
         :type delete_cookies: Boolean
         :returns: _BaseActions instance
         """
-        self.open_browser(self.resolve_url(url), self.browser)
+        resolved_url = self.resolve_url(url)
+        self.open_browser(resolved_url, self.browser)
+
+        # Probably don't need this check here. We should log no matter
+        # what and the user sets the log level. When we take this check out
+        # also take out of base class __init__ parameter.
+        self._log("open", self.name, str(self._current_browser()), resolved_url)
+
         if delete_cookies:
             self.delete_all_cookies()
         return self

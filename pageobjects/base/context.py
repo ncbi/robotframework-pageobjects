@@ -1,5 +1,8 @@
 from .ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
 from robot.libraries.BuiltIn import BuiltIn
+from robot.running.context import EXECUTION_CONTEXTS
+from robot import api as robot_api
+import logging
 
 class Context(object):
     """
@@ -20,6 +23,9 @@ class Context(object):
             cls._new_called += 1
 
         return cls._instance
+    
+    def in_robot(self):
+        return EXECUTION_CONTEXTS.current is not None
     
     def get_se_instance(self):
 
@@ -56,3 +62,19 @@ class Context(object):
                     ExposedBrowserSelenium2Library()
                     se = ExposedBrowserSelenium2Library._se_instance
         return se
+
+
+    def get_logger(self, module_name):
+        if self.in_robot():
+            return robot_api.logger
+        else:
+            return self._get_logger_outside_robot(module_name)
+        
+    def _get_logger_outside_robot(self, module_name):
+        logger = logging.getLogger(module_name)
+        logger.setLevel(logging.INFO)
+        fh = logging.FileHandler("po_log.txt")
+        fh.setLevel(logging.INFO)
+        logger.addHandler(fh)
+        return logger
+
