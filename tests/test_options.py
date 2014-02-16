@@ -3,7 +3,6 @@ import unittest
 
 from basetestcase import BaseTestCase
 
-
 test_dir = os.path.dirname(os.path.realpath(__file__))
 log_path = test_dir + os.sep + "po_log.txt"
 
@@ -51,9 +50,6 @@ class TestOptions(BaseTestCase):
             test_dir,
                                                                                                          test_dir))
         self.assert_run(run, search_output="PASS", expected_browser="firefox")
-
-
-
 
 if __name__ == "__main__":
     unittest.main()
