@@ -5,9 +5,8 @@ from xml.dom.minidom import parse
 
 import re
 import os
-
-log_path = os.path.dirname(os.path.realpath(__file__)) + "/po_log.txt"
-
+this_dir = os.path.dirname(os.path.realpath(__file__))
+log_path = os.getcwd() + os.sep + "po_log.txt"
 
 class BaseTestCase(unittest.TestCase):
     """
@@ -15,6 +14,7 @@ class BaseTestCase(unittest.TestCase):
     """
 
     def setUp(self):
+
         try:
             os.unlink(log_path)
         except OSError:
@@ -150,13 +150,13 @@ class BaseTestCase(unittest.TestCase):
 
         if expected_browser:
             try:
-                log = open("po_log.txt")
+                log = open(log_path)
                 log_fields = log.read().split("\t")
                 logged_browser = log_fields[2]
                 self.assertTrue(expected_browser.lower() in logged_browser.lower(), "Unexpected browser. Expected %s, "
                                                                                "got %s" % (expected_browser, logged_browser))
             except (OSError, IOError), e:
                 #self.fail("Problem reading log: %s" % e )
-                robot_log = open("log.html")
+                robot_log = open(os.getcwd() + os.sep + "log.html")
                 self.assertTrue(expected_browser in robot_log.read(), "Unexpected browser. Expected %s, got something else")
 
