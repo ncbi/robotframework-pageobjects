@@ -8,6 +8,7 @@ import os
 this_dir = os.path.dirname(os.path.realpath(__file__))
 log_path = os.getcwd() + os.sep + "po_log.txt"
 
+
 class BaseTestCase(unittest.TestCase):
     """
     Base class Robot page object test cases.
@@ -126,7 +127,6 @@ class BaseTestCase(unittest.TestCase):
         :param expected_returncode: expected returncode
         :param expected_tests_ran: number of tests ran
         :param expected_tests_failed: number of tests failed
-         :param expected_run_status: Final status of sanity run. "OK", "FAIL" or "WARN"
         :param search_output: Text to assert is present in stdout of run. Provide  regular expression
         """
         returncode = run.returncode
@@ -149,14 +149,21 @@ class BaseTestCase(unittest.TestCase):
                                      search_output, run.cmd))
 
         if expected_browser:
-            try:
-                log = open(log_path)
-                log_fields = log.read().split("\t")
-                logged_browser = log_fields[2]
-                self.assertTrue(expected_browser.lower() in logged_browser.lower(), "Unexpected browser. Expected %s, "
-                                                                               "got %s" % (expected_browser, logged_browser))
-            except (OSError, IOError), e:
-                #self.fail("Problem reading log: %s" % e )
-                robot_log = open(os.getcwd() + os.sep + "log.html")
-                self.assertTrue(expected_browser in robot_log.read(), "Unexpected browser. Expected %s, got something else")
+            if "pybot" in run.cmd:
+                try:
+                    robot_log = open(os.getcwd() + os.sep + "log.html")
+                    self.assertTrue(expected_browser in robot_log.read(), "Unexpected browser. Expected %s, got something else")
+                finally:
+                    robot_log.close()
+            else:
+                try:
+                    po_log = open(log_path)
+                    log_fields = po_log.read().split("\t")
+                    logged_browser = log_fields[2]
+                    self.assertTrue(expected_browser.lower() in logged_browser.lower(), "Unexpected browser. Expected %s, "
+                                                                                   "got %s" % (expected_browser,
+                                                                                               logged_browser))
+                finally:
+                    po_log.close()
+
 
