@@ -8,15 +8,11 @@ import os
 
 log_path = os.path.dirname(os.path.realpath(__file__)) + "/po_log.txt"
 
+
 class BaseTestCase(unittest.TestCase):
     """
-    Base class for tests for sanity run by nose
+    Base class Robot page object test cases.
     """
-
-    sanity_dir = "/".join(__file__.split("/")[:-2])
-    path_to_sanity = sanity_dir + "/sanity.py"
-    path_to_test_testcases = sanity_dir + "/tests/testcases"
-    base_file_url = None
 
     def setUp(self):
         try:
@@ -41,33 +37,14 @@ class BaseTestCase(unittest.TestCase):
         except OSError:
             pass
 
-    def get_base_file_url(self):
-        """
-        Returns the base file HTTP URL to
-        pages under test, which will be different
-        depending on the server. We use file protocol
-        to speed up the tests.
-        """
-        return "file://" + os.path.dirname(os.path.realpath(__file__)) + "/pages"
-
-    def get_file_url(self, filename):
-        return self.base_file_url + "/" + filename
-
     def run_program(self, program, *args, **opts):
 
         """
-        Runs sanity returning an object with the following properties:
+        Runs a program using a subprocess, returning an object with the following properties:
 
-        - cmd: The command run after splitting with shlex. Don't pass 'sanity' etc,
-            instead pass in any arguments as a string. eg: runsanity("http://www.example.com")
-            or runsanity("urls.xml")
-
+        - cmd: The command run after splitting with shlex.
         - returncode: The return code
-        - output: the ouput from the sanity run
-
-        Example::
-
-            self.runsanity("http://www.example.com", "http://www.example2.com", testcases="TestCase1,TestCase2")
+        - output: the ouput to stdout or stderr
 
         In the case where a simple flag needs to be passed, psss the option as a boolean, eg::
             self.runsanity("http://www.example.com", no_page_check=True)
@@ -79,7 +56,9 @@ class BaseTestCase(unittest.TestCase):
         """
 
         class Ret(object):
-
+            """
+            The object to return from running the program
+            """
             def __init__(self, cmd, returncode, output, rid, xmldoc=None):
                 self.cmd = cmd
                 self.returncode = returncode
@@ -135,7 +114,7 @@ class BaseTestCase(unittest.TestCase):
 
     def assert_run(self, run,
                           expected_returncode=0, expected_tests_ran=None,
-                          expected_tests_failed=None, expected_tests_warned=None, expected_run_status=None,
+                          expected_tests_failed=None,
                           search_output=None, expected_browser=None
     ):
         """
@@ -164,16 +143,6 @@ class BaseTestCase(unittest.TestCase):
             self.assertTrue("failures=%s" % expected_tests_failed in run.output,
                             "Did not find %s expected failures when running %s." % (expected_tests_failed,
                                                                                     run.cmd))
-        if expected_tests_warned:
-            self.assertTrue("warnings=%s" % expected_tests_warned in run.output, "Did not find %s "
-                                                                                       "expected warns when "
-                                                                                       "running '%s'" % (
-                                                                                           expected_tests_warned,
-                                                                                           run.cmd))
-        if expected_run_status:
-            self.assertIsNotNone(re.search("\n" + expected_run_status.upper() + "( \(.+?\))?$", run.output),
-                                 "Expected run status of %s not "
-                                 "found when running %s" % (expected_run_status, run.cmd))
         if search_output:
             self.assertIsNotNone(re.search(search_output, run.output),
                                  "string: '%s' not found in stdout when running %s" % (
