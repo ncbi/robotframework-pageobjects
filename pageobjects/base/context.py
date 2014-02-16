@@ -63,14 +63,14 @@ class Context(object):
                     se = ExposedBrowserSelenium2Library._se_instance
         return se
 
-
     def get_logger(self, module_name):
         if self.in_robot():
             return robot_api.logger
         else:
             return self._get_logger_outside_robot(module_name)
         
-    def _get_logger_outside_robot(self, module_name):
+    @staticmethod
+    def _get_logger_outside_robot(module_name):
         logger = logging.getLogger(module_name)
         logger.setLevel(logging.INFO)
         fh = logging.FileHandler("po_log.txt")
