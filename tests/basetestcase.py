@@ -38,6 +38,12 @@ class BaseTestCase(unittest.TestCase):
         except OSError:
             pass
 
+    def run_scenario(self, scenario):
+        if scenario.endswith(".py"):
+            return self.run_program("python %s/scenarios/%s" % (self.test_dir, scenario))
+        else:
+            pass
+
     def run_program(self, program, *args, **opts):
 
         """

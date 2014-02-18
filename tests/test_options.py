@@ -30,19 +30,20 @@ class TestOptions(BaseTestCase):
     """
 
     def test_unittest_default_browser_should_be_phantomjs(self):
-        run = self.run_program("python %s/scenarios/test_unittest.py" % self.test_dir)
+        #run = self.run_program("python %s/scenarios/test_unittest.py" % self.test_dir)
+        run = self.run_scenario("test_unittest.py")
         self.assert_run(run, search_output="OK", expected_browser="phantomjs")
 
     def test_unittest_PO_BROWSER_env_var_set_to_firefox_should_run_firefox(self):
         os.environ["PO_BROWSER"] = "firefox"
-        run = self.run_program("python %s/scenarios/test_unittest.py" % self.test_dir)
+        run = self.run_scenario("test_unittest.py")
         self.assert_run(run, search_output="OK", expected_browser="firefox")
 
     def test_unittest_variable_file_var_set_to_firefox(self):
         try:
             self.write_var_file(browser="firefox")
             os.environ["PO_VAR_FILE"] = self.test_dir + os.sep + "vars.py"
-            run = self.run_program("python %s/scenarios/test_unittest.py" % self.test_dir)
+            run = self.run_scenario("test_unittest.py")
             self.assert_run(run, search_output="OK", expected_browser="firefox")
 
         except AssertionError, e:
