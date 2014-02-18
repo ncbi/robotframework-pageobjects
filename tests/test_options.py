@@ -69,14 +69,29 @@ class BrowserOptionTestCase(BaseTestCase):
 
 class OpenMethodTestCase(BaseTestCase):
     """
-    Tests the page object's open method. Possibilities:
+    Tests the page object's open method. We test in both robot context and
+    unittest contexts. Possibilities:
 
         - No url passed and no homepage attribute set, exception
+        - No url passed but a homepage attribute is set, pass
+        - No url passed, baseurl and homepage is set.
     """
 
-    def test_no_baseurl_no_homepage_raises_exception(self):
+    def test_no_baseurl_no_homepage_raises_exception_unittest(self):
         run = self.run_scenario("test_unittest_no_homepage.py")
         self.assert_run(run, expected_returncode=1, search_output="No homepage set")
+
+    def test_no_baseurl_no_homepage_raises_exception_robot(self):
+        run = self.run_scenario("test_robot_no_homepage.robot")
+        self.assert_run(run, expected_returncode=1, search_output="No homepage set")
+
+    def test_nobase_url_homepage_set_unittest(self):
+        run = self.run_scenario("test_unittest.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")
+
+    def test_nobase_url_homepage_set_robot(self):
+        run = self.run_scenario("test_robot.robot")
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
 
 if __name__ == "__main__":
     unittest.main()
