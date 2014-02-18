@@ -22,10 +22,12 @@ class Context(object):
 
         return cls._instance
     
-    def in_robot(self):
+    @staticmethod
+    def in_robot():
         return EXECUTION_CONTEXTS.current is not None
     
-    def get_se_instance(self):
+    @staticmethod
+    def get_se_instance():
 
         """
         Gets the Selenoim2Library instance (which interfaces with SE)

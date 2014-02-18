@@ -143,7 +143,6 @@ class _Keywords(object):
 
         return makefunc
 
-
 def not_keyword(f):
     """
     Decorator function to wrap _Keywords.not_keyword.
@@ -157,7 +156,6 @@ def not_keyword(f):
     """
     return _Keywords.not_keyword(f)
 
-
 def robot_alias(stub):
     """
     Decorator function to wrap _Keywords.robot_alias
@@ -167,8 +165,45 @@ def robot_alias(stub):
     """
     return _Keywords.robot_alias(stub)
 
+class _KeywordGroupMetaClass(KeywordGroupMetaClass):
+    """
+    Extending the metaclass Selenium2Library uses to wrap all keywords in
+    a decorator to invoke the _run_on_failure method. Not good that we are
+    referring to _run_on_failure_decorator, but I don't see another way to
+    make this work other than writing our own decorator that copies the code.
+    
+    We're doing this in the first place because when outside Robot, if an action
+    fails, we want to call a "run-on-failure" method directly instead of a keyword
+    --since we don't have an easy way of translating keywords to methods outside Robot.
+    
+    But if that method is defined in this class or a subclass, instead of
+    Selenium2Library, then Selenium2Library's decoration of methods to call run-on-failure
+    won't do the job. We need to duplicate what it's doing and wrap our own methods so
+    that they trigger a "run on failure" as well.
+    
+    And we need to exclude "get_keyword_names" and "run_keyword", since they're not keywords.
+    TODO: Should we exclude methods with @not_keyword?
+    """
+    def __new__(cls, clsname, bases, dict):
+        """
+        Loops through the methods in this class and decorates them. Here we want to
+        exclude run_keyword and get_keyword_names, since they're API methods.
+        """
+        if decorator:
+            for name, method in dict.items():
+                if not name.startswith('_') and inspect.isroutine(method) and name not in ("get_keyword_names", "run_keyword"):
+                    # TODO: Consider a better way to exclude methods from this decorator.
+                    dict[name] = decorator(_run_on_failure_decorator, method)
+        return type.__new__(cls, clsname, bases, dict)
 
-class _S2LWrapper(object):
+class _KeywordGroup(object):
+    """
+    Base class that includes the _KeywordGroupMetaClass. This class is used by
+    _S2LWrapper.
+    """
+    __metaclass__ = _KeywordGroupMetaClass
+
+class _S2LWrapper(_KeywordGroup):
     """
     Helper class that defines the methods to be used in PageObjectLibrary that interact with Selenium2Library.
     This is used by _BaseActions, which is used by PageObjectLibrary. This class initializes the S2L instance
@@ -187,7 +222,7 @@ class _S2LWrapper(object):
         Initialize the Selenium2Library instance.
         """
         super(_S2LWrapper, self).__init__(*args, **kwargs)
-        self._se = Context().get_se_instance()
+        self._se = Context.get_se_instance()
 
     def __getattr__(self, name):
         """
@@ -202,33 +237,7 @@ class _S2LWrapper(object):
             raise AttributeError("%r object has no attribute %r" % (self.__class__.__name__, name))
         return attr
 
-
-class _KeywordGroupMetaClass(KeywordGroupMetaClass):
-    """
-    Extending the metaclass Selenium2Library uses to wrap all keywords in
-    a decorator to invoke the _run_on_failure method. Not good that we are
-    referring to _run_on_failure_decorator, but I don't see another way to
-    make this work other than writing our own decorator that copies the code.
-    """
-    def __new__(cls, clsname, bases, dict):
-        """
-        Loops through the methods in this class and decorates them. Here we want to
-        exclude run_keyword and get_keyword_names, since they're API methods.
-        """
-        if decorator:
-            for name, method in dict.items():
-                import sys
-                sys.__stdout__.write(name)
-                if not name.startswith('_') and inspect.isroutine(method) and name not in ("get_keyword_names", "run_keyword"):
-                    # TODO: Consider a better way to exclude methods from this decorator.
-                    dict[name] = decorator(_run_on_failure_decorator, method)
-        return type.__new__(cls, clsname, bases, dict)
-
-class _KeywordGroup(object):
-    __metaclass__ = _KeywordGroupMetaClass
-
-
-class _BaseActions(_S2LWrapper, _KeywordGroup):
+class _BaseActions(_S2LWrapper):
     """
     Helper class that defines actions for PageObjectLibrary.
     """
@@ -370,7 +379,7 @@ class _BaseActions(_S2LWrapper, _KeywordGroup):
         
         Solve this problem.
         """
-        if Context().in_robot():
+        if Context.in_robot():
             sys.__stdout__.write("\nFOO")
             import traceback
             #traceback.print_stack(limit=4)
