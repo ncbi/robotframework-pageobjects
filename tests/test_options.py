@@ -2,9 +2,10 @@ import os
 import unittest
 
 from basetestcase import BaseTestCase
+from nose.tools import raises
 
 
-class TestOptions(BaseTestCase):
+class BrowserOptionTestCase(BaseTestCase):
     """
     Tests for basic options and option handling.
 
@@ -27,6 +28,9 @@ class TestOptions(BaseTestCase):
     PO_ environment variables set and that we are running with
     default options. The tests are then free to set environment variables or
     write variable files as needed.
+
+    This test case tests browser option, but in effect also tests option handling, assuming
+    that options are gotten internally using the optionhandler.OptionHandler class.
     """
 
     def test_unittest_default_browser_should_be_phantomjs(self):
@@ -63,8 +67,21 @@ class TestOptions(BaseTestCase):
         self.assert_run(run, search_output="PASS", expected_browser="firefox")
 
 
+class OpenMethodTestCase(BaseTestCase):
+    """
+    Tests the page object's open method. Possibilities:
+
+        - No url passed and no homepage attribute set, exception
+    """
+
+    def test_no_baseurl_no_homepage_raises_exception(self):
+        run = self.run_scenario("test_unittest_no_homepage.py")
+        self.assert_run(run, expected_returncode=1, search_output="No homepage set")
+
 if __name__ == "__main__":
     unittest.main()
+
+
 
 
 

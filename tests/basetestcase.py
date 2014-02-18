@@ -50,6 +50,9 @@ class BaseTestCase(unittest.TestCase):
         if scenario.endswith(".py"):
             return self.run_program("python %s%sscenarios%s%s" % (self.test_dir, os.sep, os.sep, scenario))
         else:
+            cmd = "pybot -P %s%sscenarios %s%sscenarios%s%s" % (self.test_dir, os.sep,
+                                                                                  self.test_dir, os.sep,
+                                                                               os.sep, scenario)
             return self.run_program("pybot -P %s%sscenarios %s%sscenarios%s%s" % (self.test_dir, os.sep,
                                                                                   self.test_dir, os.sep,
                                                                                   os.sep, scenario))

@@ -24,7 +24,6 @@ import re
 
 from selenium.webdriver.support.ui import WebDriverWait
 
-
 from .context import Context
 from optionhandler import OptionHandler
 
@@ -88,7 +87,7 @@ class _Keywords(object):
         for fname, stub in cls._aliases.iteritems():
             if alias == stub.replace(cls._alias_delimiter, "_" + pageobject_name + "_"):
                 return fname
-            # We didn't find a match, so take the class name off the end.
+                # We didn't find a match, so take the class name off the end.
         return alias.replace("_" + pageobject_name, "")
 
     @classmethod
@@ -235,9 +234,14 @@ class _BaseActions(_S2LWrapper):
                 ret = url
         else:
             if self.baseurl:
-                # If no url passed and base url, then go to base url + homepage
                 ret = self.baseurl + self.homepage
             else:
+                try:
+                    self.homepage
+                except AttributeError:
+                    raise Exception("No homepage set for page object %s." % self.__class__
+                    .__name__)
+
                 if not self.homepage[:5] in ["http:", "file:"]:
                     raise Exception("Home page '%s' is invalid. You must set a baseurl" % self.homepage)
                 else:
