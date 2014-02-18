@@ -30,7 +30,6 @@ class TestOptions(BaseTestCase):
     """
 
     def test_unittest_default_browser_should_be_phantomjs(self):
-        #run = self.run_program("python %s/scenarios/test_unittest.py" % self.test_dir)
         run = self.run_scenario("test_unittest.py")
         self.assert_run(run, search_output="OK", expected_browser="phantomjs")
 
@@ -53,7 +52,7 @@ class TestOptions(BaseTestCase):
             self.remove_vars_file()
 
     def test_robot_default_browser_should_be_phantomjs(self):
-        run = self.run_program("pybot -P %s/scenarios %s/scenarios/test_robot.robot" % (self.test_dir, self.test_dir))
+        run = self.run_scenario("test_robot.robot")
         self.assert_run(run, search_output="PASS", expected_browser="phantomjs")
 
     def test_robot_variable_set_should_run_in_firefox(self):
