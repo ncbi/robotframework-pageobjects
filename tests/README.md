@@ -1,5 +1,8 @@
-Directory for the robot page object project tests. test.py is the entry point.
+Directory for the robot page object project tests.
 
-Run nosetests test.py
+This directory contains the actual tests written in unittest. The test cases extend `basetestcase.BaseTestCase` which
+take care of resetting environment variables, deleting log files, calling the .py or .robot test cases in the
+scenarios directory.
 
-This runs test_robot.robot and test_unittest.py in a subprocess and does various assertions against stder, stdout, and any logs produced. 
+The scenarios directory also contains test page objects (in widget.py) which model the mocked widget site under the
+`scenarios/pages` directory.
