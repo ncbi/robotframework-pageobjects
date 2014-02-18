@@ -5,7 +5,6 @@ from xml.dom.minidom import parse
 
 import re
 import os
-this_dir = os.path.dirname(os.path.realpath(__file__))
 log_path = os.getcwd() + os.sep + "po_log.txt"
 
 
@@ -13,6 +12,7 @@ class BaseTestCase(unittest.TestCase):
     """
     Base class Robot page object test cases.
     """
+    test_dir = os.path.dirname(os.path.realpath(__file__))
 
     def setUp(self):
 
@@ -165,5 +165,26 @@ class BaseTestCase(unittest.TestCase):
                                                                                                logged_browser))
                 finally:
                     po_log.close()
+
+    def write_var_file(self, *args, **kwargs):
+        f = None
+        try:
+            f = open(self.test_dir + os.sep + "vars.py", "w")
+            for i in kwargs:
+                line = "%s = '%s'\n" % (i, kwargs[i])
+                f.write(line)
+        except Exception, e:
+            raise Exception("Problem creating vars file: %s" % e)
+        finally:
+            if f:
+                f.close()
+
+    def remove_vars_file(self):
+        try:
+            vars_path = self.test_dir + os.sep + "vars.py"
+            os.unlink(vars_path)
+            os.unlink(self.test_dir + os.sep + "vars.pyc")
+        except OSError:
+            pass
 
 

@@ -3,9 +3,6 @@ import unittest
 
 from basetestcase import BaseTestCase
 
-test_dir = os.path.dirname(os.path.realpath(__file__))
-log_path = test_dir + os.sep + "po_log.txt"
-
 
 class TestOptions(BaseTestCase):
     """
@@ -33,23 +30,38 @@ class TestOptions(BaseTestCase):
     """
 
     def test_unittest_default_browser_should_be_phantomjs(self):
-        run = self.run_program("python %s/scenarios/test_unittest.py" % test_dir)
+        run = self.run_program("python %s/scenarios/test_unittest.py" % self.test_dir)
         self.assert_run(run, search_output="OK", expected_browser="phantomjs")
 
     def test_unittest_PO_BROWSER_env_var_set_to_firefox_should_run_firefox(self):
         os.environ["PO_BROWSER"] = "firefox"
-        run = self.run_program("python %s/scenarios/test_unittest.py" % test_dir)
+        run = self.run_program("python %s/scenarios/test_unittest.py" % self.test_dir)
         self.assert_run(run, search_output="OK", expected_browser="firefox")
 
+    def test_unittest_variable_file_var_set_to_firefox(self):
+        try:
+            self.write_var_file(browser="firefox")
+            os.environ["PO_VAR_FILE"] = self.test_dir + os.sep + "vars.py"
+            run = self.run_program("python %s/scenarios/test_unittest.py" % self.test_dir)
+            self.assert_run(run, search_output="OK", expected_browser="firefox")
+
+        except AssertionError, e:
+            raise e
+
+        finally:
+            self.remove_vars_file()
+
     def test_robot_default_browser_should_be_phantomjs(self):
-        run = self.run_program("pybot -P %s/scenarios %s/scenarios/test_robot.robot" % (test_dir, test_dir))
+        run = self.run_program("pybot -P %s/scenarios %s/scenarios/test_robot.robot" % (self.test_dir, self.test_dir))
         self.assert_run(run, search_output="PASS", expected_browser="phantomjs")
 
     def test_robot_variable_set_should_run_in_firefox(self):
         run = self.run_program("pybot -P %s/scenarios --variable=browser:firefox %s/scenarios/test_robot.robot" % (
-            test_dir,
-                                                                                                         test_dir))
+            self.test_dir,
+            self
+            .test_dir))
         self.assert_run(run, search_output="PASS", expected_browser="firefox")
+
 
 if __name__ == "__main__":
     unittest.main()
