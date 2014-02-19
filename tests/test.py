@@ -1,5 +1,6 @@
 import os
 import unittest
+import glob
 
 from basetestcase import BaseTestCase
 
@@ -124,11 +125,17 @@ class OpenTestCase(BaseTestCase):
 
 
 class ActionsTestCase(BaseTestCase):
+
     def unittest_test_screenshot_on_failure(self):
-        pass
+        run = self.run_scenario("test_no_homepage.py")
+        self.assert_run(run, expected_returncode=1, search_output="No homepage set")
+        self.assertEquals(len(glob.glob("*.png")), 1, "On Failure or error, page object generates screenshot")
 
     def robot_test_screenshot_on_failure(self):
-        pass
+        run = self.run_scenario("test_no_homepage.robot")
+        self.assert_run(run, expected_returncode=1, search_output="No homepage set")
+        self.assertEquals(len(glob.glob("*.png")), 1, "On Failure or error, page object generates screenshot")
+
 
 if __name__ == "__main__":
     unittest.main()
