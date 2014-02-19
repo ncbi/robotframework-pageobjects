@@ -94,13 +94,13 @@ class OpenTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
     def test_unittest_no_url_passed_baseurl_set_rel_homepage_set_should_pass(self):
-        os.environ["PO_BASEURL"] = "file://%s/scenarios" % self.test_dir
+        os.environ["PO_BASEURL"] = "file:///%s/scenarios" % self.test_dir.replace("\\", "/")
         run = self.run_scenario("test_no_url_passed_relative_homepage.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_robot_no_url_passed_baseurl_set_rel_homepage_set_should_pass(self):
         run = self.run_scenario("test_no_url_passed_relative_homepage.robot",
-                                variable="baseurl:file://%s/scenarios" % self.test_dir)
+                                variable="baseurl:file:///%s/scenarios" % self.test_dir.replace("\\", "/")
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
     def test_unittest_abs_url_passed_no_baseurl_set_homepage_set_should_pass(self):
@@ -113,14 +113,14 @@ class OpenTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
     def test_unittest_rel_url_passed_baseurl_set_no_homepage_set_should_pass(self):
-        os.environ["PO_BASEURL"] = "file://%s/scenarios" % self.test_dir
+        os.environ["PO_BASEURL"] = "file:///%s/scenarios" % self.test_dir.replace("\\", "/")
         run = self.run_scenario("test_rel_url_passed.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_robot_rel_url_passed_baseurl_set_no_homepage_set_should_pass(self):
-        os.environ["PO_BASEURL"] = "file://%s/scenarios" % self.test_dir
+        os.environ["PO_BASEURL"] = "file:///%s/scenarios" % self.test_dir.replace("\\", "/")
         run = self.run_scenario("test_rel_url_passed.robot", variable="baseurl:%s" % (
-            "file://%s/scenarios" % self.test_dir))
+            "file:///%s/scenarios" % self.test_dir))
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
 
