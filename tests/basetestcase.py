@@ -18,6 +18,11 @@ class BaseTestCase(unittest.TestCase):
 
     def setUp(self):
 
+        # Remove png files
+        for dirname, subdirs, files in os.walk("."):
+            for f in files:
+                if f.endswith(".png"):
+                    os.unlink(os.path.abspath(f))
         try:
             os.unlink(log_path)
         except OSError:

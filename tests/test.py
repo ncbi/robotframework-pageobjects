@@ -22,7 +22,7 @@ class BrowserOptionTestCase(BaseTestCase):
 
     The BaseTestCase setUp removes all PO environment variables.
     tearDown restores them. It also removes po_log file in
-    setUp and tearDown.
+    setUp and tearDown and screenshots in setUp
 
     This assures that at the beginning of each test there are no
     PO_ environment variables set and that we are running with
@@ -107,7 +107,6 @@ class OpenTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_robot_abs_url_passed_no_baseurl_set_homepage_set_should_pass(self):
-
         # Pass the absolute file URL to the site under test to the robot test.
         run = self.run_scenario("test_abs_url_passed.robot", variable="ABS_URL:%s" % self.site_under_test_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
