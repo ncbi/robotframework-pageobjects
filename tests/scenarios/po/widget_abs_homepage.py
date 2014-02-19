@@ -7,8 +7,11 @@ from pageobjects.base.PageObjectLibrary import PageObjectLibrary, robot_alias
 
 class Page(PageObjectLibrary):
     name = "Widget Page"
-    homepage = "file:///%s" % os.sep.join(os.path.dirname(os.path.abspath(__file__)).split(os.sep)[:-1]) + os.sep + os.path.join("pages",
-                                                                                                  "widget-home-page.html")
+    homepage = "file:///%s" % os.sep.join(
+        os.path.dirname(os.path.abspath(__file__)).split(os.sep)[:-1]) + os.sep + os.path.join("pages",
+                                                                                               "widget-home-page"
+                                                                                               ".html").replace(
+        "\\", "/")
 
     @robot_alias("search__name__for")
     def search(self, term):
