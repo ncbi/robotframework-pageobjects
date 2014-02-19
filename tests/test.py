@@ -130,7 +130,7 @@ class ActionsTestCase(BaseTestCase):
     def unittest_test_screenshot_on_failure(self):
         run = self.run_scenario("test_fail.py")
         self.assertEquals(len(glob.glob("*.png")), 1, "On Failure page object should take screenshot")
-        
+
     @skip("NOT IMPLEMENTED YET")
     def robot_test_screenshot_on_failure(self):
         run = self.run_scenario("test_fail.robot")
