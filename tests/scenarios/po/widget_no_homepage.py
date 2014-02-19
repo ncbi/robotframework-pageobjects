@@ -1,4 +1,3 @@
-import os
 
 import robot.utils.asserts as asserts
 
