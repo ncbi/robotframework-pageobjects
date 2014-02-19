@@ -54,7 +54,9 @@ class BaseTestCase(unittest.TestCase):
         """
 
         if scenario.endswith(".py"):
-            return self.run_program("python %s%sscenarios%s%s" % (self.test_dir, os.sep, os.sep, scenario))
+            arg = "python %s%sscenarios%s%s" % (self.test_dir, os.sep, os.sep, scenario)
+            print arg
+            return self.run_program(arg)
         else:
             return self.run_program("pybot", "-P %s%sscenarios%spo" % (self.test_dir, os.sep, os.sep),
                                     "%s%sscenarios%s%s" % (
@@ -98,7 +100,6 @@ class BaseTestCase(unittest.TestCase):
 
 
         cmd = base_cmd + " " + " ".join(args) + " "
-
         cmd  = base_cmd + " "
         for name in opts:
             val = opts[name]
@@ -109,7 +110,8 @@ class BaseTestCase(unittest.TestCase):
 
         cmd += " " + " ".join(args)
 
-        p = subprocess.Popen(shlex.split(cmd), shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        isposix = os.name.lower() == "posix"
+        p = subprocess.Popen(shlex.split(cmd, False, isposix), shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         com = p.communicate()
         code = p.wait()
 
