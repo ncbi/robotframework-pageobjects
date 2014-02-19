@@ -1,11 +1,15 @@
 import unittest
 from po import widget_no_homepage
+import os
 
 
 class TestWidgetSearch(unittest.TestCase):
+
+    widget_url = "file://%s" % os.path.dirname(os.path.abspath(__file__)) + os.sep + os.path.join("pages", "widget-home-page.html")
+
     def test_search(self):
         widget_page = widget_no_homepage.Page()
-        widget_page.open("file:///Users/cohenaa/PyCharmProjects/rfexp/tests/scenarios/pages/widget-home-page.html")
+        widget_page.open(self.widget_url)
         self.widget_search_result_page = widget_page.search("search term")
         self.widget_search_result_page.should_have_results(3)
 

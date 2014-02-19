@@ -106,7 +106,9 @@ class OpenTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_robot_abs_url_passed_no_baseurl_set_homepage_set_should_pass(self):
-        run = self.run_scenario("test_abs_url_passed.robot")
+
+        # Pass the absolute file URL to the site under test to the robot test.
+        run = self.run_scenario("test_abs_url_passed.robot", variable="ABS_URL:%s" % self.site_under_test_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
     def test_unittest_rel_url_passed_baseurl_set_no_homepage_set_should_pass(self):
@@ -119,6 +121,14 @@ class OpenTestCase(BaseTestCase):
         run = self.run_scenario("test_rel_url_passed.robot", variable="baseurl:%s" % (
             "file://%s/scenarios" % self.test_dir))
         self.assert_run(run, expected_returncode=0, search_output="PASS")
+
+
+class ActionsTestCase(BaseTestCase):
+    def unittest_test_screenshot_on_failure(self):
+        pass
+
+    def robot_test_screenshot_on_failure(self):
+        pass
 
 if __name__ == "__main__":
     unittest.main()
