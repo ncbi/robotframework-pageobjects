@@ -2,7 +2,6 @@ import os
 import unittest
 
 from basetestcase import BaseTestCase
-from nose.tools import raises
 
 
 class BrowserOptionTestCase(BaseTestCase):
@@ -60,37 +59,65 @@ class BrowserOptionTestCase(BaseTestCase):
         self.assert_run(run, search_output="PASS", expected_browser="phantomjs")
 
     def test_robot_variable_set_should_run_in_firefox(self):
-        run = self.run_program("pybot -P %s/scenarios --variable=browser:firefox %s/scenarios/test_robot.robot" % (
-            self.test_dir,
-            self
-            .test_dir))
+        run = self.run_scenario("test_robot.robot", variable="browser:firefox")
         self.assert_run(run, search_output="PASS", expected_browser="firefox")
 
 
-class OpenMethodTestCase(BaseTestCase):
+class OpenTestCase(BaseTestCase):
     """
     Tests the page object's open method. We test in both robot context and
     unittest contexts. Possibilities:
 
-        - No url passed and no homepage attribute set, exception
-        - No url passed but a homepage attribute is set, pass
-        - No url passed, baseurl and homepage is set.
+        - No url passed and no homepage attribute set, exception.
+        - No url passed but a homepage attribute is set
+        - No url passed, baseurl and homepage is set. Homepage is relative
+        - url passed, no basurl
+        - relative url passed, baseurl
     """
 
-    def test_no_baseurl_no_homepage_raises_exception_unittest(self):
+    def test_no_baseurl_set_no_homepage_set_raises_exception_unittest(self):
         run = self.run_scenario("test_unittest_no_homepage.py")
         self.assert_run(run, expected_returncode=1, search_output="No homepage set")
 
-    def test_no_baseurl_no_homepage_raises_exception_robot(self):
+    def test_no_baseurl_set_no_homepage_set_raises_exception_robot(self):
         run = self.run_scenario("test_robot_no_homepage.robot")
         self.assert_run(run, expected_returncode=1, search_output="No homepage set")
 
-    def test_nobase_url_homepage_set_unittest(self):
+    def test_no_baseurl_set_homepage_set_unittest(self):
         run = self.run_scenario("test_unittest.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
-    def test_nobase_url_homepage_set_robot(self):
+    def test_no_baseurl_homepage_set_robot(self):
         run = self.run_scenario("test_robot.robot")
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
+
+    def test_baseurl_set_homepage_set_unittest(self):
+        os.environ["PO_BASEURL"] = "file://%s/scenarios" % self.test_dir
+        run = self.run_scenario("test_unittest_relative_homepage.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")
+
+    def test_baseurl_set_homepage_set_robot(self):
+        run = self.run_scenario("test_robot_relative_homepage.robot",
+                                variable="baseurl:file://%s/scenarios" % self.test_dir)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
+
+    def test_url_passed_no_homepage_set_no_baseurl_set_unittest(self):
+        run = self.run_scenario("test_abs_url_passed_unittest.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")
+
+    def test_url_passed_no_homepage_set_no_baseurl_set_robot(self):
+        run = self.run_scenario("test_robot_abs_url_passed.robot")
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
+
+    def relative_url_passed_baseurl_set_unittest(self):
+        os.environ["PO_BASEURL"] = "file://%s/scenarios" % self.test_dir
+        run = self.run_scenario("test_unittest_relative_url_passed.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")
+
+    def relative_url_passed_baseurl_set_robot(self):
+        os.environ["PO_BASEURL"] = "file://%s/scenarios" % self.test_dir
+        run = self.run_scenario("test_robot_rel_url_passed.robot", variable="baseurl:%s" % (
+            "file://%s/scenarios" % self.test_dir))
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
 if __name__ == "__main__":

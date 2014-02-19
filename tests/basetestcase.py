@@ -39,7 +39,7 @@ class BaseTestCase(unittest.TestCase):
         except OSError:
             pass
 
-    def run_scenario(self, scenario):
+    def run_scenario(self, scenario, *args, **kwargs):
         """
         Runs a robot page object package test scenario, either a plain Python
         unittest or a robot test. The unittest scenario must reside in tests/scenarios and have
@@ -50,14 +50,10 @@ class BaseTestCase(unittest.TestCase):
         if scenario.endswith(".py"):
             return self.run_program("python %s%sscenarios%s%s" % (self.test_dir, os.sep, os.sep, scenario))
         else:
-            cmd = "pybot -P %s%sscenarios %s%sscenarios%s%s" % (self.test_dir, os.sep,
-                                                                                  self.test_dir, os.sep,
-                                                                               os.sep, scenario)
-            return self.run_program("pybot -P %s%sscenarios %s%sscenarios%s%s" % (self.test_dir, os.sep,
-                                                                                  self.test_dir, os.sep,
-                                                                                  os.sep, scenario))
+            return self.run_program("pybot", "-P %s%sscenarios/po" % (self.test_dir, os.sep), "%s%sscenarios%s%s" % (
+                self.test_dir, os.sep, os.sep, scenario), **kwargs)
 
-    def run_program(self, program, *args, **opts):
+    def run_program(self, base_cmd, *args, **opts):
 
         """
         Runs a program using a subprocess, returning an object with the following properties:
@@ -80,29 +76,31 @@ class BaseTestCase(unittest.TestCase):
             The object to return from running the program
             """
 
-            def __init__(self, cmd, returncode, output, rid, xmldoc=None):
+            def __init__(self, cmd, returncode, output, xmldoc=None):
                 self.cmd = cmd
                 self.returncode = returncode
                 self.output = output
-                self.rid = rid
                 self.xmldoc = xmldoc
 
             def __repr__(self):
-                return "<run object: cmd: '%s', returncode: %s, rid: %s, xmldoc: %s, output: %s>" % (self.cmd,
-                                                                                                     self.returncode,
-                                                                                                     self.rid,
-                                                                                                     self.xmldoc,
-                                                                                                     self.output[0:25]
-                                                                                                     .replace("\n", ""))
+                return "<run object: cmd: '%s', returncode: %s, xmldoc: %s, output: %s>" % (self.cmd, self.returncode,
 
-        cmd = program + " " + " ".join(args) + " "
+                                                                                            self.xmldoc,
+                                                                                            self.output[0:25]
+                                                                                            .replace("\n", ""))
 
+
+        cmd = base_cmd + " " + " ".join(args) + " "
+
+        cmd  = base_cmd + " "
         for name in opts:
             val = opts[name]
             if isinstance(val, bool):
                 cmd = cmd + "--" + name.replace("_", "-") + " "
             else:
                 cmd = cmd + "--" + name.replace("_", "-") + "=" + val + " "
+
+        cmd += " " + " ".join(args)
 
         p = subprocess.Popen(shlex.split(cmd), shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         com = p.communicate()
@@ -127,12 +125,7 @@ class BaseTestCase(unittest.TestCase):
         # Splice out trailing new line
         out = out[:-1]
 
-        first_line = out.split("\n")[0]
-        rid = re.sub(".*Run ID: ", "", first_line.replace("\n", ""))
-        if len(rid) != 9:
-            rid = None
-
-        return Ret(cmd, code, out, rid, xmldoc=dom)
+        return Ret(cmd, code, out, xmldoc=dom)
 
     def assert_run(self, run,
                    expected_returncode=0, expected_tests_ran=None,
