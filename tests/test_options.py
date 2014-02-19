@@ -75,46 +75,46 @@ class OpenTestCase(BaseTestCase):
         - relative url passed, baseurl
     """
 
-    def test_no_baseurl_set_no_homepage_set_raises_exception_unittest(self):
+    def test_unittest_no_baseurl_set_no_homepage_set_raises_exception(self):
         run = self.run_scenario("test_unittest_no_homepage.py")
         self.assert_run(run, expected_returncode=1, search_output="No homepage set")
 
-    def test_no_baseurl_set_no_homepage_set_raises_exception_robot(self):
+    def test_robot_no_baseurl_set_no_homepage_set_raises_exception(self):
         run = self.run_scenario("test_robot_no_homepage.robot")
         self.assert_run(run, expected_returncode=1, search_output="No homepage set")
 
-    def test_no_baseurl_set_homepage_set_unittest(self):
+    def test_unittest_no_baseurl_set_homepage_set(self):
         run = self.run_scenario("test_unittest.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
-    def test_no_baseurl_homepage_set_robot(self):
+    def test_robot_no_baseurl_homepage_set(self):
         run = self.run_scenario("test_robot.robot")
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
-    def test_baseurl_set_homepage_set_unittest(self):
+    def test_unittest_baseurl_set_homepage_set(self):
         os.environ["PO_BASEURL"] = "file://%s/scenarios" % self.test_dir
         run = self.run_scenario("test_unittest_relative_homepage.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
-    def test_baseurl_set_homepage_set_robot(self):
+    def test_robot_baseurl_set_homepage_set(self):
         run = self.run_scenario("test_robot_relative_homepage.robot",
                                 variable="baseurl:file://%s/scenarios" % self.test_dir)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
-    def test_url_passed_no_homepage_set_no_baseurl_set_unittest(self):
+    def test_unittest_url_passed_no_homepage_set_no_baseurl_set(self):
         run = self.run_scenario("test_abs_url_passed_unittest.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
-    def test_url_passed_no_homepage_set_no_baseurl_set_robot(self):
+    def test_robot_url_passed_no_homepage_set_no_baseurl_set(self):
         run = self.run_scenario("test_robot_abs_url_passed.robot")
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
-    def relative_url_passed_baseurl_set_unittest(self):
+    def test_unittest_relative_url_passed_baseurl_set(self):
         os.environ["PO_BASEURL"] = "file://%s/scenarios" % self.test_dir
         run = self.run_scenario("test_unittest_relative_url_passed.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
-    def relative_url_passed_baseurl_set_robot(self):
+    def test_robot_relative_url_passed_baseurl_set(self):
         os.environ["PO_BASEURL"] = "file://%s/scenarios" % self.test_dir
         run = self.run_scenario("test_robot_rel_url_passed.robot", variable="baseurl:%s" % (
             "file://%s/scenarios" % self.test_dir))
