@@ -110,6 +110,12 @@ class BaseTestCase(unittest.TestCase):
         cmd += " " + " ".join(args)
 
         isposix = os.name.lower() == "posix"
+        print "\n"
+        print cmd
+        print isposix
+        parsed_cmd = [el.replace("\\\", "\\") for el in shlex.split(cmd, False, isposix)]
+        print parsed_cmd
+
         p = subprocess.Popen(shlex.split(cmd, False, isposix), shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         com = p.communicate()
         code = p.wait()
