@@ -113,7 +113,7 @@ class BaseTestCase(unittest.TestCase):
         print "\n"
         print cmd
         print isposix
-        parsed_cmd = [el.replace("\\\", "\\") for el in shlex.split(cmd, False, isposix)]
+        parsed_cmd = [el.replace("\\\\", "\\") for el in shlex.split(cmd, False, isposix)]
         print parsed_cmd
 
         p = subprocess.Popen(shlex.split(cmd, False, isposix), shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
