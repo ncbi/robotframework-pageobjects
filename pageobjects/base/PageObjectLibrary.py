@@ -172,9 +172,12 @@ class _KeywordGroupMetaClass(KeywordGroupMetaClass):
     referring to _run_on_failure_decorator, but I don't see another way to
     make this work other than writing our own decorator that copies the code.
     
-    We're doing this in the first place because when outside Robot, if an action
-    fails, we want to call a "run-on-failure" method directly instead of a keyword
-    --since we don't have an easy way of translating keywords to methods outside Robot.
+    We're doing this in the first place for two reasons. First, when inside Robot, if an
+    action fails that is not a keyword defined by Selenium2Library (e.g. if it uses
+    Robot's built-in asserts), Selenium2Library won't have decorated the action to
+    trigger a run on failure. Second, when outside Robot, if an action fails, we want to call
+    a "run-on-failure" method directly instead of a keyword--since we don't have an
+    easy way of translating keywords to methods outside Robot.
     
     But if that method is defined in this class or a subclass, instead of
     Selenium2Library, then Selenium2Library's decoration of methods to call run-on-failure
@@ -384,6 +387,7 @@ class _BaseActions(_S2LWrapper):
             import traceback
             #traceback.print_stack(limit=4)
             #sys.__stdout__.write(str("\n".join(traceback.format_stack(limit=8))))
+            #self._se._run_on_failure.__func__(self)
             self._se._run_on_failure()
         else:
             sys.__stdout__.write("\nBAR")
