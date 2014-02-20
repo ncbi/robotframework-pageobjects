@@ -14,7 +14,8 @@ class BaseTestCase(unittest.TestCase):
     Base class Robot page object test cases.
     """
     test_dir = os.path.dirname(os.path.realpath(__file__))
-    site_under_test_file_url = "file:///%s/scenarios/pages/widget-home-page.html" % test_dir.replace("\\", "/")
+    base_file_url = "file:///%s/scenarios" % test_dir.replace("\\", "/")
+    site_under_test_file_url = "%s/pages/widget-home-page.html" % base_file_url
 
     def setUp(self):
 
