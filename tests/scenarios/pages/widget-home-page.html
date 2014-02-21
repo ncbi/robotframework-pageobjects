@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Widget Homepage</title>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.js"></script>
+</head>
+<body>
+    <h1>Your source for great widgets</h1>
+    <form>
+        <label for="q">Search for our widgets</label>
+        <input type="text" id="q"/>
+        <input type="submit" value="Search" id="go"/>
+    </form>
+    <script type="text/javascript">
+        // Fake out a get.
+
+        jQuery("#go").click( function(e) {
+            e.preventDefault();
+            document.location = "result.html?q=search%20term"
+
+        })
+    </script>
+</body>
+</html>

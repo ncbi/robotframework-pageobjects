@@ -25,12 +25,12 @@ import re
 
 from selenium.webdriver.support.ui import WebDriverWait
 
-from robot.api import logger as robot_logger
 
-from .context import Context
+from context import Context
 from optionhandler import OptionHandler
 
 from Selenium2Library.keywords.keywordgroup import decorator, KeywordGroupMetaClass, _run_on_failure_decorator
+this_module_name = __name__
 
 class _Keywords(object):
     """
@@ -226,6 +226,7 @@ class _S2LWrapper(_KeywordGroup):
         """
         super(_S2LWrapper, self).__init__(*args, **kwargs)
         self._se = Context.get_se_instance()
+        self._logger = Context.get_logger(this_module_name)
 
     def __getattr__(self, name):
         """
@@ -234,9 +235,12 @@ class _S2LWrapper(_KeywordGroup):
         NB that __getattr__ is only called if the member can't be found normally.
         """
         try:
-            attr = getattr(object.__getattribute__(self, "_se"), name)
-        except Exception as e:
-        # Pass along an AttributeError as though it came from this object.
+            if not name.startswith("_"):
+                attr = getattr(object.__getattribute__(self, "_se"), name)
+            else:
+                raise
+        except:
+            # Pass along an AttributeError as though it came from this object.
             raise AttributeError("%r object has no attribute %r" % (self.__class__.__name__, name))
         return attr
 
@@ -277,11 +281,24 @@ class _BaseActions(_S2LWrapper):
                 # If no url passed and base url, then go to base url + homepage
                 ret = self.baseurl + self.homepage
             else:
-                if not self.homepage.startswith("http"):
+                if not self.homepage[:5] in ["http:", "file:"]:
                     raise Exception("Home page '%s' is invalid. You must set a baseurl" % self.homepage)
                 else:
                     ret = self.homepage
         return ret
+
+    def _log(self, *args):
+        """
+        Logs either to Robot or to a file if outside robot. If logging to a file,
+        prints each argument delimited by tabs.
+        """
+        self._logger.info("\t".join(args))
+
+    def get_current_browser(self):
+        """
+        Wrap the _current_browser() S2L method
+        """
+        return self._se._current_browser()
 
     def open(self, url=None, delete_cookies=True):
         """
@@ -293,7 +310,14 @@ class _BaseActions(_S2LWrapper):
         :type delete_cookies: Boolean
         :returns: _BaseActions instance
         """
-        self.open_browser(self.resolve_url(url), self.browser)
+        resolved_url = self.resolve_url(url)
+        self.open_browser(resolved_url, self.browser)
+
+        # Probably don't need this check here. We should log no matter
+        # what and the user sets the log level. When we take this check out
+        # also take out of base class __init__ parameter.
+        self._log("open", self.pageobject_name, str(self.get_current_browser()), resolved_url)
+
         if delete_cookies:
             self.delete_all_cookies()
         return self
@@ -313,7 +337,7 @@ class _BaseActions(_S2LWrapper):
         :returns: None
         """
         timeout = 10
-        wait = WebDriverWait(self._current_browser(),
+        wait = WebDriverWait(self.get_current_browser(),
                              timeout) #TODO: move to default config, allow parameter to this function too
 
         def wait_fnc(driver):
@@ -337,7 +361,7 @@ class _BaseActions(_S2LWrapper):
         :type required: boolean
         :returns: WebElement instance
         """
-        return self._element_find(locator, first_only, required, **kwargs)
+        return self._se._element_find(locator, first_only, required, **kwargs)
 
     @not_keyword
     def find_element(self, locator, **kwargs):
@@ -380,11 +404,20 @@ class _BaseActions(_S2LWrapper):
         which is actually self._se and not this instance--because
         __getattr__ calls self._se's methods.
         
-        Solve this problem.
+        Compounding this problem is that capture_page_screenshot can't be run
+        outside Robot because it relies (through S2L's _get_log_dir() method)
+        on ${LOG FILE} and ${OUTPUTDIR} in robot.variables.GLOBAL_VARIABLES.
+        
+        
+        So we need to make two fixes:
+        1) Make our decorator apply to S2L when running outside Robot. Hate to say it,
+        but perhaps monkey patch?
+        2) Either supply the variables mentioned above to robot.variables.GLOBAL_VARIABLES
+        somehow, or copy the screenshot code to our own method.
         """
         if Context.in_robot():
             sys.__stdout__.write("\nFOO")
-            import traceback
+            #import traceback
             #traceback.print_stack(limit=4)
             #sys.__stdout__.write(str("\n".join(traceback.format_stack(limit=8))))
             #self._se._run_on_failure.__func__(self)
@@ -393,10 +426,11 @@ class _BaseActions(_S2LWrapper):
             sys.__stdout__.write("\nBAR")
             if self._run_on_failure_method is not None:
                 try:
+                    sys.__stdout__.write(repr(self._run_on_failure_method))
                     self._run_on_failure_method()
                 except Exception, err:
-                    pass
-                    #self._se._run_on_failure_error(err)
+                    #pass
+                    self._se._run_on_failure_error(err)
 
 
 

@@ -1,6 +1,9 @@
+import sys
 import re
 import os
 import imp
+sys.__stdout__.write(str(sys.path))
+from context import Context
 
 # Our page objects should be used independently of Robot Framework
 try:
@@ -72,12 +75,13 @@ class OptionHandler(object):
         # After configs are saved from var file, get individual environment variables
         for env_varname in os.environ:
             if env_varname.startswith("PO_"):
-                varname = env_varname[3:].lower()
+                varname = env_varname[3:]
                 ret[self._convert_to_robot_format(varname)] = os.environ.get(env_varname)
 
         return ret
 
     def _convert_to_robot_format(self, name):
+        name = name.lower()
         return name if re.match("\$\{.+\}", name) else "${%s}" % name
 
     def get(self, name):
@@ -87,7 +91,13 @@ class OptionHandler(object):
 
         ret = None
         try:
-            ret = self._opts[self._convert_to_robot_format(name)]
+            sys.__stdout__.write("\n"+name)
+            sys.__stdout__.write("\n"+self._convert_to_robot_format(name))
+            sys.__stdout__.write("\n"+str(self._opts))
+            if Context.in_robot():
+                ret = self._opts[self._convert_to_robot_format(name)]
+            else:
+                ret = self._opts[self._convert_to_robot_format(name.replace(" ", "_"))]
         except KeyError:
             pass
 

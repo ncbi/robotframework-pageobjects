@@ -1,6 +1,7 @@
-from .ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
 from robot.libraries.BuiltIn import BuiltIn
 from robot.running.context import EXECUTION_CONTEXTS
+from robot import api as robot_api
+import logging
 
 class Context(object):
     """
@@ -28,7 +29,6 @@ class Context(object):
     
     @staticmethod
     def get_se_instance():
-
         """
         Gets the Selenoim2Library instance (which interfaces with SE)
         First it looks for an se2lib instance defined in Robot,
@@ -49,6 +49,8 @@ class Context(object):
         try:
             se = BuiltIn().get_library_instance("Selenium2Library")
         except (RuntimeError, AttributeError):
+            from .ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
+            # EBS2L imports OptionHandler, which imports Context, so we can't go back and import EBS2L at the top.
             try:
                 BuiltIn().import_library("Selenium2Library")
                 se = BuiltIn().get_library_instance("Selenium2Library")
@@ -62,3 +64,20 @@ class Context(object):
                     ExposedBrowserSelenium2Library()
                     se = ExposedBrowserSelenium2Library._se_instance
         return se
+
+    @classmethod
+    def get_logger(cls, module_name):
+        if cls.in_robot():
+            return robot_api.logger
+        else:
+            return cls._get_logger_outside_robot(module_name)
+        
+    @staticmethod
+    def _get_logger_outside_robot(module_name):
+        logger = logging.getLogger(module_name)
+        logger.setLevel(logging.INFO)
+        fh = logging.FileHandler("po_log.txt")
+        fh.setLevel(logging.INFO)
+        logger.addHandler(fh)
+        return logger
+
