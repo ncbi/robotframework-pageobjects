@@ -175,6 +175,7 @@ self
 to a relative URL, like "/search", you can set your baseurl to "http://www.example.com". A call to your page object's
  open method will open at "http://www.example.com/search".
 - `browser` (PO_BROWSER): which browser to use. Defaults to "phantomjs".
+- `loglevel` (PO_LOGLEVEL): decides what level to log. Default is `INFO`. Other levels are, `DEBUG`, `CRITICAL` etc.
 - `selenium_speed` (PO_SELENIIM_SPEED): The speed between Selenium commands. Use this to slow down the page actions,
  which is useful when, for example, it takes a few moments for something to load via AJAX.
 
