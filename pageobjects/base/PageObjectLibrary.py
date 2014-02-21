@@ -18,7 +18,6 @@
 .. moduleauthor:: Daniel Frishberg, Aaron Cohen <daniel.frishberg@nih.gov>, <aaron.cohen@nih.gov>
 
 """
-import sys
 
 import inspect
 import re
@@ -416,20 +415,12 @@ class _BaseActions(_S2LWrapper):
         somehow, or copy the screenshot code to our own method.
         """
         if Context.in_robot():
-            sys.__stdout__.write("\nFOO")
-            #import traceback
-            #traceback.print_stack(limit=4)
-            #sys.__stdout__.write(str("\n".join(traceback.format_stack(limit=8))))
-            #self._se._run_on_failure.__func__(self)
             self._se._run_on_failure()
         else:
-            sys.__stdout__.write("\nBAR")
             if self._run_on_failure_method is not None:
                 try:
-                    sys.__stdout__.write(repr(self._run_on_failure_method))
                     self._run_on_failure_method()
                 except Exception, err:
-                    #pass
                     self._se._run_on_failure_error(err)
 
 

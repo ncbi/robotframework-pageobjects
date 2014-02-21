@@ -1,4 +1,3 @@
-import sys
 import os
 from Selenium2Library import Selenium2Library
 from .optionhandler import OptionHandler
@@ -29,4 +28,4 @@ class ExposedBrowserSelenium2Library(Selenium2Library):
         logfile = self._option_handler.get("LOG FILE")
         if logfile != "NONE":
             return os.path.dirname(logfile)
-        return self._option_handler.get("OUTPUTDIR")
+        ret = self._option_handler.get("OUTPUTDIR")
