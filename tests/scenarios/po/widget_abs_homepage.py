@@ -8,7 +8,7 @@ from pageobjects.base.PageObjectLibrary import PageObjectLibrary, robot_alias
 class Page(PageObjectLibrary):
     name = "Widget Page"
     homepage = "file:///%s" % os.sep.join(
-        os.path.dirname(os.path.abspath(__file__)).split(os.sep)[:-1]) + os.sep + os.path.join("pages",
+        os.path.dirname(os.path.abspath(__file__)).split(os.sep)[:-1]) + os.sep + os.path.join("site",
                                                                                                "widget-home-page"
                                                                                                ".html").replace(
         "\\", "/")
