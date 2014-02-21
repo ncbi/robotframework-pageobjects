@@ -175,7 +175,11 @@ self
 to a relative URL, like "/search", you can set your baseurl to "http://www.example.com". A call to your page object's
  open method will open at "http://www.example.com/search".
 - `browser` (PO_BROWSER): which browser to use. Defaults to "phantomjs".
-- `loglevel` (PO_LOGLEVEL): decides what level to log. Default is `INFO`. Other levels are, `DEBUG`, `CRITICAL` etc.
+- `loglevel` (PO_LOGLEVEL): decides what level to log. Default is `INFO`. Other levels are, `DEBUG`,
+`CRITICAL` etc. Robot logs to its log file, which you can view at log.html.  When using page objects outside of the
+Robot context, a log file will be written to the current working directory named po_log.txt. To do your own logging,
+from your page object class, do self._log("foo", "bar"). Each parameter sent to `_log()` will get written to the log
+as a tab delimited line.
 - `selenium_speed` (PO_SELENIIM_SPEED): The speed between Selenium commands. Use this to slow down the page actions,
  which is useful when, for example, it takes a few moments for something to load via AJAX.
 
