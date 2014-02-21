@@ -80,12 +80,12 @@ class OptionHandler(object):
     def _convert_to_robot_format(self, name):
         return name if re.match("\$\{.+\}", name) else "${%s}" % name
 
-    def get(self, name):
+    def get(self, name, default=None):
         """
         Gets an option value given an option name
         """
 
-        ret = None
+        ret = default
         try:
             ret = self._opts[self._convert_to_robot_format(name)]
         except KeyError:
