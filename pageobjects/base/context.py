@@ -1,7 +1,8 @@
+import logging
 from robot.libraries.BuiltIn import BuiltIn
 from robot.running.context import EXECUTION_CONTEXTS
 from robot import api as robot_api
-import logging
+from .ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
 
 class Context(object):
     """
@@ -49,7 +50,6 @@ class Context(object):
         try:
             se = BuiltIn().get_library_instance("Selenium2Library")
         except (RuntimeError, AttributeError):
-            from .ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
             # EBS2L imports OptionHandler, which imports Context, so we can't go back and import EBS2L at the top.
             try:
                 BuiltIn().import_library("Selenium2Library")

@@ -174,16 +174,18 @@ class _KeywordGroupMetaClass(KeywordGroupMetaClass):
     action fails that is not a keyword defined by Selenium2Library (e.g. if it uses
     Robot's built-in asserts), Selenium2Library won't have decorated the action to
     trigger a run on failure. Second, when outside Robot, if an action fails, we want to call
-    a "run-on-failure" method directly instead of a keyword--since we don't have an
-    easy way of translating keywords to methods outside Robot.
+    a "run-on-failure" method directly instead of a keyword--since using keyword names outside
+    Robot doesn't make sense.
     
-    But if that method is defined in this class or a subclass, instead of
-    Selenium2Library, then Selenium2Library's decoration of methods to call run-on-failure
-    won't do the job. We need to duplicate what it's doing and wrap our own methods so
-    that they trigger a "run on failure" as well.
+    To solve the first problem, we need to duplicate what Selenium2Library is doing and
+    wrap our own methods so that they trigger a "run on failure" as well.
     
     And we need to exclude "get_keyword_names" and "run_keyword", since they're not keywords.
     TODO: Should we exclude methods with @not_keyword?
+    
+    To solve the second problem, we need to define our own "run_on_failure_method" keyword argument
+    (see _BaseActions's __init__). That means we also have to define our own _run_on_failure (called
+    by the _run_on_failure_decorator). See _BaseActions's _run_on_failure.
     """
     def __new__(cls, clsname, bases, dict):
         """
@@ -390,28 +392,24 @@ class _BaseActions(_S2LWrapper):
 
     def _run_on_failure(self):
         """
-        Override Selenium2Library's _run_on_failure():
+        Copy of Selenium2Library's _run_on_failure().
         If we're in Robot, just fall back to S2L's behavior.
         If we're outside Robot, then we need to call our own
-        method, which is "capture_page_screenshot" by default.
+        run_on_failure_method, which is "capture_page_screenshot" by default.
         
-        TODO: The S2L _run_on_failure method still gets called when an
-        S2L action fails (including the _run_on_failure_method() call
-        if that's an S2L method like capture_page_screenshot),
-        because the decorator calls _run_on_failure() on the method's instance,
-        which is actually self._se and not this instance--because
-        __getattr__ calls self._se's methods.
-        
-        Compounding this problem is that capture_page_screenshot can't be run
+        NB: Selenium2Library's capture_page_screenshot can't be run
         outside Robot because it relies (through S2L's _get_log_dir() method)
         on ${LOG FILE} and ${OUTPUTDIR} in robot.variables.GLOBAL_VARIABLES.
         
+        To solve this problem, we are initializing robot.variables.GLOBAL_VARIABLES
+        by calling robot.variables.init_global_variables() in our OptionHandler class.
         
-        So we need to make two fixes:
-        1) Make our decorator apply to S2L when running outside Robot. Hate to say it,
-        but perhaps monkey patch?
-        2) Either supply the variables mentioned above to robot.variables.GLOBAL_VARIABLES
-        somehow, or copy the screenshot code to our own method.
+        We also, when calling the _run_on_failure_method, set a flag used
+        by Selenium2Library's _run_on_failure() method, called _running_on_failure_routine.
+        That flag indicates within that method that we're already in a failure handler
+        and should not recursively call the failure handler again if it doesn't work the
+        first time. This is *bad* because we are digging around in S2L's protected
+        variables.
         """
         if Context.in_robot():
             self._se._run_on_failure()
