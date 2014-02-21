@@ -7,7 +7,7 @@ from pageobjects.base.PageObjectLibrary import PageObjectLibrary, robot_alias
 
 class Page(PageObjectLibrary):
     name = "Widget Page"
-    homepage = "/site/widget-home-page.html"
+    homepage = "/site/index.html"
 
     @robot_alias("search__name__for")
     def search(self, term):

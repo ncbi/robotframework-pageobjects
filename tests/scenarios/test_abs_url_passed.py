@@ -5,7 +5,7 @@ import os
 
 class TestWidgetSearch(unittest.TestCase):
 
-    widget_url = "file:///%s" % os.path.dirname(os.path.abspath(__file__)) + os.sep + os.path.join("site", "widget-home-page.html").replace("\\", "/")
+    widget_url = "file:///%s" % os.path.dirname(os.path.abspath(__file__)) + os.sep + os.path.join("site", "index.html").replace("\\", "/")
     
     def test_search(self):
         widget_page = widget_no_homepage.Page()
