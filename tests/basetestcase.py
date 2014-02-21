@@ -23,7 +23,6 @@ class BaseTestCase(unittest.TestCase):
         # Remove png files
         screenshot_locator = os.getcwd() + os.sep + "selenium-screenshot*.png"
         for screenshot in glob.glob(screenshot_locator):
-            print screenshot
             os.unlink(screenshot)
 
         # Remote python logger output
