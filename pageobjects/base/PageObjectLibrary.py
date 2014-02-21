@@ -21,6 +21,7 @@
 
 import inspect
 import re
+import uritemplate
 
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -187,6 +188,7 @@ class _S2LWrapper(object):
         self._se = Context().get_se_instance()
         self._logger = Context().get_logger(this_module_name)
 
+
     def __getattr__(self, name):
         """
         Override the built-in __getattr__ method so that we expose
@@ -217,16 +219,20 @@ class _BaseActions(_S2LWrapper):
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
 
-    def resolve_url(self, url=None):
+    def resolve_url(self, url=None, **template_vars):
         """
         Resolves the url to open for the page object's open method, depending on whether
-        baseurl is set, url is passed etc.
+        baseurl is set, url is passed and taking into account template variables
 
         :param url: The URL, whether relative or absolute to resolve.
         :type url: str
         :returns: str
         """
-        if url:
+
+        if len(template_vars) > 0:
+            if self.baseurl:
+                return uritemplate.expand(self.baseurl + self.uri_template, template_vars)
+        elif url:
             # URL is passed, if base url set, prefix it
             if self.baseurl:
                 ret = self.baseurl + url
@@ -255,7 +261,7 @@ class _BaseActions(_S2LWrapper):
         """
         self._logger.info("\t".join(args))
 
-    def open(self, url=None, delete_cookies=True):
+    def open(self, url=None, delete_cookies=True, **url_template_vars):
         """
         Wrapper for Selenium2Library's open_browser() that calls resolve_url for url logic and self.browser.
         It also deletes cookies after opening the browser.
@@ -265,7 +271,8 @@ class _BaseActions(_S2LWrapper):
         :type delete_cookies: Boolean
         :returns: _BaseActions instance
         """
-        resolved_url = self.resolve_url(url)
+
+        resolved_url = self.resolve_url(url, **url_template_vars)
         self.open_browser(resolved_url, self.browser)
 
         # Probably don't need this check here. We should log no matter
