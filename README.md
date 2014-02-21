@@ -169,13 +169,13 @@ Individual "PO_" environment variables override any set in a variable file.
 
 ### Options Defined by Page Objects
 
-- `browser` (PO_BROWSER): which browser to use. Defaults to "phantomjs".
 - `baseurl` (PO_BASEURL): which URL to base open calls with. For example if you set your page object's homepage with
 self
 .homepage
 to a relative URL, like "/search", you can set your baseurl to "http://www.example.com". A call to your page object's
  open method will open at "http://www.example.com/search".
- - `selenium_speed` (PO_SELENIIM_SPEED): The speed between Selenium commands. Use this to slow down the page actions,
+- `browser` (PO_BROWSER): which browser to use. Defaults to "phantomjs".
+- `selenium_speed` (PO_SELENIIM_SPEED): The speed between Selenium commands. Use this to slow down the page actions,
  which is useful when, for example, it takes a few moments for something to load via AJAX.
 
 
