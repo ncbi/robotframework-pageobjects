@@ -5,8 +5,9 @@ from xml.dom.minidom import parse
 
 import re
 import os
+import glob
 
-log_path = os.getcwd() + os.sep + "po_log.txt"
+log_path = os.getcwd() + os.path.join(os.sep, "po_log.txt")
 
 
 class BaseTestCase(unittest.TestCase):
@@ -20,10 +21,12 @@ class BaseTestCase(unittest.TestCase):
     def setUp(self):
 
         # Remove png files
-        for dirname, subdirs, files in os.walk("."):
-            for f in files:
-                if f.endswith(".png"):
-                    os.unlink(os.path.abspath(f))
+        screenshot_locator = os.getcwd() + os.sep + "selenium-screenshot*.png"
+        for screenshot in glob.glob(screenshot_locator):
+            print screenshot
+            os.unlink(screenshot)
+
+        # Remote python logger output
         try:
             os.unlink(log_path)
         except OSError:
