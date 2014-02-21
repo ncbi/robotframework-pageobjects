@@ -18,7 +18,7 @@
 .. moduleauthor:: Daniel Frishberg, Aaron Cohen <daniel.frishberg@nih.gov>, <aaron.cohen@nih.gov>
 
 """
-
+import sys
 import inspect
 import re
 
@@ -247,7 +247,7 @@ class _BaseActions(_S2LWrapper):
     """
     Helper class that defines actions for PageObjectLibrary.
     """
-
+    _running_on_failure = False # Flag used by _run_on_failure()
     def __init__(self, run_on_failure_method="capture_page_screenshot", *args, **kwargs):
         """
         Initializes the options used by the actions defined in this class.
@@ -417,11 +417,25 @@ class _BaseActions(_S2LWrapper):
         if Context.in_robot():
             self._se._run_on_failure()
         else:
+            # Set a flag that indicates that we're in the middle of a run, so
+            #  we don't get an infinite running-on-failure loop if the method
+            #  we're running fails.
+            if self._run_on_failure_method is None:
+                return
+            if self._running_on_failure:
+                return
+            # Also set S2L's flag
+            self._running_on_failure = self._se._running_on_failure_routine = True
+            
             if self._run_on_failure_method is not None:
+                
                 try:
                     self._run_on_failure_method()
                 except Exception, err:
                     self._se._run_on_failure_error(err)
+                finally:
+                    self._running_on_failure = False
+                    # Don't need to unset S2L's flag because S2L's _run_on_failure will handle that.
 
 
 
