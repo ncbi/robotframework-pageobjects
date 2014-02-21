@@ -6,5 +6,5 @@ scenarios directory. In general each test is executed both in the Robot Framewor
 
 - The `scenarios` directory contains the unittests and robot tests which the page object framework tests call in a
 subprocess.
-- The `pages` directory contains the sample site under test
+- The `site` directory contains the sample site under test
 - The `po` directory continas the page objects which are used to test the functionality of the base page object.
