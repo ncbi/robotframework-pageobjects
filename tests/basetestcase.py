@@ -5,17 +5,27 @@ from xml.dom.minidom import parse
 
 import re
 import os
-this_dir = os.path.dirname(os.path.realpath(__file__))
-log_path = os.getcwd() + os.sep + "po_log.txt"
+import glob
+
+log_path = os.getcwd() + os.path.join(os.sep, "po_log.txt")
 
 
 class BaseTestCase(unittest.TestCase):
     """
     Base class Robot page object test cases.
     """
+    test_dir = os.path.dirname(os.path.realpath(__file__))
+    base_file_url = "file:///%s/scenarios" % test_dir.replace("\\", "/")
+    site_under_test_file_url = "%s/pages/widget-home-page.html" % base_file_url
 
     def setUp(self):
 
+        # Remove png files
+        screenshot_locator = os.getcwd() + os.sep + "selenium-screenshot*.png"
+        for screenshot in glob.glob(screenshot_locator):
+            os.unlink(screenshot)
+
+        # Remote python logger output
         try:
             os.unlink(log_path)
         except OSError:
@@ -38,7 +48,23 @@ class BaseTestCase(unittest.TestCase):
         except OSError:
             pass
 
-    def run_program(self, program, *args, **opts):
+    def run_scenario(self, scenario, *args, **kwargs):
+        """
+        Runs a robot page object package test scenario, either a plain Python
+        unittest or a robot test. The unittest scenario must reside in tests/scenarios and have
+        a .py ending. The robot test must also live under tests/scenarios and have a .robot
+        ending.
+        """
+
+        if scenario.endswith(".py"):
+            arg = "python %s%sscenarios%s%s" % (self.test_dir, os.sep, os.sep, scenario)
+            return self.run_program(arg)
+        else:
+            return self.run_program("pybot", "-P %s%sscenarios%spo" % (self.test_dir, os.sep, os.sep),
+                                    "%s%sscenarios%s%s" % (
+                self.test_dir, os.sep, os.sep, scenario), **kwargs)
+
+    def run_program(self, base_cmd, *args, **opts):
 
         """
         Runs a program using a subprocess, returning an object with the following properties:
@@ -60,22 +86,23 @@ class BaseTestCase(unittest.TestCase):
             """
             The object to return from running the program
             """
-            def __init__(self, cmd, returncode, output, rid, xmldoc=None):
+
+            def __init__(self, cmd, returncode, output, xmldoc=None):
                 self.cmd = cmd
                 self.returncode = returncode
                 self.output = output
-                self.rid = rid
                 self.xmldoc = xmldoc
 
             def __repr__(self):
-                return "<run object: cmd: '%s', returncode: %s, rid: %s, xmldoc: %s, output: %s>" % (self.cmd,
-                                                                                               self.returncode,
-                                                                                               self.rid, self.xmldoc,
-                                                                                               self.output[0:25]
-                                                                                               .replace("\n", ""))
+                return "<run object: cmd: '%s', returncode: %s, xmldoc: %s, output: %s>" % (self.cmd, self.returncode,
 
-        cmd = program + " " + " ".join(args) + " "
+                                                                                            self.xmldoc,
+                                                                                            self.output[0:25]
+                                                                                            .replace("\n", ""))
 
+
+        cmd = base_cmd + " " + " ".join(args) + " "
+        cmd  = base_cmd + " "
         for name in opts:
             val = opts[name]
             if isinstance(val, bool):
@@ -83,7 +110,9 @@ class BaseTestCase(unittest.TestCase):
             else:
                 cmd = cmd + "--" + name.replace("_", "-") + "=" + val + " "
 
-        p = subprocess.Popen(shlex.split(cmd), shell=False, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        cmd += " " + " ".join(args)
+
+        p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         com = p.communicate()
         code = p.wait()
 
@@ -106,17 +135,12 @@ class BaseTestCase(unittest.TestCase):
         # Splice out trailing new line
         out = out[:-1]
 
-        first_line = out.split("\n")[0]
-        rid = re.sub(".*Run ID: ", "", first_line.replace("\n", ""))
-        if len(rid) != 9:
-            rid = None
-
-        return Ret(cmd, code, out, rid, xmldoc=dom)
+        return Ret(cmd, code, out, xmldoc=dom)
 
     def assert_run(self, run,
-                          expected_returncode=0, expected_tests_ran=None,
-                          expected_tests_failed=None,
-                          search_output=None, expected_browser=None
+                   expected_returncode=0, expected_tests_ran=None,
+                   expected_tests_failed=None,
+                   search_output=None, expected_browser=None
     ):
         """
         Makes general assertions about a program run based on return code
@@ -136,9 +160,9 @@ class BaseTestCase(unittest.TestCase):
                               returncode, expected_returncode, run.cmd))
         if expected_tests_ran:
             self.assertTrue("Ran %s test" % expected_tests_ran in run.output, "Didn't get %s tests ran when "
-                                                                                    "running '%s'" % (
-                                                                                        expected_tests_ran,
-                                                                                        run.cmd))
+                                                                              "running '%s'" % (
+                                                                                  expected_tests_ran,
+                                                                                  run.cmd))
         if expected_tests_failed:
             self.assertTrue("failures=%s" % expected_tests_failed in run.output,
                             "Did not find %s expected failures when running %s." % (expected_tests_failed,
@@ -152,7 +176,8 @@ class BaseTestCase(unittest.TestCase):
             if "pybot" in run.cmd:
                 try:
                     robot_log = open(os.getcwd() + os.sep + "log.html")
-                    self.assertTrue(expected_browser in robot_log.read(), "Unexpected browser. Expected %s, got something else")
+                    self.assertTrue(expected_browser in robot_log.read(),
+                                    "Unexpected browser. Expected %s, got something else")
                 finally:
                     robot_log.close()
             else:
@@ -160,10 +185,32 @@ class BaseTestCase(unittest.TestCase):
                     po_log = open(log_path)
                     log_fields = po_log.read().split("\t")
                     logged_browser = log_fields[2]
-                    self.assertTrue(expected_browser.lower() in logged_browser.lower(), "Unexpected browser. Expected %s, "
-                                                                                   "got %s" % (expected_browser,
-                                                                                               logged_browser))
+                    self.assertTrue(expected_browser.lower() in logged_browser.lower(),
+                                    "Unexpected browser. Expected %s, "
+                                    "got %s" % (expected_browser,
+                                                logged_browser))
                 finally:
                     po_log.close()
+
+    def write_var_file(self, *args, **kwargs):
+        f = None
+        try:
+            f = open(self.test_dir + os.sep + "vars.py", "w")
+            for i in kwargs:
+                line = "%s = '%s'\n" % (i, kwargs[i])
+                f.write(line)
+        except Exception, e:
+            raise Exception("Problem creating vars file: %s" % e)
+        finally:
+            if f:
+                f.close()
+
+    def remove_vars_file(self):
+        try:
+            vars_path = self.test_dir + os.sep + "vars.py"
+            os.unlink(vars_path)
+            os.unlink(self.test_dir + os.sep + "vars.pyc")
+        except OSError:
+            pass
 
 

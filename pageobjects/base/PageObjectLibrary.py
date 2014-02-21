@@ -24,7 +24,6 @@ import re
 
 from selenium.webdriver.support.ui import WebDriverWait
 
-
 from .context import Context
 from optionhandler import OptionHandler
 
@@ -88,7 +87,7 @@ class _Keywords(object):
         for fname, stub in cls._aliases.iteritems():
             if alias == stub.replace(cls._alias_delimiter, "_" + pageobject_name + "_"):
                 return fname
-            # We didn't find a match, so take the class name off the end.
+                # We didn't find a match, so take the class name off the end.
         return alias.replace("_" + pageobject_name, "")
 
     @classmethod
@@ -202,36 +201,6 @@ class _S2LWrapper(object):
         return attr
 
 
-    def _get_se_instance(self):
-
-        """
-        Gets the Selenoim2Library instance (which interfaces with SE)
-        First it looks for an se2lib instance defined in Robot,
-        which exists if a test has included a SE2Library.
-
-        If the Se2Library is not included directly, then it looks for the
-        instance stored on exposedbrowserselib, and if that's not found, it
-        creates the instance.
-        """
-        try:
-            se = BuiltIn().get_library_instance("Selenium2Library")
-        except (RuntimeError, AttributeError):
-            try:
-                BuiltIn().import_library("Selenium2Library")
-                se = BuiltIn().get_library_instance("Selenium2Library")
-
-            except: # We're not running in Robot
-                # We didn't find an instance in Robot, so see if one has been created by another Page Object.
-                try:
-                    # TODO: Pull this logic into ExposedBrowserSelenium2Library
-                    se = ExposedBrowserSelenium2Library._se_instance
-                except AttributeError:
-                    # Create the instance
-                    ExposedBrowserSelenium2Library()
-                    se = ExposedBrowserSelenium2Library._se_instance
-        return se
-
-
 class _BaseActions(_S2LWrapper):
     """
     Helper class that defines actions for PageObjectLibrary
@@ -265,9 +234,14 @@ class _BaseActions(_S2LWrapper):
                 ret = url
         else:
             if self.baseurl:
-                # If no url passed and base url, then go to base url + homepage
                 ret = self.baseurl + self.homepage
             else:
+                try:
+                    self.homepage
+                except AttributeError:
+                    raise Exception("No homepage set for page object %s." % self.__class__
+                    .__name__)
+
                 if not self.homepage[:5] in ["http:", "file:"]:
                     raise Exception("Home page '%s' is invalid. You must set a baseurl" % self.homepage)
                 else:
