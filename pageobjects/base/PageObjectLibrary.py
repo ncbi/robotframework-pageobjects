@@ -18,7 +18,6 @@
 .. moduleauthor:: Daniel Frishberg, Aaron Cohen <daniel.frishberg@nih.gov>, <aaron.cohen@nih.gov>
 
 """
-import sys
 import inspect
 import re
 
