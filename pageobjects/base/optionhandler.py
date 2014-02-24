@@ -15,7 +15,11 @@ except ImportError:
 # Set up Robot's global variables so we get all the built-in default settings when we're outside Robot.
 # We need this for Selenium2Library's _get_log_dir() method, among other things.
 # TODO: DCLT-693: Put this handling in some other place.
-init_global_variables(RobotSettings())
+# TODO: DCLT-659: Write test, confirm we're not breaking anything inside Robot, and that we are
+#  not preventing the setting of certain CL options. We shouldn't be, since we use _get_opts_no_robot() below,
+#  and then fall back if needed to GLOBAL_VARIABLES, which will always have Robot's default values.
+if not Context.in_robot():
+    init_global_variables(RobotSettings())
 
 
 class OptionHandler(object):
@@ -45,7 +49,6 @@ class OptionHandler(object):
                 self._opts = BuiltIn().get_variables()
             except AttributeError:
                 self._opts = {}
-                self._opts.update(self._normalize(GLOBAL_VARIABLES))
                 self._opts.update(self._get_opts_no_robot())
 
     def _get_opts_no_robot(self):
