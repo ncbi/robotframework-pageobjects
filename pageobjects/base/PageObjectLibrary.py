@@ -219,60 +219,59 @@ class _BaseActions(_S2LWrapper):
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
 
-    def resolve_url(self, url=None, **template_vars):
-        """
-        Resolves the url to open for the page object's open method, depending on whether
-        baseurl is set, url is passed and taking into account template variables
+    def _resolve_url(self, uri_vars):
+        self.baseurl = self.baseurl if self.baseurl else ""
 
-        :param url: The URL, whether relative or absolute to resolve.
-        :type url: str
-        :returns: str
-        """
-
-        if len(template_vars) > 0:
-            if self.baseurl:
-                return uritemplate.expand(self.baseurl + self.uri_template, template_vars)
-        elif url:
-            # URL is passed, if base url set, prefix it
-            if self.baseurl:
-                ret = self.baseurl + url
-            else:
-                ret = url
+        if uri_vars:
+            return uritemplate.expand(self.baseurl + self.uri_template, uri_vars)
         else:
-            if self.baseurl:
-                ret = self.baseurl + self.homepage
-            else:
-                try:
-                    self.homepage
-                except AttributeError:
-                    raise Exception("No homepage set for page object %s." % self.__class__
-                    .__name__)
+            try:
+                return self.baseurl + self.url
 
-                if not self.homepage[:5] in ["http:", "file:"]:
-                    raise Exception("Home page '%s' is invalid. You must set a baseurl" % self.homepage)
-                else:
-                    ret = self.homepage
-        return ret
+            except AttributeError:
+                    raise Exception("No url attribute set for page object %s." % self.__class__
+                    .__name__)
 
     def _log(self, *args):
         """
         Logs either to Robot or to a file if outside robot. If logging to a file,
         prints each argument delimited by tabs.
         """
-        self._logger.info("\t".join(args))
+        self._logger.info("\t".join([str(arg) for arg in args]))
 
-    def open(self, url=None, delete_cookies=True, **url_template_vars):
+    def open(self, uri_vars=None, delete_cookies=False):
         """
         Wrapper for Selenium2Library's open_browser() that calls resolve_url for url logic and self.browser.
         It also deletes cookies after opening the browser.
-        :param url: Optionally specify a URL. If not passed in, resolve_url will default to the page object's homepage.
-        :type url: str
-        :param delete_cookies: If set to False, does not delete browser's cookies when called.
+
+        :param uri_vars: A dictionary of variables mapping to a page object's uri_template. For example given a
+        template like this::
+
+                class MyPageObject(PageObject):
+                    uri_template = "category/{category}"
+
+                    ...
+
+        calling in Python::
+
+            ...
+            my_page_object.open({"category": "home-and-garden"})
+
+        or in Robot Framework::
+
+           ...
+           Open My Page Object  category=home-and-garden
+
+        ...would open the browser at: `/category/home-and-garden`
+
+        If no `uri_var` is passed the page object tries to open the browser at its url attribute.
+        
+
+        :param delete_cookies: If set to True, deletes browser's cookies when called.
         :type delete_cookies: Boolean
         :returns: _BaseActions instance
         """
-
-        resolved_url = self.resolve_url(url, **url_template_vars)
+        resolved_url = self._resolve_url(uri_vars)
         self.open_browser(resolved_url, self.browser)
 
         # Probably don't need this check here. We should log no matter
