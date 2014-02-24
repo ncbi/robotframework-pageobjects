@@ -20,6 +20,7 @@ class GetrmTestCase(unittest.TestCase):
         page.search(term)
         page.result_arrow_should_exist()
         page.go_to_results()
+        page.capture_page_screenshot()
         page.headers_should_match(expected_value)
             
     

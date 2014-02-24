@@ -84,7 +84,7 @@ class OpenTestCase(BaseTestCase):
     def test_robot_no_url_passed_no_baseurl_no_homepage_raises_exception(self):
         run = self.run_scenario("test_no_homepage.robot")
         self.assert_run(run, expected_returncode=1, search_output="No homepage set")
-
+        
     def test_unittest_no_url_passed_no_baseurl_abs_homepage_set_should_pass(self):
         run = self.run_scenario("test_no_url_passed_abs_homepage_set.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
@@ -124,12 +124,10 @@ class OpenTestCase(BaseTestCase):
 
 
 class ActionsTestCase(BaseTestCase):
-    @skip("NOT IMPLEMENTED YET")
     def unittest_test_screenshot_on_failure(self):
         run = self.run_scenario("test_fail.py")
         self.assertEquals(len(glob.glob("*.png")), 1, "On Failure page object should take screenshot")
 
-    @skip("NOT IMPLEMENTED YET")
     def robot_test_screenshot_on_failure(self):
         run = self.run_scenario("test_fail.robot")
         self.assertEquals(len(glob.glob("*.png")), 1, "On Failure page object should generate screenshot")

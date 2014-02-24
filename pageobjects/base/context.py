@@ -60,7 +60,7 @@ class Context(object):
                     # TODO: Pull this logic into ExposedBrowserSelenium2Library
                     se = ExposedBrowserSelenium2Library._se_instance
                 except AttributeError:
-                    # Create the instance
+                    # Create the instance.
                     ExposedBrowserSelenium2Library()
                     se = ExposedBrowserSelenium2Library._se_instance
         return se

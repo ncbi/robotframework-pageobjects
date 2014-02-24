@@ -15,4 +15,6 @@ class ExposedBrowserSelenium2Library(Selenium2Library):
         return cls._se_instance
     
     def __init__(self, *args, **kwargs):
+        # Set run_on_failure=None to prevent S2L from trying to take a screenshot.
+        kwargs["run_on_failure"] = "Nothing"
         super(ExposedBrowserSelenium2Library, self).__init__(*args, **kwargs)

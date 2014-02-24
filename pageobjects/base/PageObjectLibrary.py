@@ -26,7 +26,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from .context import Context
 from .optionhandler import OptionHandler
 
-from Selenium2Library.keywords.keywordgroup import decorator, KeywordGroupMetaClass, _run_on_failure_decorator
 this_module_name = __name__
 
 class _Keywords(object):
@@ -162,50 +161,7 @@ def robot_alias(stub):
     """
     return _Keywords.robot_alias(stub)
 
-class _KeywordGroupMetaClass(KeywordGroupMetaClass):
-    """
-    Extending the metaclass Selenium2Library uses to wrap all keywords in
-    a decorator to invoke the _run_on_failure method. Not good that we are
-    referring to _run_on_failure_decorator, but I don't see another way to
-    make this work other than writing our own decorator that copies the code.
-    
-    We're doing this in the first place for two reasons. First, when inside Robot, if an
-    action fails that is not a keyword defined by Selenium2Library (e.g. if it uses
-    Robot's built-in asserts), Selenium2Library won't have decorated the action to
-    trigger a run on failure. Second, when outside Robot, if an action fails, we want to call
-    a "run-on-failure" method directly instead of a keyword--since using keyword names outside
-    Robot doesn't make sense.
-    
-    To solve the first problem, we need to duplicate what Selenium2Library is doing and
-    wrap our own methods so that they trigger a "run on failure" as well.
-    
-    And we need to exclude "get_keyword_names" and "run_keyword", since they're not keywords.
-    TODO: Should we exclude methods with @not_keyword?
-    
-    To solve the second problem, we need to define our own "run_on_failure_method" keyword argument
-    (see _BaseActions's __init__). That means we also have to define our own _run_on_failure (called
-    by the _run_on_failure_decorator). See _BaseActions's _run_on_failure.
-    """
-    def __new__(cls, clsname, bases, dict):
-        """
-        Loops through the methods in this class and decorates them. Here we want to
-        exclude run_keyword and get_keyword_names, since they're API methods.
-        """
-        if decorator:
-            for name, method in dict.items():
-                if not name.startswith('_') and inspect.isroutine(method) and name not in ("get_keyword_names", "run_keyword"):
-                    # TODO: Consider a better way to exclude methods from this decorator.
-                    dict[name] = decorator(_run_on_failure_decorator, method)
-        return type.__new__(cls, clsname, bases, dict)
-
-class _KeywordGroup(object):
-    """
-    Base class that includes the _KeywordGroupMetaClass. This class is used by
-    _S2LWrapper.
-    """
-    __metaclass__ = _KeywordGroupMetaClass
-
-class _S2LWrapper(_KeywordGroup):
+class _S2LWrapper(object):
     """
     Helper class that defines the methods to be used in PageObjectLibrary that interact with Selenium2Library.
     This is used by _BaseActions, which is used by PageObjectLibrary. This class initializes the S2L instance
@@ -247,19 +203,18 @@ class _BaseActions(_S2LWrapper):
     """
     Helper class that defines actions for PageObjectLibrary.
     """
-    _running_on_failure = False # Flag used by _run_on_failure()
-    def __init__(self, run_on_failure_method="capture_page_screenshot", *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """
         Initializes the options used by the actions defined in this class.
         """
         super(_BaseActions, self).__init__(*args, **kwargs)
-        self._run_on_failure_method = getattr(self, run_on_failure_method)
         self._option_handler = OptionHandler()
         self.selenium_speed = self._option_handler.get("selenium_speed") or .5
         self.set_selenium_speed(self.selenium_speed)
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
 
+    @not_keyword
     def resolve_url(self, url=None):
         """
         Resolves the url to open for the page object's open method, depending on whether
@@ -298,6 +253,7 @@ class _BaseActions(_S2LWrapper):
         """
         self._logger.info("\t".join(args))
 
+    @not_keyword
     def get_current_browser(self):
         """
         Wrap the _current_browser() S2L method
@@ -394,52 +350,6 @@ class _BaseActions(_S2LWrapper):
         return self._find_element(locator, first_only=False, **kwargs)
 
 
-    def _run_on_failure(self):
-        """
-        Copy of Selenium2Library's _run_on_failure().
-        If we're in Robot, just fall back to S2L's behavior.
-        If we're outside Robot, then we need to call our own
-        run_on_failure_method, which is "capture_page_screenshot" by default.
-        
-        NB: Selenium2Library's capture_page_screenshot can't be run
-        outside Robot because it relies (through S2L's _get_log_dir() method)
-        on ${LOG FILE} and ${OUTPUTDIR} in robot.variables.GLOBAL_VARIABLES.
-        
-        To solve this problem, we are initializing robot.variables.GLOBAL_VARIABLES
-        by calling robot.variables.init_global_variables() in our OptionHandler class.
-        
-        We also, when calling the _run_on_failure_method, set a flag used
-        by Selenium2Library's _run_on_failure() method, called _running_on_failure_routine.
-        That flag indicates within that method that we're already in a failure handler
-        and should not recursively call the failure handler again if it doesn't work the
-        first time. This is *bad* because we are digging around in S2L's protected
-        variables.
-        """
-        if Context.in_robot():
-            self._se._run_on_failure()
-        else:
-            # Set a flag that indicates that we're in the middle of a run, so
-            #  we don't get an infinite running-on-failure loop if the method
-            #  we're running fails.
-            if self._run_on_failure_method is None:
-                return
-            if self._running_on_failure:
-                return
-            # Also set S2L's flag
-            self._running_on_failure = self._se._running_on_failure_routine = True
-            
-            if self._run_on_failure_method is not None:
-                
-                try:
-                    self._run_on_failure_method()
-                except Exception, err:
-                    self._se._run_on_failure_error(err)
-                finally:
-                    self._running_on_failure = False
-                    # Don't need to unset S2L's flag because S2L's _run_on_failure will handle that.
-
-
-
 class PageObjectLibrary(_BaseActions):
     """
     Base RF page object.
@@ -450,8 +360,6 @@ class PageObjectLibrary(_BaseActions):
     
     This class then provides the behavior used by the RF's dynamic API.
     Optional constructor arguments:
-    run_on_failure_method: If specified, you can indicate what action should
-    be taken when an action fails.
     """
     browser = "firefox"
 
