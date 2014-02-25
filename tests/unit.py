@@ -15,7 +15,6 @@ class ResolveUrlTestCase(BaseTestCase):
 
         self.PO = PO
 
-
     ### Exceptions ###
     @raises(exceptions.NoBaseUrlException)
     def test_no_baseurl_set_no_url_attr_set_should_raise_NoBaseUrlException(self):
@@ -47,6 +46,12 @@ class ResolveUrlTestCase(BaseTestCase):
         self.PO.uri_template = "http://www.ncbi.nlm.nih.gov/pubmed/{pid}"
         print self.PO().resolve_url({"pid": "123"})
 
+    @raises(exceptions.InvalidUriTemplateVariable)
+    def test_baseurl_set_bad_vars_passed_to_uri_template(self):
+        self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
+        self.PO.uri_template = "/pubmed/{pid}"
+        self.PO().resolve_url({"foo": "bar"})
+
     ### Normative Cases ###
     def test_rel_url_attr_set(self):
         self.set_baseurl_env()
@@ -57,59 +62,7 @@ class ResolveUrlTestCase(BaseTestCase):
         self.assertRegexpMatches(url, "file:///.+/foo$")
 
     def test_uri_vars_set(self):
-        self.set_baseurl_env()
-
-
-
-
-    """
-    def test_robot_no_uri_vars_no_url_should_raise_exception(self):
-        run = self.run_scenario("test_no_url.robot", variable="baseurl:%s" % self.base_file_url)
-        self.assert_run(run, expected_returncode=1, search_output='must have a "url" attribute')
-
-    #def test_abs
-
-
-
-
-
-
-    def test_unittest_no_uri_vars_rel_url_attr_set_baseurl_set_should_pass(self):
-        os.environ["PO_BASEURL"] = self.base_file_url
-        run = self.run_scenario("test_relative_url.py")
-        self.assert_run(run, expected_returncode=0, search_output="OK")
-
-    def test_robot_no_uri_vars_rel_url_attr_set_baseurl_set_should_pass(self):
-        run = self.run_scenario("test_relative_url.robot",
-                                variable="baseurl:%s" % self.base_file_url)
-        self.assert_run(run, expected_returncode=0, search_output="PASS")
-
-    def test_absolute_url_attr_set_should_raise_exception(self):
-        run = self.run_scenario("test_abs_url_set.py")
-        self.assert_run(run, expected_returncode=1, search_output="foo")
-
-
-    # Need to start here tomorrow.
-    def test_unittest_abs_url_passed_no_baseurl_set_homepage_set_should_pass(self):
-        run = self.run_scenario("test_abs_url_passed.py")
-        self.assert_run(run, expected_returncode=0, search_output="OK")
-
-    def test_robot_abs_url_passed_no_baseurl_set_homepage_set_should_pass(self):
-        # Pass the absolute file URL to the site under test to the robot test.
-        run = self.run_scenario("test_abs_url_passed.robot", variable="ABS_URL:%s" % self.site_under_test_file_url)
-        self.assert_run(run, expected_returncode=0, search_output="PASS")
-
-    def test_unittest_rel_url_passed_baseurl_set_no_homepage_set_should_pass(self):
-        os.environ["PO_BASEURL"] = self.base_file_url
-        run = self.run_scenario("test_rel_url_passed.py")
-        self.assert_run(run, expected_returncode=0, search_output="OK")
-
-    def test_robot_rel_url_passed_baseurl_set_no_homepage_set_should_pass(self):
-        run = self.run_scenario("test_rel_url_passed.robot", variable="baseurl:%s" % self.base_file_url)
-        self.assert_run(run, expected_returncode=0, search_output="PASS")
-
-    def test_unittest_template_passed_baseurl_set(self):
-        os.environ["PO_BASEURL"] = self.base_file_url
-        run = self.run_scenario("test_template_passed.py")
-        self.assert_run(run, expected_returncode=0, search_output="OK")
-    """
+        self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
+        self.PO.uri_template = "/pubmed/{pid}"
+        url = self.PO().resolve_url({"pid": "123"})
+        self.assertEquals("http://www.ncbi.nlm.nih.gov/pubmed/123", url)

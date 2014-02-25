@@ -9,5 +9,10 @@ class NoUrlAttributeException(AttributeError):
 class AbsoluteUrlAttributeException(ValueError):
     pass
 
+
 class AbsoluteUriTemplateException(ValueError):
+    pass
+
+
+class InvalidUriTemplateVariable(ValueError):
     pass

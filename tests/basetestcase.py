@@ -48,8 +48,9 @@ class BaseTestCase(unittest.TestCase):
         except OSError:
             pass
 
-    def set_baseurl_env(self):
-        os.environ["PO_BASEURL"] = self.base_file_url
+    def set_baseurl_env(self, base_file=True, arbitrary_base=None):
+        val = self.base_file_url if base_file else arbitrary_base
+        os.environ["PO_BASEURL"] = val
 
     def run_scenario(self, scenario, *args, **kwargs):
         """

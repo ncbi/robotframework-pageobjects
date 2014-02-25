@@ -240,6 +240,14 @@ class _BaseActions(_S2LWrapper):
                 raise exceptions.AbsoluteUriTemplateException("The URI Template \"%s\" in \"%s\" is an absoulte URL. "
                                                               "It should be relative and used with baseurl")
 
+            # Check that variables are correct...
+            for uri_var in uri_vars:
+                if uri_var not in uritemplate.variables(self.uri_template):
+                    raise exceptions.InvalidUriTemplateVariable("The variable passed in, \"%s\" does not match "
+                                                                "template \"%s\" for page object \"%s\"" % (uri_var,
+                                                                                                            self
+                                                                                                            .uri_template,
+                                                                                                            pageobj_name))
             return uritemplate.expand(self.baseurl + self.uri_template, uri_vars)
 
         # URI template not being passed in, so the page object might have a "url" attribute
