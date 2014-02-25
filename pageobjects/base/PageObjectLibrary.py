@@ -26,6 +26,7 @@ import uritemplate
 from selenium.webdriver.support.ui import WebDriverWait
 
 from .context import Context
+import exceptions
 from optionhandler import OptionHandler
 
 this_module_name = __name__
@@ -219,19 +220,52 @@ class _BaseActions(_S2LWrapper):
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
 
-    def _resolve_url(self, uri_vars):
-        self.baseurl = self.baseurl if self.baseurl else ""
+    def resolve_url(self, uri_vars):
+        """
+        Figures out the URL that a page object should open at.
+
+        Called by open().
+        """
+        pageobj_name = self.__class__.__name__
+
+        # We always need a baseurl set. This enforces parameterization of the
+        # domain under test.
+        if self.baseurl is None:
+            raise exceptions.NoBaseUrlException("To open page object, \"%s\" you must set a baseurl." % pageobj_name)
 
         if uri_vars:
-            return uritemplate.expand(self.baseurl + self.uri_template, uri_vars)
-        else:
-            try:
-                return self.baseurl + self.url
+            # URI template variables are being passed in, so the page object encapsulates
+            # a page that follows some sort of URL pattern. Eg, /pubmed/SOME_ARTICLE_ID.
+            if self._is_url_absolute(self.uri_template):
+                raise exceptions.AbsoluteUriTemplateException("The URI Template \"%s\" in \"%s\" is an absoulte URL. "
+                                                              "It should be relative and used with baseurl")
 
-            except AttributeError:
-                    raise Exception("Can't get a URL to open--no url attribute's been set for page object '%s'." % self
-                    .__class__
-                    .__name__)
+            return uritemplate.expand(self.baseurl + self.uri_template, uri_vars)
+
+        # URI template not being passed in, so the page object might have a "url" attribute
+        # set which means the page object has a unique URL. Eg, Pubmed Home Page would have a
+        # "url" attribute set to "/pubmed" given a baseurl of "http://domain".
+        try:
+            self.url
+        except AttributeError:
+            raise exceptions.NoUrlAttributeException(
+                "Page object \"%s\" must have a \"url\" attribute set." % pageobj_name)
+
+        # Don't allow absolute url attribute.
+        if self._is_url_absolute(self.url):
+            raise exceptions.AbsoluteUrlAttributeException(
+                "Page object \"%s\" must not have an absolute \"url\" attribute set. Use a relative URL "
+                "instead." % pageobj_name)
+
+        # urlparse.joinurl could be used, but it mucks with the url too much, esp file URLs
+        return self.baseurl + self.url
+
+    @staticmethod
+    def _is_url_absolute(url):
+        if url[:7] in ["http://", "https://", "file://"]:
+            return True
+        else:
+            return False
 
     def _log(self, *args):
         """
@@ -272,7 +306,7 @@ class _BaseActions(_S2LWrapper):
         :type delete_cookies: Boolean
         :returns: _BaseActions instance
         """
-        resolved_url = self._resolve_url(uri_vars)
+        resolved_url = self.resolve_url(uri_vars)
         self.open_browser(resolved_url, self.browser)
 
         # Probably don't need this check here. We should log no matter

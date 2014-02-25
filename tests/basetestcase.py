@@ -48,6 +48,9 @@ class BaseTestCase(unittest.TestCase):
         except OSError:
             pass
 
+    def set_baseurl_env(self):
+        os.environ["PO_BASEURL"] = self.base_file_url
+
     def run_scenario(self, scenario, *args, **kwargs):
         """
         Runs a robot page object package test scenario, either a plain Python
