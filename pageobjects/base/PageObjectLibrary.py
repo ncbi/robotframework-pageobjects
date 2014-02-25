@@ -229,7 +229,8 @@ class _BaseActions(_S2LWrapper):
                 return self.baseurl + self.url
 
             except AttributeError:
-                    raise Exception("No url attribute set for page object %s." % self.__class__
+                    raise Exception("Can't get a URL to open--no url attribute's been set for page object '%s'." % self
+                    .__class__
                     .__name__)
 
     def _log(self, *args):
@@ -265,7 +266,7 @@ class _BaseActions(_S2LWrapper):
         ...would open the browser at: `/category/home-and-garden`
 
         If no `uri_var` is passed the page object tries to open the browser at its url attribute.
-        
+
 
         :param delete_cookies: If set to True, deletes browser's cookies when called.
         :type delete_cookies: Boolean

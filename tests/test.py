@@ -70,21 +70,24 @@ class OpenTestCase(BaseTestCase):
     Tests the page object's open method. We test in both robot context and
     unittest contexts. Permutations are:
 
-        - No url passed, no homepage attribute set, exception.
-        - No url passed but a homepage attribute is set
-        - No url passed, baseurl and homepage is set. Homepage is relative
-        - url passed, no basurl
-        - relative url passed, baseurl
+        - No uri vars passed, no url attribute set, exception.
+        - No uri vars passed, a relative url attribute is set with a baseurl, pass
+        - No url vars passed, a relative url attribute is set, but no baseurl, exception
+        - url vars passed, no uri_template attribute set, exception
+        - url vars passed but they don't match uri_template string, exception
+        - url vars passed, uri template set, url attribute set, use template-generated url and pass
+        - urls vars passed, uri template set, pass
     """
 
-    def test_unittest_no_url_passed_no_baseurl_no_homepage_raises_exception(self):
-        run = self.run_scenario("test_no_homepage.py")
-        self.assert_run(run, expected_returncode=1, search_output="No homepage set")
+    def test_unittest_no_uri_vars_no_url_should_raise_exception(self):
+        run = self.run_scenario("test_no_url.py")
+        self.assert_run(run, expected_returncode=1, search_output="Can't get a URL to open")
 
-    def test_robot_no_url_passed_no_baseurl_no_homepage_raises_exception(self):
-        run = self.run_scenario("test_no_homepage.robot")
-        self.assert_run(run, expected_returncode=1, search_output="No homepage set")
+    def test_robot_no_uri_vars_no_url_should_raise_exception(self):
+        run = self.run_scenario("test_no_url.robot")
+        self.assert_run(run, expected_returncode=1, search_output="Can't get a URL to open")
 
+    """
     def test_unittest_no_url_passed_no_baseurl_abs_homepage_set_should_pass(self):
         run = self.run_scenario("test_no_url_passed_abs_homepage_set.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
@@ -93,16 +96,18 @@ class OpenTestCase(BaseTestCase):
         run = self.run_scenario("test_no_url_passed_abs_homepage_set.robot")
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
-    def test_unittest_no_url_passed_baseurl_set_rel_homepage_set_should_pass(self):
+    """
+    def test_unittest_no_uri_vars_rel_url_attr_set_baseurl_set_should_pass(self):
         os.environ["PO_BASEURL"] = self.base_file_url
-        run = self.run_scenario("test_no_url_passed_relative_homepage.py")
+        run = self.run_scenario("test_relative_url.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
-    def test_robot_no_url_passed_baseurl_set_rel_homepage_set_should_pass(self):
-        run = self.run_scenario("test_no_url_passed_relative_homepage.robot",
+    def test_robot_no_uri_vars_rel_url_attr_set_baseurl_set_should_pass(self):
+        run = self.run_scenario("test_relative_url.robot",
                                 variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
+    # Need to start here tomorrow.
     def test_unittest_abs_url_passed_no_baseurl_set_homepage_set_should_pass(self):
         run = self.run_scenario("test_abs_url_passed.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")

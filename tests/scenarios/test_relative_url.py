@@ -1,12 +1,12 @@
 import unittest
-from po import widget_relative_homepage
+from po import widget_relative_url
 
 
 class TestWidgetSearch(unittest.TestCase):
 
     def test_search(self):
 
-        widget_page = widget_relative_homepage.Page()
+        widget_page = widget_relative_url.Page()
         widget_page.open()
         self.widget_search_result_page = widget_page.search("search term")
         self.widget_search_result_page.should_have_results(3)
