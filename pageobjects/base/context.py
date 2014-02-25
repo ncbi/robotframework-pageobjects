@@ -1,8 +1,8 @@
-from .ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
+import logging
 from robot.libraries.BuiltIn import BuiltIn
 from robot.running.context import EXECUTION_CONTEXTS
 from robot import api as robot_api
-import logging
+from .ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
 
 class Context(object):
     """
@@ -24,11 +24,12 @@ class Context(object):
 
         return cls._instance
     
-    def in_robot(self):
+    @staticmethod
+    def in_robot():
         return EXECUTION_CONTEXTS.current is not None
     
-    def get_se_instance(self):
-
+    @staticmethod
+    def get_se_instance():
         """
         Gets the Selenoim2Library instance (which interfaces with SE)
         First it looks for an se2lib instance defined in Robot,
@@ -49,6 +50,7 @@ class Context(object):
         try:
             se = BuiltIn().get_library_instance("Selenium2Library")
         except (RuntimeError, AttributeError):
+            # EBS2L imports OptionHandler, which imports Context, so we can't go back and import EBS2L at the top.
             try:
                 BuiltIn().import_library("Selenium2Library")
                 se = BuiltIn().get_library_instance("Selenium2Library")
@@ -58,16 +60,17 @@ class Context(object):
                     # TODO: Pull this logic into ExposedBrowserSelenium2Library
                     se = ExposedBrowserSelenium2Library._se_instance
                 except AttributeError:
-                    # Create the instance
+                    # Create the instance.
                     ExposedBrowserSelenium2Library()
                     se = ExposedBrowserSelenium2Library._se_instance
         return se
 
-    def get_logger(self, module_name):
-        if self.in_robot():
+    @classmethod
+    def get_logger(cls, module_name):
+        if cls.in_robot():
             return robot_api.logger
         else:
-            return self._get_logger_outside_robot(module_name)
+            return cls._get_logger_outside_robot(module_name)
         
     @staticmethod
     def _get_logger_outside_robot(module_name):
