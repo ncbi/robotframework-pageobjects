@@ -1,6 +1,7 @@
 import re
 import os
 import imp
+from robot.api import logger
 
 # Our page objects should be used independently of Robot Framework
 try:
@@ -71,6 +72,7 @@ class OptionHandler(object):
 
         # After configs are saved from var file, get individual environment variables
         for env_varname in os.environ:
+
             if env_varname.startswith("PO_"):
                 varname = env_varname[3:].lower()
                 ret[self._convert_to_robot_format(varname)] = os.environ.get(env_varname)

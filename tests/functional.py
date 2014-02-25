@@ -6,7 +6,7 @@ from unittest import skip
 from basetestcase import BaseTestCase
 
 
-class BrowserOptionTestCase(BaseTestCase):
+class SmokeTestCase(BaseTestCase):
     """
     Tests for basic options and option handling.
 
@@ -34,35 +34,23 @@ class BrowserOptionTestCase(BaseTestCase):
     that options are gotten internally using the optionhandler.OptionHandler class.
     """
 
-    def test_unittest_default_browser_should_be_phantomjs(self):
-        run = self.run_scenario("test_abs_url_set.py")
+    def test_unittest_rel_url_set(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_rel_url.py")
         self.assert_run(run, search_output="OK", expected_browser="phantomjs")
 
-    def test_robot_default_browser_should_be_phantomjs(self):
-        run = self.run_scenario("test_no_url_passed_abs_homepage_set.robot")
+    def test_robot_rel_url_set(self):
+        run = self.run_scenario("test_rel_url.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, search_output="PASS", expected_browser="phantomjs")
 
-    def test_unittest_PO_BROWSER_env_var_set_to_firefox_should_run_in_firefox(self):
-        os.environ["PO_BROWSER"] = "firefox"
-        run = self.run_scenario("test_abs_url_set.py")
-        self.assert_run(run, search_output="OK", expected_browser="firefox")
+    def test_unittest_uri_template(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_template_passed.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")
 
-    def test_robot_variable_set_should_run_in_firefox(self):
-        run = self.run_scenario("test_no_url_passed_abs_homepage_set.robot", variable="browser:firefox")
-        self.assert_run(run, search_output="PASS", expected_browser="firefox")
-
-    def test_unittest_variable_file_var_set_to_firefox_should_run_in_firefox(self):
-        try:
-            self.write_var_file(browser="firefox")
-            os.environ["PO_VAR_FILE"] = self.test_dir + os.sep + "vars.py"
-            run = self.run_scenario("test_abs_url_set.py")
-            self.assert_run(run, search_output="OK", expected_browser="firefox")
-
-        except AssertionError, e:
-            raise e
-
-        finally:
-            self.remove_vars_file()
+    def test_robot_uri_template(self):
+        run = self.run_scenario("test_template_passed.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
 
 
 class ActionsTestCase(BaseTestCase):

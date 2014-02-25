@@ -230,6 +230,7 @@ class _BaseActions(_S2LWrapper):
 
         # We always need a baseurl set. This enforces parameterization of the
         # domain under test.
+
         if self.baseurl is None:
             raise exceptions.NoBaseUrlException("To open page object, \"%s\" you must set a baseurl." % pageobj_name)
 
