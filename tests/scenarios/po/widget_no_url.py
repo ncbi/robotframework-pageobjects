@@ -13,7 +13,6 @@ class Page(PageObjectLibrary):
         self.click_element("go")
         return SearchResultPage()
 
-
 class SearchResultPage(Page):
     name = "Widget Search Result Page"
 

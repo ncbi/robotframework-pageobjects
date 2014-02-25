@@ -18,7 +18,6 @@
 .. moduleauthor:: Daniel Frishberg, Aaron Cohen <daniel.frishberg@nih.gov>, <aaron.cohen@nih.gov>
 
 """
-
 import inspect
 import re
 import uritemplate
@@ -27,7 +26,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from .context import Context
 import exceptions
-from optionhandler import OptionHandler
+from .optionhandler import OptionHandler
 
 this_module_name = __name__
 
@@ -186,10 +185,8 @@ class _S2LWrapper(object):
         """
         Initialize the Selenium2Library instance.
         """
-        self._context = Context()
-        self._se = self._context.get_se_instance()
-        self._logger = self._context.get_logger(this_module_name)
-
+        self._se = Context.get_se_instance()
+        self._logger = Context.get_logger(this_module_name)
 
     def __getattr__(self, name):
         """
@@ -198,8 +195,11 @@ class _S2LWrapper(object):
         NB that __getattr__ is only called if the member can't be found normally.
         """
         try:
-            attr = getattr(object.__getattribute__(self, "_se"), name)
-        except Exception as e:
+            if not name.startswith("_"):
+                attr = getattr(object.__getattribute__(self, "_se"), name)
+            else:
+                raise
+        except:
             # Pass along an AttributeError as though it came from this object.
             raise AttributeError("%r object has no attribute %r" % (self.__class__.__name__, name))
         return attr
@@ -207,7 +207,7 @@ class _S2LWrapper(object):
 
 class _BaseActions(_S2LWrapper):
     """
-    Helper class that defines actions for PageObjectLibrary
+    Helper class that defines actions for PageObjectLibrary.
     """
 
     def __init__(self, *args, **kwargs):
@@ -220,8 +220,10 @@ class _BaseActions(_S2LWrapper):
         self.set_selenium_speed(self.selenium_speed)
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
-        
+
+    @not_keyword
     def resolve_url(self, *args):
+
         """
         Figures out the URL that a page object should open at.
 
@@ -301,6 +303,13 @@ class _BaseActions(_S2LWrapper):
         """
         self._logger.info("\t".join([str(arg) for arg in args]))
 
+    @not_keyword
+    def get_current_browser(self):
+        """
+        Wrap the _current_browser() S2L method
+        """
+        return self._se._current_browser()
+
     def open(self, *args):
         """
         Wrapper for Selenium2Library's open_browser() that calls resolve_url for url logic and self.browser.
@@ -339,7 +348,7 @@ class _BaseActions(_S2LWrapper):
         # Probably don't need this check here. We should log no matter
         # what and the user sets the log level. When we take this check out
         # also take out of base class __init__ parameter.
-        self._log("open", self.name, str(self._current_browser()), resolved_url)
+        self._log("open", self.pageobject_name, str(self.get_current_browser()), resolved_url)
 
         return self
 
@@ -358,7 +367,7 @@ class _BaseActions(_S2LWrapper):
         :returns: None
         """
         timeout = 10
-        wait = WebDriverWait(self._current_browser(),
+        wait = WebDriverWait(self.get_current_browser(),
                              timeout) #TODO: move to default config, allow parameter to this function too
 
         def wait_fnc(driver):
@@ -382,7 +391,7 @@ class _BaseActions(_S2LWrapper):
         :type required: boolean
         :returns: WebElement instance
         """
-        return self._element_find(locator, first_only, required, **kwargs)
+        return self._se._element_find(locator, first_only, required, **kwargs)
 
     @not_keyword
     def find_element(self, locator, **kwargs):
@@ -420,6 +429,7 @@ class PageObjectLibrary(_BaseActions):
     used by this class and its descendents.
     
     This class then provides the behavior used by the RF's dynamic API.
+    Optional constructor arguments:
     """
     browser = "firefox"
 
@@ -473,5 +483,3 @@ class PageObjectLibrary(_BaseActions):
         # Translate back from Robot Framework alias to actual method
         orig_meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, self.pageobject_name))
         return orig_meth(*args)
-
-

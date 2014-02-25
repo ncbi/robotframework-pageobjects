@@ -1,13 +1,11 @@
 import re
 import os
 import imp
-from robot.api import logger
 
-# Our page objects should be used independently of Robot Framework
-try:
-    from robot.libraries.BuiltIn import BuiltIn
-except ImportError:
-    pass
+from context import Context
+
+
+from robot.libraries.BuiltIn import BuiltIn
 
 
 class OptionHandler(object):
@@ -35,9 +33,9 @@ class OptionHandler(object):
         if self._new_called == 1:
             try:
                 self._opts = BuiltIn().get_variables()
-
             except AttributeError:
-                self._opts = self._get_opts_no_robot()
+                self._opts = {}
+                self._opts.update(self._get_opts_no_robot())
 
     def _get_opts_no_robot(self):
 
@@ -68,19 +66,28 @@ class OptionHandler(object):
             for vars_mod_attr_name in var_file_attrs:
                 if not vars_mod_attr_name.startswith("_"):
                     vars_file_var_value = var_file_attrs[vars_mod_attr_name]
-                    ret[self._convert_to_robot_format(vars_mod_attr_name)] = vars_file_var_value
+                    ret[self._normalize(vars_mod_attr_name)] = vars_file_var_value
 
         # After configs are saved from var file, get individual environment variables
         for env_varname in os.environ:
 
             if env_varname.startswith("PO_"):
-                varname = env_varname[3:].lower()
-                ret[self._convert_to_robot_format(varname)] = os.environ.get(env_varname)
+                varname = env_varname[3:]
+                ret[self._normalize(varname)] = os.environ.get(env_varname)
 
         return ret
 
-    def _convert_to_robot_format(self, name):
-        return name if re.match("\$\{.+\}", name) else "${%s}" % name
+    def _normalize(self, opts):
+        """
+        Convert an option keyname to lower-cased robot format, or convert
+        all the keys in a dictionary to robot format.
+        """
+        if isinstance(opts, basestring):
+            name = opts.lower()
+            return name if re.match("\$\{.+\}", name) else "${%s}" % name
+        else:
+            # We're dealing with a dict
+            return {self._normalize(key): val for (key, val) in opts.iteritems()}
 
     def get(self, name, default=None):
         """
@@ -89,7 +96,10 @@ class OptionHandler(object):
 
         ret = default
         try:
-            ret = self._opts[self._convert_to_robot_format(name)]
+            if Context.in_robot():
+                ret = self._opts[self._normalize(name)]
+            else:
+                ret = self._opts[self._normalize(name.replace(" ", "_"))]
         except KeyError:
             pass
 
