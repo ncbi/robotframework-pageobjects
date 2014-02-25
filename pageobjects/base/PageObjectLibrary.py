@@ -220,7 +220,7 @@ class _BaseActions(_S2LWrapper):
         self.set_selenium_speed(self.selenium_speed)
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
-
+        
     def resolve_url(self, *args):
         """
         Figures out the URL that a page object should open at.
@@ -239,18 +239,18 @@ class _BaseActions(_S2LWrapper):
         if len(args) > 0:
             # URI template variables are being passed in, so the page object encapsulates
             # a page that follows some sort of URL pattern. Eg, /pubmed/SOME_ARTICLE_ID.
+
             if self._is_url_absolute(self.uri_template):
                 raise exceptions.AbsoluteUriTemplateException("The URI Template \"%s\" in \"%s\" is an absoulte URL. "
                                                               "It should be relative and used with baseurl")
 
             # Parse the keywords, don't check context here, because we want
             # to be able to unittest outside of any context.
-            self._log("hey you guys")
-            self._log(args)
-
-
             uri_vars = {}
-            vars_defined_in_tempalte = uritemplate.variables(self.uri_template)
+
+            # If passed in from Robot, it's a series of strings that need to be
+            # parsed by the "=" char., otherwise it's a python dictionary, which is
+            # the only argument.
             if isinstance(args[0], basestring):
                 for arg in args:
                     split_arg = arg.split("=")
@@ -258,9 +258,7 @@ class _BaseActions(_S2LWrapper):
             else:
                 uri_vars = args[0]
 
-            # Check that variables are correct...
-            self._log(uri_vars)
-            self._log( uritemplate.expand(self.baseurl + self.uri_template, uri_vars))
+            # Check that variables are correct and match template.
             for uri_var in uri_vars:
                 if uri_var not in uritemplate.variables(self.uri_template):
                     raise exceptions.InvalidUriTemplateVariable("The variable passed in, \"%s\" does not match "
