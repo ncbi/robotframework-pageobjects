@@ -186,8 +186,9 @@ class _S2LWrapper(object):
         """
         Initialize the Selenium2Library instance.
         """
-        self._se = Context().get_se_instance()
-        self._logger = Context().get_logger(this_module_name)
+        self._context = Context()
+        self._se = self._context.get_se_instance()
+        self._logger = self._context.get_logger(this_module_name)
 
 
     def __getattr__(self, name):
@@ -220,12 +221,13 @@ class _BaseActions(_S2LWrapper):
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
 
-    def resolve_url(self, uri_vars):
+    def resolve_url(self, *args):
         """
         Figures out the URL that a page object should open at.
 
         Called by open().
         """
+
         pageobj_name = self.__class__.__name__
 
         # We always need a baseurl set. This enforces parameterization of the
@@ -234,14 +236,31 @@ class _BaseActions(_S2LWrapper):
         if self.baseurl is None:
             raise exceptions.NoBaseUrlException("To open page object, \"%s\" you must set a baseurl." % pageobj_name)
 
-        if uri_vars:
+        if len(args) > 0:
             # URI template variables are being passed in, so the page object encapsulates
             # a page that follows some sort of URL pattern. Eg, /pubmed/SOME_ARTICLE_ID.
             if self._is_url_absolute(self.uri_template):
                 raise exceptions.AbsoluteUriTemplateException("The URI Template \"%s\" in \"%s\" is an absoulte URL. "
                                                               "It should be relative and used with baseurl")
 
+            # Parse the keywords, don't check context here, because we want
+            # to be able to unittest outside of any context.
+            self._log("hey you guys")
+            self._log(args)
+
+
+            uri_vars = {}
+            vars_defined_in_tempalte = uritemplate.variables(self.uri_template)
+            if isinstance(args[0], basestring):
+                for arg in args:
+                    split_arg = arg.split("=")
+                    uri_vars[split_arg[0]] = split_arg[1]
+            else:
+                uri_vars = args[0]
+
             # Check that variables are correct...
+            self._log(uri_vars)
+            self._log( uritemplate.expand(self.baseurl + self.uri_template, uri_vars))
             for uri_var in uri_vars:
                 if uri_var not in uritemplate.variables(self.uri_template):
                     raise exceptions.InvalidUriTemplateVariable("The variable passed in, \"%s\" does not match "
@@ -249,6 +268,7 @@ class _BaseActions(_S2LWrapper):
                                                                                                             self
                                                                                                             .uri_template,
                                                                                                             pageobj_name))
+
             return uritemplate.expand(self.baseurl + self.uri_template, uri_vars)
 
         # URI template not being passed in, so the page object might have a "url" attribute
@@ -283,7 +303,7 @@ class _BaseActions(_S2LWrapper):
         """
         self._logger.info("\t".join([str(arg) for arg in args]))
 
-    def open(self, uri_vars=None, delete_cookies=False):
+    def open(self, *args):
         """
         Wrapper for Selenium2Library's open_browser() that calls resolve_url for url logic and self.browser.
         It also deletes cookies after opening the browser.
@@ -315,7 +335,7 @@ class _BaseActions(_S2LWrapper):
         :type delete_cookies: Boolean
         :returns: _BaseActions instance
         """
-        resolved_url = self.resolve_url(uri_vars)
+        resolved_url = self.resolve_url(*args)
         self.open_browser(resolved_url, self.browser)
 
         # Probably don't need this check here. We should log no matter
@@ -323,8 +343,6 @@ class _BaseActions(_S2LWrapper):
         # also take out of base class __init__ parameter.
         self._log("open", self.name, str(self._current_browser()), resolved_url)
 
-        if delete_cookies:
-            self.delete_all_cookies()
         return self
 
     def close(self):

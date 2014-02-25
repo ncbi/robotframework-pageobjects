@@ -18,7 +18,7 @@ class ResolveUrlTestCase(BaseTestCase):
     ### Exceptions ###
     @raises(exceptions.NoBaseUrlException)
     def test_no_baseurl_set_no_url_attr_set_should_raise_NoBaseUrlException(self):
-        self.PO().resolve_url(uri_vars=None)
+        self.PO().resolve_url()
 
     @raises(exceptions.NoBaseUrlException)
     def test_no_baseurl_set_no_url_attr_set_uri_vars_set_should_raise_NoBaseUrlExeption(self):
@@ -32,13 +32,13 @@ class ResolveUrlTestCase(BaseTestCase):
     @raises(exceptions.NoUrlAttributeException)
     def test_baseurl_set_no_url_attr_set_should_raise_NoUrlAttributeException(self):
         self.set_baseurl_env()
-        self.PO().resolve_url(uri_vars=None)
+        self.PO().resolve_url()
 
     @raises(exceptions.AbsoluteUrlAttributeException)
     def test_baseurl_set_abs_url_attr_should_raise_AbsoulteUrlAttributeException(self):
         self.set_baseurl_env()
         self.PO.url = "http://www.example.com"
-        self.PO().resolve_url(uri_vars=None)
+        self.PO().resolve_url()
 
     @raises(exceptions.AbsoluteUriTemplateException)
     def test_baseurl_set_abs_uri_template_should_raise_AbsoluteUriTemplateException(self):
@@ -57,7 +57,7 @@ class ResolveUrlTestCase(BaseTestCase):
         self.set_baseurl_env()
         self.PO.url = "/foo"
         po_inst = self.PO()
-        url = po_inst.resolve_url(uri_vars=None)
+        url = po_inst.resolve_url()
         self.assertEquals(url, po_inst.baseurl + po_inst.url)
         self.assertRegexpMatches(url, "file:///.+/foo$")
 
