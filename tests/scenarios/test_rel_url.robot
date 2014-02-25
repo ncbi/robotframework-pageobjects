@@ -2,8 +2,8 @@
 
 Documentation  Tests for Robot Framework Page Object package.
 ...
-Library    widget_relative_url.Page
-Library    widget_relative_url.SearchResultPage
+Library    widget_rel_url.Page
+Library    widget_rel_url.SearchResultPage
 
 *** Test Cases ***
 
