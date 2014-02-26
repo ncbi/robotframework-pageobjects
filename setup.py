@@ -8,7 +8,7 @@ reqs = os.path.join(os.path.abspath(os.path.dirname(__file__)),
 REQUIRES = filter(None, open(reqs).read().splitlines())
 
 setup(
-    name="Robot Experiment",
+    name="Robot Framework Page Objects",
     version="0.1",
     description="Lets you use the page object pattern with Robot Framework and plain python", 
     author="National Center for Biotechnology Information",
