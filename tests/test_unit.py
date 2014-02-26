@@ -2,7 +2,7 @@ from nose.tools import raises
 
 from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
-from robotpageobjects.PageObjectLibrary import PageObjectLibrary
+from robotpageobjects.page import Page
 
 
 class ResolveUrlTestCase(BaseTestCase):
@@ -10,7 +10,7 @@ class ResolveUrlTestCase(BaseTestCase):
     def setUp(self):
         super(ResolveUrlTestCase, self).setUp()
 
-        class PO(PageObjectLibrary):
+        class PO(Page):
             pass
 
         self.PO = PO

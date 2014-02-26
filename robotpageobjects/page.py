@@ -420,7 +420,7 @@ class _BaseActions(_S2LWrapper):
         return self._find_element(locator, first_only=False, **kwargs)
 
 
-class PageObjectLibrary(_BaseActions):
+class Page(_BaseActions):
     """
     Base RF page object.
 
@@ -431,14 +431,13 @@ class PageObjectLibrary(_BaseActions):
     This class then provides the behavior used by the RF's dynamic API.
     Optional constructor arguments:
     """
-    browser = "firefox"
 
     def __init__(self, *args, **kwargs):
         """
         Initializes the pageobject_name variable, which is used by the _Keywords class
         for determining aliases.
         """
-        super(PageObjectLibrary, self).__init__(*args, **kwargs)
+        super(Page, self).__init__(*args, **kwargs)
         self.pageobject_name = self._get_pageobject_name()
 
     def _get_pageobject_name(self):

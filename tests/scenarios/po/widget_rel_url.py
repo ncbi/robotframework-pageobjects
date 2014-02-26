@@ -1,10 +1,10 @@
 
 import robot.utils.asserts as asserts
 
-from robotpageobjects.PageObjectLibrary import PageObjectLibrary, robot_alias
+from robotpageobjects.page import Page, robot_alias
 
 
-class Page(PageObjectLibrary):
+class Page(Page):
     name = "Widget Page"
     url = "/site/index.html"
 
