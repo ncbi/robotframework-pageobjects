@@ -44,6 +44,9 @@ class SmokeTestCase(BaseTestCase):
     def test_unittest_uri_template(self):
         self.set_baseurl_env()
         run = self.run_scenario("test_template_passed.py")
+        print "\n\n***"
+        print run.output
+        print "\n***"
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_robot_uri_template(self):
