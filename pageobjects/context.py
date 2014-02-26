@@ -4,7 +4,7 @@ from robot.running.context import EXECUTION_CONTEXTS
 from robot import api as robot_api
 from robot.conf import RobotSettings
 from robot.variables import init_global_variables
-from .ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
+from ExposedBrowserSelenium2Library import ExposedBrowserSelenium2Library
 
 
 class Context(object):

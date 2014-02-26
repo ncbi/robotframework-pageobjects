@@ -1,5 +1,5 @@
 
-from pageobjects.base.PageObjectLibrary import PageObjectLibrary
+from pageobjects.PageObjectLibrary import PageObjectLibrary
 
 
 class WidgetItemPage(PageObjectLibrary):

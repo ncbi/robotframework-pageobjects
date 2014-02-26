@@ -10,7 +10,7 @@ REQUIRES = filter(None, open(reqs).read().splitlines())
 setup(
     name="Robot Experiment",
     version="0.1",
-    description="Experiments with Robot Framework and IFT", 
+    description="Lets you use the page object pattern with Robot Framework and plain python", 
     author="National Center for Biotechnology Information",
     install_requires=REQUIRES,
     packages=find_packages(exclude=("tests",)),

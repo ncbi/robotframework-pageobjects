@@ -24,9 +24,9 @@ import uritemplate
 
 from selenium.webdriver.support.ui import WebDriverWait
 
-from .context import Context
+from context import Context
 import exceptions
-from .optionhandler import OptionHandler
+from optionhandler import OptionHandler
 
 this_module_name = __name__
 
