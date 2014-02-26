@@ -11,6 +11,7 @@
         * Outside Robot
     * Options Defined by Page Objects
 
+
 Adds the concept of Page Objects to Robot Framework & Selenium2Library. Page objects can work independently of Robot
 Framework allowing you to encapsulate page logic in Robot Framework testcases or outsides of Robot Framework (eg.
 Python unittest test cases).
