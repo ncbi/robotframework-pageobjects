@@ -1,5 +1,5 @@
 
-from pageobjects.PageObjectLibrary import PageObjectLibrary
+from robotpageobjects.PageObjectLibrary import PageObjectLibrary
 
 
 class WidgetItemPage(PageObjectLibrary):

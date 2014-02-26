@@ -1,8 +1,8 @@
 from nose.tools import raises
 
 from basetestcase import BaseTestCase
-from pageobjects import exceptions
-from pageobjects.PageObjectLibrary import PageObjectLibrary
+from robotpageobjects import exceptions
+from robotpageobjects.PageObjectLibrary import PageObjectLibrary
 
 
 class ResolveUrlTestCase(BaseTestCase):

@@ -1,7 +1,7 @@
 
 import robot.utils.asserts as asserts
 
-from pageobjects.PageObjectLibrary import PageObjectLibrary, robot_alias
+from robotpageobjects.PageObjectLibrary import PageObjectLibrary, robot_alias
 
 
 class Page(PageObjectLibrary):
