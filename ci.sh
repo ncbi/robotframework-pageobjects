@@ -12,6 +12,7 @@
 
 function main {
 
+    rm -rf robot
     find . -name *.pyc -exec rm {} \;
 
     if [ $# -lt 1 ]; then
