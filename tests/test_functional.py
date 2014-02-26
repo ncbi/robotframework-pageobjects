@@ -1,7 +1,5 @@
-import os
-import unittest
 import glob
-from unittest import skip
+import unittest
 
 from basetestcase import BaseTestCase
 
@@ -54,12 +52,12 @@ class SmokeTestCase(BaseTestCase):
 
 
 class ActionsTestCase(BaseTestCase):
-    @skip("NOT IMPLEMENTED YET")
+    @unittest.skip("NOT IMPLEMENTED YET")
     def unittest_test_screenshot_on_failure(self):
         run = self.run_scenario("test_fail.py")
         self.assertEquals(len(glob.glob("*.png")), 1, "On Failure page object should take screenshot")
 
-    @skip("NOT IMPLEMENTED YET")
+    @unittest.skip("NOT IMPLEMENTED YET")
     def robot_test_screenshot_on_failure(self):
         run = self.run_scenario("test_fail.robot")
         self.assertEquals(len(glob.glob("*.png")), 1, "On Failure page object should generate screenshot")
