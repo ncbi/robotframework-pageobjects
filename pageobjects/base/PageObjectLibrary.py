@@ -20,13 +20,16 @@
 """
 import inspect
 import re
+import uritemplate
 
 from selenium.webdriver.support.ui import WebDriverWait
 
 from .context import Context
+import exceptions
 from .optionhandler import OptionHandler
 
 this_module_name = __name__
+
 
 class _Keywords(object):
     """
@@ -139,6 +142,7 @@ class _Keywords(object):
 
         return makefunc
 
+
 def not_keyword(f):
     """
     Decorator function to wrap _Keywords.not_keyword.
@@ -152,6 +156,7 @@ def not_keyword(f):
     """
     return _Keywords.not_keyword(f)
 
+
 def robot_alias(stub):
     """
     Decorator function to wrap _Keywords.robot_alias
@@ -160,6 +165,7 @@ def robot_alias(stub):
     :returns: callable
     """
     return _Keywords.robot_alias(stub)
+
 
 class _S2LWrapper(object):
     """
@@ -179,7 +185,6 @@ class _S2LWrapper(object):
         """
         Initialize the Selenium2Library instance.
         """
-        super(_S2LWrapper, self).__init__(*args, **kwargs)
         self._se = Context.get_se_instance()
         self._logger = Context.get_logger(this_module_name)
 
@@ -199,10 +204,12 @@ class _S2LWrapper(object):
             raise AttributeError("%r object has no attribute %r" % (self.__class__.__name__, name))
         return attr
 
+
 class _BaseActions(_S2LWrapper):
     """
     Helper class that defines actions for PageObjectLibrary.
     """
+
     def __init__(self, *args, **kwargs):
         """
         Initializes the options used by the actions defined in this class.
@@ -215,43 +222,86 @@ class _BaseActions(_S2LWrapper):
         self.browser = self._option_handler.get("browser") or "phantomjs"
 
     @not_keyword
-    def resolve_url(self, url=None):
-        """
-        Resolves the url to open for the page object's open method, depending on whether
-        baseurl is set, url is passed etc.
+    def resolve_url(self, *args):
 
-        :param url: The URL, whether relative or absolute to resolve.
-        :type url: str
-        :returns: str
         """
-        if url:
-            # URL is passed, if base url set, prefix it
-            if self.baseurl:
-                ret = self.baseurl + url
+        Figures out the URL that a page object should open at.
+
+        Called by open().
+        """
+
+        pageobj_name = self.__class__.__name__
+
+        # We always need a baseurl set. This enforces parameterization of the
+        # domain under test.
+
+        if self.baseurl is None:
+            raise exceptions.NoBaseUrlException("To open page object, \"%s\" you must set a baseurl." % pageobj_name)
+
+        if len(args) > 0:
+            # URI template variables are being passed in, so the page object encapsulates
+            # a page that follows some sort of URL pattern. Eg, /pubmed/SOME_ARTICLE_ID.
+
+            if self._is_url_absolute(self.uri_template):
+                raise exceptions.AbsoluteUriTemplateException("The URI Template \"%s\" in \"%s\" is an absoulte URL. "
+                                                              "It should be relative and used with baseurl")
+
+            # Parse the keywords, don't check context here, because we want
+            # to be able to unittest outside of any context.
+            uri_vars = {}
+
+            # If passed in from Robot, it's a series of strings that need to be
+            # parsed by the "=" char., otherwise it's a python dictionary, which is
+            # the only argument.
+            if isinstance(args[0], basestring):
+                for arg in args:
+                    split_arg = arg.split("=")
+                    uri_vars[split_arg[0]] = split_arg[1]
             else:
-                ret = url
+                uri_vars = args[0]
+
+            # Check that variables are correct and match template.
+            for uri_var in uri_vars:
+                if uri_var not in uritemplate.variables(self.uri_template):
+                    raise exceptions.InvalidUriTemplateVariable("The variable passed in, \"%s\" does not match "
+                                                                "template \"%s\" for page object \"%s\"" % (uri_var,
+                                                                                                            self
+                                                                                                            .uri_template,
+                                                                                                            pageobj_name))
+
+            return uritemplate.expand(self.baseurl + self.uri_template, uri_vars)
+
+        # URI template not being passed in, so the page object might have a "url" attribute
+        # set which means the page object has a unique URL. Eg, Pubmed Home Page would have a
+        # "url" attribute set to "/pubmed" given a baseurl of "http://domain".
+        try:
+            self.url
+        except AttributeError:
+            raise exceptions.NoUrlAttributeException(
+                "Page object \"%s\" must have a \"url\" attribute set." % pageobj_name)
+
+        # Don't allow absolute url attribute.
+        if self._is_url_absolute(self.url):
+            raise exceptions.AbsoluteUrlAttributeException(
+                "Page object \"%s\" must not have an absolute \"url\" attribute set. Use a relative URL "
+                "instead." % pageobj_name)
+
+        # urlparse.joinurl could be used, but it mucks with the url too much, esp file URLs
+        return self.baseurl + self.url
+
+    @staticmethod
+    def _is_url_absolute(url):
+        if url[:7] in ["http://", "https://", "file://"]:
+            return True
         else:
-            if self.baseurl:
-                ret = self.baseurl + self.homepage
-            else:
-                try:
-                    self.homepage
-                except AttributeError:
-                    raise Exception("No homepage set for page object %s." % self.__class__
-                    .__name__)
-
-                if not self.homepage[:5] in ["http:", "file:"]:
-                    raise Exception("Home page '%s' is invalid. You must set a baseurl" % self.homepage)
-                else:
-                    ret = self.homepage
-        return ret
+            return False
 
     def _log(self, *args):
         """
         Logs either to Robot or to a file if outside robot. If logging to a file,
         prints each argument delimited by tabs.
         """
-        self._logger.info("\t".join(args))
+        self._logger.info("\t".join([str(arg) for arg in args]))
 
     @not_keyword
     def get_current_browser(self):
@@ -260,17 +310,39 @@ class _BaseActions(_S2LWrapper):
         """
         return self._se._current_browser()
 
-    def open(self, url=None, delete_cookies=True):
+    def open(self, *args):
         """
         Wrapper for Selenium2Library's open_browser() that calls resolve_url for url logic and self.browser.
         It also deletes cookies after opening the browser.
-        :param url: Optionally specify a URL. If not passed in, resolve_url will default to the page object's homepage.
-        :type url: str
-        :param delete_cookies: If set to False, does not delete browser's cookies when called.
+
+        :param uri_vars: A dictionary of variables mapping to a page object's uri_template. For example given a
+        template like this::
+
+                class MyPageObject(PageObject):
+                    uri_template = "category/{category}"
+
+                    ...
+
+        calling in Python::
+
+            ...
+            my_page_object.open({"category": "home-and-garden"})
+
+        or in Robot Framework::
+
+           ...
+           Open My Page Object  category=home-and-garden
+
+        ...would open the browser at: `/category/home-and-garden`
+
+        If no `uri_var` is passed the page object tries to open the browser at its url attribute.
+
+
+        :param delete_cookies: If set to True, deletes browser's cookies when called.
         :type delete_cookies: Boolean
         :returns: _BaseActions instance
         """
-        resolved_url = self.resolve_url(url)
+        resolved_url = self.resolve_url(*args)
         self.open_browser(resolved_url, self.browser)
 
         # Probably don't need this check here. We should log no matter
@@ -278,8 +350,6 @@ class _BaseActions(_S2LWrapper):
         # also take out of base class __init__ parameter.
         self._log("open", self.pageobject_name, str(self.get_current_browser()), resolved_url)
 
-        if delete_cookies:
-            self.delete_all_cookies()
         return self
 
     def close(self):
@@ -413,4 +483,3 @@ class PageObjectLibrary(_BaseActions):
         # Translate back from Robot Framework alias to actual method
         orig_meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, self.pageobject_name))
         return orig_meth(*args)
-    

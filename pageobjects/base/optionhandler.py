@@ -1,25 +1,11 @@
 import re
 import os
 import imp
+
 from context import Context
-from robot.conf import RobotSettings
-from robot.variables import GLOBAL_VARIABLES, init_global_variables
-
-# Our page objects should be used independently of Robot Framework
-try:
-    from robot.libraries.BuiltIn import BuiltIn
-except ImportError:
-    pass
 
 
-# Set up Robot's global variables so we get all the built-in default settings when we're outside Robot.
-# We need this for Selenium2Library's _get_log_dir() method, among other things.
-# TODO: DCLT-693: Put this handling in some other place.
-# TODO: DCLT-659: Write test, confirm we're not breaking anything inside Robot, and that we are
-#  not preventing the setting of certain CL options. We shouldn't be, since we use _get_opts_no_robot() below,
-#  and then fall back if needed to GLOBAL_VARIABLES, which will always have Robot's default values.
-if not Context.in_robot():
-    init_global_variables(RobotSettings())
+from robot.libraries.BuiltIn import BuiltIn
 
 
 class OptionHandler(object):
@@ -84,6 +70,7 @@ class OptionHandler(object):
 
         # After configs are saved from var file, get individual environment variables
         for env_varname in os.environ:
+
             if env_varname.startswith("PO_"):
                 varname = env_varname[3:]
                 ret[self._normalize(varname)] = os.environ.get(env_varname)
@@ -102,12 +89,12 @@ class OptionHandler(object):
             # We're dealing with a dict
             return {self._normalize(key): val for (key, val) in opts.iteritems()}
 
-    def get(self, name):
+    def get(self, name, default=None):
         """
         Gets an option value given an option name
         """
 
-        ret = None
+        ret = default
         try:
             if Context.in_robot():
                 ret = self._opts[self._normalize(name)]

@@ -16,7 +16,7 @@ class BaseTestCase(unittest.TestCase):
     """
     test_dir = os.path.dirname(os.path.realpath(__file__))
     base_file_url = "file:///%s/scenarios" % test_dir.replace("\\", "/")
-    site_under_test_file_url = "%s/pages/widget-home-page.html" % base_file_url
+    site_under_test_file_url = "%s/site/index.html" % base_file_url
 
     def setUp(self):
 
@@ -48,6 +48,10 @@ class BaseTestCase(unittest.TestCase):
         except OSError:
             pass
 
+    def set_baseurl_env(self, base_file=True, arbitrary_base=None):
+        val = self.base_file_url if base_file else arbitrary_base
+        os.environ["PO_BASEURL"] = val
+
     def run_scenario(self, scenario, *args, **kwargs):
         """
         Runs a robot page object package test scenario, either a plain Python
@@ -58,6 +62,7 @@ class BaseTestCase(unittest.TestCase):
 
         if scenario.endswith(".py"):
             arg = "python %s%sscenarios%s%s" % (self.test_dir, os.sep, os.sep, scenario)
+
             return self.run_program(arg)
         else:
             return self.run_program("pybot", "-P %s%sscenarios%spo" % (self.test_dir, os.sep, os.sep),
