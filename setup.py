@@ -7,13 +7,13 @@ reqs = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                     'requirements.txt')
 REQUIRES = filter(None, open(reqs).read().splitlines())
 
-"""
+
 # Listing inflection module as requirements is not working in windows for some
 # reason. So install it using pip install.
 
-if os.name != "posix":
-    os.system("pip install inflection==0.2.0")
-"""
+
+os.system("pip install inflection==0.2.0")
+
 setup(
     name="Robot Framework Page Objects",
     version="0.1",
