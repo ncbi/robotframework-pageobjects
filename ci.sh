@@ -51,7 +51,7 @@ function main {
     fi
 
     # Run tests 
-    nosetests -vs --with-xunit tests/test_functional.py:SmokeTestCase.test_robot_rel_url_set
+    nosetests -vs --with-xunit tests/
 }
 
 main $1
