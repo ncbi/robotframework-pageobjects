@@ -13,6 +13,7 @@
 function main {
 
     rm -rf robot
+    echo "Removing dir"
     rm -rf robotframework-pageobjects
     find . -name *.pyc -exec rm {} \;
 
@@ -50,7 +51,7 @@ function main {
     fi
 
     # Run tests 
-    nosetests -vs --with-xunit tests/
+    nosetests -vs --with-xunit tests/test_functional.py:SmokeTestCase.test_robot_rel_url_set
 }
 
 main $1
