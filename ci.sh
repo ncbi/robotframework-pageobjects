@@ -13,6 +13,7 @@
 function main {
 
     rm -rf robot
+    rm -rf robotframework-pageobjects
     find . -name *.pyc -exec rm {} \;
 
     if [ $# -lt 1 ]; then
