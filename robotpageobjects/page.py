@@ -18,7 +18,6 @@
 .. moduleauthor:: Daniel Frishberg, Aaron Cohen <daniel.frishberg@nih.gov>, <aaron.cohen@nih.gov>
 
 """
-import inflection
 import inspect
 import re
 import uritemplate
@@ -445,7 +444,17 @@ class Page(_BaseActions):
         try:
             self.name
         except AttributeError:
-            self.name = inflection.titleize(self.__class__.__name__)
+            self.name = self._titleize(self.__class__.__name__)
+
+    @staticmethod
+    @not_keyword
+    def _titleize(str):
+        return re.sub(r"(\w)([A-Z])", r"\1 \2", str)
+
+    @staticmethod
+    @not_keyword
+    def _underscore(str):
+        return re.sub(r"\s+", "_", str)
 
     def get_keyword_names(self):
         """
@@ -458,7 +467,7 @@ class Page(_BaseActions):
         keywords = []
         for name, obj in inspect.getmembers(self):
             if inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
-                keywords.append(_Keywords.get_robot_alias(name, inflection.underscore(self.name)))
+                keywords.append(_Keywords.get_robot_alias(name, self._underscore(self.name)))
 
         return keywords
 
@@ -472,5 +481,5 @@ class Page(_BaseActions):
         :returns: callable
         """
         # Translate back from Robot Framework alias to actual method
-        orig_meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, inflection.underscore(self.name)))
+        orig_meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, self._underscore(self.name)))
         return orig_meth(*args)
