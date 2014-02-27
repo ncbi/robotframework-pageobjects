@@ -2,6 +2,8 @@
 
 import os
 from setuptools import setup, find_packages
+import subprocess
+import shlex
 
 reqs = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                     'requirements.txt')
@@ -12,7 +14,7 @@ REQUIRES = filter(None, open(reqs).read().splitlines())
 # reason. So install it using pip install.
 
 
-os.system("pip install inflection==0.2.0")
+subprocess.call("pip install inflection==0.2.0", shell=True)
 
 setup(
     name="Robot Framework Page Objects",
