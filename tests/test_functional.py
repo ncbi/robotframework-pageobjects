@@ -41,6 +41,10 @@ class SmokeTestCase(BaseTestCase):
         run = self.run_scenario("test_rel_url.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, search_output="PASS", expected_browser="phantomjs")
 
+    def test_robot_no_name_attr_should_use_underscored_class_name_to_namespaced_keyword(self):
+        run = self.run_scenario("test_rel_url_no_name_attr.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, search_output="PASS", expected_browser="phantomjs")
+
     def test_unittest_uri_template(self):
         self.set_baseurl_env()
         run = self.run_scenario("test_template_passed.py")

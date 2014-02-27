@@ -18,6 +18,7 @@
 .. moduleauthor:: Daniel Frishberg, Aaron Cohen <daniel.frishberg@nih.gov>, <aaron.cohen@nih.gov>
 
 """
+import inflection
 import inspect
 import re
 import uritemplate
@@ -348,7 +349,7 @@ class _BaseActions(_S2LWrapper):
         # Probably don't need this check here. We should log no matter
         # what and the user sets the log level. When we take this check out
         # also take out of base class __init__ parameter.
-        self._log("open", self.pageobject_name, str(self.get_current_browser()), resolved_url)
+        self._log("open", self.__class__.__name__, str(self.get_current_browser()), resolved_url)
 
         return self
 
@@ -438,22 +439,13 @@ class Page(_BaseActions):
         for determining aliases.
         """
         super(Page, self).__init__(*args, **kwargs)
-        self.pageobject_name = self._get_pageobject_name()
 
-    def _get_pageobject_name(self):
-        """
-        Gets the name that will be appended to keywords when using
-        Robot by looking at the name attribute of the page object class.
-        If no "name" attribute is defined, appends the name of the page object
-        class.
-        :returns: str
-        """
+        # If a name is not explicitly set with the name attribute,
+        # get it from the class name.
         try:
-            pageobject_name = re.sub(r"\s+", "_", self.name)
+            self.name
         except AttributeError:
-            pageobject_name = self.__class__.__name__.replace("PageLibrary", "").lower()
-
-        return pageobject_name
+            self.name = inflection.titleize(self.__class__.__name__)
 
     def get_keyword_names(self):
         """
@@ -466,7 +458,7 @@ class Page(_BaseActions):
         keywords = []
         for name, obj in inspect.getmembers(self):
             if inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
-                keywords.append(_Keywords.get_robot_alias(name, self.pageobject_name))
+                keywords.append(_Keywords.get_robot_alias(name, inflection.underscore(self.name)))
 
         return keywords
 
@@ -480,5 +472,5 @@ class Page(_BaseActions):
         :returns: callable
         """
         # Translate back from Robot Framework alias to actual method
-        orig_meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, self.pageobject_name))
+        orig_meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, inflection.underscore(self.name)))
         return orig_meth(*args)
