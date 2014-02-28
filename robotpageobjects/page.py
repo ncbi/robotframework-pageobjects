@@ -271,7 +271,7 @@ class _BaseActions(_S2LWrapper):
 
             return uritemplate.expand(self.baseurl + self.uri_template, uri_vars)
 
-        # URI template not being passed in, so the page object might have a "url" attribute
+        # URI template not being passed in, so the page object might have a "uri" attribute
         # set which means the page object has a unique URL. Eg, Pubmed Home Page would have a
         # "url" attribute set to "/pubmed" given a baseurl of "http://domain".
         try:
@@ -280,10 +280,10 @@ class _BaseActions(_S2LWrapper):
             raise exceptions.NoUriAttributeException(
                 "Page object \"%s\" must have a \"url\" attribute set." % pageobj_name)
 
-        # Don't allow absolute url attribute.
+        # Don't allow absolute uri attribute.
         if self._is_url_absolute(self.uri):
             raise exceptions.AbsoluteUriAttributeException(
-                "Page object \"%s\" must not have an absolute \"url\" attribute set. Use a relative URL "
+                "Page object \"%s\" must not have an absolute \"uri\" attribute set. Use a relative URL "
                 "instead." % pageobj_name)
 
         # urlparse.joinurl could be used, but it mucks with the url too much, esp file URLs
@@ -335,7 +335,7 @@ class _BaseActions(_S2LWrapper):
 
         ...would open the browser at: `/category/home-and-garden`
 
-        If no `uri_var` is passed the page object tries to open the browser at its url attribute.
+        If no `uri_var` is passed the page object tries to open the browser at its uri attribute.
 
 
         :param delete_cookies: If set to True, deletes browser's cookies when called.
