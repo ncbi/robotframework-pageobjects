@@ -32,17 +32,17 @@ class SmokeTestCase(BaseTestCase):
     that options are gotten internally using the optionhandler.OptionHandler class.
     """
 
-    def test_unittest_rel_url_set(self):
+    def test_unittest_rel_uri_set(self):
         self.set_baseurl_env()
-        run = self.run_scenario("test_rel_url.py")
+        run = self.run_scenario("test_rel_uri_attr.py")
         self.assert_run(run, search_output="OK", expected_browser="phantomjs")
 
-    def test_robot_rel_url_set(self):
-        run = self.run_scenario("test_rel_url.robot", variable="baseurl:%s" % self.base_file_url)
+    def test_robot_rel_uri_set(self):
+        run = self.run_scenario("test_rel_uri_attr.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, search_output="PASS", expected_browser="phantomjs")
 
     def test_robot_no_name_attr_should_use_underscored_class_name_to_namespaced_keyword(self):
-        run = self.run_scenario("test_rel_url_no_name_attr.robot", variable="baseurl:%s" % self.base_file_url)
+        run = self.run_scenario("test_rel_uri_attr_no_name_attr.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, search_output="PASS", expected_browser="phantomjs")
 
     def test_unittest_uri_template(self):
