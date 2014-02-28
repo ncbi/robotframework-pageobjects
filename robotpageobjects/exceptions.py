@@ -7,7 +7,7 @@ class NoBaseUrlException(AttributeError):
     pass
 
 
-class NoUrlAttributeException(AttributeError):
+class NoUriAttributeException(AttributeError):
     """
     Raised when nothing is passed to a page object's open method
     but no url attribute is set on the page object.
@@ -15,7 +15,7 @@ class NoUrlAttributeException(AttributeError):
     pass
 
 
-class AbsoluteUrlAttributeException(ValueError):
+class AbsoluteUriAttributeException(ValueError):
     """
     Raised when nothing is passed to a page object's open
     method and the page object's `url` attribute is set to an

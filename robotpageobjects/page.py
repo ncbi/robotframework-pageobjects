@@ -275,19 +275,19 @@ class _BaseActions(_S2LWrapper):
         # set which means the page object has a unique URL. Eg, Pubmed Home Page would have a
         # "url" attribute set to "/pubmed" given a baseurl of "http://domain".
         try:
-            self.url
+            self.uri
         except AttributeError:
-            raise exceptions.NoUrlAttributeException(
+            raise exceptions.NoUriAttributeException(
                 "Page object \"%s\" must have a \"url\" attribute set." % pageobj_name)
 
         # Don't allow absolute url attribute.
-        if self._is_url_absolute(self.url):
-            raise exceptions.AbsoluteUrlAttributeException(
+        if self._is_url_absolute(self.uri):
+            raise exceptions.AbsoluteUriAttributeException(
                 "Page object \"%s\" must not have an absolute \"url\" attribute set. Use a relative URL "
                 "instead." % pageobj_name)
 
         # urlparse.joinurl could be used, but it mucks with the url too much, esp file URLs
-        return self.baseurl + self.url
+        return self.baseurl + self.uri
 
     @staticmethod
     def _is_url_absolute(url):

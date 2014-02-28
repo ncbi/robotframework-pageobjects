@@ -4,17 +4,19 @@ import robot.utils.asserts as asserts
 from robotpageobjects.page import Page, robot_alias
 
 
-class WidgetPage(Page):
-    url = "/site/index.html"
+class Page(Page):
+    name = "Widget Page"
+    uri = "/site/index.html"
 
     @robot_alias("search__name__for")
     def search(self, term):
         self.input_text("q", "search term")
         self.click_element("go")
-        return WidgetSearchResultPage()
+        return SearchResultPage()
 
 
-class WidgetSearchResultPage(Page):
+class SearchResultPage(Page):
+    name = "Widget Search Result Page"
 
     @robot_alias("__name__should_have_results")
     def should_have_results(self, expected):

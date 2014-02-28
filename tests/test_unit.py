@@ -17,27 +17,27 @@ class ResolveUrlTestCase(BaseTestCase):
 
     ### Exceptions ###
     @raises(exceptions.NoBaseUrlException)
-    def test_no_baseurl_set_no_url_attr_set_should_raise_NoBaseUrlException(self):
+    def test_no_baseurl_set_no_uri_attr_set_should_raise_NoBaseUrlException(self):
         self.PO().resolve_url()
 
     @raises(exceptions.NoBaseUrlException)
-    def test_no_baseurl_set_no_url_attr_set_uri_vars_set_should_raise_NoBaseUrlExeption(self):
+    def test_no_baseurl_set_no_uri_attr_set_uri_vars_set_should_raise_NoBaseUrlExeption(self):
         self.PO().resolve_url("bar")
 
     @raises(exceptions.NoBaseUrlException)
-    def test_no_baseurl_set_url_attr_set_uri_vars_set_should_raise_NoBaseUrlExeption(self):
-        self.PO.url = "/foo"
+    def test_no_baseurl_set_uri_attr_set_uri_vars_set_should_raise_NoBaseUrlExeption(self):
+        self.PO.uri = "/foo"
         self.PO().resolve_url("bar")
 
-    @raises(exceptions.NoUrlAttributeException)
-    def test_baseurl_set_no_url_attr_set_should_raise_NoUrlAttributeException(self):
+    @raises(exceptions.NoUriAttributeException)
+    def test_baseurl_set_no_uri_attr_set_should_raise_NoUriAttributeException(self):
         self.set_baseurl_env()
         self.PO().resolve_url()
 
-    @raises(exceptions.AbsoluteUrlAttributeException)
-    def test_baseurl_set_abs_url_attr_should_raise_AbsoulteUrlAttributeException(self):
+    @raises(exceptions.AbsoluteUriAttributeException)
+    def test_baseurl_set_abs_uri_attr_should_raise_AbsoulteUrlAttributeException(self):
         self.set_baseurl_env()
-        self.PO.url = "http://www.example.com"
+        self.PO.uri = "http://www.example.com"
         self.PO().resolve_url()
 
     @raises(exceptions.AbsoluteUriTemplateException)
@@ -53,12 +53,12 @@ class ResolveUrlTestCase(BaseTestCase):
         self.PO().resolve_url({"foo": "bar"})
 
     ### Normative Cases ###
-    def test_rel_url_attr_set(self):
+    def test_rel_uri_attr_set(self):
         self.set_baseurl_env()
-        self.PO.url = "/foo"
+        self.PO.uri = "/foo"
         po_inst = self.PO()
         url = po_inst.resolve_url()
-        self.assertEquals(url, po_inst.baseurl + po_inst.url)
+        self.assertEquals(url, po_inst.baseurl + po_inst.uri)
         self.assertRegexpMatches(url, "file:///.+/foo$")
 
     def test_uri_vars_set(self):
