@@ -14,6 +14,8 @@ class Context(object):
     """
     _instance = None
     _new_called = 0
+    _keywords_exposed = False
+    _cache = None
     def __new__(cls, *args, **kwargs):
         """
         Make this object a singleton. We're using this in optionhandler as well,
@@ -90,6 +92,22 @@ class Context(object):
         fh.setLevel(level)
         logger.addHandler(fh)
         return logger
+    
+    @classmethod
+    def are_keywords_exposed(cls):
+        return cls._keywords_exposed
+    
+    @classmethod
+    def set_keywords_exposed(cls):
+        cls._keywords_exposed = True
+        
+    @classmethod
+    def set_cache(cls, cache):
+        cls._cache = cache
+        
+    @classmethod
+    def get_cache(cls):
+        return cls._cache
 
 # Set up Robot's global variables so we get all the built-in default settings when we're outside Robot.
 # We need this for Selenium2Library's _get_log_dir() method, among other things.

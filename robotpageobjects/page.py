@@ -21,15 +21,16 @@
 import inspect
 import re
 import uritemplate
+import sys
 
 from selenium.webdriver.support.ui import WebDriverWait
 
 from context import Context
 import exceptions
 from optionhandler import OptionHandler
+from Selenium2Library import Selenium2Library
 
 this_module_name = __name__
-
 
 class _Keywords(object):
     """
@@ -166,46 +167,7 @@ def robot_alias(stub):
     """
     return _Keywords.robot_alias(stub)
 
-
-class _S2LWrapper(object):
-    """
-    Helper class that defines the methods to be used in PageObjectLibrary that interact with Selenium2Library.
-    This is used by _BaseActions, which is used by PageObjectLibrary. This class initializes the S2L instance
-    used by a library. It also exposes the methods of the S2L instance as methods of its own instance
-    by overriding __getattr__.
-    
-    
-    Problem solved here is of using multiple page objects that import RF's Selenium2Library. Can't do that because it
-    is responsible for managing browser. This way our page objects don't inherit from Selenium2Library, instead they
-    simply use the browser instance.
-    
-    """
-
-    def __init__(self, *args, **kwargs):
-        """
-        Initialize the Selenium2Library instance.
-        """
-        self._se = Context.get_se_instance()
-        self._logger = Context.get_logger(this_module_name)
-
-    def __getattr__(self, name):
-        """
-        Override the built-in __getattr__ method so that we expose
-        Selenium2Library's methods.
-        NB that __getattr__ is only called if the member can't be found normally.
-        """
-        try:
-            if not name.startswith("_"):
-                attr = getattr(object.__getattribute__(self, "_se"), name)
-            else:
-                raise
-        except:
-            # Pass along an AttributeError as though it came from this object.
-            raise AttributeError("%r object has no attribute %r" % (self.__class__.__name__, name))
-        return attr
-
-
-class _BaseActions(_S2LWrapper):
+class _BaseActions(Selenium2Library):
     """
     Helper class that defines actions for PageObjectLibrary.
     """
@@ -213,9 +175,10 @@ class _BaseActions(_S2LWrapper):
     def __init__(self, *args, **kwargs):
         """
         Initializes the options used by the actions defined in this class.
-        """
+        """        
         super(_BaseActions, self).__init__(*args, **kwargs)
         self._option_handler = OptionHandler()
+        self._logger = Context.get_logger(this_module_name)
         self.selenium_speed = self._option_handler.get("selenium_speed") or .5
         self.set_selenium_speed(self.selenium_speed)
         self.baseurl = self._option_handler.get("baseurl")
@@ -308,7 +271,7 @@ class _BaseActions(_S2LWrapper):
         """
         Wrap the _current_browser() S2L method
         """
-        return self._se._current_browser()
+        return self._current_browser()
 
     def open(self, *args):
         """
@@ -391,7 +354,7 @@ class _BaseActions(_S2LWrapper):
         :type required: boolean
         :returns: WebElement instance
         """
-        return self._se._element_find(locator, first_only, required, **kwargs)
+        return self._element_find(locator, first_only, required, **kwargs)
 
     @not_keyword
     def find_element(self, locator, **kwargs):
@@ -437,7 +400,11 @@ class Page(_BaseActions):
         Initializes the pageobject_name variable, which is used by the _Keywords class
         for determining aliases.
         """
+        self._shared_cache = Context.get_cache()
         super(Page, self).__init__(*args, **kwargs)
+        if self._shared_cache is not None:
+            self._cache = self._shared_cache
+        Context.set_cache(self._cache)
 
         # If a name is not explicitly set with the name attribute,
         # get it from the class name.
@@ -463,12 +430,29 @@ class Page(_BaseActions):
         This method uses the _Keywords class to handle exclusions and aliases.
         :returns: list
         """
+        keywords_exposed = Context.are_keywords_exposed()
         # Return all method names on the class to expose keywords to Robot Framework
         keywords = []
-        for name, obj in inspect.getmembers(self):
-            if inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
+        members = inspect.getmembers(self)
+        
+        for name, obj in members:
+            if not inspect.ismethod(obj):
+                continue
+            
+            in_s2l_base = False
+            func = obj.__func__
+            if func in Selenium2Library.__dict__.values():
+                in_s2l_base = True
+            else:
+                for base in Selenium2Library.__bases__:
+                    if func in base.__dict__.values():
+                        in_s2l_base = True
+            if in_s2l_base:
+                if keywords_exposed:
+                    keywords.append(name)
+            elif inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
                 keywords.append(_Keywords.get_robot_alias(name, self._underscore(self.name)))
-
+        Context.set_keywords_exposed()
         return keywords
 
     def run_keyword(self, alias, args):
