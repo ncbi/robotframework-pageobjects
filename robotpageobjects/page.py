@@ -171,6 +171,7 @@ class _BaseActions(Selenium2Library):
     """
     Helper class that defines actions for PageObjectLibrary.
     """
+    _selectors = {}
 
     def __init__(self, *args, **kwargs):
         """
@@ -183,6 +184,28 @@ class _BaseActions(Selenium2Library):
         self.set_selenium_speed(self.selenium_speed)
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
+        self._set_selectors()
+
+    #@property
+    #def selectors(self):
+    #    return self._selectors
+    
+    @classmethod
+    def _get_class_selectors(cls):
+        base_dicts = [cls._selectors, [base._get_class_selectors() for base in cls.__bases__ if hasattr(base, "_get_class_selectors")]]
+        return base_dicts
+        
+    
+    def _set_selectors(self):
+        #tree = inspect.getclasstree(self.__class__,)
+        #for klass in tree:
+        #    fo
+        #selectors = {}
+        #for base in self.__class__.__bases__:
+        #    base_selectors = base._selectors
+        sys.__stdout__.write("\n****SELECTORS****\n"+str( self.__class__._get_class_selectors())+"\n")
+            
+            
 
     @not_keyword
     def resolve_url(self, *args):
@@ -343,6 +366,20 @@ class _BaseActions(Selenium2Library):
 
         wait.until(wait_fnc)
 
+    def _element_find(self, locator, *args, **kwargs):
+        """
+        Override built-in _element_find() method and map selectors. Try to use _element_find with the
+        locator as is, then try, if a selector exists, try that.
+        :param locator: The Selenium2Library-style locator (or IFT selector) to use
+        """
+        try:
+            return super(_BaseActions, self)._element_find(locator, *args, **kwargs)
+        except:
+            if locator in self._selectors:
+                return super(_BaseActions, self)._element_find(self._selectors[locator], *args, **kwargs)
+            else:
+                raise
+    
     def _find_element(self, locator, first_only=True, required=True, **kwargs):
         """
         Helper method that wraps _element_find().
@@ -394,7 +431,6 @@ class Page(_BaseActions):
     This class then provides the behavior used by the RF's dynamic API.
     Optional constructor arguments:
     """
-
     def __init__(self, *args, **kwargs):
         """
         Initializes the pageobject_name variable, which is used by the _Keywords class
@@ -412,6 +448,8 @@ class Page(_BaseActions):
             self.name
         except AttributeError:
             self.name = self._titleize(self.__class__.__name__)
+        #for key, selector in self.selectors.iteritems():
+        #    self.assign_id_to_element(key, selector)
 
     @staticmethod
     @not_keyword

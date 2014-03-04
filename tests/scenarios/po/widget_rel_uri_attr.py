@@ -8,10 +8,12 @@ class Page(Page):
     name = "Widget Page"
     uri = "/site/index.html"
 
+    _selectors = {"search-button": "go"}
+
     @robot_alias("search__name__for")
     def search(self, term):
         self.input_text("q", "search term")
-        self.click_element("go")
+        self.click_element("search-button")
         return SearchResultPage()
 
 
