@@ -39,11 +39,15 @@ class Context(object):
         if cls._s2l_instance is not None:
             return cls._s2l_instance
         else:
-            try:
-                cls._s2l_instance = BuiltIn().get_library_instance("Selenium2Library")
-            except:
-                pass
-        return cls._s2l_instance
+            cls.import_s2l()
+            return cls._s2l_instance
+
+    @classmethod
+    def import_s2l(cls):
+        try:
+            cls._s2l_instance = BuiltIn().get_library_instance("Selenium2Library")
+        except:
+            cls._s2l_instance = BuiltIn().import_library("Selenium2Library")
 
     @classmethod
     def get_logger(cls, module_name):
@@ -67,14 +71,6 @@ class Context(object):
         fh.setLevel(level)
         logger.addHandler(fh)
         return logger
-    
-    @classmethod
-    def are_keywords_exposed(cls):
-        if cls._keywords_exposed:
-            return True
-        else:
-            cls._keywords_exposed = True if cls.get_s2l_instance() else False
-            return cls._keywords_exposed
 
     @classmethod
     def set_keywords_exposed(cls):
