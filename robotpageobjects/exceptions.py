@@ -32,7 +32,7 @@ class AbsoluteUriTemplateException(ValueError):
     pass
 
 
-class InvalidUriTemplateVariable(ValueError):
+class InvalidUriTemplateVariableException(ValueError):
     """
     Raised when a variable passed to a page object's open
     method doesn't match a variable in the page object's

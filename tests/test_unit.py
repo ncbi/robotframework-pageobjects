@@ -1,5 +1,8 @@
 import os
+
 from nose.tools import raises
+from mock import patch
+from robot.libraries.BuiltIn import BuiltIn
 
 from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
@@ -8,7 +11,6 @@ from robotpageobjects.optionhandler import OptionHandler
 
 
 class OptionHandlerTestCase(BaseTestCase):
-
     def test_is_singleton(self):
         ids = []
         for i in range(3):
@@ -41,9 +43,14 @@ class OptionHandlerTestCase(BaseTestCase):
         self.assertEquals(handler.get("author"), "Dickens")
         self.assertEquals(handler.get("dynamic"), "Python")
 
+    @patch.object(BuiltIn, "get_variables")
+    def test_robot(self, mock_get_variables):
+        mock_get_variables.return_value = {"${browser}": "foobar"}
+        handler = OptionHandler()
+        self.assertEquals(handler.get("browser"), "foobar")
+
 
 class ResolveUrlTestCase(BaseTestCase):
-
     def setUp(self):
         super(ResolveUrlTestCase, self).setUp()
 
@@ -83,7 +90,7 @@ class ResolveUrlTestCase(BaseTestCase):
         self.PO.uri_template = "http://www.ncbi.nlm.nih.gov/pubmed/{pid}"
         print self.PO()._resolve_url({"pid": "123"})
 
-    @raises(exceptions.InvalidUriTemplateVariable)
+    @raises(exceptions.InvalidUriTemplateVariableException)
     def test_baseurl_set_bad_vars_passed_to_uri_template(self):
         self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
         self.PO.uri_template = "/pubmed/{pid}"
