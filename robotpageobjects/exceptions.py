@@ -39,3 +39,10 @@ class InvalidUriTemplateVariable(ValueError):
     `uri_template` attribute.
     """
     pass
+
+
+class VarFileImportErrorException(ImportError):
+    """
+    Raised when a variable file can't be imported
+    """
+    pass
