@@ -7,5 +7,5 @@ call pip freeze
 call pip install nose
 call pip install -e .
 call pip install mock
-call python -c 'import mock'
+call python -c "import mock"
 ::call nosetests -vs --with-xunit tests/
