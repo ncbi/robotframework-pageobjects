@@ -1,1 +1,1 @@
-from page import Page
+from page import Page, robot_alias
