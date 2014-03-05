@@ -13,6 +13,7 @@ class Context(object):
     It's a singleton.
     """
     _instance = None
+    _s2l_instance = None
     _new_called = 0
     _keywords_exposed = False
     _cache = None
@@ -33,42 +34,16 @@ class Context(object):
     def in_robot():
         return EXECUTION_CONTEXTS.current is not None
 
-    @staticmethod
-    def get_se_instance():
-        """
-        Gets the Selenoim2Library instance (which interfaces with SE)
-        First it looks for an se2lib instance defined in Robot,
-        which exists if a test has included a SE2Library.
-    
-        If the Se2Library is not included directly, then it looks for the
-        instance stored on exposedbrowserselib, and if that's not found, it
-        creates the instance.
-        
-        Note that this may not work unless this is called after Robot's Runner has started
-        a suite, because the current context won't have been initialized.
-        TODO: Determine whether this presents a problem for listeners.
-        Using EXECUTION_CONTEXTS.current and checking if it's not None doesn't solve that problem,
-        because we could still be running in Robot and simply not have a context yet.
-        We need to handle that case without just returning a new S2L instance--probably raise
-        and exception.
-        """
-        try:
-            se = BuiltIn().get_library_instance("Selenium2Library")
-        except (RuntimeError, AttributeError):
-            # EBS2L imports OptionHandler, which imports Context, so we can't go back and import EBS2L at the top.
+    @classmethod
+    def get_s2l_instance(cls):
+        if cls._s2l_instance is not None:
+            return cls._s2l_instance
+        else:
             try:
-                BuiltIn().import_library("Selenium2Library")
-                se = BuiltIn().get_library_instance("Selenium2Library")
-            except: # We're not running in Robot
-                # We didn't find an instance in Robot, so see if one has been created by another Page Object.
-                try:
-                    # TODO: Pull this logic into ExposedBrowserSelenium2Library
-                    se = ExposedBrowserSelenium2Library._se_instance
-                except AttributeError:
-                    # Create the instance.
-                    ExposedBrowserSelenium2Library()
-                    se = ExposedBrowserSelenium2Library._se_instance
-        return se
+                cls._s2l_instance = BuiltIn().get_library_instance("Selenium2Library")
+            except:
+                pass
+        return cls._s2l_instance
 
     @classmethod
     def get_logger(cls, module_name):
@@ -95,8 +70,12 @@ class Context(object):
     
     @classmethod
     def are_keywords_exposed(cls):
-        return cls._keywords_exposed
-    
+        if cls._keywords_exposed:
+            return True
+        else:
+            cls._keywords_exposed = True if cls.get_s2l_instance() else False
+            return cls._keywords_exposed
+
     @classmethod
     def set_keywords_exposed(cls):
         cls._keywords_exposed = True
@@ -107,6 +86,11 @@ class Context(object):
         
     @classmethod
     def get_cache(cls):
+        if cls._cache is None:
+            try:
+                cls._cache = cls.get_s2l_instance()._cache
+            except:
+                pass
         return cls._cache
 
 # Set up Robot's global variables so we get all the built-in default settings when we're outside Robot.

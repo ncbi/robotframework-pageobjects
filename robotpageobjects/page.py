@@ -175,7 +175,9 @@ class _BaseActions(Selenium2Library):
     def __init__(self, *args, **kwargs):
         """
         Initializes the options used by the actions defined in this class.
-        """        
+        """
+        if not Context.in_robot():
+            kwargs["run_on_failure"] = "Nothing"
         super(_BaseActions, self).__init__(*args, **kwargs)
         self._option_handler = OptionHandler()
         self._logger = Context.get_logger(this_module_name)
@@ -405,6 +407,7 @@ class Page(_BaseActions):
         if self._shared_cache is not None:
             self._cache = self._shared_cache
         Context.set_cache(self._cache)
+        sys.__stdout__.write("\m***CACHE***\n"+str(self._cache)+"\n")
 
         # If a name is not explicitly set with the name attribute,
         # get it from the class name.
@@ -448,7 +451,7 @@ class Page(_BaseActions):
                     if func in base.__dict__.values():
                         in_s2l_base = True
             if in_s2l_base:
-                if keywords_exposed:
+                if not keywords_exposed:
                     keywords.append(name)
             elif inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
                 keywords.append(_Keywords.get_robot_alias(name, self._underscore(self.name)))
