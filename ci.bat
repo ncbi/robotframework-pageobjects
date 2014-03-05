@@ -1,3 +1,4 @@
+call deactivate
 call pip freeze
 ::call rmdir robot /s /q
 ::call virtualenv robot
