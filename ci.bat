@@ -1,3 +1,4 @@
+call git branch
 call rmdir robot /s /q
 call virtualenv robot
 call robot\Scripts\activate.bat
