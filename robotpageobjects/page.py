@@ -21,7 +21,6 @@
 import inspect
 import re
 import uritemplate
-import sys
 
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -167,7 +166,20 @@ def robot_alias(stub):
     """
     return _Keywords.robot_alias(stub)
 
-class _BaseActions(Selenium2Library):
+class _S2LWrapper(Selenium2Library):
+    def __init__(self, *args, **kwargs):
+        if not Context.in_robot():
+            kwargs["run_on_failure"] = "Nothing"
+        else:
+            Context.import_s2l()
+
+        self._shared_cache = Context.get_cache()
+        super(_S2LWrapper, self).__init__(*args, **kwargs)
+        if self._shared_cache is not None:
+            self._cache = self._shared_cache
+        Context.set_cache(self._cache)
+
+class _BaseActions(_S2LWrapper):
     """
     Helper class that defines actions for PageObjectLibrary.
     """
@@ -176,8 +188,11 @@ class _BaseActions(Selenium2Library):
     def __init__(self, *args, **kwargs):
         """
         Initializes the options used by the actions defined in this class.
-        """        
+        """
+
         super(_BaseActions, self).__init__(*args, **kwargs)
+
+
         self._option_handler = OptionHandler()
         self._logger = Context.get_logger(this_module_name)
         self.selenium_speed = self._option_handler.get("selenium_speed") or .5
@@ -436,11 +451,7 @@ class Page(_BaseActions):
         Initializes the pageobject_name variable, which is used by the _Keywords class
         for determining aliases.
         """
-        self._shared_cache = Context.get_cache()
         super(Page, self).__init__(*args, **kwargs)
-        if self._shared_cache is not None:
-            self._cache = self._shared_cache
-        Context.set_cache(self._cache)
 
         # If a name is not explicitly set with the name attribute,
         # get it from the class name.
@@ -468,7 +479,6 @@ class Page(_BaseActions):
         This method uses the _Keywords class to handle exclusions and aliases.
         :returns: list
         """
-        keywords_exposed = Context.are_keywords_exposed()
         # Return all method names on the class to expose keywords to Robot Framework
         keywords = []
         members = inspect.getmembers(self)
@@ -486,11 +496,9 @@ class Page(_BaseActions):
                     if func in base.__dict__.values():
                         in_s2l_base = True
             if in_s2l_base:
-                if keywords_exposed:
-                    keywords.append(name)
+                continue
             elif inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
                 keywords.append(_Keywords.get_robot_alias(name, self._underscore(self.name)))
-        Context.set_keywords_exposed()
         return keywords
 
     def run_keyword(self, alias, args):
