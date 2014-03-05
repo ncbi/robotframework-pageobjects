@@ -1,2 +1,3 @@
+mock==1.0.1
 robotframework-selenium2library==1.5.0
 uritemplate==0.6
