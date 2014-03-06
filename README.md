@@ -183,5 +183,3 @@ from your page object class, do self._log("foo", "bar"). Each parameter sent to 
 as a tab delimited line.
 - `selenium_speed` (PO_SELENIIM_SPEED): The speed between Selenium commands. Use this to slow down the page actions,
  which is useful when, for example, it takes a few moments for something to load via AJAX.
-
-
