@@ -469,7 +469,7 @@ class Page(_BaseActions):
             in_s2l_base = False
             func = obj.__func__ # Get the unbound function for the method
             # Check if that function is defined in Selenium2Library
-            # if func in Selenium2Library.__dict__.values():
+            if func in Selenium2Library.__dict__.values():
                 in_s2l_base = True
             else:
                 # Check if the functoin is defined in any of Selenium2Library's direct base classes.

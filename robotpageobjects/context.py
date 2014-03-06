@@ -44,6 +44,11 @@ class Context(object):
 
     @classmethod
     def import_s2l(cls):
+        """
+        Make sure that Selenium2Library has been imported by Robot.
+        First try to get the existing instance. If that fails,
+        tell Robot to import the library.
+        """
         try:
             cls._s2l_instance = BuiltIn().get_library_instance("Selenium2Library")
         except:
