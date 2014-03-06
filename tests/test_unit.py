@@ -94,5 +94,5 @@ class ResolveUrlTestCase(BaseTestCase):
         page = FooBarPage()
         selectors = page._selectors
         self.assertEqual(selectors.get("foo"), "foo", "Selectors should contain 'foo' from BaseFoo.")
-        self.assertTrue(selectors.get("bar"), "bar", "Selectors should contain 'bar' from BaseBar.")
-        self.assertTrue(selectors.get("baz"), "baz", "Selector 'baz' should be overridden in FooBarPage." )
+        self.assertEqual(selectors.get("bar"), "bar", "Selectors should contain 'bar' from BaseBar.")
+        self.assertEqual(selectors.get("baz"), "baz", "Selector 'baz' should be overridden in FooBarPage." )
