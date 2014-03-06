@@ -55,3 +55,4 @@ function main {
 }
 
 main $1
+pybot --variable=baseurl:file:////export/home/tomcat/TeamCity/Agent3/work/e7cf82a112a30337/tests/scenarios -P /export/home/tomcat/TeamCity/Agent3/work/e7cf82a112a30337/tests/scenarios/po /export/home/tomcat/TeamCity/Agent3/work/e7cf82a112a30337/tests/scenarios/test_rel_uri_attr.robot
