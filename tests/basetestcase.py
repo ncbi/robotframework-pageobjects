@@ -34,7 +34,7 @@ class BaseTestCase(unittest.TestCase):
         # Unset all PO_ env variables, but save them so we can restore them in teardown
         self.original_po_vars = {}
         for key in os.environ.keys():
-            if key.startswith("PO_"):
+            if key.lower().startswith("po_"):
                 self.original_po_vars[key] = os.environ[key]
                 del os.environ[key]
 

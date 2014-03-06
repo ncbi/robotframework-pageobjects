@@ -3,6 +3,7 @@ import os
 import imp
 
 from context import Context
+import exceptions
 
 
 from robot.libraries.BuiltIn import BuiltIn
@@ -37,6 +38,9 @@ class OptionHandler(object):
                 self._opts = {}
                 self._opts.update(self._get_opts_no_robot())
 
+    def __repr__(self):
+        return "<robotpageobjects.optionhandler.OptionHandler object at %s: %s>" % (id(self), self._opts)
+
     def _get_opts_no_robot(self):
 
         """
@@ -59,8 +63,10 @@ class OptionHandler(object):
             try:
                 vars_mod = imp.load_source("vars", abs_var_file_path)
 
-            except ImportError, e:
-                raise Exception("Couldn't import variable file: %s" % e.message)
+            except (ImportError, IOError), e:
+                raise exceptions.VarFileImportErrorException("Couldn't import variable file: %s. Ensure it exists and "
+                                                           "is "
+                                                       "importable." % var_file_path)
 
             var_file_attrs = vars_mod.__dict__
             for vars_mod_attr_name in var_file_attrs:
@@ -71,7 +77,7 @@ class OptionHandler(object):
         # After configs are saved from var file, get individual environment variables
         for env_varname in os.environ:
 
-            if env_varname.startswith("PO_"):
+            if env_varname.startswith("PO_") and env_varname.isupper():
                 varname = env_varname[3:]
                 ret[self._normalize(varname)] = os.environ.get(env_varname)
 

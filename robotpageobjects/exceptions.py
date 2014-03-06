@@ -40,10 +40,17 @@ class AbsoluteUriTemplateException(ValueError):
     pass
 
 
-class InvalidUriTemplateVariable(ValueError):
+class InvalidUriTemplateVariableException(ValueError):
     """
     Raised when a variable passed to a page object's open
     method doesn't match a variable in the page object's
     `uri_template` attribute.
+    """
+    pass
+
+
+class VarFileImportErrorException(ImportError):
+    """
+    Raised when a variable file can't be imported
     """
     pass

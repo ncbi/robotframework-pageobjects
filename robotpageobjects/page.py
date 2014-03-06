@@ -308,7 +308,7 @@ class _BaseActions(_SelectorsManagement):
             # Check that variables are correct and match template.
             for uri_var in uri_vars:
                 if uri_var not in uritemplate.variables(self.uri_template):
-                    raise exceptions.InvalidUriTemplateVariable("The variable passed in, \"%s\" does not match "
+                    raise exceptions.InvalidUriTemplateVariableException("The variable passed in, \"%s\" does not match "
                                                                 "template \"%s\" for page object \"%s\"" % (uri_var,
                                                                                                             self
                                                                                                             .uri_template,

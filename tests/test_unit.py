@@ -1,12 +1,58 @@
+import os
+
 from nose.tools import raises
+from mock import patch
+from robot.libraries.BuiltIn import BuiltIn
+from unittest import skipUnless
 
 from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
 from robotpageobjects.page import Page
+from robotpageobjects.optionhandler import OptionHandler
+
+
+class OptionHandlerTestCase(BaseTestCase):
+    def test_is_singleton(self):
+        ids = []
+        for i in range(3):
+            ids.append(id(OptionHandler()))
+        self.assertTrue(all(x == ids[0] for x in ids), "All OptionHandler instances should refer to the same instance")
+
+    def test_no_robot_get_env_var(self):
+        os.environ["PO_FOO"] = "bar"
+        handler = OptionHandler()
+        self.assertEquals(handler.get("foo"), "bar")
+
+    def test_no_robot_env_not_set_is_none(self):
+        handler = OptionHandler()
+        self.assertIsNone(handler.get("fasdfasdfasdfsadf"))
+
+    @skipUnless(os.name == "posix", "Skipping Windows, since environment variables are not case sensitive")
+    def test_no_robot_ignore_lowercase_env_vars(self):
+        os.environ["PO_BROWSEr"] = "firefox"
+        handler = OptionHandler()
+        self.assertIsNone(handler.get("browser"), "Mixed case environment variables should not be set")
+
+    @raises(exceptions.VarFileImportErrorException)
+    def test_var_file_import_exception(self):
+        os.environ["PO_VAR_FILE"] = "foo/bar/asdfsadf/asdf"
+        handler = OptionHandler()
+        handler.get("PO_VAR_FILE")
+
+    def test_no_robot_var_file(self):
+        os.environ["PO_VAR_FILE"] = "%s/vars.py" % self.test_dir
+        handler = OptionHandler()
+        self.assertEquals(handler.get("author"), "Dickens")
+        self.assertEquals(handler.get("dynamic"), "Python")
+
+    @patch.object(BuiltIn, "get_variables")
+    def test_robot(self, mock_get_variables):
+        mock_get_variables.return_value = {"${browser}": "foobar"}
+        handler = OptionHandler()
+        self.assertEquals(handler.get("browser"), "foobar")
 
 
 class ResolveUrlTestCase(BaseTestCase):
-
     def setUp(self):
         super(ResolveUrlTestCase, self).setUp()
 
@@ -46,7 +92,7 @@ class ResolveUrlTestCase(BaseTestCase):
         self.PO.uri_template = "http://www.ncbi.nlm.nih.gov/pubmed/{pid}"
         print self.PO()._resolve_url({"pid": "123"})
 
-    @raises(exceptions.InvalidUriTemplateVariable)
+    @raises(exceptions.InvalidUriTemplateVariableException)
     def test_baseurl_set_bad_vars_passed_to_uri_template(self):
         self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
         self.PO.uri_template = "/pubmed/{pid}"
