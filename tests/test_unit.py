@@ -3,6 +3,7 @@ import os
 from nose.tools import raises
 from mock import patch
 from robot.libraries.BuiltIn import BuiltIn
+from unittest import skipUnless
 
 from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
@@ -26,6 +27,7 @@ class OptionHandlerTestCase(BaseTestCase):
         handler = OptionHandler()
         self.assertIsNone(handler.get("fasdfasdfasdfsadf"))
 
+    @skipUnless(os.name == "posix", "Skipping Windows, since environment variables are not case sensitive")
     def test_no_robot_ignore_lowercase_env_vars(self):
         os.environ["PO_BROWSEr"] = "firefox"
         handler = OptionHandler()
