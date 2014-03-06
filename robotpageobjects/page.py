@@ -167,12 +167,22 @@ def robot_alias(stub):
     return _Keywords.robot_alias(stub)
 
 class _S2LWrapper(Selenium2Library):
+    """
+    Helper class that wraps Selenium2Library and manages the browser cache.
+    """
     def __init__(self, *args, **kwargs):
         if not Context.in_robot():
             kwargs["run_on_failure"] = "Nothing"
+            # S2L checks if its "run_on_failure" keyword is "Nothing". If it is, it won't do anything on failure.
+            # We need this to prevent S2L from attempting to take a screenshot outside Robot.
         else:
+            # If in Robot, we want to make sure Selenium2Library is imported so its keywords are available,
+            # and so we can share its cache. When outside Robot, we won't share the cache with any import
+            # of Selenium2Library. This could be done with a monkey-patch,
+            # but we are punting until and unless this becomes an issue. See DCLT-708.
             Context.import_s2l()
 
+        # Use Selenium2Library's cache for our page objects.
         self._shared_cache = Context.get_cache()
         super(_S2LWrapper, self).__init__(*args, **kwargs)
         if self._shared_cache is not None:
