@@ -22,7 +22,6 @@ class SearchResultPage(Page):
     def should_have_results(self, expected):
         len_results = len(self._find_element("xpath=id('results')/li", False, False))
         asserts.assert_equals(len_results, int(expected), "Unexpected number of results found on %s, got %s, "
-                                                         "expected %s" %(
-            self.name, len_results, expected))
+                                                          "expected %s" %(self.name, len_results, expected))
 
 
