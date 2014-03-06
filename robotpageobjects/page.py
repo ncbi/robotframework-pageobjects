@@ -182,7 +182,8 @@ class _S2LWrapper(Selenium2Library):
             # but we are punting until and unless this becomes an issue. See DCLT-708.
             Context.import_s2l()
 
-        # Use Selenium2Library's cache for our page objects.
+        # Use Selenium2Library's cache for our page objects. That way you can run a keyword from any page object,
+        # or from Selenium2Library, and not have to open a separate browser.
         self._shared_cache = Context.get_cache()
         super(_S2LWrapper, self).__init__(*args, **kwargs)
         if self._shared_cache is not None:
@@ -448,28 +449,42 @@ class Page(_BaseActions):
         """
         RF Dynamic API hook implementation that provides a list of all keywords defined by
         the implementing class. NB that this will not expose Selenium2Library's keywords.
+        That is done (in Robot) by programmatically importing Selenium2Library. See __init__
+        in _S2LWrapper.
         This method uses the _Keywords class to handle exclusions and aliases.
         :returns: list
         """
         # Return all method names on the class to expose keywords to Robot Framework
         keywords = []
         members = inspect.getmembers(self)
-        
+
+
+        # Look through our methods and identify which ones are Selenium2Library's
+        # (by checking it and its base classes).
         for name, obj in members:
+            # Don't look for non-methods.
             if not inspect.ismethod(obj):
                 continue
             
             in_s2l_base = False
-            func = obj.__func__
-            if func in Selenium2Library.__dict__.values():
+            func = obj.__func__ # Get the unbound function for the method
+            # Check if that function is defined in Selenium2Library
+            # if func in Selenium2Library.__dict__.values():
                 in_s2l_base = True
             else:
+                # Check if the functoin is defined in any of Selenium2Library's direct base classes.
+                # Note that this will not check those classes' ancestors, but Selenium2Library
+                # (at present) makes the same assumption about its inheritance hierarchy in its
+                # __init__.
                 for base in Selenium2Library.__bases__:
                     if func in base.__dict__.values():
                         in_s2l_base = True
+            # Don't add methods belonging to S2L to the exposed keywords.
             if in_s2l_base:
                 continue
             elif inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
+                # Add all methods that don't start with an underscore and were not marked with the
+                # @not_keyword decorator.
                 keywords.append(_Keywords.get_robot_alias(name, self._underscore(self.name)))
         return keywords
 
