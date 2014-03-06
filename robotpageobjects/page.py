@@ -267,7 +267,7 @@ class _BaseActions(_SelectorsManagement):
         self.browser = self._option_handler.get("browser") or "phantomjs"
 
     @not_keyword
-    def resolve_url(self, *args):
+    def _resolve_url(self, *args):
 
         """
         Figures out the URL that a page object should open at.
@@ -380,7 +380,7 @@ class _BaseActions(_SelectorsManagement):
         :type delete_cookies: Boolean
         :returns: _BaseActions instance
         """
-        resolved_url = self.resolve_url(*args)
+        resolved_url = self._resolve_url(*args)
         self.open_browser(resolved_url, self.browser)
 
         # Probably don't need this check here. We should log no matter
