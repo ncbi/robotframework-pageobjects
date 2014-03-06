@@ -21,6 +21,7 @@
 import inspect
 import re
 import uritemplate
+import sys
 
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -166,6 +167,17 @@ def robot_alias(stub):
     """
     return _Keywords.robot_alias(stub)
 
+class SelectorsDict(dict):
+    """
+    Wrap dict to add the ability to enforce key uniqueness.
+    """
+    def merge(self, other_dict):
+        for key, value in other_dict.iteritems():
+            if key in self:
+                raise exceptions.DuplicateKeyException("Key \"%s\" is defined by two parent classes. \
+                                            Only subclasses can override selector keys." % key)
+            else:
+                self[key] = value
 class _S2LWrapper(Selenium2Library):
     """
     Helper class that wraps Selenium2Library and manages the browser cache.
@@ -190,11 +202,54 @@ class _S2LWrapper(Selenium2Library):
             self._cache = self._shared_cache
         Context.set_cache(self._cache)
 
-class _BaseActions(_S2LWrapper):
+    @not_keyword
+    def get_current_browser(self):
+        """
+        Wrap the _current_browser() S2L method
+        """
+        return self._current_browser()
+
+
+class _SelectorsManagement(_S2LWrapper):
+    _selectors = {}
+
+    def __init__(self, *args, **kwargs):
+        super(_SelectorsManagement, self).__init__(*args, **kwargs)
+        self._selectors = self._get_class_selectors()
+
+    def _get_class_selectors(self):
+        def __get_class_selectors(klass):
+            all_selectors = SelectorsDict()
+            own_selectors = klass._selectors
+
+            # Get all the selectors dicts defined by the bases
+            base_dicts = [__get_class_selectors(base) for base in klass.__bases__ if hasattr(base, "_selectors")]
+
+            # Add the selectors for the bases to the return dict
+            #[all_selectors.update(base_dict) for base_dict in base_dicts]
+            [all_selectors.merge(base_dict) for base_dict in base_dicts]
+
+            # Update the return dict with this class's selectors, overriding the bases
+            all_selectors.update(own_selectors)
+            return all_selectors
+        return __get_class_selectors(self.__class__)
+
+    def _element_find(self, locator, *args, **kwargs):
+        """
+        Override built-in _element_find() method and map selectors. Try to use _element_find with the
+        locator as is, then try, if a selector exists, try that.
+        :param locator: The Selenium2Library-style locator (or IFT selector) to use
+        """
+
+        if locator in self._selectors:
+            return super(_SelectorsManagement, self)._element_find(self._selectors[locator], *args, **kwargs)
+        else:
+            return super(_SelectorsManagement, self)._element_find(locator, *args, **kwargs)
+
+class _BaseActions(_SelectorsManagement):
     """
     Helper class that defines actions for PageObjectLibrary.
     """
-    _selectors = {}
 
     def __init__(self, *args, **kwargs):
         """
@@ -210,28 +265,6 @@ class _BaseActions(_S2LWrapper):
         self.set_selenium_speed(self.selenium_speed)
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
-        self._set_selectors()
-
-    #@property
-    #def selectors(self):
-    #    return self._selectors
-    
-    @classmethod
-    def _get_class_selectors(cls):
-        base_dicts = [cls._selectors, [base._get_class_selectors() for base in cls.__bases__ if hasattr(base, "_get_class_selectors")]]
-        return base_dicts
-        
-    
-    def _set_selectors(self):
-        #tree = inspect.getclasstree(self.__class__,)
-        #for klass in tree:
-        #    fo
-        #selectors = {}
-        #for base in self.__class__.__bases__:
-        #    base_selectors = base._selectors
-        sys.__stdout__.write("\n****SELECTORS****\n"+str( self.__class__._get_class_selectors())+"\n")
-            
-            
 
     @not_keyword
     def resolve_url(self, *args):
@@ -315,13 +348,6 @@ class _BaseActions(_S2LWrapper):
         """
         self._logger.info("\t".join([str(arg) for arg in args]))
 
-    @not_keyword
-    def get_current_browser(self):
-        """
-        Wrap the _current_browser() S2L method
-        """
-        return self._current_browser()
-
     def open(self, *args):
         """
         Wrapper for Selenium2Library's open_browser() that calls resolve_url for url logic and self.browser.
@@ -392,35 +418,8 @@ class _BaseActions(_S2LWrapper):
 
         wait.until(wait_fnc)
 
-    def _element_find(self, locator, *args, **kwargs):
-        """
-        Override built-in _element_find() method and map selectors. Try to use _element_find with the
-        locator as is, then try, if a selector exists, try that.
-        :param locator: The Selenium2Library-style locator (or IFT selector) to use
-        """
-        try:
-            return super(_BaseActions, self)._element_find(locator, *args, **kwargs)
-        except:
-            if locator in self._selectors:
-                return super(_BaseActions, self)._element_find(self._selectors[locator], *args, **kwargs)
-            else:
-                raise
-    
-    def _find_element(self, locator, first_only=True, required=True, **kwargs):
-        """
-        Helper method that wraps _element_find().
-        :param locator: The Selenium2Library-style locator to use
-        :type locator: str
-        :param first_only: Optional parameter to restrict the search to the first element. Defaults to True.
-        :type first_only: boolean
-        :param required: Optional parameter to raise an exception if no matches are found. Defaults to True.
-        :type required: boolean
-        :returns: WebElement instance
-        """
-        return self._element_find(locator, first_only, required, **kwargs)
-
     @not_keyword
-    def find_element(self, locator, **kwargs):
+    def find_element(self, locator, required=True, **kwargs):
         """
         Wraps Selenium2Library's protected _element_find() method to find single elements.
         TODO: Incorporate selectors API into this.
@@ -430,10 +429,10 @@ class _BaseActions(_S2LWrapper):
         :type required: boolean
         :returns: WebElement instance
         """
-        return self._find_element(locator, **kwargs)
+        return self._element_find(locator, True, required, **kwargs)
 
     @not_keyword
-    def find_elements(self, locator, **kwargs):
+    def find_elements(self, locator, required=True, **kwargs):
         """
         Wraps Selenium2Library's protected _element_find() method to find multiple elements.
         TODO: Incorporate selectors API into this.
@@ -443,7 +442,7 @@ class _BaseActions(_S2LWrapper):
         :type required: boolean
         :returns: WebElement instance
         """
-        return self._find_element(locator, first_only=False, **kwargs)
+        return self._element_find(locator, False, required, **kwargs)
 
 
 class Page(_BaseActions):
@@ -457,6 +456,7 @@ class Page(_BaseActions):
     This class then provides the behavior used by the RF's dynamic API.
     Optional constructor arguments:
     """
+
     def __init__(self, *args, **kwargs):
         """
         Initializes the pageobject_name variable, which is used by the _Keywords class
@@ -510,10 +510,9 @@ class Page(_BaseActions):
             if func in Selenium2Library.__dict__.values():
                 in_s2l_base = True
             else:
-                # Check if the functoin is defined in any of Selenium2Library's direct base classes.
-                # Note that this will not check those classes' ancestors, but Selenium2Library
-                # (at present) makes the same assumption about its inheritance hierarchy in its
-                # __init__.
+                # Check if the function is defined in any of Selenium2Library's direct base classes.
+                # Note that this will not check those classes' ancestors.
+                # TODO: Check all S2L's ancestors.
                 for base in Selenium2Library.__bases__:
                     if func in base.__dict__.values():
                         in_s2l_base = True

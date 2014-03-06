@@ -1,3 +1,11 @@
+class DuplicateKeyException(ValueError):
+    """
+    Raised when two selector dictionaries are merged and have a
+    duplicate key.
+    """
+    pass
+
+
 class NoBaseUrlException(AttributeError):
     """
     Raised when no baseurl is set for the page object. A baseurl

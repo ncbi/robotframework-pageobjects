@@ -19,7 +19,7 @@ class SearchResultPage(Page):
 
     @robot_alias("__name__should_have_results")
     def should_have_results(self, expected):
-        len_results = len(self._find_element("xpath=id('results')/li", False, False))
+        len_results = len(self.find_elements("xpath=id('results')/li", required=False))
         asserts.assert_equals(len_results, int(expected), "Unexpected number of results found on %s, got %s, "
                                                          "expected %s" %(
             self.name, len_results, expected))
