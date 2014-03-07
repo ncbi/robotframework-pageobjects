@@ -66,6 +66,12 @@ class ActionsTestCase(BaseTestCase):
         run = self.run_scenario("test_fail.robot")
         self.assertEquals(len(glob.glob("*.png")), 1, "On Failure page object should generate screenshot")
 
+    def test_no_robot_action_failing_should_not_warn_about_screenshot(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_fail.py")
+        self.assertFalse("warn" in run.output.lower(), "No warning should be issued when a method fails outside "
+                                                          "robot")
+
     def robot_importing_se2lib_after_page_object_should_work(self):
         # This run is duplicated, but it shows that SE2Lib library imported
         # with page objects works.

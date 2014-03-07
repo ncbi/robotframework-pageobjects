@@ -11,18 +11,22 @@ from robotpageobjects.page import Page
 from robotpageobjects.optionhandler import OptionHandler
 
 
-class SE2LibMethodsExposed(BaseTestCase):
+class InheritFromSe2LibTestCase(BaseTestCase):
+
+    def setUp(self):
+        super(InheritFromSe2LibTestCase, self).setUp()
+
+        class PO(Page):
+            pass
+
+        self.po = PO()
 
     def test_no_robot_se2lib_exposed(self):
         # We can't test this as a unittest in
         # robot, so see functional test class.
-        class PO(Page):
-            pass
-
-        PO()
 
         try:
-            getattr(PO, "title_should_be")
+            getattr(self.po, "title_should_be")
         except AttributeError:
             self.fail("SE2Lib methods are not exposed as direct page object attributes")
 
