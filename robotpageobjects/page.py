@@ -168,8 +168,10 @@ def robot_alias(stub):
     """
     return _Keywords.robot_alias(stub)
 
+
 class Override(str):
     pass
+
 
 class SelectorsDict(dict):
     """
@@ -198,6 +200,7 @@ class SelectorsDict(dict):
                     raise exceptions.DuplicateKeyException("Key \"%s\" is defined by two parent classes. \
                                             Only subclasses can override selector keys." % key)
             self[str(key)] = value
+
 
 class _S2LWrapper(Selenium2Library):
     """
@@ -246,7 +249,7 @@ class _SelectorsManagement(_S2LWrapper):
     class Page2(Page1):
         _selectors = {Override("input box"): "id=bar"}
         ...
-        
+
     And a Page2 object will have access to "search button", which maps to "id=go",
     and "input box", which maps to "id=bar".
     """
@@ -314,6 +317,7 @@ class _SelectorsManagement(_S2LWrapper):
                     raise ValueError("\"%s\" looks like a selector, but it is not in the selectors dict." % locator)
                 else:
                     raise
+
 
 class _BaseActions(_SelectorsManagement):
     """
