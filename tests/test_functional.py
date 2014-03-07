@@ -66,6 +66,12 @@ class ActionsTestCase(BaseTestCase):
         run = self.run_scenario("test_fail.robot")
         self.assertEquals(len(glob.glob("*.png")), 1, "On Failure page object should generate screenshot")
 
+class SelectorsTestCase(BaseTestCase):
+    @unittest.skip("NOT IMPLEMENTED YET: See DCLT-728")
+    def test_click_element_selector(self):
+        run = self.run_scenario("test_click_element_selector.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
+
 
 if __name__ == "__main__":
     unittest.main()

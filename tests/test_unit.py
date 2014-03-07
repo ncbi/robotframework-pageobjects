@@ -7,7 +7,7 @@ from unittest import skipUnless
 
 from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
-from robotpageobjects.page import Page
+from robotpageobjects.page import Page, Override
 from robotpageobjects.optionhandler import OptionHandler
 
 
@@ -135,7 +135,7 @@ class ResolveUrlTestCase(BaseTestCase):
                           "baz": "cat"}
 
         class FooBarPage(Page, BaseFoo, BaseBar):
-            _selectors = {"baz": "baz"}
+            _selectors = {Override("baz"): "baz"}
 
         page = FooBarPage()
         selectors = page._selectors

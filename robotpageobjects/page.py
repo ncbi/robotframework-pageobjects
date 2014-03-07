@@ -22,6 +22,7 @@ import inspect
 import re
 import uritemplate
 import sys
+import warnings
 
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -167,17 +168,37 @@ def robot_alias(stub):
     """
     return _Keywords.robot_alias(stub)
 
+class Override(str):
+    pass
+
 class SelectorsDict(dict):
     """
     Wrap dict to add the ability to enforce key uniqueness.
     """
-    def merge(self, other_dict):
+    def merge(self, other_dict, from_subclass=False):
+        """
+        Merge in selectors from another dictionary. Don't allow duplicate keys.
+        If from_subclass is True, allow subclasses to override parent classes.
+        If they attempt to override without explicitly using the Override class,
+        allow the override but raise a warning.
+        :param other_dict: The dictionary to merge into the SelectorsDict object.
+        :type other_dict: dict
+        :returns: None
+        """
         for key, value in other_dict.iteritems():
             if key in self:
-                raise exceptions.DuplicateKeyException("Key \"%s\" is defined by two parent classes. \
+                if from_subclass:
+                    if not isinstance(key, Override):
+                        warnings.warn("Key \"%s\" is defined in an ancestor class. \
+                                       Using the value \"%s\" defined in the subclass.\
+                                       To prevent this warning, use robotpageobjects.Override(\"%s\")." % (key, value, key),
+                                      exceptions.KeyOverrideWarning)
+
+                else:
+                    raise exceptions.DuplicateKeyException("Key \"%s\" is defined by two parent classes. \
                                             Only subclasses can override selector keys." % key)
-            else:
-                self[key] = value
+            self[str(key)] = value
+
 class _S2LWrapper(Selenium2Library):
     """
     Helper class that wraps Selenium2Library and manages the browser cache.
@@ -211,13 +232,25 @@ class _S2LWrapper(Selenium2Library):
 
 
 class _SelectorsManagement(_S2LWrapper):
+    """
+    Class to manage selectors, which map to S2L locators.
+    """
     _selectors = {}
 
     def __init__(self, *args, **kwargs):
+        """
+        Set instance _selectors according to the class hierarchy.
+        See _get_class_selectors.
+        """
         super(_SelectorsManagement, self).__init__(*args, **kwargs)
         self._selectors = self._get_class_selectors()
 
     def _get_class_selectors(self):
+        """
+        Get the selectors from all parent classes and merge them,
+        overriding any parent classes' selectors with subclasses'
+        selectors.
+        """
         def __get_class_selectors(klass):
             all_selectors = SelectorsDict()
             own_selectors = klass._selectors
@@ -230,21 +263,42 @@ class _SelectorsManagement(_S2LWrapper):
             [all_selectors.merge(base_dict) for base_dict in base_dicts]
 
             # Update the return dict with this class's selectors, overriding the bases
-            all_selectors.update(own_selectors)
+            all_selectors.merge(own_selectors, from_subclass=True)
             return all_selectors
         return __get_class_selectors(self.__class__)
+
+    def _is_locator_format(locator):
+        """
+        Ask Selenium2Library's ElementFinder if the locator uses
+        one of its supported prefixes.
+        :param locator: The locator to look up
+        :type locator: str
+
+        """
+        finder = self._element_finder
+        prefix = finder._parse_locator(locator)[0]
+        return prefix is not None or locator.startswith("//")
+
 
     def _element_find(self, locator, *args, **kwargs):
         """
         Override built-in _element_find() method and map selectors. Try to use _element_find with the
         locator as is, then try, if a selector exists, try that.
         :param locator: The Selenium2Library-style locator (or IFT selector) to use
+        :type locator: str
+        :returns: WebElement or list
         """
-
         if locator in self._selectors:
             return super(_SelectorsManagement, self)._element_find(self._selectors[locator], *args, **kwargs)
         else:
-            return super(_SelectorsManagement, self)._element_find(locator, *args, **kwargs)
+            try:
+                return super(_SelectorsManagement, self)._element_find(locator, *args, **kwargs)
+            except ValueError:
+                if not self._is_locator_format(locator):
+                    # Not found, doesn't look like a locator, not in selectors dict
+                    raise ValueError("\"%s\" looks like a selector, but it is not in the selectors dict." % locator)
+                else:
+                    raise
 
 class _BaseActions(_SelectorsManagement):
     """
