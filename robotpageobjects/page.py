@@ -21,7 +21,6 @@
 import inspect
 import re
 import uritemplate
-import sys
 import warnings
 
 from selenium.webdriver.support.ui import WebDriverWait
