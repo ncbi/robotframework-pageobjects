@@ -234,6 +234,21 @@ class _S2LWrapper(Selenium2Library):
 class _SelectorsManagement(_S2LWrapper):
     """
     Class to manage selectors, which map to S2L locators.
+    This allows page object authors to define a class-level dict.
+    These selectors can be defined in any ancestor class, and
+    are inherited. A subclass can override its parent's selectors:
+
+    from robotpageobjects.page import Page, Override
+    class Page1(Page):
+        _selectors = {"search button": "id=go",
+              "input box": "xpath=//input[@id="foo"]"}
+
+    class Page2(Page1):
+        _selectors = {Override("input box"): "id=bar"}
+        ...
+        
+    And a Page2 object will have access to "search button", which maps to "id=go",
+    and "input box", which maps to "id=bar".
     """
     _selectors = {}
 
@@ -524,8 +539,6 @@ class Page(_BaseActions):
             self.name
         except AttributeError:
             self.name = self._titleize(self.__class__.__name__)
-        #for key, selector in self.selectors.iteritems():
-        #    self.assign_id_to_element(key, selector)
 
     @staticmethod
     @not_keyword
@@ -566,7 +579,7 @@ class Page(_BaseActions):
             else:
                 # Check if the function is defined in any of Selenium2Library's direct base classes.
                 # Note that this will not check those classes' ancestors.
-                # TODO: Check all S2L's ancestors.
+                # TODO: Check all S2L's ancestors. DCLT-
                 for base in Selenium2Library.__bases__:
                     if func in base.__dict__.values():
                         in_s2l_base = True
