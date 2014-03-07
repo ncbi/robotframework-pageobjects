@@ -66,6 +66,11 @@ class ActionsTestCase(BaseTestCase):
         run = self.run_scenario("test_fail.robot")
         self.assertEquals(len(glob.glob("*.png")), 1, "On Failure page object should generate screenshot")
 
+    def robot_importing_se2lib_with_page_object_should_work(self):
+        # This run is duplicated, but it shows that SE2Lib library imported
+        # with page objects works.
+        run = self.run("test_template_passed.robot")
+        self.assert_run(run, expected_returncode=0, search_output="PASSED")
 
 if __name__ == "__main__":
     unittest.main()

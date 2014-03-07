@@ -11,6 +11,22 @@ from robotpageobjects.page import Page
 from robotpageobjects.optionhandler import OptionHandler
 
 
+class SE2LibMethodsExposed(BaseTestCase):
+
+    def test_no_robot_se2lib_exposed(self):
+        # We can't test this as a unittest in
+        # robot, so see functional test class.
+        class PO(Page):
+            pass
+
+        PO()
+
+        try:
+            getattr(PO, "title_should_be")
+        except AttributeError:
+            self.fail("SE2Lib methods are not exposed as direct page object attributes")
+
+
 class OptionHandlerTestCase(BaseTestCase):
     def test_is_singleton(self):
         ids = []
