@@ -12,5 +12,5 @@ Test Widget Site
     Search Widget Page For  cool thing
 
     # This will fail the assertion
-    Widget Search Result Page Should Have Results  2
+    Title Should Be  foo
     [Teardown]  Close Widget Page
