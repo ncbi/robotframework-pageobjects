@@ -11,6 +11,26 @@ from robotpageobjects.page import Page, Override
 from robotpageobjects.optionhandler import OptionHandler
 
 
+class InheritFromSe2LibTestCase(BaseTestCase):
+
+    def setUp(self):
+        super(InheritFromSe2LibTestCase, self).setUp()
+
+        class PO(Page):
+            pass
+
+        self.po = PO()
+
+    def test_no_robot_se2lib_exposed(self):
+        # We can't test this as a unittest in
+        # robot, so see functional test class.
+
+        try:
+            getattr(self.po, "title_should_be")
+        except AttributeError:
+            self.fail("SE2Lib methods are not exposed as direct page object attributes")
+
+
 class OptionHandlerTestCase(BaseTestCase):
     def test_is_singleton(self):
         ids = []
