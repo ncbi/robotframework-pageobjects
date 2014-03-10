@@ -284,7 +284,7 @@ class _SelectorsManagement(_S2LWrapper):
             return all_selectors
         return __get_class_selectors(self.__class__)
 
-    def _is_locator_format(locator):
+    def _is_locator_format(self, locator):
         """
         Ask Selenium2Library's ElementFinder if the locator uses
         one of its supported prefixes.
