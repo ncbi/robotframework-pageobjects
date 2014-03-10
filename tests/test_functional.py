@@ -88,6 +88,15 @@ class ActionsTestCase(BaseTestCase):
         self.run_scenario("test_fail_se2lib_keyword.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_screen_shots(1)
 
+    def test_manual_screenshot_outside_robot(self):
+        self.assert_screen_shots(0)
+        self.set_baseurl_env()
+        self.run_scenario("test_manual_screen_shot.py")
+        self.assert_screen_shots(1)
+
+    def test_manual_screenshot_robot(self):
+        self.assert_screen_shots(0)
+        self.run_scenario("test_manual_screen_shot.robot", variable="baseurl:%s" % self.base_file_url)
 
 class SelectorsTestCase(BaseTestCase):
     @unittest.skip("NOT IMPLEMENTED YET: See DCLT-728")
