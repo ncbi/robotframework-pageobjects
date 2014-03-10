@@ -81,7 +81,7 @@ class ActionsTestCase(BaseTestCase):
         self.assert_screen_shots(0)
         self.run_scenario("test_fail.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_screen_shots(2)
-        # DCLT-726: Change to 1 when we fix this bug.
+        #TODO DCLT-726: Change to 1 when we fix this bug.
 
     def test_robot_screen_shot_on_se2lib_keyword_failure(self):
         self.assert_screen_shots(0)
