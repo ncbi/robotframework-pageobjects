@@ -232,7 +232,7 @@ class _BaseActions(_S2LWrapper):
             # a page that follows some sort of URL pattern. Eg, /pubmed/SOME_ARTICLE_ID.
 
             if self._is_url_absolute(self.uri_template):
-                raise exceptions.AbsoluteUriTemplateException("The URI Template \"%s\" in \"%s\" is an absoulte URL. "
+                raise exceptions.AbsoluteUriTemplateException("The URI Template \"%s\" in \"%s\" is an absolute URL. "
                                                               "It should be relative and used with baseurl")
 
             # Parse the keywords, don't check context here, because we want
@@ -267,7 +267,7 @@ class _BaseActions(_S2LWrapper):
             self.uri
         except AttributeError:
             raise exceptions.NoUriAttributeException(
-                "Page object \"%s\" must have a \"url\" attribute set." % pageobj_name)
+                "Page object \"%s\" must have a \"uri\" attribute set." % pageobj_name)
 
         # Don't allow absolute uri attribute.
         if self._is_url_absolute(self.uri):
