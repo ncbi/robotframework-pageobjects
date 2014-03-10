@@ -9,8 +9,5 @@ Library    widget_rel_uri_attr.SearchResultPage
 
 Test Widget Site
     Open Widget Page
-    Search Widget Page For  cool thing
-
-    # This will fail the assertion
-    Widget Search Result Page Should Have Results  2
+    Capture Page Screenshot
     [Teardown]  Close Widget Page

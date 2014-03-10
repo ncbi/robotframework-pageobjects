@@ -1,4 +1,5 @@
 import glob
+import os
 import unittest
 
 from basetestcase import BaseTestCase
@@ -56,16 +57,78 @@ class SmokeTestCase(BaseTestCase):
 
 
 class ActionsTestCase(BaseTestCase):
+
+    @staticmethod
+    def get_screen_shot_paths(search_dir=os.getcwd()):
+        return glob.glob("%s/*.png" % search_dir)
+
+    def assert_screen_shots(self, expected_screen_shots):
+        screen_shots = self.get_screen_shot_paths()
+        if expected_screen_shots > 0:
+            self.assertTrue(len(screen_shots) > 0, "A screen shot was taken")
+
+        self.assertEquals(len(screen_shots), expected_screen_shots, "Exactly %s screen shots should have been taken, "
+                                                                    "got %s instead"
+                                                                    % (expected_screen_shots, screen_shots))
+
     @unittest.skip("NOT IMPLEMENTED YET")
     def unittest_test_screenshot_on_failure(self):
+        self.assert_screen_shots(0)
+        self.run_scenario("test_fail.py")
+        self.assert_screen_shots(1)
+
+    def test_robot_screen_shot_on_page_object_keyword_failure(self):
+        self.assert_screen_shots(0)
+        self.run_scenario("test_fail.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_screen_shots(2)
+        #TODO DCLT-726: Change to 1 when we fix this bug.
+
+    def test_robot_screen_shot_on_se2lib_keyword_failure(self):
+        self.assert_screen_shots(0)
+        self.run_scenario("test_fail_se2lib_keyword.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_screen_shots(1)
+
+    def test_manual_screenshot_outside_robot(self):
+        self.assert_screen_shots(0)
+        self.set_baseurl_env()
+        self.run_scenario("test_manual_screen_shot.py")
+        self.assert_screen_shots(1)
+
+    def test_manual_screenshot_robot(self):
+        self.assert_screen_shots(0)
+        self.run_scenario("test_manual_screen_shot.robot", variable="baseurl:%s" % self.base_file_url)
+
+class SelectorsTestCase(BaseTestCase):
+    @unittest.skip("NOT IMPLEMENTED YET: See DCLT-728")
+    def test_s2l_keyword_with_selector(self):
+        run = self.run_scenario("test_s2l_keyword_with_selector.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
+
+    def test_find_elements_with_selector(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_find_elements_with_selector.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")
+
+    def test_selector_exceptions(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_selector_exceptions.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")
+
+    def test_no_robot_action_failing_should_not_warn_about_screenshot(self):
+        self.set_baseurl_env()
         run = self.run_scenario("test_fail.py")
-        self.assertEquals(len(glob.glob("*.png")), 1, "On Failure page object should take screenshot")
+        self.assertFalse("warn" in run.output.lower(), "No warning should be issued when a method fails outside "
+                                                          "robot")
 
-    @unittest.skip("NOT IMPLEMENTED YET")
-    def robot_test_screenshot_on_failure(self):
-        run = self.run_scenario("test_fail.robot")
-        self.assertEquals(len(glob.glob("*.png")), 1, "On Failure page object should generate screenshot")
+    def robot_importing_se2lib_after_page_object_should_work(self):
+        # This run is duplicated, but it shows that SE2Lib library imported
+        # with page objects works.
+        run = self.run_scenario("test_template_passed.robot")
+        self.assert_run(run, expected_returncode=0, search_output="PASSED")
 
+    def robot_importing_se2lib_before_page_object_should_work(self):
+        run = self.run_scenario("test_se2lib_imported_before_po.robot")
+        self.assert_run(run, expected_returncode=0, search_output="PASSED")
 
 if __name__ == "__main__":
     unittest.main()

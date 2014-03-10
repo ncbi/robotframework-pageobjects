@@ -7,8 +7,28 @@ from unittest import skipUnless
 
 from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
-from robotpageobjects.page import Page
+from robotpageobjects.page import Page, Override
 from robotpageobjects.optionhandler import OptionHandler
+
+
+class InheritFromSe2LibTestCase(BaseTestCase):
+
+    def setUp(self):
+        super(InheritFromSe2LibTestCase, self).setUp()
+
+        class PO(Page):
+            pass
+
+        self.po = PO()
+
+    def test_no_robot_se2lib_exposed(self):
+        # We can't test this as a unittest in
+        # robot, so see functional test class.
+
+        try:
+            getattr(self.po, "title_should_be")
+        except AttributeError:
+            self.fail("SE2Lib methods are not exposed as direct page object attributes")
 
 
 class OptionHandlerTestCase(BaseTestCase):
@@ -112,3 +132,33 @@ class ResolveUrlTestCase(BaseTestCase):
         self.PO.uri_template = "/pubmed/{pid}"
         url = self.PO()._resolve_url({"pid": "123"})
         self.assertEquals("http://www.ncbi.nlm.nih.gov/pubmed/123", url)
+
+    ### Selectors ##
+    @raises(exceptions.DuplicateKeyException)
+    def test_selectors_dup(self):
+        class BaseFoo(object):
+            _selectors = {"foo": "foo"}
+
+        class BaseBar(object):
+            _selectors = {"foo": "bar"}
+
+        class FooBarPage(Page, BaseFoo, BaseBar):
+            _selectors = {"foo": "baz"}
+        page = FooBarPage()
+
+    def test_selectors_merge_override(self):
+        class BaseFoo(object):
+            _selectors = {"foo": "foo"}
+
+        class BaseBar(object):
+            _selectors = {"bar": "bar",
+                          "baz": "cat"}
+
+        class FooBarPage(Page, BaseFoo, BaseBar):
+            _selectors = {Override("baz"): "baz"}
+
+        page = FooBarPage()
+        selectors = page._selectors
+        self.assertEqual(selectors.get("foo"), "foo", "Selectors should contain 'foo' from BaseFoo.")
+        self.assertEqual(selectors.get("bar"), "bar", "Selectors should contain 'bar' from BaseBar.")
+        self.assertEqual(selectors.get("baz"), "baz", "Selector 'baz' should be overridden in FooBarPage." )

@@ -21,6 +21,7 @@
 import inspect
 import re
 import uritemplate
+import warnings
 
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -166,6 +167,40 @@ def robot_alias(stub):
     """
     return _Keywords.robot_alias(stub)
 
+
+class Override(str):
+    pass
+
+
+class SelectorsDict(dict):
+    """
+    Wrap dict to add the ability to enforce key uniqueness.
+    """
+    def merge(self, other_dict, from_subclass=False):
+        """
+        Merge in selectors from another dictionary. Don't allow duplicate keys.
+        If from_subclass is True, allow subclasses to override parent classes.
+        If they attempt to override without explicitly using the Override class,
+        allow the override but raise a warning.
+        :param other_dict: The dictionary to merge into the SelectorsDict object.
+        :type other_dict: dict
+        :returns: None
+        """
+        for key, value in other_dict.iteritems():
+            if key in self:
+                if from_subclass:
+                    if not isinstance(key, Override):
+                        warnings.warn("Key \"%s\" is defined in an ancestor class. \
+                                       Using the value \"%s\" defined in the subclass.\
+                                       To prevent this warning, use robotpageobjects.Override(\"%s\")." % (key, value, key),
+                                      exceptions.KeyOverrideWarning)
+
+                else:
+                    raise exceptions.DuplicateKeyException("Key \"%s\" is defined by two parent classes. \
+                                            Only subclasses can override selector keys." % key)
+            self[str(key)] = value
+
+
 class _S2LWrapper(Selenium2Library):
     """
     Helper class that wraps Selenium2Library and manages the browser cache.
@@ -190,7 +225,100 @@ class _S2LWrapper(Selenium2Library):
             self._cache = self._shared_cache
         Context.set_cache(self._cache)
 
-class _BaseActions(_S2LWrapper):
+    @not_keyword
+    def get_current_browser(self):
+        """
+        Wrap the _current_browser() S2L method
+        """
+        return self._current_browser()
+
+
+class _SelectorsManagement(_S2LWrapper):
+    """
+    Class to manage selectors, which map to S2L locators.
+    This allows page object authors to define a class-level dict.
+    These selectors can be defined in any ancestor class, and
+    are inherited. A subclass can override its parent's selectors:
+
+    from robotpageobjects.page import Page, Override
+    class Page1(Page):
+        _selectors = {"search button": "id=go",
+              "input box": "xpath=//input[@id="foo"]"}
+
+    class Page2(Page1):
+        _selectors = {Override("input box"): "id=bar"}
+        ...
+
+    And a Page2 object will have access to "search button", which maps to "id=go",
+    and "input box", which maps to "id=bar".
+    """
+    _selectors = {}
+
+    def __init__(self, *args, **kwargs):
+        """
+        Set instance _selectors according to the class hierarchy.
+        See _get_class_selectors.
+        """
+        super(_SelectorsManagement, self).__init__(*args, **kwargs)
+        self._selectors = self._get_class_selectors()
+
+    def _get_class_selectors(self):
+        """
+        Get the selectors from all parent classes and merge them,
+        overriding any parent classes' selectors with subclasses'
+        selectors.
+        """
+        def __get_class_selectors(klass):
+            all_selectors = SelectorsDict()
+            own_selectors = klass._selectors
+
+            # Get all the selectors dicts defined by the bases
+            base_dicts = [__get_class_selectors(base) for base in klass.__bases__ if hasattr(base, "_selectors")]
+
+            # Add the selectors for the bases to the return dict
+            #[all_selectors.update(base_dict) for base_dict in base_dicts]
+            [all_selectors.merge(base_dict) for base_dict in base_dicts]
+
+            # Update the return dict with this class's selectors, overriding the bases
+            all_selectors.merge(own_selectors, from_subclass=True)
+            return all_selectors
+        return __get_class_selectors(self.__class__)
+
+    def _is_locator_format(self, locator):
+        """
+        Ask Selenium2Library's ElementFinder if the locator uses
+        one of its supported prefixes.
+        :param locator: The locator to look up
+        :type locator: str
+
+        """
+        finder = self._element_finder
+        prefix = finder._parse_locator(locator)[0]
+        return prefix is not None or locator.startswith("//")
+
+
+    def _element_find(self, locator, *args, **kwargs):
+        """
+        Override built-in _element_find() method and map selectors. Try to use _element_find with the
+        locator as is, then try, if a selector exists, try that.
+        :param locator: The Selenium2Library-style locator (or IFT selector) to use
+        :type locator: str
+        :returns: WebElement or list
+        """
+        if locator in self._selectors:
+            return super(_SelectorsManagement, self)._element_find(self._selectors[locator], *args, **kwargs)
+        else:
+            try:
+                return super(_SelectorsManagement, self)._element_find(locator, *args, **kwargs)
+            except ValueError:
+                if not self._is_locator_format(locator):
+                    # Not found, doesn't look like a locator, not in selectors dict
+                    raise ValueError("\"%s\" looks like a selector, but it is not in the selectors dict." % locator)
+                else:
+                    raise
+
+
+class _BaseActions(_SelectorsManagement):
     """
     Helper class that defines actions for PageObjectLibrary.
     """
@@ -292,13 +420,6 @@ class _BaseActions(_S2LWrapper):
         """
         self._logger.info("\t".join([str(arg) for arg in args]))
 
-    @not_keyword
-    def get_current_browser(self):
-        """
-        Wrap the _current_browser() S2L method
-        """
-        return self._current_browser()
-
     def open(self, *args):
         """
         Wrapper for Selenium2Library's open_browser() that calls resolve_url for url logic and self.browser.
@@ -369,21 +490,8 @@ class _BaseActions(_S2LWrapper):
 
         wait.until(wait_fnc)
 
-    def _find_element(self, locator, first_only=True, required=True, **kwargs):
-        """
-        Helper method that wraps _element_find().
-        :param locator: The Selenium2Library-style locator to use
-        :type locator: str
-        :param first_only: Optional parameter to restrict the search to the first element. Defaults to True.
-        :type first_only: boolean
-        :param required: Optional parameter to raise an exception if no matches are found. Defaults to True.
-        :type required: boolean
-        :returns: WebElement instance
-        """
-        return self._element_find(locator, first_only, required, **kwargs)
-
     @not_keyword
-    def find_element(self, locator, **kwargs):
+    def find_element(self, locator, required=True, **kwargs):
         """
         Wraps Selenium2Library's protected _element_find() method to find single elements.
         TODO: Incorporate selectors API into this.
@@ -393,10 +501,10 @@ class _BaseActions(_S2LWrapper):
         :type required: boolean
         :returns: WebElement instance
         """
-        return self._find_element(locator, **kwargs)
+        return self._element_find(locator, True, required, **kwargs)
 
     @not_keyword
-    def find_elements(self, locator, **kwargs):
+    def find_elements(self, locator, required=True, **kwargs):
         """
         Wraps Selenium2Library's protected _element_find() method to find multiple elements.
         TODO: Incorporate selectors API into this.
@@ -406,7 +514,7 @@ class _BaseActions(_S2LWrapper):
         :type required: boolean
         :returns: WebElement instance
         """
-        return self._find_element(locator, first_only=False, **kwargs)
+        return self._element_find(locator, False, required, **kwargs)
 
 
 class Page(_BaseActions):
@@ -472,10 +580,9 @@ class Page(_BaseActions):
             if func in Selenium2Library.__dict__.values():
                 in_s2l_base = True
             else:
-                # Check if the functoin is defined in any of Selenium2Library's direct base classes.
-                # Note that this will not check those classes' ancestors, but Selenium2Library
-                # (at present) makes the same assumption about its inheritance hierarchy in its
-                # __init__.
+                # Check if the function is defined in any of Selenium2Library's direct base classes.
+                # Note that this will not check those classes' ancestors.
+                # TODO: Check all S2L's ancestors. DCLT-
                 for base in Selenium2Library.__bases__:
                     if func in base.__dict__.values():
                         in_s2l_base = True

@@ -103,8 +103,8 @@ Here is the Google page object. It is designed to be the base class of all Googl
         # Search Google For  term.
         @robot_alias("search__name__for")
         def search(self, term):
-            self.se.input_text("xpath=//input[@name='q']", term)
-            self.se.click_element("gs_htif0")
+            self.input_text("xpath=//input[@name='q']", term)
+            self.click_element("gs_htif0")
             return ResultPage()
 
 Here's the Google Result page object. It's also in `pageobjects/google.py`:
@@ -120,7 +120,7 @@ Here's the Google Result page object. It's also in `pageobjects/google.py`:
         # This will become "On Google Result Page Click Result"
         @robot_alias("on__name__click_result")
         def click_result(self, i):
-            els = self.se._element_find("xpath=//h3[@class='r']/a[not(ancestor::table)]", False, False, tag="a")
+            els = self.find_elements("xpath=//h3[@class='r']/a[not(ancestor::table)]", required=False, tag="a")
             try:
                 els[int(i)].click()
             except IndexError:

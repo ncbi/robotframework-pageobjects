@@ -1,3 +1,18 @@
+class DuplicateKeyException(ValueError):
+    """
+    Raised when two selector dictionaries are merged and have a
+    duplicate key.
+    """
+    pass
+
+class KeyOverrideWarning(Warning):
+    """
+    Raised when a subclass attempts to override a parent's selector
+    without using the Override class.
+    """
+    pass
+
+
 class NoBaseUrlException(AttributeError):
     """
     Raised when no baseurl is set for the page object. A baseurl
