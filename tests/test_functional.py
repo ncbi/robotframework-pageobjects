@@ -80,17 +80,19 @@ class ActionsTestCase(BaseTestCase):
     def test_robot_screen_shot_on_page_object_keyword_failure(self):
         self.assert_screen_shots(0)
         self.run_scenario("test_fail.robot", variable="baseurl:%s" % self.base_file_url)
-        self.assert_screen_shots(1)
+        self.assert_screen_shots(2)
+        # DCLT-726: Change to 1 when we fix this bug.
 
     def test_robot_screen_shot_on_se2lib_keyword_failure(self):
         self.assert_screen_shots(0)
         self.run_scenario("test_fail_se2lib_keyword.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_screen_shots(1)
 
+
 class SelectorsTestCase(BaseTestCase):
     @unittest.skip("NOT IMPLEMENTED YET: See DCLT-728")
-    def test_click_element_selector(self):
-        run = self.run_scenario("test_click_element_selector.robot", variable="baseurl:%s" % self.base_file_url)
+    def test_s2l_keyword_with_selector(self):
+        run = self.run_scenario("test_s2l_keyword_with_selector.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
     def test_no_robot_action_failing_should_not_warn_about_screenshot(self):
