@@ -242,25 +242,25 @@ class _SelectorsManagement(_S2LWrapper):
 
     from robotpageobjects.page import Page, Override
     class Page1(Page):
-        _selectors = {"search button": "id=go",
+        selectors = {"search button": "id=go",
               "input box": "xpath=//input[@id="foo"]"}
 
     class Page2(Page1):
-        _selectors = {Override("input box"): "id=bar"}
+        selectors = {Override("input box"): "id=bar"}
         ...
 
     And a Page2 object will have access to "search button", which maps to "id=go",
     and "input box", which maps to "id=bar".
     """
-    _selectors = {}
+    selectors = {}
 
     def __init__(self, *args, **kwargs):
         """
-        Set instance _selectors according to the class hierarchy.
+        Set instance selectors according to the class hierarchy.
         See _get_class_selectors.
         """
         super(_SelectorsManagement, self).__init__(*args, **kwargs)
-        self._selectors = self._get_class_selectors()
+        self.selectors = self._get_class_selectors()
 
     def _get_class_selectors(self):
         """
@@ -270,13 +270,12 @@ class _SelectorsManagement(_S2LWrapper):
         """
         def __get_class_selectors(klass):
             all_selectors = SelectorsDict()
-            own_selectors = klass._selectors
+            own_selectors = klass.selectors
 
             # Get all the selectors dicts defined by the bases
-            base_dicts = [__get_class_selectors(base) for base in klass.__bases__ if hasattr(base, "_selectors")]
+            base_dicts = [__get_class_selectors(base) for base in klass.__bases__ if hasattr(base, "selectors")]
 
             # Add the selectors for the bases to the return dict
-            #[all_selectors.update(base_dict) for base_dict in base_dicts]
             [all_selectors.merge(base_dict) for base_dict in base_dicts]
 
             # Update the return dict with this class's selectors, overriding the bases
@@ -305,8 +304,8 @@ class _SelectorsManagement(_S2LWrapper):
         :type locator: str
         :returns: WebElement or list
         """
-        if locator in self._selectors:
-            return super(_SelectorsManagement, self)._element_find(self._selectors[locator], *args, **kwargs)
+        if locator in self.selectors:
+            return super(_SelectorsManagement, self)._element_find(self.selectors[locator], *args, **kwargs)
         else:
             try:
                 return super(_SelectorsManagement, self)._element_find(locator, *args, **kwargs)

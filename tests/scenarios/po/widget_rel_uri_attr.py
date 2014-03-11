@@ -6,7 +6,7 @@ from robotpageobjects.page import Page, robot_alias
 class Page(Page):
     name = "Widget Page"
     uri = "/site/index.html"
-    _selectors = {"search-button": "go"}
+    selectors = {"search-button": "go"}
 
     @robot_alias("search__name__for")
     def search(self, term):
@@ -17,7 +17,7 @@ class Page(Page):
 
 class SearchResultPage(Page):
     name = "Widget Search Result Page"
-    _selectors = {"results": "xpath=id('results')/li"}
+    selectors = {"results": "xpath=id('results')/li"}
 
     @robot_alias("__name__should_have_results")
     def should_have_results(self, expected):
