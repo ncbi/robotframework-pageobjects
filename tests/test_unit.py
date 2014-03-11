@@ -137,28 +137,28 @@ class ResolveUrlTestCase(BaseTestCase):
     @raises(exceptions.DuplicateKeyException)
     def test_selectors_dup(self):
         class BaseFoo(object):
-            _selectors = {"foo": "foo"}
+            selectors = {"foo": "foo"}
 
         class BaseBar(object):
-            _selectors = {"foo": "bar"}
+            selectors = {"foo": "bar"}
 
         class FooBarPage(Page, BaseFoo, BaseBar):
-            _selectors = {"foo": "baz"}
+            selectors = {"foo": "baz"}
         page = FooBarPage()
 
     def test_selectors_merge_override(self):
         class BaseFoo(object):
-            _selectors = {"foo": "foo"}
+            selectors = {"foo": "foo"}
 
         class BaseBar(object):
-            _selectors = {"bar": "bar",
+            selectors = {"bar": "bar",
                           "baz": "cat"}
 
         class FooBarPage(Page, BaseFoo, BaseBar):
-            _selectors = {Override("baz"): "baz"}
+            selectors = {Override("baz"): "baz"}
 
         page = FooBarPage()
-        selectors = page._selectors
+        selectors = page.selectors
         self.assertEqual(selectors.get("foo"), "foo", "Selectors should contain 'foo' from BaseFoo.")
         self.assertEqual(selectors.get("bar"), "bar", "Selectors should contain 'bar' from BaseBar.")
         self.assertEqual(selectors.get("baz"), "baz", "Selector 'baz' should be overridden in FooBarPage." )
