@@ -270,7 +270,7 @@ class _SelectorsManagement(_S2LWrapper):
         """
         def __get_class_selectors(klass):
             all_selectors = SelectorsDict()
-            own_selectors = klass.selectors
+            own_selectors = klass.__dict__.get("selectors", {})
 
             # Get all the selectors dicts defined by the bases
             base_dicts = [__get_class_selectors(base) for base in klass.__bases__ if hasattr(base, "selectors")]
