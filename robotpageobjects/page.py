@@ -22,6 +22,7 @@ import inspect
 import re
 import uritemplate
 import warnings
+from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from Selenium2Library import Selenium2Library
 
@@ -355,7 +356,7 @@ class _BaseActions(_SelectorsManagement):
                 self._option_handler.get(sauce_opt)
             )
 
-        self._validate_sauce_options()
+        self._attempt_sauce = self._validate_sauce_options()
 
     def _validate_sauce_options(self):
 
@@ -366,12 +367,17 @@ class _BaseActions(_SelectorsManagement):
             if attr.startswith("sauce_"):
                 sauce[attr] = getattr(self, attr)
 
-        if any(sauce.values()) and (not sauce["sauce_username"] or
+        at_least_one_sauce_opt_set = any(sauce.values())
+        if at_least_one_sauce_opt_set and (not sauce["sauce_username"] or
                                         not sauce["sauce_apikey"] or not sauce["sauce_platform"]):
             raise exceptions.MissingSauceOptionError("When running Sauce, need at " +
                                                      "least sauce-username, sauce-apikey, and sauce-platform " +
-                                                     "options set.")
+                                                  "options set.")
 
+        # If we get here, tell the object that it's going to
+        # attempt to use sauce and that all needed sauce options are
+        # at least set.
+        return at_least_one_sauce_opt_set
 
     @not_keyword
     def _resolve_url(self, *args):
@@ -489,7 +495,14 @@ class _BaseActions(_SelectorsManagement):
         :returns: _BaseActions instance
         """
         resolved_url = self._resolve_url(*args)
-        self.open_browser(resolved_url, self.browser)
+        if self._attempt_sauce:
+            remote_url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (self.sauce_username, self.sauce_apikey)
+            caps = getattr(webdriver.DesiredCapabilities, self.browser.upper())
+            caps["platform"] = self.sauce_platform
+            caps["version"] = self.sauce_browserversion
+            self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
+        else:
+            self.open_browser(resolved_url, self.browser)
 
         # Probably don't need this check here. We should log no matter
         # what and the user sets the log level. When we take this check out
