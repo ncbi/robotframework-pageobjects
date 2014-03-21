@@ -56,8 +56,18 @@ class SmokeTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
 
-class ActionsTestCase(BaseTestCase):
+class SauceTestCase(BaseTestCase):
 
+    def test_sauce_unittest(self):
+        run = self.run_scenario("test_sauce.py")
+
+        # We expect this to fail, because the test makes a purposely false assertion
+        # to test that we can assert against things going on in Sauce.
+        self.assert_run(run, expected_returncode=1, search_output="Title should have been 'foo' but was 'Home - "
+                                                                  "PubMed - NCBI")
+
+
+class ActionsTestCase(BaseTestCase):
     @staticmethod
     def get_screen_shot_paths(search_dir=os.getcwd()):
         return glob.glob("%s/*.png" % search_dir)
@@ -98,6 +108,7 @@ class ActionsTestCase(BaseTestCase):
         self.assert_screen_shots(0)
         self.run_scenario("test_manual_screen_shot.robot", variable="baseurl:%s" % self.base_file_url)
 
+
 class SelectorsTestCase(BaseTestCase):
     @unittest.skip("NOT IMPLEMENTED YET: See DCLT-728")
     def test_s2l_keyword_with_selector(self):
@@ -118,7 +129,7 @@ class SelectorsTestCase(BaseTestCase):
         self.set_baseurl_env()
         run = self.run_scenario("test_fail.py")
         self.assertFalse("warn" in run.output.lower(), "No warning should be issued when a method fails outside "
-                                                          "robot")
+                                                       "robot")
 
     def robot_importing_se2lib_after_page_object_should_work(self):
         # This run is duplicated, but it shows that SE2Lib library imported
@@ -129,6 +140,7 @@ class SelectorsTestCase(BaseTestCase):
     def robot_importing_se2lib_before_page_object_should_work(self):
         run = self.run_scenario("test_se2lib_imported_before_po.robot")
         self.assert_run(run, expected_returncode=0, search_output="PASSED")
+
 
 if __name__ == "__main__":
     unittest.main()
