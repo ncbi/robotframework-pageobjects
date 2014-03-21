@@ -22,15 +22,16 @@ import inspect
 import re
 import uritemplate
 import warnings
-
 from selenium.webdriver.support.ui import WebDriverWait
+from Selenium2Library import Selenium2Library
 
 from context import Context
 import exceptions
 from optionhandler import OptionHandler
-from Selenium2Library import Selenium2Library
+
 
 this_module_name = __name__
+
 
 class _Keywords(object):
     """
@@ -176,6 +177,7 @@ class SelectorsDict(dict):
     """
     Wrap dict to add the ability to enforce key uniqueness.
     """
+
     def merge(self, other_dict, from_subclass=False):
         """
         Merge in selectors from another dictionary. Don't allow duplicate keys.
@@ -192,7 +194,8 @@ class SelectorsDict(dict):
                     if not isinstance(key, Override):
                         warnings.warn("Key \"%s\" is defined in an ancestor class. \
                                        Using the value \"%s\" defined in the subclass.\
-                                       To prevent this warning, use robotpageobjects.Override(\"%s\")." % (key, value, key),
+                                       To prevent this warning, use robotpageobjects.Override(\"%s\")." % (
+                        key, value, key),
                                       exceptions.KeyOverrideWarning)
 
                 else:
@@ -205,6 +208,7 @@ class _S2LWrapper(Selenium2Library):
     """
     Helper class that wraps Selenium2Library and manages the browser cache.
     """
+
     def __init__(self, *args, **kwargs):
         if not Context.in_robot():
             kwargs["run_on_failure"] = "Nothing"
@@ -268,6 +272,7 @@ class _SelectorsManagement(_S2LWrapper):
         overriding any parent classes' selectors with subclasses'
         selectors.
         """
+
         def __get_class_selectors(klass):
             all_selectors = SelectorsDict()
             own_selectors = klass.__dict__.get("selectors", {})
@@ -281,6 +286,7 @@ class _SelectorsManagement(_S2LWrapper):
             # Update the return dict with this class's selectors, overriding the bases
             all_selectors.merge(own_selectors, from_subclass=True)
             return all_selectors
+
         return __get_class_selectors(self.__class__)
 
     def _is_locator_format(self, locator):
@@ -329,7 +335,6 @@ class _BaseActions(_SelectorsManagement):
 
         super(_BaseActions, self).__init__(*args, **kwargs)
 
-
         self._option_handler = OptionHandler()
         self._logger = Context.get_logger(this_module_name)
         self.selenium_speed = self._option_handler.get("selenium_speed") or .5
@@ -345,8 +350,8 @@ class _BaseActions(_SelectorsManagement):
         ]
         for sauce_opt in self._sauce_options:
             setattr(
-                self, 
-                sauce_opt, 
+                self,
+                sauce_opt,
                 self._option_handler.get(sauce_opt)
             )
 
@@ -359,15 +364,15 @@ class _BaseActions(_SelectorsManagement):
         sauce = {}
         for attr in dir(self):
             if attr.startswith("sauce_"):
-                sauce[attr] = getattr(self, attr)     
+                sauce[attr] = getattr(self, attr)
 
-        if any(sauce.values()) and (not sauce["sauce_username"] or 
-                not sauce["sauce_apikey"] or not sauce["sauce_platform"]):
-            raise exceptions.MissingSauceOptionException("When running Sauce, need at " +
-                    "least sauce-username, sauce-apikey, and sauce-platform " +
-                    "options set.")
+        if any(sauce.values()) and (not sauce["sauce_username"] or
+                                        not sauce["sauce_apikey"] or not sauce["sauce_platform"]):
+            raise exceptions.MissingSauceOptionError("When running Sauce, need at " +
+                                                     "least sauce-username, sauce-apikey, and sauce-platform " +
+                                                     "options set.")
 
-        
+
     @not_keyword
     def _resolve_url(self, *args):
 
@@ -410,11 +415,12 @@ class _BaseActions(_SelectorsManagement):
             # Check that variables are correct and match template.
             for uri_var in uri_vars:
                 if uri_var not in uritemplate.variables(self.uri_template):
-                    raise exceptions.InvalidUriTemplateVariableException("The variable passed in, \"%s\" does not match "
-                                                                "template \"%s\" for page object \"%s\"" % (uri_var,
-                                                                                                            self
-                                                                                                            .uri_template,
-                                                                                                            pageobj_name))
+                    raise exceptions.InvalidUriTemplateVariableException(
+                        "The variable passed in, \"%s\" does not match "
+                        "template \"%s\" for page object \"%s\"" % (uri_var,
+                                                                    self
+                                                                    .uri_template,
+                                                                    pageobj_name))
 
             return uritemplate.expand(self.baseurl + self.uri_template, uri_vars)
 
@@ -508,7 +514,7 @@ class _BaseActions(_SelectorsManagement):
         """
         timeout = 10
         wait = WebDriverWait(self.get_current_browser(),
-                             timeout) #TODO: move to default config, allow parameter to this function too
+                             timeout)  #TODO: move to default config, allow parameter to this function too
 
         def wait_fnc(driver):
             try:
@@ -603,9 +609,9 @@ class Page(_BaseActions):
             # Don't look for non-methods.
             if not inspect.ismethod(obj):
                 continue
-            
+
             in_s2l_base = False
-            func = obj.__func__ # Get the unbound function for the method
+            func = obj.__func__  # Get the unbound function for the method
             # Check if that function is defined in Selenium2Library
             if func in Selenium2Library.__dict__.values():
                 in_s2l_base = True

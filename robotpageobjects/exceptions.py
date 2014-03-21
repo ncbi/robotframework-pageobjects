@@ -63,7 +63,7 @@ class VarFileImportErrorException(ImportError):
     pass
 
 
-class MissingSauceOptionException(ValueError):
+class MissingSauceOptionError(ValueError):
     """
     Raised when there's a missing sauce option 
     """
