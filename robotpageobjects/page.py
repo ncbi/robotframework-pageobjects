@@ -337,6 +337,37 @@ class _BaseActions(_SelectorsManagement):
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
 
+        self._sauce_options = [
+            "sauce_username",
+            "sauce_apikey",
+            "sauce_platform",
+            "sauce_browserversion",
+        ]
+        for sauce_opt in self._sauce_options:
+            setattr(
+                self, 
+                sauce_opt, 
+                self._option_handler.get(sauce_opt)
+            )
+
+        self._validate_sauce_options()
+
+    def _validate_sauce_options(self):
+
+        # If any sauce options are set, at least
+        # username, apikey, and platform must be set.
+        sauce = {}
+        for attr in dir(self):
+            if attr.startswith("sauce_"):
+                sauce[attr] = getattr(self, attr)     
+
+        if any(sauce.values()) and (not sauce["sauce_username"] or 
+                not sauce["sauce_apikey"] or not sauce["sauce_platform"]):
+            raise exceptions.MissingSauceOptionException("When running Sauce, need at " +
+                    "least sauce-username, sauce-apikey, and sauce-platform " +
+                    "options set.")
+
+        
     @not_keyword
     def _resolve_url(self, *args):
 

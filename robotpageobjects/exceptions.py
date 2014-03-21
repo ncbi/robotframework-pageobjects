@@ -61,3 +61,10 @@ class VarFileImportErrorException(ImportError):
     Raised when a variable file can't be imported
     """
     pass
+
+
+class MissingSauceOptionException(ValueError):
+    """
+    Raised when there's a missing sauce option 
+    """
+    pass
