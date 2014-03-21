@@ -1,6 +1,10 @@
 import glob
+import json
 import os
+import re
 import unittest
+
+import requests
 
 from basetestcase import BaseTestCase
 
@@ -58,8 +62,32 @@ class SmokeTestCase(BaseTestCase):
 
 class SauceTestCase(BaseTestCase):
 
+    def get_job_data(self, sid):
+        username = "cohenaa2"
+        apikey = "ea30c3ed-2ddb-41ca-bde1-41122dcfc1cd"
+        rest_url = "https://%s:%s@saucelabs.com/rest/v1/%s/jobs/%s" %(username, apikey, username, sid)
+        resp = requests.get(rest_url)
+        return json.loads(resp.content)
+
+    def get_sid_from_log(self):
+
+        try:
+            f = open(os.path.join(os.getcwd(), "po_log.txt"))
+            lines = f.readlines()
+            for line in lines:
+                if line.startswith("session ID"):
+                    return re.sub(r"^session ID: ", "", line)
+        except Exception, e:
+            raise e
+
+        finally:
+            f.close()
+
     def test_sauce_unittest(self):
         run = self.run_scenario("test_sauce.py")
+        job_data = self.get_job_data(self.get_sid_from_log())
+
+        self.assertEquals(job_data["browser"], "firefox", "The job ran in Sauce")
 
         # We expect this to fail, because the test makes a purposely false assertion
         # to test that we can assert against things going on in Sauce.

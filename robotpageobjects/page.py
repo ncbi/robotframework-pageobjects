@@ -505,6 +505,7 @@ class _BaseActions(_SelectorsManagement):
             caps["version"] = self.sauce_browserversion
             self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
             self.session_id = self.get_current_browser().session_id
+            self._log("session ID: %s" % self.session_id)
 
         else:
             self.open_browser(resolved_url, self.browser)
