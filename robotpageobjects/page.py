@@ -358,6 +358,9 @@ class _BaseActions(_SelectorsManagement):
 
         self._attempt_sauce = self._validate_sauce_options()
 
+        # There's only a session ID when using a remote webdriver (Sauce, for example)
+        self.session_id = None
+
     def _validate_sauce_options(self):
 
         # If any sauce options are set, at least
@@ -501,8 +504,11 @@ class _BaseActions(_SelectorsManagement):
             caps["platform"] = self.sauce_platform
             caps["version"] = self.sauce_browserversion
             self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
+            self.session_id = self.get_current_browser().session_id
+
         else:
             self.open_browser(resolved_url, self.browser)
+        #self.sid =
 
         # Probably don't need this check here. We should log no matter
         # what and the user sets the log level. When we take this check out
