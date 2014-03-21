@@ -196,10 +196,10 @@ class SelectorsDict(dict):
                                        Using the value \"%s\" defined in the subclass.\
                                        To prevent this warning, use robotpageobjects.Override(\"%s\")." % (
                         key, value, key),
-                                      exceptions.KeyOverrideWarning)
+                                      exceptions.KeyOverrideError)
 
                 else:
-                    raise exceptions.DuplicateKeyException("Key \"%s\" is defined by two parent classes. \
+                    raise exceptions.DuplicateKeyError("Key \"%s\" is defined by two parent classes. \
                                             Only subclasses can override selector keys." % key)
             self[str(key)] = value
 
@@ -388,14 +388,14 @@ class _BaseActions(_SelectorsManagement):
         # domain under test.
 
         if self.baseurl is None:
-            raise exceptions.NoBaseUrlException("To open page object, \"%s\" you must set a baseurl." % pageobj_name)
+            raise exceptions.NoBaseUrlError("To open page object, \"%s\" you must set a baseurl." % pageobj_name)
 
         if len(args) > 0:
             # URI template variables are being passed in, so the page object encapsulates
             # a page that follows some sort of URL pattern. Eg, /pubmed/SOME_ARTICLE_ID.
 
             if self._is_url_absolute(self.uri_template):
-                raise exceptions.AbsoluteUriTemplateException("The URI Template \"%s\" in \"%s\" is an absolute URL. "
+                raise exceptions.AbsoluteUriTemplateError("The URI Template \"%s\" in \"%s\" is an absolute URL. "
                                                               "It should be relative and used with baseurl")
 
             # Parse the keywords, don't check context here, because we want
@@ -415,7 +415,7 @@ class _BaseActions(_SelectorsManagement):
             # Check that variables are correct and match template.
             for uri_var in uri_vars:
                 if uri_var not in uritemplate.variables(self.uri_template):
-                    raise exceptions.InvalidUriTemplateVariableException(
+                    raise exceptions.InvalidUriTemplateVariableError(
                         "The variable passed in, \"%s\" does not match "
                         "template \"%s\" for page object \"%s\"" % (uri_var,
                                                                     self
@@ -430,12 +430,12 @@ class _BaseActions(_SelectorsManagement):
         try:
             self.uri
         except AttributeError:
-            raise exceptions.NoUriAttributeException(
+            raise exceptions.NoUriAttributeError(
                 "Page object \"%s\" must have a \"uri\" attribute set." % pageobj_name)
 
         # Don't allow absolute uri attribute.
         if self._is_url_absolute(self.uri):
-            raise exceptions.AbsoluteUriAttributeException(
+            raise exceptions.AbsoluteUriAttributeError(
                 "Page object \"%s\" must not have an absolute \"uri\" attribute set. Use a relative URL "
                 "instead." % pageobj_name)
 

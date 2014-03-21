@@ -1,11 +1,11 @@
-class DuplicateKeyException(ValueError):
+class DuplicateKeyError(ValueError):
     """
     Raised when two selector dictionaries are merged and have a
     duplicate key.
     """
     pass
 
-class KeyOverrideWarning(Warning):
+class KeyOverrideError(Warning):
     """
     Raised when a subclass attempts to override a parent's selector
     without using the Override class.
@@ -13,7 +13,7 @@ class KeyOverrideWarning(Warning):
     pass
 
 
-class NoBaseUrlException(AttributeError):
+class NoBaseUrlError(AttributeError):
     """
     Raised when no baseurl is set for the page object. A baseurl
     must always be set and url/uri_template attributes must be relative
@@ -22,7 +22,7 @@ class NoBaseUrlException(AttributeError):
     pass
 
 
-class NoUriAttributeException(AttributeError):
+class NoUriAttributeError(AttributeError):
     """
     Raised when nothing is passed to a page object's open method
     but no url attribute is set on the page object.
@@ -30,7 +30,7 @@ class NoUriAttributeException(AttributeError):
     pass
 
 
-class AbsoluteUriAttributeException(ValueError):
+class AbsoluteUriAttributeError(ValueError):
     """
     Raised when nothing is passed to a page object's open
     method and the page object's `url` attribute is set to an
@@ -39,7 +39,7 @@ class AbsoluteUriAttributeException(ValueError):
     pass
 
 
-class AbsoluteUriTemplateException(ValueError):
+class AbsoluteUriTemplateError(ValueError):
     """
     Raised when a uri_template attribute on a page object is
     set to an absolute URL.
@@ -47,7 +47,7 @@ class AbsoluteUriTemplateException(ValueError):
     pass
 
 
-class InvalidUriTemplateVariableException(ValueError):
+class InvalidUriTemplateVariableError(ValueError):
     """
     Raised when a variable passed to a page object's open
     method doesn't match a variable in the page object's
@@ -56,7 +56,7 @@ class InvalidUriTemplateVariableException(ValueError):
     pass
 
 
-class VarFileImportErrorException(ImportError):
+class VarFileImportErrorError(ImportError):
     """
     Raised when a variable file can't be imported
     """
