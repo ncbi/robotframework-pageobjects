@@ -66,7 +66,11 @@ class SauceTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=1, search_output="Title should have been 'foo' but was 'Home - "
                                                                   "PubMed - NCBI")
 
+    def test_sauce_robot(self):
+        run = self.run_scenario("test_sauce.robot", variablefile=os.path.join(self.test_dir, "sauce_vars.py"))
 
+        self.assert_run(run, expected_returncode=1, search_output="Title should have been 'foo' but was 'Home - "
+                                                                  "PubMed - NCBI")
 class ActionsTestCase(BaseTestCase):
     @staticmethod
     def get_screen_shot_paths(search_dir=os.getcwd()):

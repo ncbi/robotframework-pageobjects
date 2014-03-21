@@ -1,0 +1,6 @@
+baseurl = "http://www.ncbi.nlm.nih.gov"
+sauce_username = "cohenaa2"
+sauce_apikey = "ea30c3ed-2ddb-41ca-bde1-41122dcfc1cd"
+browser = "Firefox"
+browserversion = "27"
+sauce_platform = "Windows 8.1"
