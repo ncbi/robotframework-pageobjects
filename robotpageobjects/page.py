@@ -349,6 +349,7 @@ class _BaseActions(_SelectorsManagement):
             "sauce_apikey",
             "sauce_platform",
             "sauce_browserversion",
+            "sauce_device_orientation",
         ]
         for sauce_opt in self._sauce_options:
             setattr(
@@ -365,7 +366,7 @@ class _BaseActions(_SelectorsManagement):
     def _validate_sauce_options(self):
 
         # If any sauce options are set, at least
-        # username, apikey, and platform must be set.
+        # username, apikey, and platform must be set, the rest are optional
         sauce = {}
         for attr in dir(self):
             if attr.startswith("sauce_"):
@@ -503,7 +504,10 @@ class _BaseActions(_SelectorsManagement):
             remote_url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (self.sauce_username, self.sauce_apikey)
             caps = getattr(webdriver.DesiredCapabilities, self.browser.upper())
             caps["platform"] = self.sauce_platform
-            caps["version"] = self.sauce_browserversion
+            if self.sauce_browserversion:
+                caps["version"] = self.sauce_browserversion
+            if self.sauce_device_orientation:
+                caps["device_orientation"] = self.sauce_device_orientation
 
             try:
                 self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)

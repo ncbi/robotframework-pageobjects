@@ -7,7 +7,6 @@ class NCBITestCase(unittest.TestCase):
     def test_title_should_fail(self):
         os.environ["PO_BASEURL"] = "http://www.ncbi.nlm.nih.gov"
         os.environ["PO_BROWSER"] = "Firefox"
-        os.environ["PO_SAUCE_BROWSERVERSION"] = "27"
         os.environ["PO_SAUCE_USERNAME"] = os.getenv("SAUCE_USERNAME")
         os.environ["PO_SAUCE_APIKEY"] = os.getenv("SAUCE_APIKEY")
         os.environ["PO_SAUCE_PLATFORM"] = "Windows 8.1"
