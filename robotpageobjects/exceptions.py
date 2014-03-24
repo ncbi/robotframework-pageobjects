@@ -5,7 +5,7 @@ class DuplicateKeyError(ValueError):
     """
     pass
 
-class KeyOverrideError(Warning):
+class KeyOverrideWarning(Warning):
     """
     Raised when a subclass attempts to override a parent's selector
     without using the Override class.

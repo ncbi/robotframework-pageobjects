@@ -198,7 +198,7 @@ class SelectorsDict(dict):
                                        Using the value \"%s\" defined in the subclass.\
                                        To prevent this warning, use robotpageobjects.Override(\"%s\")." % (
                         key, value, key),
-                                      exceptions.KeyOverrideError)
+                                      exceptions.KeyOverrideWarning)
 
                 else:
                     raise exceptions.DuplicateKeyError("Key \"%s\" is defined by two parent classes. \

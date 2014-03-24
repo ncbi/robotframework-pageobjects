@@ -120,9 +120,16 @@ class ResolveUrlTestCase(BaseTestCase):
         self.PO()._resolve_url({"foo": "bar"})
 
     @raises(exceptions.MissingSauceOptionError)
-    def test_missing_sauce_username_should_raise_missing_sauce_error(self):
+    def test_missing_sauce_apikey_should_raise_missing_sauce_option_error(self):
         self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
         os.environ["PO_SAUCE_USERNAME"] = "abc"
+        self.PO.uri = "/foo"
+        self.PO()
+
+    @raises(exceptions.MissingSauceOptionError)
+    def test_missing_sauce_username_should_raise_missing_sauce_option_error(self):
+        self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
+        os.environ["PO_SAUCE_APIKEY"] = "abc"
         self.PO.uri = "/foo"
         self.PO()
 
