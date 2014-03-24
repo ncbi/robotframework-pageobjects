@@ -21,6 +21,7 @@
 import inspect
 import re
 import uritemplate
+import urllib2
 import warnings
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -503,7 +504,13 @@ class _BaseActions(_SelectorsManagement):
             caps = getattr(webdriver.DesiredCapabilities, self.browser.upper())
             caps["platform"] = self.sauce_platform
             caps["version"] = self.sauce_browserversion
-            self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
+
+            try:
+                self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
+            except urllib2.HTTPError:
+                raise exceptions.SauceConnectionError("Unable to connect to sauce labs. Check your username and "
+                                                      "apikey")
+
             self.session_id = self.get_current_browser().session_id
             self._log("session ID: %s" % self.session_id)
 

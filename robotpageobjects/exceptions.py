@@ -68,3 +68,11 @@ class MissingSauceOptionError(ValueError):
     Raised when there's a missing sauce option 
     """
     pass
+
+
+class SauceConnectionError(ValueError):
+    """
+    Raised when the page object cannot connect to the
+    sauce service. Could be invalid username or apikey.
+    """
+    pass
