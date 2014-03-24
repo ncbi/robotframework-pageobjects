@@ -1,6 +1,7 @@
+import os
 baseurl = "http://www.ncbi.nlm.nih.gov"
-sauce_username = "cohenaa2"
-sauce_apikey = "ea30c3ed-2ddb-41ca-bde1-41122dcfc1cd"
+sauce_username = os.getenv("SAUCE_USERNAME")
+sauce_apikey = os.getenv("SAUCE_APIKEY")
 browser = "Firefox"
 browserversion = "27"
 sauce_platform = "Windows 8.1"

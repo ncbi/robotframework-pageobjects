@@ -8,16 +8,38 @@ import glob
 
 
 class BaseTestCase(unittest.TestCase):
+
+
     """
     Base class Robot page object test cases.
     """
+
     test_dir = os.path.dirname(os.path.realpath(__file__))
     base_file_url = "file:///%s/scenarios" % test_dir.replace("\\", "/")
     site_under_test_file_url = "%s/site/index.html" % base_file_url
 
+    @classmethod
+    def are_sauce_creds_set_for_testing(cls):
+        """
+        Determines if private sauce credentials are set as environment variables.
+
+        It doens't check for "PO_SAUCE..." because these special env vars
+        actually affect the tests. This leaves out "PO" so we can get the
+        credentials and keep them around, without affecting any tests.
+        """
+        return "SAUCE_USERNAME" in os.environ and "SAUCE_APIKEY" in os.environ
+
+
     def get_log_path(self, is_robot=False):
         filename = "log.html" if is_robot else "po_log.txt"
         return os.path.join(os.getcwd(), filename)
+
+    def get_sauce_creds(self):
+        """
+        Returns tuple of sauce username, SAUCE_APIKEY set in environment
+        for testing.
+        """
+        return os.getenv("SAUCE_USERNAME"), os.getenv("SAUCE_APIKEY")
 
     def setUp(self):
 

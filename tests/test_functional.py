@@ -68,8 +68,7 @@ class SauceTestCase(BaseTestCase):
     """
 
     def get_job_data(self, sid):
-        username = "cohenaa2"
-        apikey = "ea30c3ed-2ddb-41ca-bde1-41122dcfc1cd"
+        username, apikey = self.get_sauce_creds()
         rest_url = "https://%s:%s@saucelabs.com/rest/v1/%s/jobs/%s" %(username, apikey, username, sid)
         resp = requests.get(rest_url)
         return json.loads(resp.content)
@@ -91,6 +90,11 @@ class SauceTestCase(BaseTestCase):
         finally:
             f.close()
 
+    @unittest.skipUnless(BaseTestCase.are_sauce_creds_set_for_testing(), "Must set 'SAUCE_USERNAME' and 'SAUCE_APIKEY' ("
+                                                                     "not PO_SAUCE."
+                                                         ".) "
+                                                        "as an env "
+                                                         "variables to run this test")
     def test_sauce_unittest(self):
         self.assertFalse(os.path.exists(self.get_log_path()))
         run = self.run_scenario("test_sauce.py")
@@ -104,6 +108,11 @@ class SauceTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=1, search_output="Title should have been 'foo' but was 'Home - "
                                                                   "PubMed - NCBI")
 
+    @unittest.skipUnless(BaseTestCase.are_sauce_creds_set_for_testing(), "Must set 'SAUCE_USERNAME' and 'SAUCE_APIKEY' ("
+                                                                     "not "
+                                                           "PO_SAUCE..) "
+                                                        "as an env "
+                                                         "variables to run this test")
     def test_sauce_robot(self):
         self.assertFalse(os.path.exists(self.get_log_path(is_robot=True)))
         run = self.run_scenario("test_sauce.robot", variablefile=os.path.join(self.test_dir, "sauce_vars.py"))

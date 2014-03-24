@@ -138,13 +138,15 @@ class ResolveUrlTestCase(BaseTestCase):
         p = self.PO()
         p.open()
 
+    @skipUnless(BaseTestCase.are_sauce_creds_set_for_testing(), "SAUCE_USERNAME and SAUCE_APIKEY env vars must be set to test")
     @raises(selenium.common.exceptions.WebDriverException)
     def test_sauce_invalid_browser(self):
         self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
         os.environ["PO_BROWSER"] = "Firefox"
         os.environ["PO_SAUCE_BROWSERVERSION"] = "27"
-        os.environ["PO_SAUCE_USERNAME"] = "cohenaa2"
-        os.environ["PO_SAUCE_APIKEY"] = "ea30c3ed-2ddb-41ca-bde1-41122dcfc1cd"
+        username, apikey = self.get_sauce_creds()
+        os.environ["PO_SAUCE_USERNAME"] = username
+        os.environ["PO_SAUCE_APIKEY"] = apikey
         os.environ["PO_SAUCE_PLATFORM"] = "Winows 8.1"
         self.PO.uri = "/foo"
         p = self.PO()

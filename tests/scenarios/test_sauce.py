@@ -8,9 +8,9 @@ class NCBITestCase(unittest.TestCase):
         os.environ["PO_BASEURL"] = "http://www.ncbi.nlm.nih.gov"
         os.environ["PO_BROWSER"] = "Firefox"
         os.environ["PO_SAUCE_BROWSERVERSION"] = "27"
-        os.environ["PO_SAUCE_USERNAME"] = "cohenaa2"
+        os.environ["PO_SAUCE_USERNAME"] = os.getenv("SAUCE_USERNAME")
+        os.environ["PO_SAUCE_APIKEY"] = os.getenv("SAUCE_APIKEY")
         os.environ["PO_SAUCE_PLATFORM"] = "Windows 8.1"
-        os.environ["PO_SAUCE_APIKEY"] = "ea30c3ed-2ddb-41ca-bde1-41122dcfc1cd"
         self.p = NCBIPage()
         self.p.open({"path": "pubmed"})
         self.p.title_should_be("Home - PubMed - NCBI")
