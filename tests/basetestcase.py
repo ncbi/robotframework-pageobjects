@@ -5,6 +5,7 @@ from xml.dom.minidom import parse
 import re
 import os
 import glob
+from nose.tools import nottest
 
 
 class BaseTestCase(unittest.TestCase):
@@ -19,6 +20,7 @@ class BaseTestCase(unittest.TestCase):
     site_under_test_file_url = "%s/site/index.html" % base_file_url
 
     @classmethod
+    @nottest
     def are_sauce_creds_set_for_testing(cls):
         """
         Determines if private sauce credentials are set as environment variables.
