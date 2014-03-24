@@ -26,9 +26,11 @@ class BaseTestCase(unittest.TestCase):
         for screenshot in glob.glob(screenshot_locator):
             os.unlink(screenshot)
 
-        # Remote python logging output
         try:
             os.unlink(self.get_log_path())
+        except OSError:
+            pass
+        try:
             os.unlink(self.get_log_path(is_robot=True))
         except OSError:
             pass
@@ -47,6 +49,9 @@ class BaseTestCase(unittest.TestCase):
 
         try:
             os.unlink(self.get_log_path())
+        except OSError:
+            pass
+        try:
             os.unlink(self.get_log_path(is_robot=True))
         except OSError:
             pass
@@ -183,14 +188,14 @@ class BaseTestCase(unittest.TestCase):
         if expected_browser:
             if "pybot" in run.cmd:
                 try:
-                    robot_log = open(os.getcwd() + os.sep + "log.html")
+                    robot_log = open(self.get_log_path(is_robot=True))
                     self.assertTrue(expected_browser in robot_log.read(),
                                     "Unexpected browser. Expected %s, got something else")
                 finally:
                     robot_log.close()
             else:
                 try:
-                    po_log = open(self.log_path)
+                    po_log = open(self.get_log_path())
                     log_fields = po_log.read().split("\t")
                     logged_browser = log_fields[2]
                     self.assertTrue(expected_browser.lower() in logged_browser.lower(),

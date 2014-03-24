@@ -62,6 +62,11 @@ class SmokeTestCase(BaseTestCase):
 
 class SauceTestCase(BaseTestCase):
 
+    """
+    Sauce exception tests are in the unit tests, not the
+    functional tests.
+    """
+
     def get_job_data(self, sid):
         username = "cohenaa2"
         apikey = "ea30c3ed-2ddb-41ca-bde1-41122dcfc1cd"
@@ -71,7 +76,6 @@ class SauceTestCase(BaseTestCase):
 
     def get_sid_from_log(self, is_robot=False):
         log_path = self.get_log_path(is_robot)
-        print log_path
         try:
             f = open(log_path)
             content = f.read()
@@ -90,8 +94,6 @@ class SauceTestCase(BaseTestCase):
     def test_sauce_unittest(self):
         self.assertFalse(os.path.exists(self.get_log_path()))
         run = self.run_scenario("test_sauce.py")
-        print run.output
-        return
         job_data = self.get_job_data(self.get_sid_from_log())
 
         # Just check an arbitrary entry in the job data returned from sauce.

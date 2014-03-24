@@ -4,6 +4,8 @@ from mock import patch
 from robot.libraries.BuiltIn import BuiltIn
 from unittest import skipUnless
 
+import selenium
+
 from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
 from robotpageobjects.page import Page, Override
@@ -123,6 +125,30 @@ class ResolveUrlTestCase(BaseTestCase):
         os.environ["PO_SAUCE_USERNAME"] = "abc"
         self.PO.uri = "/foo"
         self.PO()
+
+    @raises(exceptions.SauceConnectionError)
+    def test_sauce_connection_error(self):
+        self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
+        os.environ["PO_BROWSER"] = "Firefox"
+        os.environ["PO_SAUCE_BROWSERVERSION"] = "27"
+        os.environ["PO_SAUCE_USERNAME"] = "foo"
+        os.environ["PO_SAUCE_APIKEY"] = "bar"
+        os.environ["PO_SAUCE_PLATFORM"] = "Windows 8.1"
+        self.PO.uri = "/foo"
+        p = self.PO()
+        p.open()
+
+    @raises(selenium.common.exceptions.WebDriverException)
+    def test_sauce_invalid_browser(self):
+        self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
+        os.environ["PO_BROWSER"] = "Firefox"
+        os.environ["PO_SAUCE_BROWSERVERSION"] = "27"
+        os.environ["PO_SAUCE_USERNAME"] = "cohenaa2"
+        os.environ["PO_SAUCE_APIKEY"] = "ea30c3ed-2ddb-41ca-bde1-41122dcfc1cd"
+        os.environ["PO_SAUCE_PLATFORM"] = "Winows 8.1"
+        self.PO.uri = "/foo"
+        p = self.PO()
+        p.open()
 
     ### Normative Cases ###
     def test_rel_uri_attr_set(self):
