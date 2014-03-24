@@ -137,11 +137,15 @@ class ActionsTestCase(BaseTestCase):
                                                                     "got %s instead"
                                                                     % (expected_screen_shots, screen_shots))
 
-    @unittest.skip("NOT IMPLEMENTED YET")
-    def unittest_test_screenshot_on_failure(self):
+
+    """
+    DCLT-768: TODO
+    @unittest.skip("NOT IMPLEMENTED YET. ")
+    def test_unittest_screenshot_on_failure(self):
         self.assert_screen_shots(0)
         self.run_scenario("test_fail.py")
         self.assert_screen_shots(1)
+    """
 
     def test_robot_screen_shot_on_page_object_keyword_failure(self):
         self.assert_screen_shots(0)
@@ -166,10 +170,13 @@ class ActionsTestCase(BaseTestCase):
 
 
 class SelectorsTestCase(BaseTestCase):
+
+    """
     @unittest.skip("NOT IMPLEMENTED YET: See DCLT-728")
     def test_s2l_keyword_with_selector(self):
         run = self.run_scenario("test_s2l_keyword_with_selector.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
+    """
 
     def test_find_elements_with_selector(self):
         self.set_baseurl_env()
