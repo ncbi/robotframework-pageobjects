@@ -1,4 +1,3 @@
-import shlex
 import subprocess
 import unittest
 from xml.dom.minidom import parse
@@ -6,8 +5,6 @@ from xml.dom.minidom import parse
 import re
 import os
 import glob
-
-log_path = os.getcwd() + os.path.join(os.sep, "po_log.txt")
 
 
 class BaseTestCase(unittest.TestCase):
@@ -18,6 +15,10 @@ class BaseTestCase(unittest.TestCase):
     base_file_url = "file:///%s/scenarios" % test_dir.replace("\\", "/")
     site_under_test_file_url = "%s/site/index.html" % base_file_url
 
+    def get_log_path(self, is_robot=False):
+        filename = "log.html" if is_robot else "po_log.txt"
+        return os.path.join(os.getcwd(), filename)
+
     def setUp(self):
 
         # Remove png files
@@ -25,9 +26,10 @@ class BaseTestCase(unittest.TestCase):
         for screenshot in glob.glob(screenshot_locator):
             os.unlink(screenshot)
 
-        # Remote python logger output
+        # Remote python logging output
         try:
-            os.unlink(log_path)
+            os.unlink(self.get_log_path())
+            os.unlink(self.get_log_path(is_robot=True))
         except OSError:
             pass
 
@@ -44,7 +46,8 @@ class BaseTestCase(unittest.TestCase):
             os.environ[key] = self.original_po_vars[key]
 
         try:
-            os.unlink(log_path)
+            os.unlink(self.get_log_path())
+            os.unlink(self.get_log_path(is_robot=True))
         except OSError:
             pass
 
@@ -187,7 +190,7 @@ class BaseTestCase(unittest.TestCase):
                     robot_log.close()
             else:
                 try:
-                    po_log = open(log_path)
+                    po_log = open(self.log_path)
                     log_fields = po_log.read().split("\t")
                     logged_browser = log_fields[2]
                     self.assertTrue(expected_browser.lower() in logged_browser.lower(),

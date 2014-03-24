@@ -69,24 +69,30 @@ class SauceTestCase(BaseTestCase):
         resp = requests.get(rest_url)
         return json.loads(resp.content)
 
-    def get_sid_from_log(self):
-
+    def get_sid_from_log(self, is_robot=False):
+        log_path = self.get_log_path(is_robot)
+        print log_path
         try:
-            f = open(os.path.join(os.getcwd(), "po_log.txt"))
-            lines = f.readlines()
-            for line in lines:
-                if line.startswith("session ID"):
-                    return re.sub(r"^session ID: ", "", line)
-        except Exception, e:
-            raise e
+            f = open(log_path)
+            content = f.read()
+            try:
+                return re.search(r"session ID: (.{32})", content).group(1)
+            except (AttributeError, IndexError):
+                raise Exception("Couldn't get the session ID from the log %s" % log_path)
 
+        except OSError:
+            raise "Couldn't find a log file at %s" % log_path
+        except IOError:
+            raise Exception("Couldn't open log file %s" % log_path)
         finally:
             f.close()
 
     def test_sauce_unittest(self):
+        self.assertFalse(os.path.exists(self.get_log_path()))
         run = self.run_scenario("test_sauce.py")
         job_data = self.get_job_data(self.get_sid_from_log())
 
+        # Just check an arbitrary entry in the job data returned from sauce.
         self.assertEquals(job_data["browser"], "firefox", "The job ran in Sauce")
 
         # We expect this to fail, because the test makes a purposely false assertion
@@ -95,8 +101,13 @@ class SauceTestCase(BaseTestCase):
                                                                   "PubMed - NCBI")
 
     def test_sauce_robot(self):
+        self.assertFalse(os.path.exists(self.get_log_path(is_robot=True)))
         run = self.run_scenario("test_sauce.robot", variablefile=os.path.join(self.test_dir, "sauce_vars.py"))
 
+        job_data = self.get_job_data(self.get_sid_from_log(is_robot=True))
+
+        # Just check an arbitrary entry in the job data returned from sauce.
+        self.assertEquals(job_data["browser"], "firefox", "The job ran in Sauce")
         self.assert_run(run, expected_returncode=1, search_output="Title should have been 'foo' but was 'Home - "
                                                                   "PubMed - NCBI")
 class ActionsTestCase(BaseTestCase):
