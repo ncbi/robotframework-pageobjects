@@ -520,7 +520,6 @@ class _BaseActions(_SelectorsManagement):
 
         else:
             self.open_browser(resolved_url, self.browser)
-        #self.sid =
 
         # Probably don't need this check here. We should log no matter
         # what and the user sets the log level. When we take this check out
