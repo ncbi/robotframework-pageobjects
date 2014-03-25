@@ -4,6 +4,4 @@ call robot\Scripts\activate.bat
 call pip install nose
 call pip install -e .
 call pip install mock
-call tasklist /v | find "phantomjs"
-call tasklist /v | find "firefox"
-call nosetests -vs --with-xunit tests/
+call nosetests -vs --with-xunit tests/test_unit.py tests/test_functional.py

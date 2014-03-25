@@ -64,7 +64,7 @@ class OptionHandler(object):
                 vars_mod = imp.load_source("vars", abs_var_file_path)
 
             except (ImportError, IOError), e:
-                raise exceptions.VarFileImportErrorException("Couldn't import variable file: %s. Ensure it exists and "
+                raise exceptions.VarFileImportErrorError("Couldn't import variable file: %s. Ensure it exists and "
                                                            "is "
                                                        "importable." % var_file_path)
 

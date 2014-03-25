@@ -21,16 +21,19 @@
 import inspect
 import re
 import uritemplate
+import urllib2
 import warnings
-
+from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
+from Selenium2Library import Selenium2Library
 
 from context import Context
 import exceptions
 from optionhandler import OptionHandler
-from Selenium2Library import Selenium2Library
+
 
 this_module_name = __name__
+
 
 class _Keywords(object):
     """
@@ -176,6 +179,7 @@ class SelectorsDict(dict):
     """
     Wrap dict to add the ability to enforce key uniqueness.
     """
+
     def merge(self, other_dict, from_subclass=False):
         """
         Merge in selectors from another dictionary. Don't allow duplicate keys.
@@ -192,11 +196,12 @@ class SelectorsDict(dict):
                     if not isinstance(key, Override):
                         warnings.warn("Key \"%s\" is defined in an ancestor class. \
                                        Using the value \"%s\" defined in the subclass.\
-                                       To prevent this warning, use robotpageobjects.Override(\"%s\")." % (key, value, key),
+                                       To prevent this warning, use robotpageobjects.Override(\"%s\")." % (
+                        key, value, key),
                                       exceptions.KeyOverrideWarning)
 
                 else:
-                    raise exceptions.DuplicateKeyException("Key \"%s\" is defined by two parent classes. \
+                    raise exceptions.DuplicateKeyError("Key \"%s\" is defined by two parent classes. \
                                             Only subclasses can override selector keys." % key)
             self[str(key)] = value
 
@@ -205,6 +210,7 @@ class _S2LWrapper(Selenium2Library):
     """
     Helper class that wraps Selenium2Library and manages the browser cache.
     """
+
     def __init__(self, *args, **kwargs):
         if not Context.in_robot():
             kwargs["run_on_failure"] = "Nothing"
@@ -268,6 +274,7 @@ class _SelectorsManagement(_S2LWrapper):
         overriding any parent classes' selectors with subclasses'
         selectors.
         """
+
         def __get_class_selectors(klass):
             all_selectors = SelectorsDict()
             own_selectors = klass.__dict__.get("selectors", {})
@@ -281,6 +288,7 @@ class _SelectorsManagement(_S2LWrapper):
             # Update the return dict with this class's selectors, overriding the bases
             all_selectors.merge(own_selectors, from_subclass=True)
             return all_selectors
+
         return __get_class_selectors(self.__class__)
 
     def _is_locator_format(self, locator):
@@ -329,13 +337,52 @@ class _BaseActions(_SelectorsManagement):
 
         super(_BaseActions, self).__init__(*args, **kwargs)
 
-
         self._option_handler = OptionHandler()
         self._logger = Context.get_logger(this_module_name)
         self.selenium_speed = self._option_handler.get("selenium_speed") or .5
         self.set_selenium_speed(self.selenium_speed)
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
+
+        self._sauce_options = [
+            "sauce_username",
+            "sauce_apikey",
+            "sauce_platform",
+            "sauce_browserversion",
+            "sauce_device_orientation",
+        ]
+        for sauce_opt in self._sauce_options:
+            setattr(
+                self,
+                sauce_opt,
+                self._option_handler.get(sauce_opt)
+            )
+
+        self._attempt_sauce = self._validate_sauce_options()
+
+        # There's only a session ID when using a remote webdriver (Sauce, for example)
+        self.session_id = None
+
+    def _validate_sauce_options(self):
+
+        # If any sauce options are set, at least
+        # username, apikey, and platform must be set, the rest are optional
+        sauce = {}
+        for attr in dir(self):
+            if attr.startswith("sauce_"):
+                sauce[attr] = getattr(self, attr)
+
+        at_least_one_sauce_opt_set = any(sauce.values())
+        if at_least_one_sauce_opt_set and (not sauce["sauce_username"] or
+                                        not sauce["sauce_apikey"] or not sauce["sauce_platform"]):
+            raise exceptions.MissingSauceOptionError("When running Sauce, need at " +
+                                                     "least sauce-username, sauce-apikey, and sauce-platform " +
+                                                  "options set.")
+
+        # If we get here, tell the object that it's going to
+        # attempt to use sauce and that all needed sauce options are
+        # at least set.
+        return at_least_one_sauce_opt_set
 
     @not_keyword
     def _resolve_url(self, *args):
@@ -352,14 +399,14 @@ class _BaseActions(_SelectorsManagement):
         # domain under test.
 
         if self.baseurl is None:
-            raise exceptions.NoBaseUrlException("To open page object, \"%s\" you must set a baseurl." % pageobj_name)
+            raise exceptions.NoBaseUrlError("To open page object, \"%s\" you must set a baseurl." % pageobj_name)
 
         if len(args) > 0:
             # URI template variables are being passed in, so the page object encapsulates
             # a page that follows some sort of URL pattern. Eg, /pubmed/SOME_ARTICLE_ID.
 
             if self._is_url_absolute(self.uri_template):
-                raise exceptions.AbsoluteUriTemplateException("The URI Template \"%s\" in \"%s\" is an absolute URL. "
+                raise exceptions.AbsoluteUriTemplateError("The URI Template \"%s\" in \"%s\" is an absolute URL. "
                                                               "It should be relative and used with baseurl")
 
             # Parse the keywords, don't check context here, because we want
@@ -379,11 +426,12 @@ class _BaseActions(_SelectorsManagement):
             # Check that variables are correct and match template.
             for uri_var in uri_vars:
                 if uri_var not in uritemplate.variables(self.uri_template):
-                    raise exceptions.InvalidUriTemplateVariableException("The variable passed in, \"%s\" does not match "
-                                                                "template \"%s\" for page object \"%s\"" % (uri_var,
-                                                                                                            self
-                                                                                                            .uri_template,
-                                                                                                            pageobj_name))
+                    raise exceptions.InvalidUriTemplateVariableError(
+                        "The variable passed in, \"%s\" does not match "
+                        "template \"%s\" for page object \"%s\"" % (uri_var,
+                                                                    self
+                                                                    .uri_template,
+                                                                    pageobj_name))
 
             return uritemplate.expand(self.baseurl + self.uri_template, uri_vars)
 
@@ -393,12 +441,12 @@ class _BaseActions(_SelectorsManagement):
         try:
             self.uri
         except AttributeError:
-            raise exceptions.NoUriAttributeException(
+            raise exceptions.NoUriAttributeError(
                 "Page object \"%s\" must have a \"uri\" attribute set." % pageobj_name)
 
         # Don't allow absolute uri attribute.
         if self._is_url_absolute(self.uri):
-            raise exceptions.AbsoluteUriAttributeException(
+            raise exceptions.AbsoluteUriAttributeError(
                 "Page object \"%s\" must not have an absolute \"uri\" attribute set. Use a relative URL "
                 "instead." % pageobj_name)
 
@@ -452,7 +500,26 @@ class _BaseActions(_SelectorsManagement):
         :returns: _BaseActions instance
         """
         resolved_url = self._resolve_url(*args)
-        self.open_browser(resolved_url, self.browser)
+        if self._attempt_sauce:
+            remote_url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (self.sauce_username, self.sauce_apikey)
+            caps = getattr(webdriver.DesiredCapabilities, self.browser.upper())
+            caps["platform"] = self.sauce_platform
+            if self.sauce_browserversion:
+                caps["version"] = self.sauce_browserversion
+            if self.sauce_device_orientation:
+                caps["device_orientation"] = self.sauce_device_orientation
+
+            try:
+                self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
+            except urllib2.HTTPError:
+                raise exceptions.SauceConnectionError("Unable to connect to sauce labs. Check your username and "
+                                                      "apikey")
+
+            self.session_id = self.get_current_browser().session_id
+            self._log("session ID: %s" % self.session_id)
+
+        else:
+            self.open_browser(resolved_url, self.browser)
 
         # Probably don't need this check here. We should log no matter
         # what and the user sets the log level. When we take this check out
@@ -477,7 +544,7 @@ class _BaseActions(_SelectorsManagement):
         """
         timeout = 10
         wait = WebDriverWait(self.get_current_browser(),
-                             timeout) #TODO: move to default config, allow parameter to this function too
+                             timeout)  #TODO: move to default config, allow parameter to this function too
 
         def wait_fnc(driver):
             try:
@@ -572,9 +639,9 @@ class Page(_BaseActions):
             # Don't look for non-methods.
             if not inspect.ismethod(obj):
                 continue
-            
+
             in_s2l_base = False
-            func = obj.__func__ # Get the unbound function for the method
+            func = obj.__func__  # Get the unbound function for the method
             # Check if that function is defined in Selenium2Library
             if func in Selenium2Library.__dict__.values():
                 in_s2l_base = True

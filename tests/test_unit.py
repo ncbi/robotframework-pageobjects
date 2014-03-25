@@ -1,9 +1,10 @@
 import os
-
 from nose.tools import raises
 from mock import patch
 from robot.libraries.BuiltIn import BuiltIn
 from unittest import skipUnless
+
+import selenium
 
 from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
@@ -53,7 +54,7 @@ class OptionHandlerTestCase(BaseTestCase):
         handler = OptionHandler()
         self.assertIsNone(handler.get("browser"), "Mixed case environment variables should not be set")
 
-    @raises(exceptions.VarFileImportErrorException)
+    @raises(exceptions.VarFileImportErrorError)
     def test_var_file_import_exception(self):
         os.environ["PO_VAR_FILE"] = "foo/bar/asdfsadf/asdf"
         handler = OptionHandler()
@@ -82,41 +83,81 @@ class ResolveUrlTestCase(BaseTestCase):
         self.PO = PO
 
     ### Exceptions ###
-    @raises(exceptions.NoBaseUrlException)
+    @raises(exceptions.NoBaseUrlError)
     def test_no_baseurl_set_no_uri_attr_set_should_raise_NoBaseUrlException(self):
         self.PO()._resolve_url()
 
-    @raises(exceptions.NoBaseUrlException)
+    @raises(exceptions.NoBaseUrlError)
     def test_no_baseurl_set_no_uri_attr_set_uri_vars_set_should_raise_NoBaseUrlExeption(self):
         self.PO()._resolve_url("bar")
 
-    @raises(exceptions.NoBaseUrlException)
+    @raises(exceptions.NoBaseUrlError)
     def test_no_baseurl_set_uri_attr_set_uri_vars_set_should_raise_NoBaseUrlExeption(self):
         self.PO.uri = "/foo"
         self.PO()._resolve_url("bar")
 
-    @raises(exceptions.NoUriAttributeException)
+    @raises(exceptions.NoUriAttributeError)
     def test_baseurl_set_no_uri_attr_set_should_raise_NoUriAttributeException(self):
         self.set_baseurl_env()
         self.PO()._resolve_url()
 
-    @raises(exceptions.AbsoluteUriAttributeException)
+    @raises(exceptions.AbsoluteUriAttributeError)
     def test_baseurl_set_abs_uri_attr_should_raise_AbsoulteUrlAttributeException(self):
         self.set_baseurl_env()
         self.PO.uri = "http://www.example.com"
         self.PO()._resolve_url()
 
-    @raises(exceptions.AbsoluteUriTemplateException)
+    @raises(exceptions.AbsoluteUriTemplateError)
     def test_baseurl_set_abs_uri_template_should_raise_AbsoluteUriTemplateException(self):
         self.set_baseurl_env()
         self.PO.uri_template = "http://www.ncbi.nlm.nih.gov/pubmed/{pid}"
         print self.PO()._resolve_url({"pid": "123"})
 
-    @raises(exceptions.InvalidUriTemplateVariableException)
+    @raises(exceptions.InvalidUriTemplateVariableError)
     def test_baseurl_set_bad_vars_passed_to_uri_template(self):
         self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
         self.PO.uri_template = "/pubmed/{pid}"
         self.PO()._resolve_url({"foo": "bar"})
+
+    @raises(exceptions.MissingSauceOptionError)
+    def test_missing_sauce_apikey_should_raise_missing_sauce_option_error(self):
+        self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
+        os.environ["PO_SAUCE_USERNAME"] = "abc"
+        self.PO.uri = "/foo"
+        self.PO()
+
+    @raises(exceptions.MissingSauceOptionError)
+    def test_missing_sauce_username_should_raise_missing_sauce_option_error(self):
+        self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
+        os.environ["PO_SAUCE_APIKEY"] = "abc"
+        self.PO.uri = "/foo"
+        self.PO()
+
+    @raises(exceptions.SauceConnectionError)
+    def test_sauce_connection_error(self):
+        self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
+        os.environ["PO_BROWSER"] = "Firefox"
+        os.environ["PO_SAUCE_BROWSERVERSION"] = "27"
+        os.environ["PO_SAUCE_USERNAME"] = "foo"
+        os.environ["PO_SAUCE_APIKEY"] = "bar"
+        os.environ["PO_SAUCE_PLATFORM"] = "Windows 8.1"
+        self.PO.uri = "/foo"
+        p = self.PO()
+        p.open()
+
+    @skipUnless(BaseTestCase.are_sauce_creds_set_for_testing(), "SAUCE_USERNAME and SAUCE_APIKEY env vars must be set to test")
+    @raises(selenium.common.exceptions.WebDriverException)
+    def test_sauce_invalid_browser(self):
+        self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
+        os.environ["PO_BROWSER"] = "Firefox"
+        os.environ["PO_SAUCE_BROWSERVERSION"] = "27"
+        username, apikey = self.get_sauce_creds()
+        os.environ["PO_SAUCE_USERNAME"] = username
+        os.environ["PO_SAUCE_APIKEY"] = apikey
+        os.environ["PO_SAUCE_PLATFORM"] = "Winows 8.1"
+        self.PO.uri = "/foo"
+        p = self.PO()
+        p.open()
 
     ### Normative Cases ###
     def test_rel_uri_attr_set(self):
@@ -134,7 +175,7 @@ class ResolveUrlTestCase(BaseTestCase):
         self.assertEquals("http://www.ncbi.nlm.nih.gov/pubmed/123", url)
 
     ### Selectors ##
-    @raises(exceptions.DuplicateKeyException)
+    @raises(exceptions.DuplicateKeyError)
     def test_selectors_dup(self):
         class BaseFoo(object):
             selectors = {"foo": "foo"}

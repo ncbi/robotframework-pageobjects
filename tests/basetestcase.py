@@ -1,4 +1,3 @@
-import shlex
 import subprocess
 import unittest
 from xml.dom.minidom import parse
@@ -6,17 +5,43 @@ from xml.dom.minidom import parse
 import re
 import os
 import glob
-
-log_path = os.getcwd() + os.path.join(os.sep, "po_log.txt")
+from nose.tools import nottest
 
 
 class BaseTestCase(unittest.TestCase):
+
+
     """
     Base class Robot page object test cases.
     """
+
     test_dir = os.path.dirname(os.path.realpath(__file__))
     base_file_url = "file:///%s/scenarios" % test_dir.replace("\\", "/")
     site_under_test_file_url = "%s/site/index.html" % base_file_url
+
+    @classmethod
+    @nottest
+    def are_sauce_creds_set_for_testing(cls):
+        """
+        Determines if private sauce credentials are set as environment variables.
+
+        It doens't check for "PO_SAUCE..." because these special env vars
+        actually affect the tests. This leaves out "PO" so we can get the
+        credentials and keep them around, without affecting any tests.
+        """
+        return "SAUCE_USERNAME" in os.environ and "SAUCE_APIKEY" in os.environ
+
+
+    def get_log_path(self, is_robot=False):
+        filename = "log.html" if is_robot else "po_log.txt"
+        return os.path.join(os.getcwd(), filename)
+
+    def get_sauce_creds(self):
+        """
+        Returns tuple of sauce username, SAUCE_APIKEY set in environment
+        for testing.
+        """
+        return os.getenv("SAUCE_USERNAME"), os.getenv("SAUCE_APIKEY")
 
     def setUp(self):
 
@@ -25,9 +50,12 @@ class BaseTestCase(unittest.TestCase):
         for screenshot in glob.glob(screenshot_locator):
             os.unlink(screenshot)
 
-        # Remote python logger output
         try:
-            os.unlink(log_path)
+            os.unlink(self.get_log_path())
+        except OSError:
+            pass
+        try:
+            os.unlink(self.get_log_path(is_robot=True))
         except OSError:
             pass
 
@@ -44,7 +72,11 @@ class BaseTestCase(unittest.TestCase):
             os.environ[key] = self.original_po_vars[key]
 
         try:
-            os.unlink(log_path)
+            os.unlink(self.get_log_path())
+        except OSError:
+            pass
+        try:
+            os.unlink(self.get_log_path(is_robot=True))
         except OSError:
             pass
 
@@ -180,14 +212,14 @@ class BaseTestCase(unittest.TestCase):
         if expected_browser:
             if "pybot" in run.cmd:
                 try:
-                    robot_log = open(os.getcwd() + os.sep + "log.html")
+                    robot_log = open(self.get_log_path(is_robot=True))
                     self.assertTrue(expected_browser in robot_log.read(),
                                     "Unexpected browser. Expected %s, got something else")
                 finally:
                     robot_log.close()
             else:
                 try:
-                    po_log = open(log_path)
+                    po_log = open(self.get_log_path())
                     log_fields = po_log.read().split("\t")
                     logged_browser = log_fields[2]
                     self.assertTrue(expected_browser.lower() in logged_browser.lower(),

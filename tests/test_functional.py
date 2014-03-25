@@ -1,6 +1,10 @@
 import glob
+import json
 import os
+import re
 import unittest
+
+import requests
 
 from basetestcase import BaseTestCase
 
@@ -56,8 +60,70 @@ class SmokeTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
 
-class ActionsTestCase(BaseTestCase):
+class SauceTestCase(BaseTestCase):
 
+    """
+    Sauce exception tests are in the unit tests, not the
+    functional tests.
+    """
+
+    def get_job_data(self, sid):
+        username, apikey = self.get_sauce_creds()
+        rest_url = "https://%s:%s@saucelabs.com/rest/v1/%s/jobs/%s" %(username, apikey, username, sid)
+        resp = requests.get(rest_url)
+        return json.loads(resp.content)
+
+    def get_sid_from_log(self, is_robot=False):
+        log_path = self.get_log_path(is_robot)
+        try:
+            f = open(log_path)
+            content = f.read()
+            try:
+                return re.search(r"session ID: (.{32})", content).group(1)
+            except (AttributeError, IndexError):
+                raise Exception("Couldn't get the session ID from the log %s" % log_path)
+
+        except OSError:
+            raise "Couldn't find a log file at %s" % log_path
+        except IOError:
+            raise Exception("Couldn't open log file %s" % log_path)
+        finally:
+            f.close()
+
+    @unittest.skipUnless(BaseTestCase.are_sauce_creds_set_for_testing(), "Must set 'SAUCE_USERNAME' and 'SAUCE_APIKEY' ("
+                                                                     "not PO_SAUCE."
+                                                         ".) "
+                                                        "as an env "
+                                                         "variables to run this test")
+    def test_sauce_unittest(self):
+        self.assertFalse(os.path.exists(self.get_log_path()))
+        run = self.run_scenario("test_sauce.py")
+        job_data = self.get_job_data(self.get_sid_from_log())
+
+        # Just check an arbitrary entry in the job data returned from sauce.
+        self.assertEquals(job_data["browser"], "firefox", "The job ran in Sauce")
+
+        # We expect this to fail, because the test makes a purposely false assertion
+        # to test that we can assert against things going on in Sauce.
+        self.assert_run(run, expected_returncode=1, search_output="Title should have been 'foo' but was 'Home - "
+                                                                  "PubMed - NCBI")
+
+    @unittest.skipUnless(BaseTestCase.are_sauce_creds_set_for_testing(), "Must set 'SAUCE_USERNAME' and 'SAUCE_APIKEY' ("
+                                                                     "not "
+                                                           "PO_SAUCE..) "
+                                                        "as an env "
+                                                         "variables to run this test")
+    def test_sauce_robot(self):
+        self.assertFalse(os.path.exists(self.get_log_path(is_robot=True)))
+        run = self.run_scenario("test_sauce.robot", variablefile=os.path.join(self.test_dir, "sauce_vars.py"))
+
+        job_data = self.get_job_data(self.get_sid_from_log(is_robot=True))
+
+        # Just check an arbitrary entry in the job data returned from sauce.
+        self.assertEquals(job_data["browser"], "firefox", "The job ran in Sauce")
+        self.assert_run(run, expected_returncode=1, search_output="Title should have been 'foo' but was 'Home - "
+                                                                  "PubMed - NCBI")
+class ActionsTestCase(BaseTestCase):
     @staticmethod
     def get_screen_shot_paths(search_dir=os.getcwd()):
         return glob.glob("%s/*.png" % search_dir)
@@ -71,11 +137,15 @@ class ActionsTestCase(BaseTestCase):
                                                                     "got %s instead"
                                                                     % (expected_screen_shots, screen_shots))
 
-    @unittest.skip("NOT IMPLEMENTED YET")
-    def unittest_test_screenshot_on_failure(self):
+
+    """
+    DCLT-768: TODO
+    @unittest.skip("NOT IMPLEMENTED YET. ")
+    def test_unittest_screenshot_on_failure(self):
         self.assert_screen_shots(0)
         self.run_scenario("test_fail.py")
         self.assert_screen_shots(1)
+    """
 
     def test_robot_screen_shot_on_page_object_keyword_failure(self):
         self.assert_screen_shots(0)
@@ -98,11 +168,15 @@ class ActionsTestCase(BaseTestCase):
         self.assert_screen_shots(0)
         self.run_scenario("test_manual_screen_shot.robot", variable="baseurl:%s" % self.base_file_url)
 
+
 class SelectorsTestCase(BaseTestCase):
+
+    """
     @unittest.skip("NOT IMPLEMENTED YET: See DCLT-728")
     def test_s2l_keyword_with_selector(self):
         run = self.run_scenario("test_s2l_keyword_with_selector.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
+    """
 
     def test_find_elements_with_selector(self):
         self.set_baseurl_env()
@@ -118,7 +192,7 @@ class SelectorsTestCase(BaseTestCase):
         self.set_baseurl_env()
         run = self.run_scenario("test_fail.py")
         self.assertFalse("warn" in run.output.lower(), "No warning should be issued when a method fails outside "
-                                                          "robot")
+                                                       "robot")
 
     def robot_importing_se2lib_after_page_object_should_work(self):
         # This run is duplicated, but it shows that SE2Lib library imported
@@ -129,6 +203,7 @@ class SelectorsTestCase(BaseTestCase):
     def robot_importing_se2lib_before_page_object_should_work(self):
         run = self.run_scenario("test_se2lib_imported_before_po.robot")
         self.assert_run(run, expected_returncode=0, search_output="PASSED")
+
 
 if __name__ == "__main__":
     unittest.main()
