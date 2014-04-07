@@ -51,8 +51,8 @@ function main {
     fi
 
     # Run tests 
-    nosetests -vs --with-xunit tests/test_unit.py tests/test_functional.py
-    #pybot --variable=baseurl:file://`pwd`/tests/scenarios -P `pwd`/tests/scenarios/po `pwd`/tests/scenarios/test_go_to.robot
+    #nosetests -vs --with-xunit tests/test_unit.py tests/test_functional.py
+    pybot --variable=baseurl:file://`pwd`/tests/scenarios -P `pwd`/tests/scenarios/po `pwd`/tests/scenarios/test_go_to.robot
 }
 
 main $1
