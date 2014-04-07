@@ -53,7 +53,7 @@ function main {
     # Run tests 
     #nosetests -vs --with-xunit tests/test_unit.py tests/test_functional.py
     ps aux | grep -i phantom
-    pybot --variable=baseurl:file://`pwd`/tests/scenarios -P `pwd`/tests/scenarios/po `pwd`/tests/scenarios/test_go_to.robot
+    pybot --variable=baseurl:file://`pwd`/tests/scenarios -P `pwd`/tests/scenarios/po `pwd`/tests/scenarios/test_template_passed.robot
 }
 
 main $1
