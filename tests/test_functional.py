@@ -51,11 +51,13 @@ class SmokeTestCase(BaseTestCase):
         self.assert_run(run, search_output="PASS", expected_browser="phantomjs")
 
     def test_unittest_uri_template(self):
+        # This tests open() as well as uri_template.
         self.set_baseurl_env()
         run = self.run_scenario("test_template_passed.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_robot_uri_template(self):
+        # This tests open() as well as uri_template.
         run = self.run_scenario("test_template_passed.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
@@ -167,6 +169,15 @@ class ActionsTestCase(BaseTestCase):
     def test_manual_screenshot_robot(self):
         self.assert_screen_shots(0)
         self.run_scenario("test_manual_screen_shot.robot", variable="baseurl:%s" % self.base_file_url)
+
+    def test_go_to_robot(self):
+        run = self.run_scenario("test_go_to.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
+
+    def test_go_to_outside_robot(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_go_to.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")
 
 
 class SelectorsTestCase(BaseTestCase):
