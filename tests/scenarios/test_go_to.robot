@@ -4,7 +4,7 @@ Documentation  Tests for Robot Framework Page Object package.
 ...
 Library    widget_template.WidgetItemPage
 # Keep SE2Lib imported AFTER page object, since we are testing this.
-Library    Selenium2Library
+#Library    Selenium2Library
 
 *** Test Cases ***
 
