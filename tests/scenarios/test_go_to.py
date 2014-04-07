@@ -6,7 +6,7 @@ class TestWidgetItem(unittest.TestCase):
 
     def test_widget_item(self):
         self.widget_item_page = widget_template.WidgetItemPage()
-        self.widget_item_page.open_browser("http://www.google.com")
+        self.widget_item_page.open_browser("http://www.google.com", "phantomjs")
         self.widget_item_page.go_to({"category": "home-and-garden", "id": "123"})
         self.widget_item_page.title_should_be("Cool Widget")
 
