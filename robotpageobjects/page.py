@@ -467,6 +467,13 @@ class _BaseActions(_SelectorsManagement):
         """
         self._logger.info("\t".join([str(arg) for arg in args]))
 
+    def go_to(self, *args):
+        """
+        Wrapper to make go_to method support uri templates.
+        """
+        resolved_url = self._resolve_url(*args)
+        return super(_BaseActions, self).go_to(resolved_url)
+
     def open(self, *args):
         """
         Wrapper for Selenium2Library's open_browser() that calls resolve_url for url logic and self.browser.
