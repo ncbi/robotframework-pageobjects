@@ -432,7 +432,7 @@ class _BaseActions(_SelectorsManagement):
                                                                     self
                                                                     .uri_template,
                                                                     pageobj_name))
-
+            self.uri_vars = uri_vars
             return uritemplate.expand(self.baseurl + self.uri_template, uri_vars)
 
         # URI template not being passed in, so the page object might have a "uri" attribute
@@ -479,7 +479,7 @@ class _BaseActions(_SelectorsManagement):
         Wrapper for Selenium2Library's open_browser() that calls resolve_url for url logic and self.browser.
         It also deletes cookies after opening the browser.
 
-        :param uri_vars: A dictionary of variables mapping to a page object's uri_template. For example given a
+        :param *args: A list or dictionary of variables mapping to a page object's uri_template. For example given a
         template like this::
 
                 class MyPageObject(PageObject):
