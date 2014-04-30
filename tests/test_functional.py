@@ -163,12 +163,15 @@ class ActionsTestCase(BaseTestCase):
     def test_manual_screenshot_outside_robot(self):
         self.assert_screen_shots(0)
         self.set_baseurl_env()
-        self.run_scenario("test_manual_screen_shot.py")
+        run = self.run_scenario("test_manual_screen_shot.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")
         self.assert_screen_shots(1)
 
     def test_manual_screenshot_robot(self):
         self.assert_screen_shots(0)
-        self.run_scenario("test_manual_screen_shot.robot", variable="baseurl:%s" % self.base_file_url)
+        run = self.run_scenario("test_manual_screen_shot.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
+        self.assert_screen_shots(1)
 
     def test_go_to_robot(self):
         run = self.run_scenario("test_go_to.robot", variable="baseurl:%s" % self.base_file_url)

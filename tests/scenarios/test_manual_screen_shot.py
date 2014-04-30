@@ -1,7 +1,6 @@
 import unittest
 from po import widget_rel_uri_attr
 
-
 class TestWidgetSearch(unittest.TestCase):
 
     def test_screen_shot(self):
@@ -11,6 +10,6 @@ class TestWidgetSearch(unittest.TestCase):
         self.widget_page.capture_page_screenshot()
 
     def tearDown(self):
-        self.widget__page.close()
+        self.widget_page.close()
 
 unittest.main()
