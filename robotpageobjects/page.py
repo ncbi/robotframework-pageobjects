@@ -239,7 +239,7 @@ class _S2LWrapper(Selenium2Library):
         return self._current_browser()
 
 
-class _SelectorsManagement(_S2LWrapper):
+class _SelectorsManager(_S2LWrapper):
     """
     Class to manage selectors, which map to S2L locators.
     This allows page object authors to define a class-level dict.
@@ -265,7 +265,7 @@ class _SelectorsManagement(_S2LWrapper):
         Set instance selectors according to the class hierarchy.
         See _get_class_selectors.
         """
-        super(_SelectorsManagement, self).__init__(*args, **kwargs)
+        super(_SelectorsManager, self).__init__(*args, **kwargs)
         self.selectors = self._get_class_selectors()
 
     def _get_class_selectors(self):
@@ -313,10 +313,10 @@ class _SelectorsManagement(_S2LWrapper):
         :returns: WebElement or list
         """
         if locator in self.selectors:
-            return super(_SelectorsManagement, self)._element_find(self.selectors[locator], *args, **kwargs)
+            return super(_SelectorsManager, self)._element_find(self.selectors[locator], *args, **kwargs)
         else:
             try:
-                return super(_SelectorsManagement, self)._element_find(locator, *args, **kwargs)
+                return super(_SelectorsManager, self)._element_find(locator, *args, **kwargs)
             except ValueError:
                 if not self._is_locator_format(locator):
                     # Not found, doesn't look like a locator, not in selectors dict
@@ -325,7 +325,11 @@ class _SelectorsManagement(_S2LWrapper):
                     raise
 
 
-class _BaseActions(_SelectorsManagement):
+class PageComponent(_SelectorsManager):
+    pass
+
+
+class _BaseActions(_SelectorsManager):
     """
     Helper class that defines actions for PageObjectLibrary.
     """
@@ -533,6 +537,10 @@ class _BaseActions(_SelectorsManagement):
         # also take out of base class __init__ parameter.
         self._log("open", self.__class__.__name__, str(self.get_current_browser()), resolved_url)
 
+        for comp_clas in self.components:
+            self._components[comp_clas.__name__] = comp_clas()
+        print self._components
+
         return self
 
     def close(self):
@@ -601,6 +609,9 @@ class Page(_BaseActions):
     This class then provides the behavior used by the RF's dynamic API.
     Optional constructor arguments:
     """
+
+    components = []
+    _components = {}
 
     def __init__(self, *args, **kwargs):
         """
