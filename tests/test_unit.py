@@ -171,7 +171,10 @@ class ResolveUrlTestCase(BaseTestCase):
     def test_uri_vars_set(self):
         self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
         self.PO.uri_template = "/pubmed/{pid}"
-        url = self.PO()._resolve_url({"pid": "123"})
+        p = self.PO()
+        url = p._resolve_url({"pid": "123"})
+        pid = p.uri_vars["pid"]
+        self.assertEquals("123", pid)
         self.assertEquals("http://www.ncbi.nlm.nih.gov/pubmed/123", url)
 
     ### Selectors ##
