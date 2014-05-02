@@ -12,7 +12,7 @@ class TestWidgetSearch(unittest.TestCase):
         self.p = ResultPage()
         self.p.open()
 
-    def test_foo(self):
+    def test_page_component(self):
         self.p.item_should_cost(2, "$17.00")
 
     def tearDown(self):
