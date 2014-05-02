@@ -18,7 +18,11 @@ class ResultPage(Page):
     @robot_alias("item_on__name__should_cost")
     def item_should_cost(self, i, expected_price):
         results = self.get_components("ResultComponent")
-        asserts.assert_equals(results[i - 1].price, expected_price)
+
+        # OK, here we really should check for a KeyError, but
+        # we know it won't produce one here in the mocked
+        # test case...so we won't.
+        asserts.assert_equals(results[int(i) - 1].price, expected_price)
 
 
 
