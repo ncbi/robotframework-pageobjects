@@ -5,10 +5,7 @@ from po.widgetresultpagecomponent import ResultPage
 class TestWidgetSearch(unittest.TestCase):
 
     def setUp(self):
-        import os
         super(TestWidgetSearch, self).setUp()
-        os.environ["PO_BASEURL"] = "file:////home/cohenaa/projects/ift/robotframework-pageobjects/tests/scenarios"
-
         self.p = ResultPage()
         self.p.open()
 
