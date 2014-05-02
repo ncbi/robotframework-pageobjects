@@ -81,7 +81,6 @@ class SauceTestCase(BaseTestCase):
             f = open(log_path)
             print log_path
             content = f.read()
-            print content
             try:
                 ses = re.search(r"session ID: (.{32})", content).group(1)
                 print ses
