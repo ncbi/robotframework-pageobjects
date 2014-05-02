@@ -326,7 +326,10 @@ class _SelectorsManager(_S2LWrapper):
 
 
 class PageComponent(_SelectorsManager):
-    pass
+
+    def __init__(self, root_webelement, *args, **kwargs):
+        super(PageComponent, self).__init__(*args, **kwargs)
+        self.root_webelement = root_webelement
 
 
 class _BaseActions(_SelectorsManager):
@@ -537,9 +540,18 @@ class _BaseActions(_SelectorsManager):
         # also take out of base class __init__ parameter.
         self._log("open", self.__class__.__name__, str(self.get_current_browser()), resolved_url)
 
+        # Create a registry of page component names to instances.
+        last_clas_name = None
         for comp_clas in self.components:
-            self._components[comp_clas.__name__] = comp_clas()
-        print self._components
+            clas_name = comp_clas.__name__
+            if clas_name != last_clas_name:
+                self._components[clas_name] = []
+
+            for we in self.find_elements(comp_clas.locator):
+                inst = comp_clas(we)
+                self._components[clas_name].append(inst)
+
+        #print self._components
 
         return self
 

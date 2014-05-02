@@ -219,8 +219,16 @@ class SelectorsTestCase(BaseTestCase):
         run = self.run_scenario("test_se2lib_imported_before_po.robot")
         self.assert_run(run, expected_returncode=0, search_output="PASSED")
 
+class PageComponentTestCase(BaseTestCase):
 
+    def test_page_component_unittest(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_result_component.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")
 
+    def test_page_component_robot(self):
+        run = self.run_scenario("test_result_component.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
 
 if __name__ == "__main__":
     unittest.main()
