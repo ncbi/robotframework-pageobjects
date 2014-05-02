@@ -51,7 +51,8 @@ function main {
     fi
 
     # Run tests 
-    nosetests -vs --with-xunit tests/test_unit.py tests/test_functional.py
+    #nosetests -vs --with-xunit tests/test_unit.py tests/test_functional.py
+    nosetests -vs --with-xunit tests/test_functional.py:SauceTestCase.test_sauce_robot
 }
 
 main $1

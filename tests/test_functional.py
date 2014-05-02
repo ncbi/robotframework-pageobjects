@@ -79,9 +79,13 @@ class SauceTestCase(BaseTestCase):
         log_path = self.get_log_path(is_robot)
         try:
             f = open(log_path)
+            print log_path
             content = f.read()
+            print content
             try:
-                return re.search(r"session ID: (.{32})", content).group(1)
+                ses = re.search(r"session ID: (.{32})", content).group(1)
+                print ses
+                return ses
             except (AttributeError, IndexError):
                 raise Exception("Couldn't get the session ID from the log %s" % log_path)
 
