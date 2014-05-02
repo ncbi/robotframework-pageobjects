@@ -15,13 +15,6 @@ class ResultPage(Page):
 
     components = [ResultComponent]
 
-    # This function belongs in the base Page object.
-    @not_keyword
-    def get_components(self, type):
-        """ Returns a list of a given component
-        """
-        return self._components[type]
-
     @robot_alias("item_on__name__should_cost")
     def item_should_cost(self, i, expected_price):
         results = self.get_components("ResultComponent")

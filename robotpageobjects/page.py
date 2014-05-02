@@ -549,6 +549,23 @@ class _BaseActions(_SelectorsManager):
 
         return self
 
+    @not_keyword
+    def get_components(self, component_type=None):
+        """ Returns a list of all or a given component
+        :param component_type: The string type of the
+        component to get. If none is passed, gets a list
+        of all components on the page.
+        """
+        ret = []
+        if component_type is None:
+            ret = [ret + self._components[comp_type] for comp_type in self._components]
+        else:
+            try:
+                ret = self._components[component_type]
+            except KeyError:
+                pass
+        return ret
+
     def _register_components(self):
         """ Internally register the components
         as a data structure as a dictionary, with the
