@@ -581,8 +581,9 @@ class _BaseActions(_SelectorsManager):
             if component_classname != last_component_classname:
                 self._components[component_classname] = []
 
-            for we in self.find_elements(component_class.locator):
-                inst = component_class(we)
+            component_locator = self.components[component_class]
+            for root_webelement in self.find_elements(component_locator):
+                inst = component_class(root_webelement)
                 self._components[component_classname].append(inst)
 
 

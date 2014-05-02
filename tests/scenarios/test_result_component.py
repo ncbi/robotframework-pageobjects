@@ -6,6 +6,7 @@ class TestWidgetSearch(unittest.TestCase):
 
     def setUp(self):
         super(TestWidgetSearch, self).setUp()
+
         self.p = ResultPage()
         self.p.open()
 
