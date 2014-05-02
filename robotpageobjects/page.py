@@ -541,19 +541,32 @@ class _BaseActions(_SelectorsManager):
         self._log("open", self.__class__.__name__, str(self.get_current_browser()), resolved_url)
 
         # Create a registry of page component names to instances.
-        last_clas_name = None
-        for comp_clas in self.components:
-            clas_name = comp_clas.__name__
-            if clas_name != last_clas_name:
-                self._components[clas_name] = []
-
-            for we in self.find_elements(comp_clas.locator):
-                inst = comp_clas(we)
-                self._components[clas_name].append(inst)
-
-        #print self._components
+        # This must be done after the browser is open,
+        # since we need access to the browser. That's why
+        # it can't be done in __init__.
+        self._register_components()
+        self._log("Components\t%s" % self._components)
 
         return self
+
+    def _register_components(self):
+        """ Internally register the components
+        as a data structure as a dictionary, with the
+        key being the name of the component class,
+        and the value being a list of instances of that
+        component on the page.
+        """
+
+        last_component_classname = None
+        for component_class in self.components:
+            component_classname = component_class.__name__
+            if component_classname != last_component_classname:
+                self._components[component_classname] = []
+
+            for we in self.find_elements(component_class.locator):
+                inst = component_class(we)
+                self._components[component_classname].append(inst)
+
 
     def close(self):
         """
