@@ -558,7 +558,8 @@ class _BaseActions(_SelectorsManager):
         """
         ret = []
         if component_type is None:
-            ret = [ret + self._components[comp_type] for comp_type in self._components]
+            for comp_type in self._components:
+                ret += self._components[comp_type]
         else:
             try:
                 ret = self._components[component_type]

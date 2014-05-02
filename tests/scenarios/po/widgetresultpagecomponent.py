@@ -18,7 +18,6 @@ class ResultPage(Page):
     @robot_alias("item_on__name__should_cost")
     def item_should_cost(self, i, expected_price):
         results = self.get_components("ResultComponent")
-        print self.get_components()
         asserts.assert_equals(results[i - 1].price, expected_price)
 
 
