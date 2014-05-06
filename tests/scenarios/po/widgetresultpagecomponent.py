@@ -11,8 +11,12 @@ class ResultPage(Page):
 
     uri = "/site/result.html"
 
+    selectors = {
+        "result root": "css=ul#results li.result",
+    }
+
     components = {
-        ResultComponent: "css=ul#results li.result",
+        ResultComponent: selectors["result root"],
     }
 
     @robot_alias("item_on__name__should_cost")
