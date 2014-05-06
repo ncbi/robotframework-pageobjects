@@ -324,6 +324,53 @@ class _SelectorsManager(_S2LWrapper):
                 else:
                     raise
 
+    @not_keyword
+    def find_element(self, locator, required=True, **kwargs):
+        """
+        Wraps Selenium2Library's protected _element_find() method to find single elements.
+        TODO: Incorporate selectors API into this.
+        :param locator: The Selenium2Library-style locator to use
+        :type locator: str
+        :param required: Optional parameter indicating whether an exception should be raised if no matches are found. Defaults to True.
+        :type required: boolean
+        :returns: WebElement instance
+        """
+        return self._element_find(locator, True, required, **kwargs)
+
+    @not_keyword
+    def find_elements(self, locator, required=True, **kwargs):
+        """
+        Wraps Selenium2Library's protected _element_find() method to find multiple elements.
+        TODO: Incorporate selectors API into this.
+        :param locator: The Selenium2Library-style locator to use
+        :type locator: str
+        :param required: Optional parameter indicating whether an exception should be raised if no matches are found. Defaults to True.
+        :type required: boolean
+        :returns: WebElement instance
+        """
+        return self._element_find(locator, False, required, **kwargs)
+
+
+class ComponentManager(_SelectorsManager):
+
+    def _get_instances(self, klass):
+
+        """ Gets a page component's instances
+        :param klass: The page component class
+        """
+        try:
+
+            # TODO: Yuch. If we call find_element, we get screenshot warnings relating to DCLT-659, DCLT-726,
+            # browser isn't open yet, and when get_keyword_names uses inspect.get_members, that calls
+            # any methods defined as properties with @prooperty, but the browser isn't open yet, so it
+            # tries to create a screenshot, which it can't do, and thus throws warnings. Instead we call
+            # the private _element_find, which is not a keyword.
+            return [klass(root_webelement) for root_webelement in self._element_find(klass.locator, False, True)]
+        except AttributeError:
+            raise Exception("Must set a selector property on page component")
+        except RuntimeError:
+            # There's no browser open
+            return []
 
 class PageComponent(_SelectorsManager):
 
@@ -540,49 +587,7 @@ class _BaseActions(_SelectorsManager):
         # also take out of base class __init__ parameter.
         self._log("open", self.__class__.__name__, str(self.get_current_browser()), resolved_url)
 
-        # Create a registry of page component names to instances.
-        # This must be done after the browser is open,
-        # since we need access to the browser. That's why
-        # it can't be done in __init__.
-        self._register_components()
-        self._log("Components\t%s" % self._components)
-
         return self
-
-    @not_keyword
-    def get_components(self, component_type):
-        """ Returns a list of a given page component type.
-        :param component_type: The string type of the
-        component to get.
-        """
-        ret = []
-
-        try:
-            ret = self._components[component_type]
-        except KeyError:
-            pass
-
-        return ret
-
-    def _register_components(self):
-        """ Internally register the components
-        as a data structure as a dictionary, with the
-        key being the name of the component class,
-        and the value being a list of instances of that
-        component on the page.
-        """
-
-        last_component_classname = None
-        for component_class in self.components:
-            component_classname = component_class.__name__
-            if component_classname != last_component_classname:
-                self._components[component_classname] = []
-
-            component_locator = self.components[component_class]
-            for root_webelement in self.find_elements(component_locator):
-                inst = component_class(root_webelement)
-                self._components[component_classname].append(inst)
-
 
     def close(self):
         """
@@ -611,32 +616,6 @@ class _BaseActions(_SelectorsManager):
                 return ret
 
         wait.until(wait_fnc)
-
-    @not_keyword
-    def find_element(self, locator, required=True, **kwargs):
-        """
-        Wraps Selenium2Library's protected _element_find() method to find single elements.
-        TODO: Incorporate selectors API into this.
-        :param locator: The Selenium2Library-style locator to use
-        :type locator: str
-        :param required: Optional parameter indicating whether an exception should be raised if no matches are found. Defaults to True.
-        :type required: boolean
-        :returns: WebElement instance
-        """
-        return self._element_find(locator, True, required, **kwargs)
-
-    @not_keyword
-    def find_elements(self, locator, required=True, **kwargs):
-        """
-        Wraps Selenium2Library's protected _element_find() method to find multiple elements.
-        TODO: Incorporate selectors API into this.
-        :param locator: The Selenium2Library-style locator to use
-        :type locator: str
-        :param required: Optional parameter indicating whether an exception should be raised if no matches are found. Defaults to True.
-        :type required: boolean
-        :returns: WebElement instance
-        """
-        return self._element_find(locator, False, required, **kwargs)
 
 
 class Page(_BaseActions):
@@ -687,6 +666,7 @@ class Page(_BaseActions):
         This method uses the _Keywords class to handle exclusions and aliases.
         :returns: list
         """
+
         # Return all method names on the class to expose keywords to Robot Framework
         keywords = []
         members = inspect.getmembers(self)
@@ -695,6 +675,8 @@ class Page(_BaseActions):
         # Look through our methods and identify which ones are Selenium2Library's
         # (by checking it and its base classes).
         for name, obj in members:
+
+            obj = getattr(self, name)
             # Don't look for non-methods.
             if not inspect.ismethod(obj):
                 continue

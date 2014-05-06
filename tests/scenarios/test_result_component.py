@@ -6,7 +6,8 @@ class TestWidgetSearch(unittest.TestCase):
 
     def setUp(self):
         super(TestWidgetSearch, self).setUp()
-
+        import os
+        os.environ["PO_BASEURL"] = "file:////home/cohenaa/projects/ift/robotframework-pageobjects/tests/scenarios"
         self.p = ResultPage()
         self.p.open()
 
