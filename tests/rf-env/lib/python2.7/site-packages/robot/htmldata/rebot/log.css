@@ -1,0 +1,109 @@
+/* Containers */
+.suite, .test, #errors {
+    border: 1px solid gray;
+    padding: 0.3em 0.2em;
+    margin: 0.2em 0;
+}
+.test {
+    border-style: dashed;
+}
+#errors, .metadata, .messages {
+    width: 100%;
+}
+.children {
+    display: none;
+    margin-left: 1.4em;
+}
+.suite, .test, .keyword {
+    margin-left: -0.2em;
+}
+#s1, .suite > .children > .keyword {
+    margin-left: 0;
+}
+/* Suite, test and kw headers */
+.element-header {
+    border: 1px solid transparent;
+    border-radius: 2px;
+    padding: 0.3em 6.5em 0.3em 1.4em;
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-image: url(data:image/gif;base64,R0lGODlhDQALAIAAAAAAAAAAACH5BAEKAAEALAAAAAANAAsAAAIZTICpYGz/nIOxUShvPU1ZroHTlYWlJi1LAQA7);
+}
+.element-header:hover {
+    cursor: pointer;
+    background-color: #ECECF7;
+    border-color: #BCBCD7;
+}
+.closed {
+    background-image: url(data:image/gif;base64,R0lGODlhDQALAIAAAAAAAAAAACH5BAEKAAEALAAAAAANAAsAAAIZTICpYGz/nIOxwXls3VJpDGpiRlKfyS1LAQA7);
+}
+.name {
+    font-weight: bold;
+}
+.expand {
+    float: right;
+    margin-right: -6em;
+    font-size: 0.8em;
+    width: 7em;
+    padding: 0.3em 0 0.1em 0;
+    text-align: center;
+    color: #808080 !important;
+    border-radius: 8px;
+}
+.expand:hover {
+    text-decoration: none;
+    background-color: #BBBBFF;
+    color: black !important;
+}
+.ext-link, .ext-link:link, .ext-link:visited {
+    float: right;
+    margin-right: -7em;
+    padding: 0 0.3em;
+    color: #C60F0F;
+    text-decoration: none;
+    visibility: hidden;
+}
+.element-header:hover .ext-link {
+    visibility: visible;
+}
+.ext-link:hover {
+    background: #C60F0F;
+    color: #ECECF7;
+}
+/* Messages and errors */
+.messages {
+    font-family: monospace;
+    font-size: 1.1em;
+}
+.time {
+    width: 8em;
+}
+.error-time {
+    width: 11em;
+    white-space: nowrap;
+}
+.level {
+    width: 4.5em;
+    text-align: center;
+}
+/* Message tables - these MUST NOT be combined together because otherwise
+   dynamically altering them based on visible log level is not possible. */
+.trace-message {
+    display: table;
+}
+.debug-message {
+    display: table;
+}
+/* Metadata */
+.metadata th {
+    width: 12.5em;
+    text-align: left;
+    white-space: nowrap;
+}
+.keyword-metadata {
+    font-size: 0.9em;
+}
+/* Custom styles for statistics */
+#total-stats tr:hover, #tag-stats tr:hover {
+    cursor: default;
+}

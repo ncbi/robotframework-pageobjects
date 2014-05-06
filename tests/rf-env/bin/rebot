@@ -1,0 +1,6 @@
+#!/home/cohenaa/projects/ift/robotframework-pageobjects/tests/rf-env/bin/python2.7
+
+import sys
+from robot import rebot_cli
+
+rebot_cli(sys.argv[1:])

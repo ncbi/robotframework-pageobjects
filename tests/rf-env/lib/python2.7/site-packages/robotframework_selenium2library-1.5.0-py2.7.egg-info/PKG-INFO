@@ -1,0 +1,17 @@
+Metadata-Version: 1.0
+Name: robotframework-selenium2library
+Version: 1.5.0
+Summary: Web testing library for Robot Framework
+Home-page: https://github.com/rtomac/robotframework-selenium2library
+Author: Ryan Tomac , Ed Manlove , Jeremy Johnson
+Author-email: <ryan@tomacfamily.com> ,  <devPyPlTw@verizon.net> ,  <jeremy@softworks.com.my>
+License: Apache License 2.0
+Description: Selenium2Library is a web testing library for Robot Framework
+        that leverages the Selenium 2 (WebDriver) libraries.
+Keywords: robotframework testing testautomation selenium selenium2 webdriver web
+Platform: any
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Topic :: Software Development :: Testing
