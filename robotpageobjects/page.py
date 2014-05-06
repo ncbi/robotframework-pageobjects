@@ -353,10 +353,10 @@ class _SelectorsManager(_S2LWrapper):
 
 class ComponentManager(_SelectorsManager):
 
-    def _get_instances(self, klass):
+    def _get_instances(self, component_class):
 
         """ Gets a page component's instances
-        :param klass: The page component class
+        :param component_class: The page component class
         """
         try:
 
@@ -365,7 +365,7 @@ class ComponentManager(_SelectorsManager):
             # any methods defined as properties with @prooperty, but the browser isn't open yet, so it
             # tries to create a screenshot, which it can't do, and thus throws warnings. Instead we call
             # the private _element_find, which is not a keyword.
-            return [klass(root_webelement) for root_webelement in self._element_find(klass.locator, False, True)]
+            return [component_class(root_webelement) for root_webelement in self._element_find(component_class.locator, False, True)]
         except AttributeError:
             raise Exception("Must set a selector property on page component")
         except RuntimeError:
