@@ -1,6 +1,0 @@
-uritemplate/__init__.py
-uritemplate.egg-info/PKG-INFO
-uritemplate.egg-info/SOURCES.txt
-uritemplate.egg-info/dependency_links.txt
-uritemplate.egg-info/requires.txt
-uritemplate.egg-info/top_level.txt
