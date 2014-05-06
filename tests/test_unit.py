@@ -8,7 +8,7 @@ import selenium
 
 from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
-from robotpageobjects.page import Page, Override, PageComponent
+from robotpageobjects.page import Page, Override, Component
 from robotpageobjects.optionhandler import OptionHandler
 
 

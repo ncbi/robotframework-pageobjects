@@ -372,10 +372,10 @@ class ComponentManager(_SelectorsManager):
             # There's no browser open
             return []
 
-class PageComponent(_SelectorsManager):
+class Component(_SelectorsManager):
 
     def __init__(self, root_webelement, *args, **kwargs):
-        super(PageComponent, self).__init__(*args, **kwargs)
+        super(Component, self).__init__(*args, **kwargs)
         self.root_webelement = root_webelement
 
 

@@ -1,7 +1,7 @@
-from robotpageobjects import Page, PageComponent, robot_alias, ComponentManager, not_keyword
+from robotpageobjects import Page, Component, robot_alias, ComponentManager
 from robot.utils import asserts
 
-class ResultComponent(PageComponent):
+class ResultComponent(Component):
 
     locator = "css=ul#results li.result"
 
