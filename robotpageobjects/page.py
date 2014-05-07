@@ -672,8 +672,6 @@ class Page(_BaseActions):
         # Look through our methods and identify which ones are Selenium2Library's
         # (by checking it and its base classes).
         for name, obj in members:
-
-            obj = getattr(self, name)
             # Don't look for non-methods.
             if not inspect.ismethod(obj):
                 continue
