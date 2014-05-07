@@ -5,9 +5,13 @@ class ResultComponent(Component):
 
     locator = "css=ul#results li.result"
 
+    selectors = {
+        "price el": "css=div.price",
+    }
+
     @property
     def price(self):
-        return self.root_webelement.find_element_by_css_selector("div.price").text
+        return self.get_text("price el")
 
 class ResultComponentManager(ComponentManager):
 

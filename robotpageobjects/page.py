@@ -26,6 +26,7 @@ import warnings
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from Selenium2Library import Selenium2Library
+from Selenium2Library.locators.elementfinder import ElementFinder
 
 from context import Context
 import exceptions
@@ -372,11 +373,30 @@ class ComponentManager(_SelectorsManager):
             # There's no browser open
             return []
 
+class _ComponentElementFinder(ElementFinder):
+    """Overrides the element finder class that SE2Lib's
+    _element_find uses so that we can pass the root webelement
+    instead of the driver. This allows us to limit our DOM search
+    in components to the "root webelement" instead of searching
+    globally on the driver instance.
+    """
+
+    def __init__(self, webelement):
+
+        super(_ComponentElementFinder, self).__init__()
+        self._root_webelement = webelement
+
+    def find(self, browser, locator, tag=None):
+        return super(_ComponentElementFinder, self).find(self._root_webelement, locator, tag=tag)
+
 class Component(_SelectorsManager):
 
     def __init__(self, root_webelement, *args, **kwargs):
         super(Component, self).__init__(*args, **kwargs)
         self.root_webelement = root_webelement
+
+        # Pass the root webelement to our overridden component finder class.
+        self._element_finder = _ComponentElementFinder(self.root_webelement)
 
 
 class _BaseActions(_SelectorsManager):
