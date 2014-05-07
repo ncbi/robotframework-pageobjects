@@ -630,9 +630,6 @@ class Page(_BaseActions):
     Optional constructor arguments:
     """
 
-    components = []
-    _components = {}
-
     def __init__(self, *args, **kwargs):
         """
         Initializes the pageobject_name variable, which is used by the _Keywords class

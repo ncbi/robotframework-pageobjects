@@ -170,7 +170,6 @@ class ActionsTestCase(BaseTestCase):
     def test_manual_screenshot_robot(self):
         self.assert_screen_shots(0)
         run = self.run_scenario("test_manual_screen_shot.robot", variable="baseurl:%s" % self.base_file_url)
-        print run
         self.assert_run(run, expected_returncode=0, search_output="PASS")
         self.assert_screen_shots(1)
 
