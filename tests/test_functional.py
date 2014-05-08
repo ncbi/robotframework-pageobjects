@@ -218,15 +218,21 @@ class SelectorsTestCase(BaseTestCase):
         run = self.run_scenario("test_se2lib_imported_before_po.robot")
         self.assert_run(run, expected_returncode=0, search_output="PASSED")
 
-class PageComponentTestCase(BaseTestCase):
+class ComponentTestCase(BaseTestCase):
+
+    def test_page_components_unittest(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_components.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_page_component_unittest(self):
+        # Tests get_instance, instead of get_instances.
         self.set_baseurl_env()
         run = self.run_scenario("test_component.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
-    def test_page_component_robot(self):
-        run = self.run_scenario("test_component.robot", variable="baseurl:%s" % self.base_file_url)
+    def test_page_components_robot(self):
+        run = self.run_scenario("test_components.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
 if __name__ == "__main__":

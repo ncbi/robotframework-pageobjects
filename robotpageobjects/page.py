@@ -354,11 +354,38 @@ class _SelectorsManager(_S2LWrapper):
 
 class ComponentManager(_SelectorsManager):
 
-    def _get_instances(self, component_class):
+    def get_instance(self, component_class):
 
-        """ Gets a page component's instances
+        """ Gets a page component's instance.
+        Use when you know you will be returning one
+        instance of a component. If there are none on the page,
+        returns None.
+
         :param component_class: The page component class
         """
+
+        els = self._get_root_webelements(component_class)
+        try:
+            ret = els[0]
+        except KeyError:
+            ret = None
+
+        return ret
+
+
+
+    def get_instances(self, component_class):
+
+        """ Gets a page component's instances as a list
+        Use when you know you will be returning at least two
+        instances of a component. If there are none on the page
+        returns an empty list.
+
+        :param component_class: The page component class
+        """
+        return self._get_root_webelements(component_class)
+
+    def _get_root_webelements(self, component_class):
         try:
 
             # TODO: Yuch. If we call find_element, we get screenshot warnings relating to DCLT-659, DCLT-726,
@@ -366,12 +393,19 @@ class ComponentManager(_SelectorsManager):
             # any methods defined as properties with @prooperty, but the browser isn't open yet, so it
             # tries to create a screenshot, which it can't do, and thus throws warnings. Instead we call
             # the private _element_find, which is not a keyword.
-            return [component_class(root_webelement) for root_webelement in self._element_find(component_class.locator, False, True)]
+            ret = [component_class(root_webelement) for root_webelement in self._element_find(component_class
+                                                                                            .locator,
+
+                                                                                         False, True)]
+
         except AttributeError:
             raise Exception("Must set a selector property on page component")
+
         except RuntimeError:
             # There's no browser open
-            return []
+            ret = []
+
+        return ret
 
 class _ComponentElementFinder(ElementFinder):
     """Overrides the element finder class that SE2Lib's

@@ -1,19 +1,16 @@
 import unittest
-from po.widgetresultpagecomponent import ResultPage
+from po.widgetresultpagecomponent import ResultsPage
 
 
 class TestWidgetSearch(unittest.TestCase):
 
     def setUp(self):
         super(TestWidgetSearch, self).setUp()
-        self.p = ResultPage()
+        self.p = ResultsPage()
         self.p.open()
 
     def test_page_component(self):
-        # Tests get_instance(), as opposed to get_instances()
-
-        self.assertNotEquals(type(self.p.result), list)
-        self.assertEquals(self.p.result.price, "$14.00")
+        self.p.item_should_cost(2, "$17.00")
 
     def tearDown(self):
         super(TestWidgetSearch, self).tearDown()
