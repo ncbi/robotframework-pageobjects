@@ -232,12 +232,23 @@ class _S2LWrapper(Selenium2Library):
             self._cache = self._shared_cache
         Context.set_cache(self._cache)
 
+    @property
     @not_keyword
-    def get_current_browser(self):
+    def driver(self):
         """
         Wrap the _current_browser() S2L method
         """
-        return self._current_browser()
+        try:
+            return self._current_browser()
+        except RuntimeError:
+            return None
+
+    @not_keyword
+    def get_current_browser(self):
+        """
+        Legacy wrapper for self.driver
+        """
+        return self.driver
 
 
 class _SelectorsManager(_S2LWrapper):
@@ -354,6 +365,7 @@ class _SelectorsManager(_S2LWrapper):
 
 class ComponentManager(_SelectorsManager):
 
+    @not_keyword
     def get_instance(self, component_class):
 
         """ Gets a page component's instance.
@@ -372,8 +384,7 @@ class ComponentManager(_SelectorsManager):
 
         return ret
 
-
-
+    @not_keyword
     def get_instances(self, component_class):
 
         """ Gets a page component's instances as a list
@@ -389,20 +400,20 @@ class ComponentManager(_SelectorsManager):
         try:
 
             # TODO: Yuch. If we call find_element, we get screenshot warnings relating to DCLT-659, DCLT-726,
-            # browser isn't open yet, and when get_keyword_names uses inspect.get_members, that calls
-            # any methods defined as properties with @prooperty, but the browser isn't open yet, so it
+            # browser isn't open yet, and when get_keyword_names uses inspect.getmembers, that calls
+            # any methods defined as properties with @property, but the browser isn't open yet, so it
             # tries to create a screenshot, which it can't do, and thus throws warnings. Instead we call
             # the private _element_find, which is not a keyword.
-            ret = [component_class(root_webelement) for root_webelement in self._element_find(component_class
-                                                                                            .locator,
-
-                                                                                         False, True)]
+            if hasattr(component_class, "_get_instances"):
+                component_elements = component_class._get_instances(self.driver)
+            else:
+                component_elements = self._element_find(component_class.locator, False, True)
+            ret = [component_class(root_webelement) for root_webelement in component_elements]
 
         except AttributeError:
-            raise Exception("Must set a selector property on page component")
+            raise Exception("Must set a locator attribute or get_instances() method on page component")
 
         except RuntimeError:
-            # There's no browser open
             ret = []
 
         return ret
@@ -671,6 +682,24 @@ class _BaseActions(_SelectorsManager):
 
         wait.until(wait_fnc)
 
+    @robot_alias("get_hash_on__name__")
+    def get_hash(self):
+        """
+        Get the current location hash.
+        :return: the current hash
+        """
+        url = self.get_location()
+        parts = url.split("#")
+        if len(parts) > 0:
+            return "#".join(parts[1:])
+        else:
+            return ""
+
+    @robot_alias("hash_on__name__should_be")
+    def hash_should_be(self, expected_value):
+        hash = self.get_hash()
+        asserts.assert_equal(hash, expected_value)
+
 
 class Page(_BaseActions):
     """
@@ -720,12 +749,20 @@ class Page(_BaseActions):
 
         # Return all method names on the class to expose keywords to Robot Framework
         keywords = []
-        members = inspect.getmembers(self)
+        #members = inspect.getmembers(self, inspect.ismethod)
 
 
         # Look through our methods and identify which ones are Selenium2Library's
         # (by checking it and its base classes).
-        for name, obj in members:
+        for name in dir(self):
+            try:
+                obj = getattr(self, name)
+            except:
+                # Retrieving the attribute raised an exception - for example,
+                # a property created with the @property decorator that
+                # interacts with the driver
+                continue
+
             # Don't look for non-methods.
             if not inspect.ismethod(obj):
                 continue
