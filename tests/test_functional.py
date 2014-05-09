@@ -238,6 +238,14 @@ class ComponentTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
 
+""" The following classes are used by tests for the header/subheader component.
+These tests are at the end of the file and are ultimately intended for the actual header/subheader
+components that will be written at some point soon. For now, I am sticking them in the
+Robot Framework Page Object package because it's a proof-of-concept and since the packages
+aren't written yet and the version of RF PO with support for components isn't tagged yet, I
+don't want to have to link to dev branches in depdendency links.
+"""
+
 class SubHeaderComponent(Component):
     """ Encapsulates the common, Sub header
     found on most NCBI pages.
@@ -323,13 +331,13 @@ class MySubHeaderPage(Page, SubHeaderComponentManager):
         self.subheader.search(db, term)
         # Here we'd have to figure out what page object to return...
 
-class TestSubHeaderComponentTestCase(unittest.TestCase):
+class SubHeaderComponentTestCase(unittest.TestCase):
 
     def setUp(self):
         super(TestSubHeaderComponentTestCase, self).setUp()
         os.environ["PO_BASEURL"] = "http://www.ncbi.nlm.nih.gov"
         #os.environ["PO_BROWSER"] = "firefox"
-        os.environ["PO_SELENIUM_SPEED"] = "0"
+        os.environ["PO_SELENIUM_SPEED"] = ".5"
         self.sub_header_page = MySubHeaderPage()
         self.sub_header_page.open()
 
@@ -343,10 +351,6 @@ class TestSubHeaderComponentTestCase(unittest.TestCase):
     def tearDown(self):
         super(TestSubHeaderComponentTestCase, self).tearDown()
         self.sub_header_page.close()
-
-
-if __name__ == "__main__":
-    unittest.main()
 
 
 
