@@ -70,7 +70,8 @@ class SubHeaderComponentManager(ComponentManager):
 
 class HeaderComponent(Component, SubHeaderComponentManager):
 
-    locator = ""
+    locator = "id=universal_header"
+
     selectors = {
         "logo": "css=.ncbi_logo",
 
@@ -83,6 +84,14 @@ class HeaderComponent(Component, SubHeaderComponentManager):
 
         # Defers to this component's sub component
         self.subheader.search(db, term)
+        # Should return a page object here, but this is just for testing.
+
+
+class HeaderComponentManager(ComponentManager):
+
+    @property
+    def header(self):
+        return self.get_instance(HeaderComponent)
 
 
 class MySubHeaderPage(Page, SubHeaderComponentManager):
@@ -97,6 +106,13 @@ class MySubHeaderPage(Page, SubHeaderComponentManager):
     def search_from_subheader(self, db, term):
         self.subheader.search(db, term)
         # Here we'd have to figure out what page object to return...
+
+
+class MyHeaderPage(Page, HeaderComponentManager):
+    uri = "/"
+
+    def search_from_header(self, db, term):
+        self.header.search(db, term)
 
 class SubHeaderComponentTestCase(unittest.TestCase):
 
@@ -123,7 +139,12 @@ class HeaderComponentTestCase(unittest.TestCase):
         os.environ["PO_BASEURL"] = "http://www.ncbi.nlm.nih.gov"
         #os.environ["PO_BROWSER"] = "firefox"
         os.environ["PO_SELENIUM_SPEED"] = "0"
-        self.header_page = HeaderPage()
+        self.header_page = MyHeaderPage()
         self.header_page.open()
 
-    def test_delegated_search(self):
+    def test_delegated_search_from_subheader(self):
+        self.header_page.search_from_header("Books", "dog")
+        self.header_page.title_should_be("dog - Books - NCBI")
+
+    def tearDown(self):
+        self.header_page.close()
