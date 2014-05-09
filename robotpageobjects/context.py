@@ -5,7 +5,11 @@ from robot import api as robot_api
 from robot.conf import RobotSettings
 from robot.variables import init_global_variables
 from exposedbrowserselenium2library import ExposedBrowserSelenium2Library
+from Selenium2Library.keywords.keywordgroup import _run_on_failure_decorator
 
+def __new_run_on_failure_decorator(method, *args, **kwargs):
+    return method(*args, **kwargs)
+_run_on_failure_decorator = __new_run_on_failure_decorator
 
 class Context(object):
     """
