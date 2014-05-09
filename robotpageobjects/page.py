@@ -377,7 +377,7 @@ class ComponentManager(_SelectorsManager):
         :param component_class: The page component class
         """
 
-        els = self._get_reference_webelements(component_class)
+        els = self.get_instances(component_class)
         try:
             ret = els[0]
         except KeyError:
@@ -395,10 +395,14 @@ class ComponentManager(_SelectorsManager):
 
         :param component_class: The page component class
         """
-        #return [component_class( reference_webelement) for reference_webelement in self._get_reference_webelements(component_class)]
-        return self._get_reference_webelements(component_class)
+        return [component_class(reference_webelement) for reference_webelement in self.get_reference_webelements(component_class)]
 
-    def _get_reference_webelements(self, component_class):
+    @not_keyword
+    def get_reference_webelements(self, component_class):
+        """
+        Get a list of reference elements associated with the component class.
+        :param component_class: The page component class
+        """
         try:
 
             # TODO: Yuch. If we call find_element, we get screenshot warnings relating to DCLT-659, DCLT-726,
@@ -413,14 +417,14 @@ class ComponentManager(_SelectorsManager):
             # Just use the Se2Lib-style locator string.
             else:
                 component_elements = self._element_find(component_class.locator, False, True)
-            #ret = component_elements
-            ret = [component_class( reference_webelement) for reference_webelement in component_elements]
+            ret = component_elements
+            #ret = [component_class( reference_webelement) for reference_webelement in component_elements]
 
         except AttributeError:
-            raise Exception("Must set a locator attribute or get_instances() method on page component")
+            raise Exception("Must set a locator attribute or method on page component")
 
-        except RuntimeError:
-            ret = []
+        #except RuntimeError:
+        #    ret = []
 
         return ret
 
