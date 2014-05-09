@@ -133,7 +133,7 @@ class ActionsTestCase(BaseTestCase):
     def assert_screen_shots(self, expected_screen_shots):
         screen_shots = self.get_screen_shot_paths()
         if expected_screen_shots > 0:
-            self.assertTrue(len(screen_shots) > 0, "A screen shot was taken")
+            self.assertTrue(len(screen_shots) > 0, "No screenshot was taken")
 
         self.assertEquals(len(screen_shots), expected_screen_shots, "Exactly %s screen shots should have been taken, "
                                                                     "got %s instead"

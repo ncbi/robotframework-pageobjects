@@ -678,5 +678,11 @@ class Page(_BaseActions):
         :returns: callable
         """
         # Translate back from Robot Framework alias to actual method
-        orig_meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, self._underscore(self.name)))
-        return orig_meth(*args)
+        meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, self._underscore(self.name)))
+        try:
+            return meth(*args)
+        except Exception, err:
+            #if hasattr(self, "_run_on_failure"):
+            #    self._run_on_failure()
+            self.capture_page_screenshot()
+            raise

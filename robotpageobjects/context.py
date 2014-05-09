@@ -1,15 +1,40 @@
+import re
 import logging
 from robot.libraries.BuiltIn import BuiltIn
 from robot.running.context import EXECUTION_CONTEXTS
 from robot import api as robot_api
 from robot.conf import RobotSettings
 from robot.variables import init_global_variables
-from exposedbrowserselenium2library import ExposedBrowserSelenium2Library
-from Selenium2Library.keywords.keywordgroup import _run_on_failure_decorator
+from Selenium2Library import Selenium2Library
 
-def __new_run_on_failure_decorator(method, *args, **kwargs):
-    return method(*args, **kwargs)
-_run_on_failure_decorator = __new_run_on_failure_decorator
+__old_init = Selenium2Library.__init__.__func__
+def __new_init(self, *args, **kwargs):
+    kwargs["run_on_failure"] = "Nothing"
+    return __old_init(self, *args, **kwargs)
+
+Selenium2Library.__init__ = __new_init
+
+def __get_keyword_names(self):
+    import inspect
+    ret = []
+    methods = inspect.getmembers(self, inspect.ismethod)
+    for name, meth in methods:
+        if not name.startswith("_"):
+            ret.append(name)
+    return ret
+
+Selenium2Library.get_keyword_names = __get_keyword_names
+
+def __run_keyword(self, alias, args):
+    meth = getattr(self, re.sub(r"\s+", "_", alias))
+    try:
+        return meth(*args)
+    except Exception, err:
+        self.capture_page_screenshot()
+        raise
+
+Selenium2Library.run_keyword = __run_keyword
+
 
 class Context(object):
     """
@@ -56,7 +81,7 @@ class Context(object):
         try:
             cls._s2l_instance = BuiltIn().get_library_instance("Selenium2Library")
         except:
-            cls._s2l_instance = BuiltIn().import_library("Selenium2Library")
+            cls._s2l_instance = BuiltIn().import_library("Selenium2Library", "run_on_failure=Nothing")
 
     @classmethod
     def get_logger(cls, module_name):
