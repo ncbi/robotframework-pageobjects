@@ -418,13 +418,9 @@ class ComponentManager(_SelectorsManager):
             else:
                 component_elements = self._element_find(component_class.locator, False, True)
             ret = component_elements
-            #ret = [component_class( reference_webelement) for reference_webelement in component_elements]
 
         except AttributeError:
             raise Exception("Must set a locator attribute or method on page component")
-
-        #except RuntimeError:
-        #    ret = []
 
         return ret
 
