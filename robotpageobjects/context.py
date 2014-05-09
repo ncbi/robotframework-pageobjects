@@ -54,7 +54,7 @@ class Context(object):
         try:
             cls._s2l_instance = BuiltIn().get_library_instance("Selenium2Library")
         except:
-            cls._s2l_instance = BuiltIn().import_library("Selenium2Library", "run_on_failure=Nothing")
+            cls._s2l_instance = BuiltIn().import_library("Selenium2Library")
 
     @classmethod
     def get_logger(cls, module_name):
