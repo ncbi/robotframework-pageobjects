@@ -3,7 +3,6 @@ from robot.utils import asserts
 
 class ResultComponent(Component):
 
-    locator = "css=ul#results li.result"
 
     selectors = {
         "price el": "css=div.price",
@@ -15,11 +14,15 @@ class ResultComponent(Component):
 
 class ResultsComponentManager(ComponentManager):
 
+    locator = "css=ul#results li.result"
+
     @property
     def results(self):
        return self.get_instances(ResultComponent)
 
 class ResultComponentManager(ComponentManager):
+
+    locator = "css=ul#results li.result"
 
     @property
     def result(self):
@@ -51,12 +54,6 @@ class ResultPage(Page, ResultComponentManager):
         # we know it won't produce one here in the mocked
         # test case...so we won't.
         asserts.assert_equals(results[int(i) - 1].price, expected_price)
-
-
-
-
-
-
 
 
 
