@@ -1,11 +1,13 @@
+import re
 import logging
 from robot.libraries.BuiltIn import BuiltIn
 from robot.running.context import EXECUTION_CONTEXTS
 from robot import api as robot_api
 from robot.conf import RobotSettings
 from robot.variables import init_global_variables
-from exposedbrowserselenium2library import ExposedBrowserSelenium2Library
+from monkeypatches import do_monkeypatches
 
+do_monkeypatches()
 
 class Context(object):
     """

@@ -798,5 +798,12 @@ class Page(_BaseActions):
         :returns: callable
         """
         # Translate back from Robot Framework alias to actual method
-        orig_meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, self._underscore(self.name)))
-        return orig_meth(*args)
+        meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, self._underscore(self.name)))
+        try:
+            return meth(*args)
+        except Exception, err:
+            # Hardcode capture_page_screenshot. This is because run_on_failure
+            # is being set to "Nothing" (DCLT-659 and DCLT-726).
+            # TODO: After DCLT-827 is addressed, we can use run_on_failure again.
+            self.capture_page_screenshot()
+            raise

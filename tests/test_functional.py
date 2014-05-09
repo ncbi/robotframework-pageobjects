@@ -133,7 +133,7 @@ class ActionsTestCase(BaseTestCase):
     def assert_screen_shots(self, expected_screen_shots):
         screen_shots = self.get_screen_shot_paths()
         if expected_screen_shots > 0:
-            self.assertTrue(len(screen_shots) > 0, "A screen shot was taken")
+            self.assertTrue(len(screen_shots) > 0, "No screenshot was taken")
 
         self.assertEquals(len(screen_shots), expected_screen_shots, "Exactly %s screen shots should have been taken, "
                                                                     "got %s instead"
@@ -152,7 +152,7 @@ class ActionsTestCase(BaseTestCase):
     def test_robot_screen_shot_on_page_object_keyword_failure(self):
         self.assert_screen_shots(0)
         self.run_scenario("test_fail.robot", variable="baseurl:%s" % self.base_file_url)
-        self.assert_screen_shots(2)
+        self.assert_screen_shots(1)
         #TODO DCLT-726: Change to 1 when we fix this bug.
 
     def test_robot_screen_shot_on_se2lib_keyword_failure(self):
