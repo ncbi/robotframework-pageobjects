@@ -682,7 +682,8 @@ class Page(_BaseActions):
         try:
             return meth(*args)
         except Exception, err:
-            #if hasattr(self, "_run_on_failure"):
-            #    self._run_on_failure()
+            # Hardcode capture_page_screenshot. This is because run_on_failure
+            # is being set to "Nothing" (DCLT-659 and DCLT-726).
+            # TODO: After DCLT-827 is addressed, we can use run_on_failure again.
             self.capture_page_screenshot()
             raise
