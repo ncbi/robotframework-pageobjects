@@ -404,8 +404,11 @@ class ComponentManager(_SelectorsManager):
             # any methods defined as properties with @property, but the browser isn't open yet, so it
             # tries to create a screenshot, which it can't do, and thus throws warnings. Instead we call
             # the private _element_find, which is not a keyword.
-            if hasattr(component_class, "_get_instances"):
-                component_elements = component_class._get_instances(self.driver)
+
+            # Look for a callback to dynamically find the component instances.
+            if hasattr(component_class, "_locator"):
+                component_elements = component_class._locator(self.driver)
+            # Just use the Se2Lib-style locator string.
             else:
                 component_elements = self._element_find(component_class.locator, False, True)
             ret = [component_class(root_webelement) for root_webelement in component_elements]
