@@ -404,25 +404,25 @@ class ComponentManager(_SelectorsManager):
         :param component_class: The page component class
         """
         try:
-
-            # TODO: Yuch. If we call find_element, we get screenshot warnings relating to DCLT-659, DCLT-726,
-            # browser isn't open yet, and when get_keyword_names uses inspect.getmembers, that calls
-            # any methods defined as properties with @property, but the browser isn't open yet, so it
-            # tries to create a screenshot, which it can't do, and thus throws warnings. Instead we call
-            # the private _element_find, which is not a keyword.
-
-            # Look for a "locator" callback (defined as a class method) to dynamically find the component instances.
-            if inspect.ismethod(component_class.locator):
-                component_elements = component_class.locator(self.driver)
-            # Just use the Se2Lib-style locator string.
-            else:
-                component_elements = self._element_find(component_class.locator, False, True)
-            ret = component_elements
-
+            locator = self.locator
         except AttributeError:
-            raise Exception("Must set a locator attribute or method on page component")
+            raise Exception("Must set a locator attribute or method on page component manager")
 
-        return ret
+        # TODO: Yuch. If we call find_element, we get screenshot warnings relating to DCLT-659, DCLT-726,
+        # browser isn't open yet, and when get_keyword_names uses inspect.getmembers, that calls
+        # any methods defined as properties with @property, but the browser isn't open yet, so it
+        # tries to create a screenshot, which it can't do, and thus throws warnings. Instead we call
+        # the private _element_find, which is not a keyword.
+
+        # Look for a "locator" callback (defined as a class method) to dynamically find the component instances.
+
+        if inspect.ismethod(self.locator):
+            component_elements = self.locator()
+        # Just use the Se2Lib-style locator string.
+        else:
+            component_elements = self._element_find(self.locator, False, True)
+        return component_elements
+
 
 class _ComponentElementFinder(ElementFinder):
     """Overrides the element finder class that SE2Lib's
