@@ -31,6 +31,7 @@ from Selenium2Library.locators.elementfinder import ElementFinder
 from context import Context
 import exceptions
 from optionhandler import OptionHandler
+from robot.utils import asserts
 
 
 this_module_name = __name__
@@ -376,7 +377,7 @@ class ComponentManager(_SelectorsManager):
         :param component_class: The page component class
         """
 
-        els = self._get_root_webelements(component_class)
+        els = self._get_reference_webelements(component_class)
         try:
             ret = els[0]
         except KeyError:
@@ -394,9 +395,10 @@ class ComponentManager(_SelectorsManager):
 
         :param component_class: The page component class
         """
-        return self._get_root_webelements(component_class)
+        #return [component_class( reference_webelement) for reference_webelement in self._get_reference_webelements(component_class)]
+        return self._get_reference_webelements(component_class)
 
-    def _get_root_webelements(self, component_class):
+    def _get_reference_webelements(self, component_class):
         try:
 
             # TODO: Yuch. If we call find_element, we get screenshot warnings relating to DCLT-659, DCLT-726,
@@ -405,13 +407,14 @@ class ComponentManager(_SelectorsManager):
             # tries to create a screenshot, which it can't do, and thus throws warnings. Instead we call
             # the private _element_find, which is not a keyword.
 
-            # Look for a callback to dynamically find the component instances.
-            if hasattr(component_class, "_locator"):
-                component_elements = component_class._locator(self.driver)
+            # Look for a "locator" callback (defined as a class method) to dynamically find the component instances.
+            if inspect.ismethod(component_class.locator):
+                component_elements = component_class.locator(self.driver)
             # Just use the Se2Lib-style locator string.
             else:
                 component_elements = self._element_find(component_class.locator, False, True)
-            ret = [component_class(root_webelement) for root_webelement in component_elements]
+            #ret = component_elements
+            ret = [component_class( reference_webelement) for reference_webelement in component_elements]
 
         except AttributeError:
             raise Exception("Must set a locator attribute or get_instances() method on page component")
@@ -423,28 +426,28 @@ class ComponentManager(_SelectorsManager):
 
 class _ComponentElementFinder(ElementFinder):
     """Overrides the element finder class that SE2Lib's
-    _element_find uses so that we can pass the root webelement
+    _element_find uses so that we can pass the reference webelement
     instead of the driver. This allows us to limit our DOM search
-    in components to the "root webelement" instead of searching
+    in components to the "reference webelement" instead of searching
     globally on the driver instance.
     """
 
     def __init__(self, webelement):
 
         super(_ComponentElementFinder, self).__init__()
-        self._root_webelement = webelement
+        self._reference_webelement = webelement
 
     def find(self, browser, locator, tag=None):
-        return super(_ComponentElementFinder, self).find(self._root_webelement, locator, tag=tag)
+        return super(_ComponentElementFinder, self).find(self._reference_webelement, locator, tag=tag)
 
 class Component(_SelectorsManager):
 
-    def __init__(self, root_webelement, *args, **kwargs):
+    def __init__(self, reference_webelement, *args, **kwargs):
         super(Component, self).__init__(*args, **kwargs)
-        self.root_webelement = root_webelement
+        self.reference_webelement = reference_webelement
 
         # Pass the root webelement to our overridden component finder class.
-        self._element_finder = _ComponentElementFinder(self.root_webelement)
+        self._element_finder = _ComponentElementFinder(self.reference_webelement)
 
 
 class _BaseActions(_SelectorsManager):

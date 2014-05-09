@@ -23,11 +23,11 @@ class SubHeaderComponent(Component):
     locator = "css=.header"
 
     # All selectors are implicitly limited to
-    # descendents of the "root webelement" for
+    # descendents of the "reference webelement" for
     # this component. This assures that you are finding
     # the element for **this** component.
     # If for some reason, you need to access the actual
-    # root WebElement for this instance, access: self.root_webelement
+    # reference WebElement for this instance, access: self.reference_webelement
     # from a component method.
     selectors = {
         "Search Database Select": "id=database",
