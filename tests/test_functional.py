@@ -334,7 +334,7 @@ class MySubHeaderPage(Page, SubHeaderComponentManager):
 class SubHeaderComponentTestCase(unittest.TestCase):
 
     def setUp(self):
-        super(TestSubHeaderComponentTestCase, self).setUp()
+        super(SubHeaderComponentTestCase, self).setUp()
         os.environ["PO_BASEURL"] = "http://www.ncbi.nlm.nih.gov"
         #os.environ["PO_BROWSER"] = "firefox"
         os.environ["PO_SELENIUM_SPEED"] = ".5"
@@ -349,7 +349,7 @@ class SubHeaderComponentTestCase(unittest.TestCase):
         self.sub_header_page.title_should_be("dog - Books - NCBI")
 
     def tearDown(self):
-        super(TestSubHeaderComponentTestCase, self).tearDown()
+        super(SubHeaderComponentTestCase, self).tearDown()
         self.sub_header_page.close()
 
 
