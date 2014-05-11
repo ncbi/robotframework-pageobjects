@@ -3,6 +3,7 @@ import json
 import os
 import re
 import unittest
+from scenarios.po.result_component import ResultPage, ResultPageWithOverriddenGetRefEls
 
 import requests
 
@@ -220,20 +221,33 @@ class SelectorsTestCase(BaseTestCase):
 
 class ComponentTestCase(BaseTestCase):
 
-    def test_page_components_unittest(self):
+    def setUp(self):
+        super(ComponentTestCase, self).setUp()
         self.set_baseurl_env()
-        run = self.run_scenario("test_components.py")
-        self.assert_run(run, expected_returncode=0, search_output="OK")
+        self.result_page_with_str_locator = ResultPage()
+        self.p_with_overridden_get_ref_els = ResultPageWithOverriddenGetRefEls()
 
-    def test_page_component_unittest(self):
-        # Tests get_instance, instead of get_instances.
-        self.set_baseurl_env()
-        run = self.run_scenario("test_component.py")
-        self.assert_run(run, expected_returncode=0, search_output="OK")
+    def test_get_instance_and_instances(self):
+        self.result_page_with_str_locator.open()
+        self.assertNotEquals(type(self.result_page_with_str_locator.result), list)
 
-    def test_page_components_robot(self):
-        run = self.run_scenario("test_components.robot", variable="baseurl:%s" % self.base_file_url)
-        self.assert_run(run, expected_returncode=0, search_output="PASS")
+        # Should get the first result
+        self.assertEquals(self.result_page_with_str_locator.result.price, "$14.00")
+
+        self.assertEquals(len(self.result_page_with_str_locator.results), 3)
+        self.assertEquals(self.result_page_with_str_locator.results[0].price, "$14.00")
+
+    def test_overridden_get_ref_els(self):
+        self.p_with_overridden_get_ref_els.open()
+        results = self.p_with_overridden_get_ref_els.results
+        self.assertEquals(len(results), 3)
+        self.assertEquals(results[0].price, "$14.00")
+
+
+    def tearDown(self):
+        super(ComponentTestCase, self).tearDown()
+        self.result_page_with_str_locator.close()
+        self.p_with_overridden_get_ref_els.close()
 
 
 

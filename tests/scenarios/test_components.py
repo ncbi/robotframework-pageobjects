@@ -1,5 +1,5 @@
 import unittest
-from po.widgetresultpagecomponent import ResultsPage
+from po.result_component import ResultsPage
 
 
 class TestWidgetSearch(unittest.TestCase):
