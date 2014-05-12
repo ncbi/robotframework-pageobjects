@@ -228,6 +228,14 @@ class ComponentTestCase(BaseTestCase):
         self.p_with_overridden_get_ref_els = ResultPageWithOverriddenGetRefEls()
 
     def test_get_instance_and_instances(self):
+
+        # Test get_instance and get_instances in same test.
+        # In the same component admin, get_instance and get_instances
+        # are called so we can access the result, or results object(s).
+        # You'd use get_instance() if you expected only one
+        # instance, and get_instances() if you expected > 1.
+        # Normally, of course, in the admin class, you'd call only
+        # one of these, not both.
         self.result_page_with_str_locator.open()
         self.assertNotEquals(type(self.result_page_with_str_locator.result), list)
 
