@@ -45,6 +45,8 @@ class BaseTestCase(unittest.TestCase):
 
     def setUp(self):
 
+        os.environ["PO_SELENIUM_SPEED"] = "0"
+
         # Remove png files
         screenshot_locator = os.getcwd() + os.sep + "selenium-screenshot*.png"
         for screenshot in glob.glob(screenshot_locator):

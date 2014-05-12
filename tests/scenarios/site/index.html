@@ -10,6 +10,11 @@
         <label for="q">Search for our widgets</label>
         <input type="text" id="q"/>
         <input type="submit" value="Search" id="go"/>
+        <div>
+        <a href="#advanced-search-content" id="advanced-options">Advanced Search Options</a>
+
+        <p id="advanced-search-content" style="display:none;">These are advanced options</p>
+        </div>
     </form>
     <script type="text/javascript">
         // Fake out a get.
@@ -19,6 +24,19 @@
             document.location = "result.html?q=search%20term"
 
         })
+
+        // Do a toggler for the advnaced search component
+
+        var adv_search_content = jQuery("#advanced-search-content");
+        jQuery("#advanced-options").on( "click", function(e) {
+            e.preventDefault();
+            if ( adv_search_content.css("display") == "none" ) {
+                adv_search_content.show();
+            } else {
+                adv_search_content.hide();
+            }
+        })
+
     </script>
 </body>
 </html>

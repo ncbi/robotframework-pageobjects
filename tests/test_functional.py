@@ -3,7 +3,7 @@ import json
 import os
 import re
 import unittest
-from scenarios.po.result_component import ResultPage, ResultPageWithOverriddenGetRefEls
+from scenarios.po.result_component import ResultPage, ResultPageWithOverriddenGetRefEls, HomePage
 
 import requests
 
@@ -225,7 +225,8 @@ class ComponentTestCase(BaseTestCase):
         super(ComponentTestCase, self).setUp()
         self.set_baseurl_env()
         self.result_page_with_str_locator = ResultPage()
-        self.p_with_overridden_get_ref_els = ResultPageWithOverriddenGetRefEls()
+        self.result_page_with_overidden_get_ref_els = ResultPageWithOverriddenGetRefEls()
+        self.homepage = HomePage()
 
     def test_get_instance_and_instances(self):
 
@@ -246,19 +247,41 @@ class ComponentTestCase(BaseTestCase):
         self.assertEquals(self.result_page_with_str_locator.results[0].price, "$14.00")
 
     def test_overridden_get_ref_els(self):
-        self.p_with_overridden_get_ref_els.open()
-        results = self.p_with_overridden_get_ref_els.results
+        self.result_page_with_overidden_get_ref_els.open()
+        results = self.result_page_with_overidden_get_ref_els.results
 
         # Our overriden version of get_reference_elements returns
         # two results, instead of 3.
         self.assertEquals(len(results), 2)
         self.assertEquals(results[0].price, "$14.00")
 
+    def test_component_inside_component(self):
+
+        self.homepage.open()
+        search_component = self.homepage.search_component
+
+        self.homepage.textfield_value_should_be("id=q", "", "The search component's input doesn't start blank")
+        search_component.set_search_term("foo")
+        self.homepage.textfield_value_should_be("id=q", "foo", "Search component can't set a search value")
+
+        # Access a sub component
+        advanced_option_toggler_component = search_component.advanced_option_toggler_component
+
+        self.homepage.element_should_not_be_visible("id=advanced-search-content")
+        advanced_option_toggler_component.open()
+        self.homepage.element_should_be_visible("id=advanced-search-content")
+
+    def test_use_selectors_to_get_non_child_element(self):
+        self.homepage.open()
+        toggler = self.homepage.search_component.advanced_option_toggler_component
+        toggler.open()
+        self.assertEquals(toggler.advanced_text, "These are advanced options")
 
     def tearDown(self):
         super(ComponentTestCase, self).tearDown()
         self.result_page_with_str_locator.close()
-        self.p_with_overridden_get_ref_els.close()
+        self.result_page_with_overidden_get_ref_els.close()
+        self.homepage.close()
 
 
 

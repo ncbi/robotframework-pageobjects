@@ -52,4 +52,50 @@ class ResultPageWithOverriddenGetRefEls(Page, ResultComponentManagerWithOverridd
 
 
 
+class AdvancedOptionTogglerComponent(Component):
+
+    selectors = {
+        # In relation to reference webelement, which is sibling.
+        "advanced options": "xpath=./following-sibling::p[1]",
+    }
+
+    def open(self):
+        self.reference_webelement.click()
+
+    @property
+    def advanced_text(self):
+        return self.get_text("advanced options")
+
+
+class AdvancedOptionTogglerComponentManager(ComponentManager):
+    locator = "id=advanced-options"
+
+    @property
+    def advanced_option_toggler_component(self):
+        return self.get_instance(AdvancedOptionTogglerComponent)
+
+
+class SearchComponent(Component, AdvancedOptionTogglerComponentManager):
+
+    selectors = {
+        "search input": "id=q",
+    }
+
+    def set_search_term(self, term):
+        self.input_text("search input", term)
+
+class SearchComponentManager(ComponentManager):
+
+    locator = "id=search-form"
+
+    @property
+    def search_component(self):
+        return self.get_instance(SearchComponent)
+
+
+class HomePage(Page, SearchComponentManager):
+    uri = "/site/index.html"
+
+
+
 
