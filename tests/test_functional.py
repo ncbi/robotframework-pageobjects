@@ -248,7 +248,10 @@ class ComponentTestCase(BaseTestCase):
     def test_overridden_get_ref_els(self):
         self.p_with_overridden_get_ref_els.open()
         results = self.p_with_overridden_get_ref_els.results
-        self.assertEquals(len(results), 3)
+
+        # Our overriden version of get_reference_elements returns
+        # two results, instead of 3.
+        self.assertEquals(len(results), 2)
         self.assertEquals(results[0].price, "$14.00")
 
 

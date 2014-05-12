@@ -36,8 +36,11 @@ class ResultComponentManager(ComponentManager):
 
 class ResultComponentManagerWithOverriddenGetRefEls(ResultComponentManager):
 
-    def get_reference_webelements(self, component_class):
-        return self.execute_javascript("return window.jQuery('#results li.result');")
+    def get_reference_elements(self, component_class):
+        # Get the same results we'd get in the other cases, but use JQuery to do it
+        # and to make sure we are using this overriden method, limit the results to 2, so
+        # we can check the length in the test.
+        return self.execute_javascript("return window.jQuery('#results li.result:lt(2)');")
 
 
 class ResultPage(Page, ResultComponentManager):

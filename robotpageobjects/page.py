@@ -395,10 +395,10 @@ class ComponentManager(_SelectorsManager):
 
         :param component_class: The page component class
         """
-        return [component_class(reference_webelement) for reference_webelement in self.get_reference_webelements(component_class)]
+        return [component_class(reference_webelement) for reference_webelement in self.get_reference_elements(component_class)]
 
     @not_keyword
-    def get_reference_webelements(self, component_class):
+    def get_reference_elements(self, component_class):
         """
         Get a list of reference elements associated with the component class.
         :param component_class: The page component class
