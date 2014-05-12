@@ -18,10 +18,6 @@ class SubHeaderComponent(Component):
     found on most NCBI pages.
     """
 
-    # This identifies the parent
-    # web element for this component.
-    locator = "css=.header"
-
     # All selectors are implicitly limited to
     # descendents of the "reference webelement" for
     # this component. This assures that you are finding
@@ -63,14 +59,18 @@ class SubHeaderComponentManager(ComponentManager):
     # and return the result of get_instance(). If
     # there were multiple instances on the page, we'd
     # call get_instances().
+
+    # This identifies the parent
+    # web element for this component.
+    #locator = "xpath=following-sibling::div[contains(@class, 'header')]"
+    locator = "css=.header"
+
     @property
     def subheader(self):
         return self.get_instance(SubHeaderComponent)
 
 
 class HeaderComponent(Component, SubHeaderComponentManager):
-
-    locator = "id=universal_header"
 
     selectors = {
         "logo": "css=.ncbi_logo",
@@ -88,6 +88,8 @@ class HeaderComponent(Component, SubHeaderComponentManager):
 
 
 class HeaderComponentManager(ComponentManager):
+
+    locator = "id=universal_header"
 
     @property
     def header(self):
