@@ -265,6 +265,16 @@ class ComponentTestCase(BaseTestCase):
         # A component should be able to contain other components. You'd access
         # sub component by accessing the sub component name as a property on the
         # parent component.
+
+        # These tests import the page classes directly, instead of going
+        # through run_scenario(), which is inconsistent with the rest of the
+        # Python tests. We do this because it's just clearer and easier to
+        # debug. We should probably clean up the other tests to do the same.
+        # See QAR-47882.
+
+        # We don't see the need for writing these tests in both Robot and Python
+        # because we already feel confident that page objects perform the same
+        # in both contexts, as the other tests show.
         self.homepage.open()
         search_component = self.homepage.search_component
 
