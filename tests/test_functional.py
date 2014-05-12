@@ -300,14 +300,3 @@ class ComponentTestCase(BaseTestCase):
         self.result_page_with_str_locator.close()
         self.result_page_with_locator_as_callback.close()
         self.homepage.close()
-
-
-
-
-
-
-
-
-
-
-
