@@ -118,7 +118,6 @@ class SubHeaderComponentTestCase(unittest.TestCase):
 
     def setUp(self):
         os.environ["PO_BASEURL"] = "http://www.ncbi.nlm.nih.gov"
-        #os.environ["PO_BROWSER"] = "firefox"
         os.environ["PO_SELENIUM_SPEED"] = "0"
         self.sub_header_page = MySubHeaderPage()
         self.sub_header_page.open()
@@ -137,7 +136,6 @@ class HeaderComponentTestCase(unittest.TestCase):
 
     def setUp(self):
         os.environ["PO_BASEURL"] = "http://www.ncbi.nlm.nih.gov"
-        #os.environ["PO_BROWSER"] = "firefox"
         os.environ["PO_SELENIUM_SPEED"] = "0"
         self.header_page = MyHeaderPage()
         self.header_page.open()
