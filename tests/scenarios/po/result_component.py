@@ -34,9 +34,9 @@ class ResultComponentManager(ComponentManager):
         return self.get_instances(ResultComponent)
 
 
-class ResultComponentManagerWithOverriddenGetRefEls(ResultComponentManager):
+class ResultComponentManagerWithLocatorAsCallback(ResultComponentManager):
 
-    def get_reference_elements(self, component_class):
+    def locator(self):
         # Get the same results we'd get in the other cases, but use JQuery to do it
         # and to make sure we are using this overriden method, limit the results to 2, so
         # we can check the length in the test.
@@ -47,7 +47,7 @@ class ResultPage(Page, ResultComponentManager):
 
     uri = "/site/result.html"
 
-class ResultPageWithOverriddenGetRefEls(Page, ResultComponentManagerWithOverriddenGetRefEls):
+class ResultPageWithLocatorAsCallback(Page, ResultComponentManagerWithLocatorAsCallback):
     uri = "/site/result.html"
 
 

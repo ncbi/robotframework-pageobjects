@@ -3,7 +3,7 @@ import json
 import os
 import re
 import unittest
-from scenarios.po.result_component import ResultPage, ResultPageWithOverriddenGetRefEls, HomePage
+from scenarios.po.result_component import ResultPage, ResultPageWithLocatorAsCallback, HomePage
 
 import requests
 
@@ -225,12 +225,14 @@ class ComponentTestCase(BaseTestCase):
         super(ComponentTestCase, self).setUp()
         self.set_baseurl_env()
         self.result_page_with_str_locator = ResultPage()
-        self.result_page_with_overidden_get_ref_els = ResultPageWithOverriddenGetRefEls()
+        self.result_page_with_locator_as_callback = ResultPageWithLocatorAsCallback()
         self.homepage = HomePage()
 
     def test_get_instance_and_instances(self):
 
-        # Test get_instance and get_instances in same test.
+        # Test get_instance and get_instances in same test. get_instance()
+        # get_instances() are called by the component admin class to set
+        # component instances on the page object.
         # In the same component admin, get_instance and get_instances
         # are called so we can access the result, or results object(s).
         # You'd use get_instance() if you expected only one
@@ -240,23 +242,29 @@ class ComponentTestCase(BaseTestCase):
         self.result_page_with_str_locator.open()
         self.assertNotEquals(type(self.result_page_with_str_locator.result), list)
 
-        # Should get the first result
+        # Should get the first result since we are accessing "result", not "results".
         self.assertEquals(self.result_page_with_str_locator.result.price, "$14.00")
 
+        # Now access "results" in the plural.
         self.assertEquals(len(self.result_page_with_str_locator.results), 3)
         self.assertEquals(self.result_page_with_str_locator.results[0].price, "$14.00")
 
-    def test_overridden_get_ref_els(self):
-        self.result_page_with_overidden_get_ref_els.open()
-        results = self.result_page_with_overidden_get_ref_els.results
+    def test_locator_as_callback(self):
+        self.result_page_with_locator_as_callback.open()
+        results = self.result_page_with_locator_as_callback.results
 
-        # Our overriden version of get_reference_elements returns
-        # two results, instead of 3.
+        # Our locator callback gets the nodes via a call
+        # to execute_javascript() and limits to 2 results, just
+        # to make sure we are testing the right thing.
         self.assertEquals(len(results), 2)
+        # Check that the result object works.
         self.assertEquals(results[0].price, "$14.00")
 
     def test_component_inside_component(self):
 
+        # A component should be able to contain other components. You'd access
+        # sub component by accessing the sub component name as a property on the
+        # parent component.
         self.homepage.open()
         search_component = self.homepage.search_component
 
@@ -280,7 +288,7 @@ class ComponentTestCase(BaseTestCase):
     def tearDown(self):
         super(ComponentTestCase, self).tearDown()
         self.result_page_with_str_locator.close()
-        self.result_page_with_overidden_get_ref_els.close()
+        self.result_page_with_locator_as_callback.close()
         self.homepage.close()
 
 
