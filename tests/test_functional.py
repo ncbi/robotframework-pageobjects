@@ -3,6 +3,7 @@ import json
 import os
 import re
 import unittest
+from scenarios.po.result_component import ResultPage, ResultPageWithDOMStrategyLocator, HomePage, HomePageWithDOMAdvancedToggler
 
 import requests
 
@@ -170,7 +171,6 @@ class ActionsTestCase(BaseTestCase):
     def test_manual_screenshot_robot(self):
         self.assert_screen_shots(0)
         run = self.run_scenario("test_manual_screen_shot.robot", variable="baseurl:%s" % self.base_file_url)
-        print run
         self.assert_run(run, expected_returncode=0, search_output="PASS")
         self.assert_screen_shots(1)
 
@@ -219,15 +219,97 @@ class SelectorsTestCase(BaseTestCase):
         run = self.run_scenario("test_se2lib_imported_before_po.robot")
         self.assert_run(run, expected_returncode=0, search_output="PASSED")
 
+class ComponentTestCase(BaseTestCase):
 
-if __name__ == "__main__":
-    unittest.main()
+    def setUp(self):
+        super(ComponentTestCase, self).setUp()
+        self.set_baseurl_env()
+        self.result_page_with_str_locator = ResultPage()
+        self.result_page_with_dom_strategy_locator = ResultPageWithDOMStrategyLocator()
+        self.homepage = HomePage()
+        self.homepage_with_dom_toggler = HomePageWithDOMAdvancedToggler()
 
 
+    def test_get_instance_and_instances(self):
 
+        # Test get_instance and get_instances in same test. get_instance()
+        # get_instances() are called by the component admin class to set
+        # component instances on the page object.
+        # In the same component admin, get_instance and get_instances
+        # are called so we can access the result, or results object(s).
+        # You'd use get_instance() if you expected only one
+        # instance, and get_instances() if you expected > 1.
+        # Normally, of course, in the admin class, you'd call only
+        # one of these, not both.
+        self.result_page_with_str_locator.open()
+        self.assertNotEquals(type(self.result_page_with_str_locator.result), list)
 
+        # Should get the first result since we are accessing "result", not "results".
+        self.assertEquals(self.result_page_with_str_locator.result.price, "$14.00")
 
+        # Now access "results" in the plural.
+        self.assertEquals(len(self.result_page_with_str_locator.results), 3)
+        self.assertEquals(self.result_page_with_str_locator.results[0].price, "$14.00")
 
+    def test_locator_as_dom(self):
+        self.result_page_with_dom_strategy_locator.open()
+        results = self.result_page_with_dom_strategy_locator.results
 
+        # The locator uses DOM strategy to get the nodes via a call
+        # to execute_javascript() and limits to 2 results, just
+        # to make sure we are testing the right thing.
+        self.assertEquals(len(results), 2)
+        # Check that the result object works.
+        self.assertEquals(results[0].price, "$14.00")
 
+    def test_component_inside_component(self):
 
+        # A component should be able to contain other components. You'd access
+        # sub component by accessing the sub component name as a property on the
+        # parent component.
+
+        # These tests import the page classes directly, instead of going
+        # through run_scenario(), which is inconsistent with the rest of the
+        # Python tests. We do this because it's just clearer and easier to
+        # debug. We should probably clean up the other tests to do the same.
+        # See QAR-47882.
+
+        # We don't see the need for writing these tests in both Robot and Python
+        # because we already feel confident that page objects perform the same
+        # in both contexts, as the other tests show.
+        self.homepage.open()
+        search_component = self.homepage.search_component
+
+        self.homepage.textfield_value_should_be("id=q", "", "The search component's input doesn't start blank")
+        search_component.set_search_term("foo")
+        self.homepage.textfield_value_should_be("id=q", "foo", "Search component can't set a search value")
+
+        # Access a sub component
+        advanced_option_toggler_component = search_component.advanced_option_toggler_component
+
+        self.homepage.element_should_not_be_visible("id=advanced-search-content")
+        advanced_option_toggler_component.open()
+        self.homepage.element_should_be_visible("id=advanced-search-content")
+
+    def test_component_inside_component_with_dom(self):
+
+        # When you have a component inside another component, the parent should be
+        # able to search for the child using the child's locator. The child's locator
+        # should be interpreted with reference to the parent's reference_webelement.
+
+        self.homepage_with_dom_toggler.open()
+        search_component = self.homepage_with_dom_toggler.search_component
+
+        advanced_option_toggler_component = search_component.advanced_option_toggler_component
+
+    def test_use_selectors_to_get_non_child_element(self):
+        self.homepage.open()
+        toggler = self.homepage.search_component.advanced_option_toggler_component
+        toggler.open()
+        self.assertEquals(toggler.advanced_text, "These are advanced options")
+
+    def tearDown(self):
+        super(ComponentTestCase, self).tearDown()
+        self.result_page_with_str_locator.close()
+        self.result_page_with_dom_strategy_locator.close()
+        self.homepage.close()
