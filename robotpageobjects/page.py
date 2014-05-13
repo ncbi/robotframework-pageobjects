@@ -414,13 +414,7 @@ class ComponentManager(_SelectorsManager):
         # tries to create a screenshot, which it can't do, and thus throws warnings. Instead we call
         # the private _element_find, which is not a keyword.
 
-        # Look for a "locator" callback (defined as a class method) to dynamically find the component instances.
-
-        if inspect.ismethod(self.locator):
-            component_elements = self.locator()
-        # Just use the Se2Lib-style locator string.
-        else:
-            component_elements = self._element_find(self.locator, False, True)
+        component_elements = self._element_find(self.locator, False, True)
         return component_elements
 
 

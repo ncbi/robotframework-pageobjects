@@ -249,7 +249,7 @@ class ComponentTestCase(BaseTestCase):
         self.assertEquals(len(self.result_page_with_str_locator.results), 3)
         self.assertEquals(self.result_page_with_str_locator.results[0].price, "$14.00")
 
-    def test_locator_as_callback(self):
+    def test_locator_as_dom(self):
         self.result_page_with_locator_as_callback.open()
         results = self.result_page_with_locator_as_callback.results
 

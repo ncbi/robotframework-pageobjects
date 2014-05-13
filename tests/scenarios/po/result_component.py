@@ -35,12 +35,7 @@ class ResultComponentManager(ComponentManager):
 
 
 class ResultComponentManagerWithLocatorAsCallback(ResultComponentManager):
-
-    def locator(self):
-        # Get the same results we'd get in the other cases, but use JQuery to do it
-        # and to make sure we are using this overriden method, limit the results to 2, so
-        # we can check the length in the test.
-        return self.execute_javascript("return window.jQuery('#results li.result:lt(2)');")
+    locator = "dom=window.jQuery('#results li.result:lt(2)')"
 
 
 class ResultPage(Page, ResultComponentManager):
