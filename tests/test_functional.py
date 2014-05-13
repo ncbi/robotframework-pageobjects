@@ -3,7 +3,7 @@ import json
 import os
 import re
 import unittest
-from scenarios.po.result_component import ResultPage, ResultPageWithDOMStrategyLocator, HomePage
+from scenarios.po.result_component import ResultPage, ResultPageWithDOMStrategyLocator, HomePage, HomePageWithDOMAdvancedToggler
 
 import requests
 
@@ -227,6 +227,8 @@ class ComponentTestCase(BaseTestCase):
         self.result_page_with_str_locator = ResultPage()
         self.result_page_with_dom_strategy_locator = ResultPageWithDOMStrategyLocator()
         self.homepage = HomePage()
+        self.homepage_with_dom_toggler = HomePageWithDOMAdvancedToggler()
+
 
     def test_get_instance_and_instances(self):
 
@@ -288,6 +290,17 @@ class ComponentTestCase(BaseTestCase):
         self.homepage.element_should_not_be_visible("id=advanced-search-content")
         advanced_option_toggler_component.open()
         self.homepage.element_should_be_visible("id=advanced-search-content")
+
+    def test_component_inside_component_with_dom(self):
+
+        # When you have a component inside another component, the parent should be
+        # able to search for the child using the child's locator. The child's locator
+        # should be interpreted with reference to the parent's reference_webelement.
+
+        self.homepage_with_dom_toggler.open()
+        search_component = self.homepage_with_dom_toggler.search_component
+
+        advanced_option_toggler_component = search_component.advanced_option_toggler_component
 
     def test_use_selectors_to_get_non_child_element(self):
         self.homepage.open()

@@ -34,7 +34,7 @@ class ResultComponentManager(ComponentManager):
         return self.get_instances(ResultComponent)
 
 
-class ResultComponentManagerWithLocatorAsCallback(ResultComponentManager):
+class ResultComponentManagerWithDOMStrategyLocator(ResultComponentManager):
     locator = "dom=window.jQuery('#results li.result:lt(2)')"
 
 
@@ -42,7 +42,7 @@ class ResultPage(Page, ResultComponentManager):
 
     uri = "/site/result.html"
 
-class ResultPageWithDOMStrategyLocator(Page, ResultComponentManagerWithLocatorAsCallback):
+class ResultPageWithDOMStrategyLocator(Page, ResultComponentManagerWithDOMStrategyLocator):
     uri = "/site/result.html"
 
 
@@ -69,8 +69,7 @@ class AdvancedOptionTogglerComponentManager(ComponentManager):
     def advanced_option_toggler_component(self):
         return self.get_instance(AdvancedOptionTogglerComponent)
 
-
-class SearchComponent(Component, AdvancedOptionTogglerComponentManager):
+class BaseSearchComponent(Component):
 
     selectors = {
         "search input": "id=q",
@@ -78,6 +77,11 @@ class SearchComponent(Component, AdvancedOptionTogglerComponentManager):
 
     def set_search_term(self, term):
         self.input_text("search input", term)
+
+
+
+class SearchComponent(BaseSearchComponent, AdvancedOptionTogglerComponentManager):
+    pass
 
 class SearchComponentManager(ComponentManager):
 
@@ -88,9 +92,28 @@ class SearchComponentManager(ComponentManager):
         return self.get_instance(SearchComponent)
 
 
+class AdvancedOptionTogglerComponentManagerWithDOMStrategy(AdvancedOptionTogglerComponentManager):
+
+    locator = "dom=jQuery('#advanced-options')"
+
+
+class SearchComponentWithDOMAdvancedToggler(BaseSearchComponent, AdvancedOptionTogglerComponentManagerWithDOMStrategy):
+    pass
+
+class SearchComponentWithDOMAdvancedTogglerManager(ComponentManager):
+
+    locator = "id=search-form"
+
+    @property
+    def search_component(self):
+        return self.get_instance(SearchComponentWithDOMAdvancedToggler)
+
+
+
 class HomePage(Page, SearchComponentManager):
     uri = "/site/index.html"
 
 
-
+class HomePageWithDOMAdvancedToggler(Page, SearchComponentWithDOMAdvancedTogglerManager):
+    uri = "/site/index.html"
 

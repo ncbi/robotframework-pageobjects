@@ -432,7 +432,11 @@ class _ComponentElementFinder(ElementFinder):
         self._reference_webelement = webelement
 
     def find(self, browser, locator, tag=None):
-        return super(_ComponentElementFinder, self).find(self._reference_webelement, locator, tag=tag)
+        prefix = self._parse_locator(locator)[0]
+        if prefix == "dom":
+            return super(_ComponentElementFinder, self).find(browser, locator, tag=tag)
+        else:
+            return super(_ComponentElementFinder, self).find(self._reference_webelement, locator, tag=tag)
 
 class Component(_SelectorsManager):
 
