@@ -3,7 +3,7 @@ import json
 import os
 import re
 import unittest
-from scenarios.po.result_component import ResultPage, ResultPageWithLocatorAsCallback, HomePage
+from scenarios.po.result_component import ResultPage, ResultPageWithDOMStrategyLocator, HomePage
 
 import requests
 
@@ -225,7 +225,7 @@ class ComponentTestCase(BaseTestCase):
         super(ComponentTestCase, self).setUp()
         self.set_baseurl_env()
         self.result_page_with_str_locator = ResultPage()
-        self.result_page_with_locator_as_callback = ResultPageWithLocatorAsCallback()
+        self.result_page_with_dom_strategy_locator = ResultPageWithDOMStrategyLocator()
         self.homepage = HomePage()
 
     def test_get_instance_and_instances(self):
@@ -250,10 +250,10 @@ class ComponentTestCase(BaseTestCase):
         self.assertEquals(self.result_page_with_str_locator.results[0].price, "$14.00")
 
     def test_locator_as_dom(self):
-        self.result_page_with_locator_as_callback.open()
-        results = self.result_page_with_locator_as_callback.results
+        self.result_page_with_dom_strategy_locator.open()
+        results = self.result_page_with_dom_strategy_locator.results
 
-        # Our locator callback gets the nodes via a call
+        # The locator uses DOM strategy to get the nodes via a call
         # to execute_javascript() and limits to 2 results, just
         # to make sure we are testing the right thing.
         self.assertEquals(len(results), 2)
@@ -298,5 +298,5 @@ class ComponentTestCase(BaseTestCase):
     def tearDown(self):
         super(ComponentTestCase, self).tearDown()
         self.result_page_with_str_locator.close()
-        self.result_page_with_locator_as_callback.close()
+        self.result_page_with_dom_strategy_locator.close()
         self.homepage.close()

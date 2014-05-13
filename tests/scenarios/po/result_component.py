@@ -42,7 +42,7 @@ class ResultPage(Page, ResultComponentManager):
 
     uri = "/site/result.html"
 
-class ResultPageWithLocatorAsCallback(Page, ResultComponentManagerWithLocatorAsCallback):
+class ResultPageWithDOMStrategyLocator(Page, ResultComponentManagerWithLocatorAsCallback):
     uri = "/site/result.html"
 
 
