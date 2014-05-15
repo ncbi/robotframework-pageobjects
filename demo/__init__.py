@@ -4,5 +4,5 @@ your page objects like this:
     from myapppageobjects import MyAppHomePage, etc.
 """
 
-from demo.google import *
-from demo.googlesearchresultcomponent import GoogleSearchResultComponentManager
+from google import *
+from googlesearchresultcomponent import GoogleSearchResultComponentManager
