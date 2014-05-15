@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20140515 04:02:26.965" generator="Robot 2.8.4 (Python 2.7.2 on linux2)">
+<suite source="/home/cohenaa/projects/ift/robotframework-pageobjects/demo/test_google.robot" id="s1" name="Test Google">
+<test id="s1-t1" name="Test Searching Google For A Term, All Results On Result Page Should Contain That Term">
+<kw type="kw" name="google.GoogleHomePage.Open Google">
+<doc></doc>
+<arguments>
+</arguments>
+<msg timestamp="20140515 04:02:27.354" level="INFO">Opening browser 'phantomjs' to base url 'http://www.google.com/'</msg>
+<msg timestamp="20140515 04:02:30.232" level="INFO">open	GoogleHomePage	&lt;selenium.webdriver.phantomjs.webdriver.WebDriver object at 0x2715a10&gt;	http://www.google.com/</msg>
+<status status="PASS" endtime="20140515 04:02:30.232" starttime="20140515 04:02:27.354"></status>
+</kw>
+<kw type="kw" name="google.GoogleHomePage.Search Google For">
+<doc></doc>
+<arguments>
+<arg>cat</arg>
+</arguments>
+<msg timestamp="20140515 04:02:30.233" level="INFO">Typing text 'cat' into text field 'search box'</msg>
+<msg timestamp="20140515 04:02:31.790" level="INFO">Clicking button 'search button'.</msg>
+<msg timestamp="20140515 04:02:33.940" level="INFO">No keyword will be run on failure.</msg>
+<status status="PASS" endtime="20140515 04:02:33.941" starttime="20140515 04:02:30.233"></status>
+</kw>
+<kw type="kw" name="google.GoogleResultPage.All Result Titles On Google Result Page Should Contain">
+<doc></doc>
+<arguments>
+<arg>cat</arg>
+</arguments>
+<msg timestamp="20140515 04:02:34.963" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:34.963" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:34.963" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:34.963" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:34.964" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:34.964" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:34.964" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:34.964" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:34.964" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:34.965" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:34.965" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:34.965" level="INFO">No keyword will be run on failure.</msg>
+<status status="PASS" endtime="20140515 04:02:41.201" starttime="20140515 04:02:33.942"></status>
+</kw>
+<kw type="teardown" name="google.GoogleResultPage.Close Google Result Page">
+<doc></doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20140515 04:02:41.708" starttime="20140515 04:02:41.201"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="PASS" endtime="20140515 04:02:41.709" critical="yes" starttime="20140515 04:02:27.353"></status>
+</test>
+<test id="s1-t2" name="Test Searching Google For A Term And Clicking First Result, Page Should Contain That Term">
+<kw type="kw" name="google.GoogleHomePage.Open Google">
+<doc></doc>
+<arguments>
+</arguments>
+<msg timestamp="20140515 04:02:41.710" level="INFO">Opening browser 'phantomjs' to base url 'http://www.google.com/'</msg>
+<msg timestamp="20140515 04:02:44.461" level="INFO">open	GoogleHomePage	&lt;selenium.webdriver.phantomjs.webdriver.WebDriver object at 0x2a93250&gt;	http://www.google.com/</msg>
+<status status="PASS" endtime="20140515 04:02:44.461" starttime="20140515 04:02:41.710"></status>
+</kw>
+<kw type="kw" name="google.GoogleHomePage.Search Google For">
+<doc></doc>
+<arguments>
+<arg>cat</arg>
+</arguments>
+<msg timestamp="20140515 04:02:44.462" level="INFO">Typing text 'cat' into text field 'search box'</msg>
+<msg timestamp="20140515 04:02:46.017" level="INFO">Clicking button 'search button'.</msg>
+<msg timestamp="20140515 04:02:48.032" level="INFO">No keyword will be run on failure.</msg>
+<status status="PASS" endtime="20140515 04:02:48.034" starttime="20140515 04:02:44.461"></status>
+</kw>
+<kw type="kw" name="google.GoogleResultPage.Click Result On Google Result Page">
+<doc></doc>
+<arguments>
+<arg>1</arg>
+</arguments>
+<msg timestamp="20140515 04:02:48.547" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:48.547" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:48.547" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:48.547" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:48.547" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:48.548" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:48.548" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:48.548" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:48.548" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:48.548" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:48.549" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:48.549" level="INFO">No keyword will be run on failure.</msg>
+<msg timestamp="20140515 04:02:48.549" level="INFO">Clicking link 'result title link'.</msg>
+<msg timestamp="20140515 04:02:50.495" level="INFO">No keyword will be run on failure.</msg>
+<status status="PASS" endtime="20140515 04:02:50.496" starttime="20140515 04:02:48.034"></status>
+</kw>
+<kw type="kw" name="Selenium2Library.Page Should Contain">
+<doc></doc>
+<arguments>
+<arg>cat</arg>
+</arguments>
+<msg timestamp="20140515 04:02:51.514" level="INFO">Current page contains text 'cat'.</msg>
+<status status="PASS" endtime="20140515 04:02:51.514" starttime="20140515 04:02:50.496"></status>
+</kw>
+<kw type="teardown" name="robotpageobjects.Page.Close Page">
+<doc></doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20140515 04:02:52.022" starttime="20140515 04:02:51.514"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="PASS" endtime="20140515 04:02:52.023" critical="yes" starttime="20140515 04:02:41.709"></status>
+</test>
+<doc>Google Tests
+</doc>
+<metadata>
+</metadata>
+<status status="PASS" endtime="20140515 04:02:52.023" starttime="20140515 04:02:26.966"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="0" pass="2">Critical Tests</stat>
+<stat fail="0" pass="2">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="0" pass="2" id="s1" name="Test Google">Test Google</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
