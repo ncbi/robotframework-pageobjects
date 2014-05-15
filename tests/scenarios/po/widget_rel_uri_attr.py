@@ -1,6 +1,5 @@
 
 import robot.utils.asserts as asserts
-
 from robotpageobjects.page import Page, robot_alias
 
 class Page(Page):

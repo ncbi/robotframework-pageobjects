@@ -61,7 +61,7 @@ class _Keywords(object):
         return cls._exclusions.get(name, False)
 
     @classmethod
-    def get_robot_alias(cls, name, pageobject_name):
+    def get_robot_aliases(cls, name, pageobject_name):
         """
         Gets an aliased name (with page object class substitued in either at the end
         or in place of the delimiter given the real method name.
@@ -72,10 +72,13 @@ class _Keywords(object):
         """
         # Look through the alias dict, return the aliased name for Robot
         if name in cls._aliases:
-            ret = cls._aliases[name].replace(cls._alias_delimiter, "_" + pageobject_name + "_")
+            ret = [cls._aliases[name].replace(cls._alias_delimiter, "_" + pageobject_name + "_")]
         else:
             # By default, page object name is appended to keyword
-            ret = "%s_%s" % (name, pageobject_name)
+            with_po_name = "%s_%s" % (name, pageobject_name)
+
+            # Just return the name of the keyword.
+            ret = [name, with_po_name]
 
         return ret
 
@@ -224,6 +227,7 @@ class _S2LWrapper(Selenium2Library):
             # of Selenium2Library. This could be done with a monkey-patch,
             # but we are punting until and unless this becomes an issue. See DCLT-708.
             Context.import_s2l()
+            Context.monkeypatch_namespace()
 
         # Use Selenium2Library's cache for our page objects. That way you can run a keyword from any page object,
         # or from Selenium2Library, and not have to open a separate browser.
@@ -789,7 +793,7 @@ class Page(_BaseActions):
             elif inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
                 # Add all methods that don't start with an underscore and were not marked with the
                 # @not_keyword decorator.
-                keywords.append(_Keywords.get_robot_alias(name, self._underscore(self.name)))
+                keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
         return keywords
 
     def run_keyword(self, alias, args):
@@ -804,10 +808,27 @@ class Page(_BaseActions):
         # Translate back from Robot Framework alias to actual method
         meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, self._underscore(self.name)))
         try:
-            return meth(*args)
+            ret = meth(*args)
         except Exception, err:
             # Hardcode capture_page_screenshot. This is because run_on_failure
             # is being set to "Nothing" (DCLT-659 and DCLT-726).
             # TODO: After DCLT-827 is addressed, we can use run_on_failure again.
             self.capture_page_screenshot()
             raise
+
+        if isinstance(ret, Page):
+            import sys
+            sys.__stdout__.write("\n%s\n" % alias)
+            libnames = Context.get_libraries().keys()
+
+            sys.__stdout__.write(str(libnames))
+
+            for name in libnames:
+                sys.__stdout__.write("\n*** NAME ***\n %s \n" % name.split(".")[-1:][0])
+                if name.split(".")[-1:][0] == ret.__class__.__name__:
+                    sys.__stdout__.write("\n*** SETTING ***\n")
+                    sys.__stdout__.write(name)
+                    sys.__stdout__.write("\n")
+                    Context.set_current_page(name)
+
+        return ret

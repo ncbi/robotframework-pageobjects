@@ -313,3 +313,8 @@ class ComponentTestCase(BaseTestCase):
         self.result_page_with_str_locator.close()
         self.result_page_with_dom_strategy_locator.close()
         self.homepage.close()
+
+class KeywordsTestCase(BaseTestCase):
+    def test_simon_says(self):
+        run = self.run_scenario("test_simon_says.robot")
+        self.assert_run(run, expected_returncode=0, search_output="PASSED")
