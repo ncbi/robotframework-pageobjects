@@ -1,25 +1,32 @@
+""" This module contains the 2 page objects that test_google.robot uses:
+- GoogleHomePage
+- GoogleResultPage
+"""
+
 from robotpageobjects import Page, robot_alias
 from robot.utils import asserts
 
 from googleresultcomponent import GoogleResultComponentManager
-class GoogleHomePage(Page):
 
+
+class GoogleHomePage(Page):
+    """ A class abstracting the Google home page
+    """
+
+    # A Base URL must always be set using either
+    # the --variable option or a variable file in
+    # Robot Framework. So the home page is at root.
     uri = "/"
+
+    # Let's call this page "Google" instead of the default,
+    # "Google Home Page" in Robot keywords.
     name = "Google"
 
-    # Google makes it hard to 
-    # get elements by ID or class etc.
-    # They do this in order to make it
-    # hard to do screen scaping.
-    # So here we use fairly brittle
-    # xpaths. Instead, try to get your
-    # devs to put IDs and/or classes
-    # so you can use id or css strategies,
-    # eg: "id=myid", "css=.myclass" 
     selectors = {
         "search box": "xpath=//input[@name='q']",
 
         # The search button is marked up differently depending on the user-agent.
+        # For example, PhantomJS gets an input, not a button.
         "search button": "xpath=//button[@name='btnG']|//input[@name='btnG']",
     }
 
@@ -41,12 +48,32 @@ class GoogleHomePage(Page):
 
         self.type_in_search_box(q)
         self.click_search_button()
+
+        # If a page object method takes us to
+        # another page type, return that page type.
         return GoogleResultPage()
 
-class GoogleResultPage(Page, GoogleResultComponentManager):
 
+class GoogleResultPage(Page, GoogleResultComponentManager):
+    """ Represents a Google result page. We inherit from
+    GoogleResultComponentManager, which is responsible for
+    finding and attaching Google result components to this page
+    instance and is accessed by "self.results". Each result instance
+    represents the DOM structure and functionality of a single Google
+    result listing.
+    """
+
+    # Google uses hashes and gets content via AJAX.
+    # so http://www.google.com/#q=cat is the search result
+    # page when we search for "cat".
     uri_template = "#q={q}"
 
+    # Use the robot_alias decorator to tell Robot how this method
+    # should be traslated into a keyword. By default, methods get
+    # the name of the page object (with spaces replacing capitals)
+    # appended to the method name, but we can change that with this
+    # decorator. The "__name__" token tells Robot where to put the
+    # page object name.
     @robot_alias("all_result_titles_on__name__should_contain")
     def all_results_should_contain(self, expected_text):
         """Asserts that all google result titles have specified text
@@ -59,6 +86,15 @@ class GoogleResultPage(Page, GoogleResultComponentManager):
     @robot_alias("click_result_on__name__")
     def click_result(self, i):
         """Click the result, index starting at 1"""
-        # i is passed in as string from Robot...
+
+        # Here, "self.results" is a list of result objects, which
+        # abstract the DOM structure and functionality of a single
+        # Google result listing.
+
+        # i is passed in as string from Robot... so, we
+        # cooerse it to an int.
         self.results[int(i)-1].go()
+
+        # If we click on a Google result link, we don't know
+        # what kind of page it will be, so we return a generic Page.
         return Page()
