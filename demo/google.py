@@ -6,7 +6,7 @@
 from robotpageobjects import Page, robot_alias
 from robot.utils import asserts
 
-from googleresultcomponent import GoogleResultComponentManager
+from googlesearchresultcomponent import GoogleSearchResultComponentManager
 
 
 class GoogleHomePage(Page):
@@ -51,10 +51,10 @@ class GoogleHomePage(Page):
 
         # If a page object method takes us to
         # another page type, return that page type.
-        return GoogleResultPage()
+        return GoogleSearchResultPage()
 
 
-class GoogleResultPage(Page, GoogleResultComponentManager):
+class GoogleSearchResultPage(Page, GoogleSearchResultComponentManager):
     """ Represents a Google result page. We inherit from
     GoogleResultComponentManager, which is responsible for
     finding and attaching Google result components to this page
@@ -80,8 +80,8 @@ class GoogleResultPage(Page, GoogleResultComponentManager):
         :param text: The expected text"""
 
         # This wait won't be necessary after resolving https://jira.ncbi.nlm.nih.gov/browse/QAR-47914
-        self.wait_until_page_contains_element(GoogleResultComponentManager.locator)
-        asserts.assert_true(all([expected_text in result.text.lower() for result in self.results]))
+        self.wait_until_page_contains_element(GoogleSearchResultComponentManager.locator)
+        asserts.assert_true(all([expected_text in result.text.lower() for result in self.search_results]))
 
     @robot_alias("click_result_on__name__")
     def click_result(self, i):
@@ -93,7 +93,7 @@ class GoogleResultPage(Page, GoogleResultComponentManager):
 
         # i is passed in as string from Robot... so, we
         # cooerse it to an int.
-        self.results[int(i)-1].go()
+        self.search_results[int(i)-1].go()
 
         # If we click on a Google result link, we don't know
         # what kind of page it will be, so we return a generic Page.

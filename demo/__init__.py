@@ -5,4 +5,4 @@ your page objects like this:
 """
 
 from demo.google import *
-from demo.googleresultcomponent import GoogleResultComponentManager
+from demo.googlesearchresultcomponent import GoogleSearchResultComponentManager
