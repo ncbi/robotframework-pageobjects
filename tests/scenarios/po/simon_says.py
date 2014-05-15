@@ -9,7 +9,7 @@ class SubA(MyBasePage):
     def search_for(self, term):
         self.input_text("q", "search term")
         self.click_element("go")
-        return SubB
+        return SubB()
 
 
 class SubB(MyBasePage):
