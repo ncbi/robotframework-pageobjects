@@ -52,6 +52,7 @@ function main {
 
     # Run tests 
     nosetests -vs --with-xunit tests/test_unit.py tests/test_functional.py
+    pybot --xunit demo.xml -v baseurl:http://www.google.com demo/test_google.robot
 }
 
 main $1
