@@ -26,10 +26,12 @@ import warnings
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from Selenium2Library import Selenium2Library
+from Selenium2Library.locators.elementfinder import ElementFinder
 
 from context import Context
 import exceptions
 from optionhandler import OptionHandler
+from robot.utils import asserts
 
 
 this_module_name = __name__
@@ -231,15 +233,26 @@ class _S2LWrapper(Selenium2Library):
             self._cache = self._shared_cache
         Context.set_cache(self._cache)
 
+    @property
     @not_keyword
-    def get_current_browser(self):
+    def driver(self):
         """
         Wrap the _current_browser() S2L method
         """
-        return self._current_browser()
+        try:
+            return self._current_browser()
+        except RuntimeError:
+            return None
+
+    @not_keyword
+    def get_current_browser(self):
+        """
+        Legacy wrapper for self.driver
+        """
+        return self.driver
 
 
-class _SelectorsManagement(_S2LWrapper):
+class _SelectorsManager(_S2LWrapper):
     """
     Class to manage selectors, which map to S2L locators.
     This allows page object authors to define a class-level dict.
@@ -265,7 +278,7 @@ class _SelectorsManagement(_S2LWrapper):
         Set instance selectors according to the class hierarchy.
         See _get_class_selectors.
         """
-        super(_SelectorsManagement, self).__init__(*args, **kwargs)
+        super(_SelectorsManager, self).__init__(*args, **kwargs)
         self.selectors = self._get_class_selectors()
 
     def _get_class_selectors(self):
@@ -313,10 +326,10 @@ class _SelectorsManagement(_S2LWrapper):
         :returns: WebElement or list
         """
         if locator in self.selectors:
-            return super(_SelectorsManagement, self)._element_find(self.selectors[locator], *args, **kwargs)
+            return super(_SelectorsManager, self)._element_find(self.selectors[locator], *args, **kwargs)
         else:
             try:
-                return super(_SelectorsManagement, self)._element_find(locator, *args, **kwargs)
+                return super(_SelectorsManager, self)._element_find(locator, *args, **kwargs)
             except ValueError:
                 if not self._is_locator_format(locator):
                     # Not found, doesn't look like a locator, not in selectors dict
@@ -324,8 +337,118 @@ class _SelectorsManagement(_S2LWrapper):
                 else:
                     raise
 
+    @not_keyword
+    def find_element(self, locator, required=True, **kwargs):
+        """
+        Wraps Selenium2Library's protected _element_find() method to find single elements.
+        TODO: Incorporate selectors API into this.
+        :param locator: The Selenium2Library-style locator to use
+        :type locator: str
+        :param required: Optional parameter indicating whether an exception should be raised if no matches are found. Defaults to True.
+        :type required: boolean
+        :returns: WebElement instance
+        """
+        return self._element_find(locator, True, required, **kwargs)
 
-class _BaseActions(_SelectorsManagement):
+    @not_keyword
+    def find_elements(self, locator, required=True, **kwargs):
+        """
+        Wraps Selenium2Library's protected _element_find() method to find multiple elements.
+        TODO: Incorporate selectors API into this.
+        :param locator: The Selenium2Library-style locator to use
+        :type locator: str
+        :param required: Optional parameter indicating whether an exception should be raised if no matches are found. Defaults to True.
+        :type required: boolean
+        :returns: WebElement instance
+        """
+        return self._element_find(locator, False, required, **kwargs)
+
+
+class ComponentManager(_SelectorsManager):
+
+    @not_keyword
+    def get_instance(self, component_class):
+
+        """ Gets a page component's instance.
+        Use when you know you will be returning one
+        instance of a component. If there are none on the page,
+        returns None.
+
+        :param component_class: The page component class
+        """
+
+        els = self.get_instances(component_class)
+        try:
+            ret = els[0]
+        except KeyError:
+            ret = None
+
+        return ret
+
+    @not_keyword
+    def get_instances(self, component_class):
+
+        """ Gets a page component's instances as a list
+        Use when you know you will be returning at least two
+        instances of a component. If there are none on the page
+        returns an empty list.
+
+        :param component_class: The page component class
+        """
+        return [component_class(reference_webelement) for reference_webelement in self.get_reference_elements(component_class)]
+
+    @not_keyword
+    def get_reference_elements(self, component_class):
+        """
+        Get a list of reference elements associated with the component class.
+        :param component_class: The page component class
+        """
+        try:
+            locator = self.locator
+        except AttributeError:
+            raise Exception("Must set a locator attribute or method on page component manager")
+
+        # TODO: Yuch. If we call find_element, we get screenshot warnings relating to DCLT-659, DCLT-726,
+        # browser isn't open yet, and when get_keyword_names uses inspect.getmembers, that calls
+        # any methods defined as properties with @property, but the browser isn't open yet, so it
+        # tries to create a screenshot, which it can't do, and thus throws warnings. Instead we call
+        # the private _element_find, which is not a keyword.
+
+        component_elements = self._element_find(self.locator, False, True)
+        return component_elements
+
+
+class _ComponentElementFinder(ElementFinder):
+    """Overrides the element finder class that SE2Lib's
+    _element_find uses so that we can pass the reference webelement
+    instead of the driver. This allows us to limit our DOM search
+    in components to the "reference webelement" instead of searching
+    globally on the driver instance.
+    """
+
+    def __init__(self, webelement):
+
+        super(_ComponentElementFinder, self).__init__()
+        self._reference_webelement = webelement
+
+    def find(self, browser, locator, tag=None):
+        prefix = self._parse_locator(locator)[0]
+        if prefix == "dom":
+            return super(_ComponentElementFinder, self).find(browser, locator, tag=tag)
+        else:
+            return super(_ComponentElementFinder, self).find(self._reference_webelement, locator, tag=tag)
+
+class Component(_SelectorsManager):
+
+    def __init__(self, reference_webelement, *args, **kwargs):
+        super(Component, self).__init__(*args, **kwargs)
+        self.reference_webelement = reference_webelement
+
+        # Pass the root webelement to our overridden component finder class.
+        self._element_finder = _ComponentElementFinder(self.reference_webelement)
+
+
+class _BaseActions(_SelectorsManager):
     """
     Helper class that defines actions for PageObjectLibrary.
     """
@@ -563,31 +686,23 @@ class _BaseActions(_SelectorsManagement):
 
         wait.until(wait_fnc)
 
-    @not_keyword
-    def find_element(self, locator, required=True, **kwargs):
+    @robot_alias("get_hash_on__name__")
+    def get_hash(self):
         """
-        Wraps Selenium2Library's protected _element_find() method to find single elements.
-        TODO: Incorporate selectors API into this.
-        :param locator: The Selenium2Library-style locator to use
-        :type locator: str
-        :param required: Optional parameter indicating whether an exception should be raised if no matches are found. Defaults to True.
-        :type required: boolean
-        :returns: WebElement instance
+        Get the current location hash.
+        :return: the current hash
         """
-        return self._element_find(locator, True, required, **kwargs)
+        url = self.get_location()
+        parts = url.split("#")
+        if len(parts) > 0:
+            return "#".join(parts[1:])
+        else:
+            return ""
 
-    @not_keyword
-    def find_elements(self, locator, required=True, **kwargs):
-        """
-        Wraps Selenium2Library's protected _element_find() method to find multiple elements.
-        TODO: Incorporate selectors API into this.
-        :param locator: The Selenium2Library-style locator to use
-        :type locator: str
-        :param required: Optional parameter indicating whether an exception should be raised if no matches are found. Defaults to True.
-        :type required: boolean
-        :returns: WebElement instance
-        """
-        return self._element_find(locator, False, required, **kwargs)
+    @robot_alias("hash_on__name__should_be")
+    def hash_should_be(self, expected_value):
+        hash = self.get_hash()
+        asserts.assert_equal(hash, expected_value)
 
 
 class Page(_BaseActions):
@@ -635,14 +750,23 @@ class Page(_BaseActions):
         This method uses the _Keywords class to handle exclusions and aliases.
         :returns: list
         """
+
         # Return all method names on the class to expose keywords to Robot Framework
         keywords = []
-        members = inspect.getmembers(self)
+        #members = inspect.getmembers(self, inspect.ismethod)
 
 
         # Look through our methods and identify which ones are Selenium2Library's
         # (by checking it and its base classes).
-        for name, obj in members:
+        for name in dir(self):
+            try:
+                obj = getattr(self, name)
+            except:
+                # Retrieving the attribute raised an exception - for example,
+                # a property created with the @property decorator that
+                # interacts with the driver
+                continue
+
             # Don't look for non-methods.
             if not inspect.ismethod(obj):
                 continue
