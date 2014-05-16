@@ -315,6 +315,10 @@ class ComponentTestCase(BaseTestCase):
         self.homepage.close()
 
 class KeywordsTestCase(BaseTestCase):
+
     def test_simon_says(self):
         run = self.run_scenario("test_simon_says.robot")
+        print "\n**\n"
+        print run.output
+        print "\n**"
         self.assert_run(run, expected_returncode=0, search_output="PASSED")
