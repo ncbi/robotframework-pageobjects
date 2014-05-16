@@ -35,11 +35,13 @@ class GoogleHomePage(Page):
         :param q: The search query """
 
         self.input_text("search box", q)
+        return self
 
     def click_search_button(self):
         """Clicks the main search button"""
 
         self.click_button("search button")
+        return self
 
     @robot_alias("search__name__for")
     def search_for(self, q):
@@ -82,6 +84,7 @@ class GoogleSearchResultPage(Page, GoogleSearchResultComponentManager):
         # This wait won't be necessary after resolving https://jira.ncbi.nlm.nih.gov/browse/QAR-47914
         self.wait_until_page_contains_element(GoogleSearchResultComponentManager.locator)
         asserts.assert_true(all([expected_text in result.text.lower() for result in self.search_results]))
+        return self
 
     @robot_alias("click_result_on__name__")
     def click_result(self, i):
