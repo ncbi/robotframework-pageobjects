@@ -323,3 +323,7 @@ class KeywordsTestCase(BaseTestCase):
     def test_simon_says_with_separate_classes(self):
         run = self.run_scenario("test_simon_says_separate.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
+
+    def test_simon_says_with_se2lib_keyword(self):
+        run = self.run_scenario("test_simon_says_se2lib.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")

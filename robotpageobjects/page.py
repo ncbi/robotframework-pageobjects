@@ -817,10 +817,23 @@ class Page(_BaseActions):
             raise
 
         if isinstance(ret, Page):
+            # DCLT-829
+            # In Context, we keep track of the currently executing page.
+            # That way, when a keyword is run, Robot (specifically, our monkeypatch
+            # of Robot's Namespace class - see context.py) will know which library
+            # to run a keyword on when there is a conflict.
+
+            # All page object methods should return an instance of Page.
+            # Look at the class name of that instance and use it to identify
+            # which page object to set Context's pointer to.
+
+            # Get the names of all currently imported libraries
             libnames = Context.get_libraries().keys()
+            classname = ret.__class__.__name__
 
             for name in libnames:
-                if name.split(".")[-1:][0] == ret.__class__.__name__:
+                # If we find a match for the class name, set the pointer in Context.
+                if name.split(".")[-1:][0] == classname:
                     Context.set_current_page(name)
 
         return ret
