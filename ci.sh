@@ -56,4 +56,3 @@ function main {
 }
 
 main $1
-pybot -L TRACE -P tests/scenarios/po -vbaseurl:file:///home/frishber/projects/rf-po/tests/scenarios/site -vbrowser:phantomjs tests/scenarios/test_simon_says.robot
