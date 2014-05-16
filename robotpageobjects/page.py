@@ -817,18 +817,10 @@ class Page(_BaseActions):
             raise
 
         if isinstance(ret, Page):
-            import sys
-            sys.__stdout__.write("\n%s\n" % alias)
             libnames = Context.get_libraries().keys()
 
-            sys.__stdout__.write(str(libnames))
-
             for name in libnames:
-                sys.__stdout__.write("\n*** NAME ***\n %s \n" % name.split(".")[-1:][0])
                 if name.split(".")[-1:][0] == ret.__class__.__name__:
-                    sys.__stdout__.write("\n*** SETTING ***\n")
-                    sys.__stdout__.write(name)
-                    sys.__stdout__.write("\n")
                     Context.set_current_page(name)
 
         return ret
