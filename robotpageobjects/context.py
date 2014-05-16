@@ -104,6 +104,10 @@ class Context(object):
 
     @classmethod
     def get_current_page(cls):
+        """
+        Return the current page, as indicated by the most recently
+        returned page object from a keyword.
+        """
         return cls._current_page
 
     @classmethod
@@ -112,6 +116,13 @@ class Context(object):
 
     @classmethod
     def monkeypatch_namespace(cls):
+        """
+        This is called by the base Page class when a page object is instantiated.
+        _get_handler_from_library_keywords looks for a keyword in the currently-
+        imported libraries. If it finds more than one, it raises a DataError.
+        Catch that error, use the get_current_page() method to disambiguate,
+        and call _get_explicit_handler, which takes a library and a keyword name.
+        """
         ns = EXECUTION_CONTEXTS.current.namespace
         old_get_handler_fnc = ns._get_handler_from_library_keywords
         def new_get_handler_fnc(name):

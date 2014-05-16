@@ -76,3 +76,11 @@ class SauceConnectionError(ValueError):
     sauce service. Could be invalid username or apikey.
     """
     pass
+
+
+class KeywordReturnsNoneError(ValueError):
+    """
+    Raised when a page object keyword does not
+    return anything, or returns None.
+    """
+    pass

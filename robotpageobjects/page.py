@@ -599,7 +599,8 @@ class _BaseActions(_SelectorsManager):
         Wrapper to make go_to method support uri templates.
         """
         resolved_url = self._resolve_url(*args)
-        return super(_BaseActions, self).go_to(resolved_url)
+        super(_BaseActions, self).go_to(resolved_url)
+        return self
 
     def open(self, *args):
         """
@@ -668,6 +669,7 @@ class _BaseActions(_SelectorsManager):
         :returns: None
         """
         self.close_browser()
+        return self
 
     def wait_for(self, condition):
         """
@@ -689,6 +691,7 @@ class _BaseActions(_SelectorsManager):
                 return ret
 
         wait.until(wait_fnc)
+        return self
 
     @robot_alias("get_hash_on__name__")
     def get_hash(self):
@@ -707,6 +710,7 @@ class _BaseActions(_SelectorsManager):
     def hash_should_be(self, expected_value):
         hash = self.get_hash()
         asserts.assert_equal(hash, expected_value)
+        return self
 
 
 class Page(_BaseActions):
@@ -835,5 +839,8 @@ class Page(_BaseActions):
                 # If we find a match for the class name, set the pointer in Context.
                 if name.split(".")[-1:][0] == classname:
                     Context.set_current_page(name)
+
+        elif ret is None:
+            raise exceptions.KeywordReturnsNoneError("Every page object method must have a return value.")
 
         return ret
