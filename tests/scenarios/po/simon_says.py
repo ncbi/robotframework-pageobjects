@@ -1,9 +1,10 @@
 from robotpageobjects import Page, robot_alias
 
 class MyBasePage(Page):
-    uri = "/index.html"
+    uri = "/site/index.html"
     def footer_text_should_be(self, text):
         pass
+
 
 class SubA(MyBasePage):
     def search_for(self, term):
@@ -14,3 +15,20 @@ class SubA(MyBasePage):
 
 class SubB(MyBasePage):
     pass
+
+
+class A(Page):
+    uri = "/site/index.html"
+    def footer_text_should_be(self, text):
+        pass
+
+    def search_for(self, term):
+        self.input_text("q", "search term")
+        self.click_element("go")
+        return B()
+
+
+class B(Page):
+    uri = "/site/index.html"
+    def footer_text_should_be(self, text):
+        pass

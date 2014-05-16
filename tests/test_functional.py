@@ -316,6 +316,10 @@ class ComponentTestCase(BaseTestCase):
 
 class KeywordsTestCase(BaseTestCase):
 
-    def test_simon_says(self):
-        run = self.run_scenario("test_simon_says.robot", variable="baseurl:%s" % self.base_file_url)
-        self.assert_run(run, expected_returncode=0, search_output="PASSED")
+    def test_simon_says_with_inheritance(self):
+        run = self.run_scenario("test_simon_says_inheritance.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
+
+    def test_simon_says_with_separate_classes(self):
+        run = self.run_scenario("test_simon_says_separate.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")

@@ -1,5 +1,4 @@
 *** Settings ***
-Library  simon_says.MyBasePage
 Library  simon_says.SubA
 Library  simon_says.SubB
 
