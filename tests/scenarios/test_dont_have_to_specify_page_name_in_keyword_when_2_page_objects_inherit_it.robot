@@ -1,6 +1,6 @@
 *** Settings ***
-Library  simon_says.SubA
-Library  simon_says.SubB
+Library  keyword_naming.SubA
+Library  keyword_naming.SubB
 
 *** Test Cases ***
 Should Not Have To Specify Page Name For A Keyword When Two Subclasses Inherit It

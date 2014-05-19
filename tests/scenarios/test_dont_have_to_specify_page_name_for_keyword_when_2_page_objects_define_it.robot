@@ -1,6 +1,6 @@
 *** Settings ***
-Library  simon_says.A
-Library  simon_says.B
+Library  keyword_naming.A
+Library  keyword_naming.B
 
 *** Test Cases ***
 Should Not Have To Specify Page Name For A Keyword When Two Classes Define It

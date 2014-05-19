@@ -316,16 +316,16 @@ class ComponentTestCase(BaseTestCase):
 
 class KeywordsTestCase(BaseTestCase):
 
-    def test_simon_says_with_inheritance(self):
-        run = self.run_scenario("test_simon_says_inheritance.robot", variable="baseurl:%s" % self.base_file_url)
+    def test_dont_have_to_specify_page_name_in_keyword_when_2_page_objects_inherit_it(self):
+        run = self.run_scenario("test_dont_have_to_specify_page_name_in_keyword_when_2_page_objects_inherit_it.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
-    def test_simon_says_with_separate_classes(self):
-        run = self.run_scenario("test_simon_says_separate.robot", variable="baseurl:%s" % self.base_file_url)
+    def test_dont_have_to_specify_page_name_for_keyword_when_2_page_objects_define_it(self):
+        run = self.run_scenario("test_dont_have_to_specify_page_name_for_keyword_when_2_page_objects_define_it.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
-    def test_simon_says_with_se2lib_keyword(self):
-        run = self.run_scenario("test_simon_says_se2lib.robot", variable="baseurl:%s" % self.base_file_url)
+    def test_dont_have_to_specify_page_name_when_extending_se2lib_keyword(self):
+        run = self.run_scenario("test_dont_have_to_specify_page_name_when_extending_se2lib_keyword.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
     def test_keyword_does_not_return_page_object(self):

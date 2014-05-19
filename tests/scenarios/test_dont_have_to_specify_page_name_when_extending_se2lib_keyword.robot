@@ -1,5 +1,5 @@
 *** Settings ***
-Library  simon_says.C
+Library  keyword_naming.C
 
 *** Test Cases ***
 Should Not Have To Specify Page Name When Class Extends Se2Lib Keyword
