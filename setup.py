@@ -15,7 +15,7 @@ REQUIRES = filter(None, open(reqs).read().splitlines())
 
 setup(
     name="Robot Framework Page Objects",
-    version="0.3",
+    version="0.3.1",
     description="Lets you use the page object pattern with Robot Framework and plain python", 
     author="National Center for Biotechnology Information",
     install_requires=REQUIRES,
