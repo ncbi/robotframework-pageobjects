@@ -335,3 +335,11 @@ class KeywordsTestCase(BaseTestCase):
     def test_can_alias_without_page_name(self):
         run = self.run_scenario("test_can_call_aliased_method_without_page_name.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
+
+    def test_can_alias_with_page_name(self):
+        run = self.run_scenario("test_can_call_aliased_method_with_page_name.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
+
+    def test_can_call_unaliased_with_page_name(self):
+        run = self.run_scenario("test_can_call_unaliased_method_with_page_name.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")

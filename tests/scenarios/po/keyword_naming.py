@@ -60,3 +60,6 @@ class AliasedMethodPage(Page):
     @robot_alias("do__name__something")
     def do_something(self):
         return self
+
+    def do_something_no_alias(self):
+        return self

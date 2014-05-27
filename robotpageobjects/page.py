@@ -70,15 +70,17 @@ class _Keywords(object):
         :type name: str
         :returns: str
         """
-        # Look through the alias dict, return the aliased name for Robot
-        if name in cls._aliases:
-            ret = [cls._aliases[name].replace(cls._alias_delimiter, "_" + pageobject_name + "_")]
-        else:
-            # By default, page object name is appended to keyword
-            with_po_name = "%s_%s" % (name, pageobject_name)
+        ret = []
 
-            # Just return the name of the keyword.
-            ret = [name, with_po_name]
+        # Look through the alias dict. If there is an alias, add the aliased version to what is returned.
+        if name in cls._aliases:
+            ret.append(cls._aliases[name].replace(cls._alias_delimiter, "_" + pageobject_name + "_"))
+        else:
+            # If not aliased, add the keyword name with the page object name at the end.
+            ret.append("%s_%s" % (name, pageobject_name))
+
+        # Add the plain name of the keyword.
+        ret.append(name)
 
         return ret
 
