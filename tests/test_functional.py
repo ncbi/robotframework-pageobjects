@@ -313,3 +313,33 @@ class ComponentTestCase(BaseTestCase):
         self.result_page_with_str_locator.close()
         self.result_page_with_dom_strategy_locator.close()
         self.homepage.close()
+
+class KeywordsTestCase(BaseTestCase):
+
+    def test_dont_have_to_specify_page_name_in_keyword_when_2_page_objects_inherit_it(self):
+        run = self.run_scenario("test_dont_have_to_specify_page_name_in_keyword_when_2_page_objects_inherit_it.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
+
+    def test_dont_have_to_specify_page_name_for_keyword_when_2_page_objects_define_it(self):
+        run = self.run_scenario("test_dont_have_to_specify_page_name_for_keyword_when_2_page_objects_define_it.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
+
+    def test_dont_have_to_specify_page_name_when_extending_se2lib_keyword(self):
+        run = self.run_scenario("test_dont_have_to_specify_page_name_when_extending_se2lib_keyword.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
+
+    def test_keyword_does_not_return_page_object(self):
+        run = self.run_scenario("test_does_not_return.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=1, search_output="Every page object method must have a return value.")
+
+    def test_can_alias_without_page_name(self):
+        run = self.run_scenario("test_can_call_aliased_method_without_page_name.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
+
+    def test_can_alias_with_page_name(self):
+        run = self.run_scenario("test_can_call_aliased_method_with_page_name.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
+
+    def test_can_call_unaliased_with_page_name(self):
+        run = self.run_scenario("test_can_call_unaliased_method_with_page_name.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")

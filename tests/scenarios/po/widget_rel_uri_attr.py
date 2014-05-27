@@ -1,6 +1,5 @@
 
 import robot.utils.asserts as asserts
-
 from robotpageobjects.page import Page, robot_alias
 
 class Page(Page):
@@ -24,5 +23,5 @@ class SearchResultPage(Page):
         len_results = len(self.find_elements("results"))
         asserts.assert_equals(len_results, int(expected), "Unexpected number of results found on %s, got %s, "
                                                           "expected %s" %(self.name, len_results, expected))
-
+        return self
 

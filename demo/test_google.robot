@@ -9,15 +9,15 @@ Library    robotpageobjects.Page
 
 *** Test Cases ***
 
-Test Searching Google For A Term, All Results On Result Page Should Contain That Term
+When a user searches for a term all results on the result page should contain the search term
     Open Google
-    Search Google For  cat 
+    Search Google For  cat
     All Result Titles On Google Search Result Page Should Contain  cat
     [Teardown]  Close Google Search Result Page
 
-Test Searching Google For A Term And Clicking First Result, Page Should Contain That Term
+When a user searches for a term and the user clicks the first result, the resulting page should contain the term    Open Google
     Open Google
-    Search Google For  cat
+    Search For  cat
     Click Result On Google Search Result Page  1
     Page Should Contain  cat
     [Teardown]  Close Page

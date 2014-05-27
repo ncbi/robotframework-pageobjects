@@ -61,7 +61,7 @@ class _Keywords(object):
         return cls._exclusions.get(name, False)
 
     @classmethod
-    def get_robot_alias(cls, name, pageobject_name):
+    def get_robot_aliases(cls, name, pageobject_name):
         """
         Gets an aliased name (with page object class substitued in either at the end
         or in place of the delimiter given the real method name.
@@ -70,12 +70,17 @@ class _Keywords(object):
         :type name: str
         :returns: str
         """
-        # Look through the alias dict, return the aliased name for Robot
+        ret = []
+
+        # Look through the alias dict. If there is an alias, add the aliased version to what is returned.
         if name in cls._aliases:
-            ret = cls._aliases[name].replace(cls._alias_delimiter, "_" + pageobject_name + "_")
+            ret.append(cls._aliases[name].replace(cls._alias_delimiter, "_" + pageobject_name + "_"))
         else:
-            # By default, page object name is appended to keyword
-            ret = "%s_%s" % (name, pageobject_name)
+            # If not aliased, add the keyword name with the page object name at the end.
+            ret.append("%s_%s" % (name, pageobject_name))
+
+        # Add the plain name of the keyword.
+        ret.append(name)
 
         return ret
 
@@ -224,6 +229,7 @@ class _S2LWrapper(Selenium2Library):
             # of Selenium2Library. This could be done with a monkey-patch,
             # but we are punting until and unless this becomes an issue. See DCLT-708.
             Context.import_s2l()
+            Context.monkeypatch_namespace()
 
         # Use Selenium2Library's cache for our page objects. That way you can run a keyword from any page object,
         # or from Selenium2Library, and not have to open a separate browser.
@@ -595,7 +601,8 @@ class _BaseActions(_SelectorsManager):
         Wrapper to make go_to method support uri templates.
         """
         resolved_url = self._resolve_url(*args)
-        return super(_BaseActions, self).go_to(resolved_url)
+        super(_BaseActions, self).go_to(resolved_url)
+        return self
 
     def open(self, *args):
         """
@@ -664,6 +671,7 @@ class _BaseActions(_SelectorsManager):
         :returns: None
         """
         self.close_browser()
+        return self
 
     def wait_for(self, condition):
         """
@@ -685,6 +693,7 @@ class _BaseActions(_SelectorsManager):
                 return ret
 
         wait.until(wait_fnc)
+        return self
 
     @robot_alias("get_hash_on__name__")
     def get_hash(self):
@@ -703,6 +712,7 @@ class _BaseActions(_SelectorsManager):
     def hash_should_be(self, expected_value):
         hash = self.get_hash()
         asserts.assert_equal(hash, expected_value)
+        return self
 
 
 class Page(_BaseActions):
@@ -789,7 +799,7 @@ class Page(_BaseActions):
             elif inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
                 # Add all methods that don't start with an underscore and were not marked with the
                 # @not_keyword decorator.
-                keywords.append(_Keywords.get_robot_alias(name, self._underscore(self.name)))
+                keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
         return keywords
 
     def run_keyword(self, alias, args):
@@ -804,10 +814,35 @@ class Page(_BaseActions):
         # Translate back from Robot Framework alias to actual method
         meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, self._underscore(self.name)))
         try:
-            return meth(*args)
+            ret = meth(*args)
         except Exception, err:
             # Hardcode capture_page_screenshot. This is because run_on_failure
             # is being set to "Nothing" (DCLT-659 and DCLT-726).
             # TODO: After DCLT-827 is addressed, we can use run_on_failure again.
             self.capture_page_screenshot()
             raise
+
+        if isinstance(ret, Page):
+            # DCLT-829
+            # In Context, we keep track of the currently executing page.
+            # That way, when a keyword is run, Robot (specifically, our monkeypatch
+            # of Robot's Namespace class - see context.py) will know which library
+            # to run a keyword on when there is a conflict.
+
+            # All page object methods should return an instance of Page.
+            # Look at the class name of that instance and use it to identify
+            # which page object to set Context's pointer to.
+
+            # Get the names of all currently imported libraries
+            libnames = Context.get_libraries().keys()
+            classname = ret.__class__.__name__
+
+            for name in libnames:
+                # If we find a match for the class name, set the pointer in Context.
+                if name.split(".")[-1:][0] == classname:
+                    Context.set_current_page(name)
+
+        elif ret is None:
+            raise exceptions.KeywordReturnsNoneError("Every page object method must have a return value.")
+
+        return ret
