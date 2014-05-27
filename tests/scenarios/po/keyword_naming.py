@@ -52,3 +52,11 @@ class DoesNotReturnPage(Page):
     uri = "/site/index.html"
     def footer_text_should_be(self, text):
         pass
+
+
+class AliasedMethodPage(Page):
+    uri = "/site/index.html"
+
+    @robot_alias("do__name__something")
+    def do_something(self):
+        return self

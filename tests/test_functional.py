@@ -331,3 +331,7 @@ class KeywordsTestCase(BaseTestCase):
     def test_keyword_does_not_return_page_object(self):
         run = self.run_scenario("test_does_not_return.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=1, search_output="Every page object method must have a return value.")
+
+    def test_can_alias_with_page_name(self):
+        run = self.run_scenario("test_can_alias_with_page_name.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
