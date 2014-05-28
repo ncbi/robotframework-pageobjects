@@ -7,6 +7,7 @@ in Robot and outside of Robot.
 
 How to run the demos
 --------------------
+
 Install this package:
 
 # Create a virtual environment
@@ -26,5 +27,3 @@ To run in Firefox, set the browser environment variable:
 $ export PO_BASURL=http://www.google.com
 $ export PO_BROWSERL=firefox
 $ python test_google.py
-
-
