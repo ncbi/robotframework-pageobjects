@@ -1,5 +1,6 @@
-from google import GoogleHomePage, GoogleSearchResultPage, DestinationPage
+from google import GoogleHomePage
 import unittest
+
 
 class GoogleTestCase(unittest.TestCase):
 
@@ -17,5 +18,3 @@ class GoogleTestCase(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
-
