@@ -14,7 +14,7 @@ class GoogleHomePage(Page):
     }
 
 
-    @robot_alias("tyoe_in__name__search_box")
+    @robot_alias("type_in__name__search_box")
     def type_in_search_box(self, txt):
         self.input_text("search input", txt)
         return self
