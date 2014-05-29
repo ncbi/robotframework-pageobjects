@@ -14,7 +14,7 @@ REQUIRES = filter(None, open(reqs).read().splitlines())
 # reason. So install it using pip install.
 
 setup(
-    name="Robot Framework Page Objects",
+    name="Robot-Framework-Page-Objects",
     version="0.3.1",
     description="Lets you use the page object pattern with Robot Framework and plain python", 
     author="National Center for Biotechnology Information",
