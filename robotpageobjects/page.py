@@ -468,7 +468,7 @@ class _BaseActions(_SelectorsManager):
 
         self._option_handler = OptionHandler()
         self._logger = Context.get_logger(this_module_name)
-        self.selenium_speed = self._option_handler.get("selenium_speed") or .5
+        self.selenium_speed = self._option_handler.get("selenium_speed") or 0
         self.set_selenium_speed(self.selenium_speed)
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
