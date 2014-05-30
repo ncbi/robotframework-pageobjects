@@ -45,9 +45,6 @@ function main {
     pip install nose
 
     # Install pageobjects  in the current directory.
-    # debug:
-    git describe --abbrev=4
-    
     pip install -e .
     if [ $? -ne 0 ]; then
         echo "Install failed, aborting..."
