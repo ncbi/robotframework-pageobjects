@@ -343,3 +343,10 @@ class KeywordsTestCase(BaseTestCase):
     def test_can_call_unaliased_with_page_name(self):
         run = self.run_scenario("test_can_call_unaliased_method_with_page_name.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
+
+
+class WaitingTestCase(BaseTestCase):
+    def test_implicit_wait_default_works(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_implicit_se_wait.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")

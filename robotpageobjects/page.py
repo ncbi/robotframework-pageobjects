@@ -470,6 +470,11 @@ class _BaseActions(_SelectorsManager):
         self._logger = Context.get_logger(this_module_name)
         self.selenium_speed = self._option_handler.get("selenium_speed") or 0
         self.set_selenium_speed(self.selenium_speed)
+        self.selenium_implicit_wait = self._option_handler.get("selenium_implicit_wait") or 10
+        print self.selenium_implicit_wait
+        self.set_selenium_implicit_wait(self.selenium_implicit_wait)
+        print self.get_selenium_implicit_wait()
+
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
 
