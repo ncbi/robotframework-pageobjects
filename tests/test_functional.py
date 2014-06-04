@@ -350,3 +350,14 @@ class WaitingTestCase(BaseTestCase):
         self.set_baseurl_env()
         run = self.run_scenario("test_implicit_se_wait.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
+
+    def test_implicit_wait_fails_with_option_set_to_1(self):
+        self.set_baseurl_env()
+        oldval = os.environ.get("PO_SELENIUM_IMPLICIT_WAIT")
+        os.environ["PO_SELENIUM_IMPLICIT_WAIT"] = "1"
+        run = self.run_scenario("test_implicit_se_wait.py")
+        if oldval is not None:
+            os.environ["PO_SELENIUM_IMPLICIT_WAIT"] = oldval
+        else:
+            del os.environ["PO_SELENIUM_IMPLICIT_WAIT"]
+        self.assert_run(run, expected_returncode=1, search_output="FAIL")
