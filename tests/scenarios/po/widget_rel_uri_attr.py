@@ -10,7 +10,9 @@ class Page(Page):
     selectors = {
         "search-button": "go",
         "delayed content button": "id=delayed-content",
-        "delayed content holder": "id=delayed-content-holder"
+        "delayed content holder": "id=delayed-content-holder",
+        "delayed content": "css=#delayed-content-holder > p"
+
     }
 
     @robot_alias("search__name__for")
@@ -23,7 +25,8 @@ class Page(Page):
         self.click_button("delayed content button")
 
     def delayed_content_should_exist(self):
-        asserts.assert_equals(self.get_text("delayed content holder"), "I took about 2 seconds to be inserted")
+        text = self.get_text("delayed content")
+        asserts.assert_equals(text, "I took about 2 seconds to be inserted")
 
 
 class SearchResultPage(Page):
