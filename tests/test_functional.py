@@ -189,7 +189,6 @@ class ActionsTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
 
-
 class SelectorsTestCase(BaseTestCase):
 
     """
