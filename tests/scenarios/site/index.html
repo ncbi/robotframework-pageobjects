@@ -15,6 +15,9 @@
 
         <p id="advanced-search-content" style="display:none;">These are advanced options</p>
         </div>
+        <button id="delayed-content">Click to get delayed content</button>
+        <div id="delayed-content-holder"></div>
+
     </form>
     <script type="text/javascript">
         // Fake out a get.
@@ -36,6 +39,15 @@
                 adv_search_content.hide();
             }
         })
+
+        // delay content test
+        jQuery("#delayed-content").click( function(e) {
+            e.preventDefault();
+            setTimeout( function() {
+                jQuery("#delayed-content-holder").html("<p>I took about 2 seconds to be inserted</p>");
+            }, 2000);
+
+        });
 
     </script>
 <div id="footer" style="border: 1px solid black;"><p>I am the footer.</p></div>
