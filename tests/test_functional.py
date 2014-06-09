@@ -183,6 +183,11 @@ class ActionsTestCase(BaseTestCase):
         run = self.run_scenario("test_go_to.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
+    def test_is_visible(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_is_visible.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")
+
 
 class SelectorsTestCase(BaseTestCase):
 
