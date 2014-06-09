@@ -211,7 +211,8 @@ class KeywordBehavior(BaseTestCase):
 
     @raises(exceptions.KeywordReturnsNoneError)
     def test_must_return_something_from_page_object_method(self):
-
+        # No need for testing in Robot too, since we will have a general test
+        # that exceptions get raised properly, and this is just another exception.
         class P(Page):
             uri = ""
 
