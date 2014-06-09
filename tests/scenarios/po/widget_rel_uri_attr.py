@@ -1,18 +1,32 @@
 
 import robot.utils.asserts as asserts
-
 from robotpageobjects.page import Page, robot_alias
 
 class Page(Page):
     name = "Widget Page"
+
     uri = "/site/index.html"
-    selectors = {"search-button": "go"}
+
+    selectors = {
+        "search-button": "go",
+        "delayed content button": "id=delayed-content",
+        "delayed content holder": "id=delayed-content-holder",
+        "delayed content": "css=#delayed-content-holder > p"
+
+    }
 
     @robot_alias("search__name__for")
     def search(self, term):
         self.input_text("q", "search term")
         self.click_element("search-button")
         return SearchResultPage()
+
+    def click_delayed_content_button(self):
+        self.click_button("delayed content button")
+
+    def delayed_content_should_exist(self):
+        text = self.get_text("delayed content")
+        asserts.assert_equals(text, "I took about 2 seconds to be inserted")
 
 
 class SearchResultPage(Page):
@@ -24,5 +38,5 @@ class SearchResultPage(Page):
         len_results = len(self.find_elements("results"))
         asserts.assert_equals(len_results, int(expected), "Unexpected number of results found on %s, got %s, "
                                                           "expected %s" %(self.name, len_results, expected))
-
+        return self
 

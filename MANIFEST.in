@@ -1,0 +1,3 @@
+include requirements.txt
+include RELEASE-VERSION
+include version.py

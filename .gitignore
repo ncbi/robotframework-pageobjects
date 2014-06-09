@@ -1,0 +1,12 @@
+RELEASE-VERSION
+.idea
+*.pyc
+*.egg-info
+*.log
+report.html
+log.html
+output.xml
+\#*\#
+*~
+nosetests.xml
+po_log.txt

@@ -22,5 +22,5 @@ class WidgetSearchResultPage(Page):
         asserts.assert_equals(len_results, int(expected), "Unexpected number of results found on %s, got %s, "
                                                          "expected %s" %(
             self.name, len_results, expected))
-
+        return self
 

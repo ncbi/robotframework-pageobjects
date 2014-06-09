@@ -1,5 +1,7 @@
 import re
 from Selenium2Library import Selenium2Library
+from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
 
 def do_monkeypatches():
     """
@@ -36,3 +38,21 @@ def do_monkeypatches():
             raise
 
     Selenium2Library.run_keyword = __run_keyword
+
+    def __make_phantomjs(self , remote , desired_capabilities , profile_dir):
+        browser = None
+        tries = 0
+        while not browser and tries < 6:
+            try:
+                browser = self._generic_make_browser(webdriver.PhantomJS,
+                        webdriver.DesiredCapabilities.PHANTOMJS, remote, desired_capabilities)
+            except WebDriverException, e:
+                print "Couldn't connect to webdriver. WebDriverException was: " + str(e)
+                browser = None
+                tries += 1
+        if browser:
+            return browser
+        else:
+            raise WebDriverException("Couldn't connect to webdriver after several attempts")
+
+    Selenium2Library._make_phantomjs = __make_phantomjs

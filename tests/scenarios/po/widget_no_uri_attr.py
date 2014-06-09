@@ -24,4 +24,4 @@ class SearchResultPage(Page):
                                                          "expected %s" %(
             self.name, len_results, expected))
 
-
+        return self

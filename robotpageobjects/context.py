@@ -5,6 +5,7 @@ from robot.running.context import EXECUTION_CONTEXTS
 from robot import api as robot_api
 from robot.conf import RobotSettings
 from robot.variables import init_global_variables
+from robot.errors import DataError
 from monkeypatches import do_monkeypatches
 
 do_monkeypatches()
@@ -19,6 +20,7 @@ class Context(object):
     _new_called = 0
     _keywords_exposed = False
     _cache = None
+    _current_page = None
     def __new__(cls, *args, **kwargs):
         """
         Make this object a singleton. We're using this in optionhandler as well,
@@ -95,6 +97,41 @@ class Context(object):
             except:
                 pass
         return cls._cache
+
+    @classmethod
+    def set_current_page(cls, name):
+        cls._current_page = name
+
+    @classmethod
+    def get_current_page(cls):
+        """
+        Return the current page, as indicated by the most recently
+        returned page object from a keyword.
+        """
+        return cls._current_page
+
+    @classmethod
+    def get_libraries(cls):
+        return EXECUTION_CONTEXTS.current.namespace._testlibs
+
+    @classmethod
+    def monkeypatch_namespace(cls):
+        """
+        This is called by the base Page class when a page object is instantiated.
+        _get_handler_from_library_keywords looks for a keyword in the currently-
+        imported libraries. If it finds more than one, it raises a DataError.
+        Catch that error, use the get_current_page() method to disambiguate,
+        and call _get_explicit_handler, which takes a library and a keyword name.
+        """
+        ns = EXECUTION_CONTEXTS.current.namespace
+        old_get_handler_fnc = ns._get_handler_from_library_keywords
+        def new_get_handler_fnc(name):
+            try:
+                return old_get_handler_fnc(name)
+            except DataError:
+                libname = cls.get_current_page()
+                return ns._get_explicit_handler("%s.%s" % (libname, name))
+        ns._get_handler_from_library_keywords = new_get_handler_fnc
 
 # Set up Robot's global variables so we get all the built-in default settings when we're outside Robot.
 # We need this for Selenium2Library's _get_log_dir() method, among other things.
