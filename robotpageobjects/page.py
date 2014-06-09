@@ -717,6 +717,15 @@ class _BaseActions(_SelectorsManager):
         asserts.assert_equal(hash, expected_value)
         return self
 
+    def is_visible(self, selector):
+        """
+        Get the visibility of an element by selector or locator
+        :param selector: The selector or locator
+        :type selector: str
+        :return: whether the element is visible
+        """
+        return self._is_visible(selector)
+
 
 class Page(_BaseActions):
     """
