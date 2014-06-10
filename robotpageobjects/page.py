@@ -115,6 +115,7 @@ class _Keywords(object):
         cls._exclusions[f.__name__] = True
         return f
 
+
     @classmethod
     def robot_alias(cls, stub):
         """
@@ -152,6 +153,19 @@ class _Keywords(object):
             return f
 
         return makefunc
+
+
+def must_return(f):
+    """ Decorator that throws an exception if a page object method
+    returns None"""
+
+    def wrapper(*args, **kwargs):
+        if f(*args, **kwargs) is None:
+            raise exceptions.KeywordReturnsNoneError(
+                "You must return either a page object or an appropriate value from the page object method, "
+                "'%s'" % f.__name__)
+
+    return wrapper
 
 
 def not_keyword(f):
@@ -204,7 +218,7 @@ class SelectorsDict(dict):
                         warnings.warn("Key \"%s\" is defined in an ancestor class. \
                                        Using the value \"%s\" defined in the subclass.\
                                        To prevent this warning, use robotpageobjects.Override(\"%s\")." % (
-                        key, value, key),
+                            key, value, key),
                                       exceptions.KeyOverrideWarning)
 
                 else:
@@ -371,7 +385,6 @@ class _SelectorsManager(_S2LWrapper):
 
 
 class ComponentManager(_SelectorsManager):
-
     @not_keyword
     def get_instance(self, component_class):
 
@@ -401,7 +414,8 @@ class ComponentManager(_SelectorsManager):
 
         :param component_class: The page component class
         """
-        return [component_class(reference_webelement) for reference_webelement in self.get_reference_elements(component_class)]
+        return [component_class(reference_webelement) for reference_webelement in
+                self.get_reference_elements(component_class)]
 
     @not_keyword
     def get_reference_elements(self, component_class):
@@ -444,8 +458,8 @@ class _ComponentElementFinder(ElementFinder):
         else:
             return super(_ComponentElementFinder, self).find(self._reference_webelement, locator, tag=tag)
 
-class Component(_SelectorsManager):
 
+class Component(_SelectorsManager):
     def __init__(self, reference_webelement, *args, **kwargs):
         super(Component, self).__init__(*args, **kwargs)
         self.reference_webelement = reference_webelement
@@ -506,10 +520,10 @@ class _BaseActions(_SelectorsManager):
 
         at_least_one_sauce_opt_set = any(sauce.values())
         if at_least_one_sauce_opt_set and (not sauce["sauce_username"] or
-                                        not sauce["sauce_apikey"] or not sauce["sauce_platform"]):
+                                               not sauce["sauce_apikey"] or not sauce["sauce_platform"]):
             raise exceptions.MissingSauceOptionError("When running Sauce, need at " +
                                                      "least sauce-username, sauce-apikey, and sauce-platform " +
-                                                  "options set.")
+                                                     "options set.")
 
         # If we get here, tell the object that it's going to
         # attempt to use sauce and that all needed sauce options are
@@ -539,7 +553,7 @@ class _BaseActions(_SelectorsManager):
 
             if self._is_url_absolute(self.uri_template):
                 raise exceptions.AbsoluteUriTemplateError("The URI Template \"%s\" in \"%s\" is an absolute URL. "
-                                                              "It should be relative and used with baseurl")
+                                                          "It should be relative and used with baseurl")
 
             # Parse the keywords, don't check context here, because we want
             # to be able to unittest outside of any context.
@@ -753,6 +767,21 @@ class Page(_BaseActions):
         except AttributeError:
             self.name = self._titleize(self.__class__.__name__)
 
+        def get_class_that_defined_method(meth):
+            for cls in inspect.getmro(meth.im_class):
+                if meth.__name__ in cls.__dict__:
+                    return cls
+                return None
+
+        for name, meth in inspect.getmembers(self):
+
+            if not inspect.ismethod(meth) or get_class_that_defined_method(meth) is None or  name.startswith("_") \
+                    or name in _Keywords._exclusions:
+                continue
+
+            must_return(meth)()
+
+
     @staticmethod
     @not_keyword
     def _titleize(str):
@@ -858,3 +887,5 @@ class Page(_BaseActions):
             raise exceptions.KeywordReturnsNoneError("Every page object method must have a return value.")
 
         return ret
+
+
