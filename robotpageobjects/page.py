@@ -157,13 +157,20 @@ class _Keywords(object):
 
 def must_return(f):
     """ Decorator that throws an exception if a page object method
+    :param f: The decorated function
     returns None"""
 
     def wrapper(*args, **kwargs):
-        if f(*args, **kwargs) is None:
+
+        # Call the original function, if it returns None raise exception, otherwise
+        # return what the original function returns.
+        ret = f(*args, **kwargs)
+        if ret is None:
             raise exceptions.KeywordReturnsNoneError(
                 "You must return either a page object or an appropriate value from the page object method, "
                 "'%s'" % f.__name__)
+        else:
+            return ret
 
     return wrapper
 
@@ -773,14 +780,18 @@ class Page(_BaseActions):
                     return cls
                 return None
 
-        for name, meth in inspect.getmembers(self):
-
-            if not inspect.ismethod(meth) or get_class_that_defined_method(meth) is None or  name.startswith("_") \
-                    or name in _Keywords._exclusions:
+        # Don't do inspect.getmembers since it will try to evaluate functions
+        # that are decorated as properties.
+        for name in dir(self):
+            try:
+                obj = getattr(self, name)
+            except:
                 continue
 
-            must_return(meth)()
-
+            if not inspect.ismethod(obj) or get_class_that_defined_method(obj) is None or  name.startswith("_") \
+                    or name in _Keywords._exclusions:
+                continue
+            setattr(self, name, must_return(obj))
 
     @staticmethod
     @not_keyword
@@ -809,10 +820,15 @@ class Page(_BaseActions):
 
         # Look through our methods and identify which ones are Selenium2Library's
         # (by checking it and its base classes).
+        from robot.api.logger import console
+
         for name in dir(self):
             try:
                 obj = getattr(self, name)
             except:
+                console("in except @property")
+                console(name)
+
                 # Retrieving the attribute raised an exception - for example,
                 # a property created with the @property decorator that
                 # interacts with the driver
@@ -820,6 +836,8 @@ class Page(_BaseActions):
 
             # Don't look for non-methods.
             if not inspect.ismethod(obj):
+                console("non method")
+                console(name)
                 continue
 
             in_s2l_base = False
@@ -841,6 +859,9 @@ class Page(_BaseActions):
                 # Add all methods that don't start with an underscore and were not marked with the
                 # @not_keyword decorator.
                 keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
+
+        from robot.api.logger import console
+        console(keywords)
         return keywords
 
     def run_keyword(self, alias, args):
