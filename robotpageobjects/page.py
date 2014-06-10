@@ -28,7 +28,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from Selenium2Library import Selenium2Library
 from Selenium2Library.locators.elementfinder import ElementFinder
 from Selenium2Library.keywords.keywordgroup import KeywordGroupMetaClass
-from robot.api.logger import console
 
 from context import Context
 import exceptions
@@ -753,7 +752,7 @@ def must_return(f):
 
 class PageMeta(type):
     def __new__(cls, name, bases, classdict):
-        cls._po_name = name
+
         def get_class_that_defined_method(meth):
             for cls in inspect.getmro(meth.im_class):
                 if meth.__name__ in cls.__dict__:
@@ -762,17 +761,16 @@ class PageMeta(type):
 
         # Don't do inspect.getmembers since it will try to evaluate functions
         # that are decorated as properties.
-        #from robot.api.logger import console
-        for name in dir(cls):
+        for member in dir(cls):
             try:
-                obj = getattr(cls, name)
+                obj = getattr(cls, member)
             except:
                 continue
 
-            if not inspect.ismethod(obj) or get_class_that_defined_method(obj) is None or  name.startswith("_") \
-                    or name in _Keywords._exclusions:
+            if not inspect.ismethod(obj) or get_class_that_defined_method(obj) is None or  member.startswith("_") \
+                    or member in _Keywords._exclusions:
                 continue
-            classdict[name] = must_return(classdict[name])
+            classdict[member] = must_return(classdict[member])
 
         return type.__new__(cls, name, bases, classdict)
 
@@ -796,7 +794,6 @@ class Page(_BaseActions):
     __metaclass__ = SuperPageMeta
 
     def __init__(self, *args, **kwargs):
-        from robot.api.logger import console
         """
         Initializes the pageobject_name variable, which is used by the _Keywords class
         for determining aliases.
@@ -808,8 +805,7 @@ class Page(_BaseActions):
         try:
             self.name
         except AttributeError:
-            self.name = self._titleize(Page._po_name)
-
+            self.name = self.__class__.__name__
 
 
     @staticmethod
@@ -823,7 +819,6 @@ class Page(_BaseActions):
         return re.sub(r"\s+", "_", str)
 
     def get_keyword_names(self):
-        console(self.name)
         """
         RF Dynamic API hook implementation that provides a list of all keywords defined by
         the implementing class. NB that this will not expose Selenium2Library's keywords.
@@ -874,8 +869,6 @@ class Page(_BaseActions):
                 # @not_keyword decorator.
                 keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
 
-        #console("\nkeywords for %s" % self.name)
-        #console(keywords)
         return keywords
 
     def run_keyword(self, alias, args):
