@@ -729,28 +729,34 @@ class _BaseActions(_SelectorsManager):
         return self._is_visible(selector)
 
 
+class _PageMeta(type):
+    """Meta class that allows decorating of all page object methods
+    with must_return decorator. This ensures that all page object
+    methods return something, whether it's a page object or other
+    appropriate value. We must do this in a meta class since decorating
+    methods and returning a wrapping function then rebinding that to the
+    page object is tricky. Instead the binding of the decorated function in the
+    meta class happens before the class is instantiated.
+    """
 
-def must_return(f):
-    """ Decorator that throws an exception if a page object method
-    :param f: The decorated function
-    returns None"""
+    @classmethod
+    def must_return(cls, f):
+        # Decorator that throws an exception if a page object method returns None
 
-    def wrapper(*args, **kwargs):
+        def wrapper(*args, **kwargs):
 
-        # Call the original function, if it returns None raise exception, otherwise
-        # return what the original function returns.
-        ret = f(*args, **kwargs)
-        if ret is None:
-            raise exceptions.KeywordReturnsNoneError(
-                "You must return either a page object or an appropriate value from the page object method, "
-                "'%s'" % f.__name__)
-        else:
-            return ret
+            # Call the original function, if it returns None raise exception, otherwise
+            # return what the original function returns.
+            ret = f(*args, **kwargs)
+            if ret is None:
+                raise exceptions.KeywordReturnsNoneError(
+                    "You must return either a page object or an appropriate value from the page object method, "
+                    "'%s'" % f.__name__)
+            else:
+                return ret
 
-    return wrapper
+        return wrapper
 
-
-class PageMeta(type):
     def __new__(cls, name, bases, classdict):
 
         def get_class_that_defined_method(meth):
@@ -770,12 +776,16 @@ class PageMeta(type):
             if not inspect.ismethod(obj) or get_class_that_defined_method(obj) is None or  member.startswith("_") \
                     or member in _Keywords._exclusions:
                 continue
-            classdict[member] = must_return(classdict[member])
+            classdict[member] = _PageMeta.must_return(classdict[member])
 
         return type.__new__(cls, name, bases, classdict)
 
 
-class SuperPageMeta(PageMeta, KeywordGroupMetaClass):
+class SuperPageMeta(_PageMeta, KeywordGroupMetaClass):
+    """ We need to create a super meta class that inherits from all
+    the meta classes set in the inheritence chain of Page, or we'll get
+    the dreaded error about meta conflicts. Then Page can set this meta class.
+    """
     pass
 
 
