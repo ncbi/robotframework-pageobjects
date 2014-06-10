@@ -781,7 +781,7 @@ class _PageMeta(type):
         return type.__new__(cls, name, bases, classdict)
 
 
-class SuperPageMeta(_PageMeta, KeywordGroupMetaClass):
+class _SuperPageMeta(_PageMeta, KeywordGroupMetaClass):
     """ We need to create a super meta class that inherits from all
     the meta classes set in the inheritence chain of Page, or we'll get
     the dreaded error about meta conflicts. Then Page can set this meta class.
@@ -801,7 +801,7 @@ class Page(_BaseActions):
     Optional constructor arguments:
     """
 
-    __metaclass__ = SuperPageMeta
+    __metaclass__ = _SuperPageMeta
 
     def __init__(self, *args, **kwargs):
         """
@@ -925,5 +925,3 @@ class Page(_BaseActions):
             raise exceptions.KeywordReturnsNoneError("Every page object method must have a return value.")
 
         return ret
-
-
