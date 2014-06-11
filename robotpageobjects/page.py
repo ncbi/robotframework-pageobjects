@@ -894,7 +894,6 @@ class Page(_BaseActions):
         except AttributeError:
             self.name = self._titleize(self.__class__.__name__)
 
-
     @staticmethod
     @not_keyword
     def _titleize(str):
