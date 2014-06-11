@@ -21,7 +21,6 @@ class Page(Page):
 
     @robot_alias("search__name__for")
     def search(self, term):
-        print "tada"
         self.input_text("q", "search term")
         self.click_element("go")
 
