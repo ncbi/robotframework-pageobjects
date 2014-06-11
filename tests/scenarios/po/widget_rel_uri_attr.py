@@ -23,10 +23,12 @@ class Page(Page):
 
     def click_delayed_content_button(self):
         self.click_button("delayed content button")
+        return self
 
     def delayed_content_should_exist(self):
         text = self.get_text("delayed content")
         asserts.assert_equals(text, "I took about 2 seconds to be inserted")
+        return self
 
 
 class SearchResultPage(Page):

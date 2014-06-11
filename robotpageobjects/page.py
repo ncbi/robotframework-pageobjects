@@ -27,6 +27,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from Selenium2Library import Selenium2Library
 from Selenium2Library.locators.elementfinder import ElementFinder
+from Selenium2Library.keywords.keywordgroup import KeywordGroupMetaClass
 
 from context import Context
 import exceptions
@@ -114,6 +115,7 @@ class _Keywords(object):
         """
         cls._exclusions[f.__name__] = True
         return f
+
 
     @classmethod
     def robot_alias(cls, stub):
@@ -204,7 +206,7 @@ class SelectorsDict(dict):
                         warnings.warn("Key \"%s\" is defined in an ancestor class. \
                                        Using the value \"%s\" defined in the subclass.\
                                        To prevent this warning, use robotpageobjects.Override(\"%s\")." % (
-                        key, value, key),
+                            key, value, key),
                                       exceptions.KeyOverrideWarning)
 
                 else:
@@ -422,10 +424,10 @@ class _BaseActions(_SelectorsManager):
 
         at_least_one_sauce_opt_set = any(sauce.values())
         if at_least_one_sauce_opt_set and (not sauce["sauce_username"] or
-                                        not sauce["sauce_apikey"] or not sauce["sauce_platform"]):
+                                               not sauce["sauce_apikey"] or not sauce["sauce_platform"]):
             raise exceptions.MissingSauceOptionError("When running Sauce, need at " +
                                                      "least sauce-username, sauce-apikey, and sauce-platform " +
-                                                  "options set.")
+                                                     "options set.")
 
         # If we get here, tell the object that it's going to
         # attempt to use sauce and that all needed sauce options are
@@ -455,7 +457,7 @@ class _BaseActions(_SelectorsManager):
 
             if self._is_url_absolute(self.uri_template):
                 raise exceptions.AbsoluteUriTemplateError("The URI Template \"%s\" in \"%s\" is an absolute URL. "
-                                                              "It should be relative and used with baseurl")
+                                                          "It should be relative and used with baseurl")
 
             # Parse the keywords, don't check context here, because we want
             # to be able to unittest outside of any context.
@@ -726,6 +728,60 @@ class Component(_BaseActions):
         self._element_finder = _ComponentElementFinder(self.reference_webelement)
 
 
+class _PageMeta(type):
+    """Meta class that allows decorating of all page object methods
+    with must_return decorator. This ensures that all page object
+    methods return something, whether it's a page object or other
+    appropriate value. We must do this in a meta class since decorating
+    methods and returning a wrapping function then rebinding that to the
+    page object is tricky. Instead the binding of the decorated function in the
+    meta class happens before the class is instantiated.
+    """
+
+    @classmethod
+    def must_return(cls, f):
+        # Decorator that throws an exception if a page object method returns None
+
+        def wrapper(*args, **kwargs):
+
+            # Call the original function, if it returns None raise exception, otherwise
+            # return what the original function returns.
+            ret = f(*args, **kwargs)
+            if ret is None:
+                raise exceptions.KeywordReturnsNoneError(
+                    "You must return either a page object or an appropriate value from the page object method, "
+                    "'%s'" % f.__name__)
+            else:
+                return ret
+
+        return wrapper
+
+    def __new__(cls, name, bases, classdict):
+
+        # Don't do inspect.getmembers since it will try to evaluate functions
+        # that are decorated as properties.
+        for member_name in classdict:
+            try:
+                obj = classdict[member_name]
+            except:
+                continue
+
+            if not inspect.isroutine(obj) or member_name.startswith("_") or _Keywords.is_method_excluded(member_name):
+                continue
+
+            classdict[member_name] = _PageMeta.must_return(classdict[member_name])
+
+        return type.__new__(cls, name, bases, classdict)
+
+
+class _SuperPageMeta(_PageMeta, KeywordGroupMetaClass):
+    """ We need to create a super meta class that inherits from all
+    the meta classes set in the inheritence chain of Page, or we'll get
+    the dreaded error about meta conflicts. Then Page can set this meta class.
+    """
+    pass
+
+
 class Page(_BaseActions):
     """
     Base RF page object.
@@ -737,6 +793,8 @@ class Page(_BaseActions):
     This class then provides the behavior used by the RF's dynamic API.
     Optional constructor arguments:
     """
+
+    __metaclass__ = _SuperPageMeta
 
     def __init__(self, *args, **kwargs):
         """
@@ -779,6 +837,7 @@ class Page(_BaseActions):
 
         # Look through our methods and identify which ones are Selenium2Library's
         # (by checking it and its base classes).
+
         for name in dir(self):
             try:
                 obj = getattr(self, name)
@@ -811,6 +870,7 @@ class Page(_BaseActions):
                 # Add all methods that don't start with an underscore and were not marked with the
                 # @not_keyword decorator.
                 keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
+
         return keywords
 
     def run_keyword(self, alias, args):
@@ -852,8 +912,9 @@ class Page(_BaseActions):
                 # If we find a match for the class name, set the pointer in Context.
                 if name.split(".")[-1:][0] == classname:
                     Context.set_current_page(name)
-
-        elif ret is None:
-            raise exceptions.KeywordReturnsNoneError("Every page object method must have a return value.")
+                    
+        # The case of raising an exception if a page object method returns None is handled
+        # by Page's meta class, because we need to raise this exception for Robot and
+        # outside Robot.
 
         return ret

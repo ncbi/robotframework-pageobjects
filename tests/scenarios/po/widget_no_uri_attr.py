@@ -4,16 +4,6 @@ import robot.utils.asserts as asserts
 from robotpageobjects.page import Page, robot_alias
 
 
-class Page(Page):
-    name = "Widget Page"
-
-    @robot_alias("search__name__for")
-    def search(self, term):
-        self.input_text("q", "search term")
-        self.click_element("go")
-        return SearchResultPage()
-
-
 class SearchResultPage(Page):
     name = "Widget Search Result Page"
 
@@ -25,3 +15,16 @@ class SearchResultPage(Page):
             self.name, len_results, expected))
 
         return self
+
+class Page(Page):
+    name = "Widget Page"
+
+    @robot_alias("search__name__for")
+    def search(self, term):
+        self.input_text("q", "search term")
+        self.click_element("go")
+
+        return SearchResultPage()
+
+
+
