@@ -217,6 +217,9 @@ class KeywordBehaviorTestCase(BaseTestCase):
         class P(Page):
             uri = ""
 
+            def not_return_none(self):
+                return True
+
             def return_none(self):
                 pass
 
@@ -228,6 +231,9 @@ class KeywordBehaviorTestCase(BaseTestCase):
                 pass
 
         self.p = P()
+
+    def test_method_not_return_none_should_not_raise_exception(self):
+        self.assertTrue(self.p.not_return_none())
 
     @raises(exceptions.KeywordReturnsNoneError)
     def test_method_returning_none_should_raise_exception(self):
