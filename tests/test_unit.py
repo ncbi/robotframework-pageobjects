@@ -8,7 +8,7 @@ import selenium
 
 from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
-from robotpageobjects.page import Page, Override, Component
+from robotpageobjects.page import Page, Override, not_keyword
 from robotpageobjects.optionhandler import OptionHandler
 
 
@@ -207,17 +207,35 @@ class ResolveUrlTestCase(BaseTestCase):
         self.assertEqual(selectors.get("bar"), "bar", "Selectors should contain 'bar' from BaseBar.")
         self.assertEqual(selectors.get("baz"), "baz", "Selector 'baz' should be overridden in FooBarPage." )
 
-class KeywordBehavior(BaseTestCase):
+class KeywordBehaviorTestCase(BaseTestCase):
 
-    @raises(exceptions.KeywordReturnsNoneError)
-    def test_must_return_something_from_page_object_method(self):
+    def setUp(self):
+
+        super(KeywordBehaviorTestCase, self).setUp()
         # No need for testing in Robot too, since we will have a general test
         # that exceptions get raised properly, and this is just another exception.
         class P(Page):
             uri = ""
 
-            def foo(self):
+            def return_none(self):
                 pass
 
-        p = P()
-        p.foo()
+            @not_keyword
+            def return_none_not_keyword(self):
+                pass
+
+            def _return_none(self):
+                pass
+
+        self.p = P()
+
+    @raises(exceptions.KeywordReturnsNoneError)
+    def test_method_returning_none_should_raise_exception(self):
+        self.p.return_none()
+
+    def test_method_returning_none_with_not_keyword_should_not_raise_exception(self):
+        self.assertIsNone(self.p.return_none_not_keyword())
+
+    def test_private_method_returning_none_should_not_raise_exception(self):
+        self.assertIsNone(self.p._return_none())
+
