@@ -759,24 +759,18 @@ class _PageMeta(type):
 
     def __new__(cls, name, bases, classdict):
 
-        def get_class_that_defined_method(meth):
-            for cls in inspect.getmro(meth.im_class):
-                if meth.__name__ in cls.__dict__:
-                    return cls
-                return None
-
         # Don't do inspect.getmembers since it will try to evaluate functions
         # that are decorated as properties.
-        for member in dir(cls):
+        for member_name in classdict:
             try:
-                obj = getattr(cls, member)
+                obj = classdict[member_name]
             except:
                 continue
 
-            if not inspect.ismethod(obj) or get_class_that_defined_method(obj) is None or  member.startswith("_") \
-                    or member in _Keywords._exclusions:
+            if not inspect.isroutine(obj) or member_name.startswith("_") or member_name in _Keywords._exclusions:
                 continue
-            classdict[member] = _PageMeta.must_return(classdict[member])
+
+            classdict[member_name] = _PageMeta.must_return(classdict[member_name])
 
         return type.__new__(cls, name, bases, classdict)
 
@@ -920,8 +914,9 @@ class Page(_BaseActions):
                 # If we find a match for the class name, set the pointer in Context.
                 if name.split(".")[-1:][0] == classname:
                     Context.set_current_page(name)
-
-        elif ret is None:
-            raise exceptions.KeywordReturnsNoneError("Every page object method must have a return value.")
+                    
+        # The case of raising an exception if a page object method returns None is handled
+        # by Page's meta class, because we need to raise this exception for Robot and
+        # outside Robot.
 
         return ret
