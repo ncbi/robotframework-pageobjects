@@ -892,7 +892,7 @@ class Page(_BaseActions):
         try:
             self.name
         except AttributeError:
-            self.name = self.__class__.__name__
+            self.name = self._titleize(self.__class__.__name__)
 
 
     @staticmethod
