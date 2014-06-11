@@ -767,7 +767,7 @@ class _PageMeta(type):
             except:
                 continue
 
-            if not inspect.isroutine(obj) or member_name.startswith("_") or member_name in _Keywords._exclusions:
+            if not inspect.isroutine(obj) or member_name.startswith("_") or _Keywords.is_method_excluded(member_name):
                 continue
 
             classdict[member_name] = _PageMeta.must_return(classdict[member_name])
