@@ -16,6 +16,8 @@ class BaseTestCase(unittest.TestCase):
     """
 
     test_dir = os.path.dirname(os.path.realpath(__file__))
+    scenario_dir = os.path.join(test_dir, "scenarios")
+
     base_file_url = "file:///%s/scenarios" % test_dir.replace("\\", "/")
     site_under_test_file_url = "%s/site/index.html" % base_file_url
 
@@ -34,7 +36,7 @@ class BaseTestCase(unittest.TestCase):
 
     def get_log_path(self, is_robot=False):
         filename = "log.html" if is_robot else "po_log.txt"
-        return os.path.join(os.getcwd(), filename)
+        return os.path.join(self.scenario_dir, filename)
 
     def get_sauce_creds(self):
         """
@@ -46,7 +48,7 @@ class BaseTestCase(unittest.TestCase):
     def setUp(self):
 
         # Remove png files
-        screenshot_locator = os.getcwd() + os.sep + "selenium-screenshot*.png"
+        screenshot_locator = os.path.join(self.scenario_dir, "selenium-screenshot*.png")
         for screenshot in glob.glob(screenshot_locator):
             os.unlink(screenshot)
 
@@ -91,15 +93,14 @@ class BaseTestCase(unittest.TestCase):
         a .py ending. The robot test must also live under tests/scenarios and have a .robot
         ending.
         """
-
         if scenario.endswith(".py"):
-            arg = "python %s%sscenarios%s%s" % (self.test_dir, os.sep, os.sep, scenario)
+            arg = "cd %s; python %s" % (self.scenario_dir, scenario)
 
             return self.run_program(arg)
         else:
-            return self.run_program("pybot", "-P %s%sscenarios%spo" % (self.test_dir, os.sep, os.sep),
-                                    "%s%sscenarios%s%s" % (
-                self.test_dir, os.sep, os.sep, scenario), **kwargs)
+            arg = "cd %s; pybot -P po %s" %(self.scenario_dir, scenario)
+            return self.run_program(arg, **kwargs)
+
 
     def run_program(self, base_cmd, *args, **opts):
 
@@ -118,7 +119,6 @@ class BaseTestCase(unittest.TestCase):
 
         :url: opts: Keywords of options to sanity. Use underscores in place of dashes.
         """
-
         class Ret(object):
             """
             The object to return from running the program
@@ -140,13 +140,17 @@ class BaseTestCase(unittest.TestCase):
 
         cmd = base_cmd + " " + " ".join(args) + " "
         cmd  = base_cmd + " "
+
+        opt_str = ""
         for name in opts:
             val = opts[name]
             if isinstance(val, bool):
-                cmd = cmd + "--" + name.replace("_", "-") + " "
+                opt_str += "--" + name.replace("_", "-") + " "
             else:
-                cmd = cmd + "--" + name.replace("_", "-") + "=" + val + " "
+                opt_str += "--" + name.replace("_", "-") + "=" + val + " "
 
+
+        cmd = cmd.replace("pybot ", "pybot " + opt_str + " ")
         cmd += " " + " ".join(args)
 
         p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -173,6 +177,19 @@ class BaseTestCase(unittest.TestCase):
         out = out[:-1]
 
         return Ret(cmd, code, out, xmldoc=dom)
+
+    def get_screen_shot_paths(self):
+        return glob.glob("%s/*.png" % self.scenario_dir)
+
+    def assert_screen_shots(self, expected_screen_shots):
+        screen_shots = self.get_screen_shot_paths()
+        if expected_screen_shots > 0:
+            self.assertTrue(len(screen_shots) > 0, "No screenshot was taken")
+
+        self.assertEquals(len(screen_shots), expected_screen_shots, "Exactly %s screen shots should have been taken, "
+                                                                    "got %s instead"
+                                                                    % (expected_screen_shots, screen_shots))
+
 
     def assert_run(self, run,
                    expected_returncode=0, expected_tests_ran=None,

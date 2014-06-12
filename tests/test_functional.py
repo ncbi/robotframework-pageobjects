@@ -127,18 +127,6 @@ class SauceTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=1, search_output="Title should have been 'foo' but was 'Home - "
                                                                   "PubMed - NCBI")
 class ActionsTestCase(BaseTestCase):
-    @staticmethod
-    def get_screen_shot_paths(search_dir=os.getcwd()):
-        return glob.glob("%s/*.png" % search_dir)
-
-    def assert_screen_shots(self, expected_screen_shots):
-        screen_shots = self.get_screen_shot_paths()
-        if expected_screen_shots > 0:
-            self.assertTrue(len(screen_shots) > 0, "No screenshot was taken")
-
-        self.assertEquals(len(screen_shots), expected_screen_shots, "Exactly %s screen shots should have been taken, "
-                                                                    "got %s instead"
-                                                                    % (expected_screen_shots, screen_shots))
 
 
     """
@@ -381,3 +369,10 @@ class WaitingTestCase(BaseTestCase):
             del os.environ["PO_SELENIUM_IMPLICIT_WAIT"]
         self.assert_run(run, expected_returncode=1, search_output="FAIL")
 
+
+class LoggingTestCase(BaseTestCase):
+
+    def test_content_written_to_file_and_stdout(self):
+        os.environ["PO_LOG_FILE_LOC"] = self.get_log_path()
+        run = self.run_scenario("test_logging.py")
+        print run

@@ -70,7 +70,6 @@ class Context(object):
         logger = logging.getLogger(module_name)
         logger.setLevel(logging.INFO)
         fh = logging.FileHandler("po_log.txt")
-        #loglevel_as_str = OptionHandler().get("loglevel", "INFO")
         loglevel_as_str = "INFO"
 
         try:

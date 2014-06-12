@@ -20,6 +20,7 @@
 """
 import inspect
 import re
+import sys
 import uritemplate
 import urllib2
 import warnings
@@ -510,12 +511,29 @@ class _BaseActions(_SelectorsManager):
         else:
             return False
 
-    def _log(self, *args):
+
+    def log(self, *args, **kwargs):
         """
-        Logs either to Robot or to a file if outside robot. If logging to a file,
+        Logs either to Robot log file or to a file if outside robot. If logging to a file,
         prints each argument delimited by tabs.
         """
-        self._logger.info("\t".join([str(arg) for arg in args]))
+        self._log(*args, **kwargs)
+
+    def _log(self, *args, **kwargs):
+
+        cons = False
+        try:
+            kwargs["console"]
+        except KeyError:
+            cons = True
+
+        kwargs["console"] = cons
+
+        out_list = [str(arg) for arg in args]
+        out_for_file = "\t".join(out_list)
+        self._logger.info(out_for_file)
+        if cons:
+            print("\n" + " ".join(out_list))
 
     def go_to(self, *args):
         """
