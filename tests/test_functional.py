@@ -373,6 +373,5 @@ class WaitingTestCase(BaseTestCase):
 class LoggingTestCase(BaseTestCase):
 
     def test_content_written_to_file_and_stdout(self):
-        os.environ["PO_LOG_FILE_LOC"] = self.get_log_path()
         run = self.run_scenario("test_logging.py")
-        print run
+        self.assert_run(run, expected_returncode=0, expected_tests_failed=0, search_output="hello world")

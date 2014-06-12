@@ -1,6 +1,5 @@
 import unittest
 from robotpageobjects import Page
-import os
 
 
 class LoggingTestCase(unittest.TestCase):
@@ -13,8 +12,15 @@ class LoggingTestCase(unittest.TestCase):
         self.p = P()
 
     def read_from_log_file(self):
-
-        pass
+        log = open("po_log.txt")
+        ret = None
+        try:
+            ret = log.read()
+        except Exception, e:
+            raise e
+        finally:
+            log.close()
+            return ret
 
     def test_log_to_file_and_screen(self):
         self.p.log("hello", "world")

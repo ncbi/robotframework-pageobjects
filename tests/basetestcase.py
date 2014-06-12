@@ -172,7 +172,7 @@ class BaseTestCase(unittest.TestCase):
             dom = None
 
         # Out is either stdout, or stderr
-        out = com[0] if com[1] == "" else com[1]
+        out = " ".join(com)
         # Splice out trailing new line
         out = out[:-1]
 
@@ -222,6 +222,7 @@ class BaseTestCase(unittest.TestCase):
                             "Did not find %s expected failures when running %s." % (expected_tests_failed,
                                                                                     run.cmd))
         if search_output:
+
             self.assertIsNotNone(re.search(search_output, run.output),
                                  "string: '%s' not found in stdout when running %s" % (
                                      search_output, run.cmd))
