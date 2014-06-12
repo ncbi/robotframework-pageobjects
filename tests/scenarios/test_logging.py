@@ -9,6 +9,10 @@ class LoggingTestCase(unittest.TestCase):
         class P(Page):
             uri = ""
 
+            def foo(self):
+                self.log("hello world")
+                return self
+
         self.p = P()
 
     def read_from_log_file(self):
@@ -23,7 +27,7 @@ class LoggingTestCase(unittest.TestCase):
             return ret
 
     def test_log_to_file_and_screen(self):
-        self.p.log("hello", "world")
-        self.assertEquals(self.read_from_log_file(), "hello\tworld\n")
+        self.p.foo()
+        self.assertEquals(self.read_from_log_file(), "hello world\n")
 
 unittest.main()
