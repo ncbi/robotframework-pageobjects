@@ -372,12 +372,25 @@ class WaitingTestCase(BaseTestCase):
 
 class LoggingTestCase(BaseTestCase):
 
-    def test_content_written_to_file_and_stdout_python(self):
-        run = self.run_scenario("test_logging.py")
+    def test_log_written_to_file_and_stdout_python(self):
+        run = self.run_scenario("test_logging_to_stdout.py")
 
         self.assert_run(run, expected_returncode=0, expected_tests_failed=0, search_output="hello world",
                         search_log="hello world")
 
-    def test_content_written_to_file_and_stdout_robot(self):
-        run = self.run_scenario("test_logging.robot", variable="baseurl:foo")
+    """
+    def test_log_written_only_to_file_python(self):
+        run = self.run_scenario("test_logging_to_stdout.py")
+
+        self.assert_run(run, expected_returncode=0, expected_tests_failed=0, search_output="hello world",
+                        search_log="hello world")
+    """
+    def test_log_written_to_file_and_stdout_robot(self):
+        run = self.run_scenario("test_logging_to_stdout.robot", variable="baseurl:foo")
         self.assert_run(run, expected_returncode=0, search_output="hello world", search_log="hello world")
+
+    """
+    def test_log_written_only_to_file_robot(self):
+        run = self.run_scenario("test_logging_to_stdout.robot", variable="baseurl:foo")
+        self.assert_run(run, expected_returncode=0, search_output="hello world", search_log="hello world")
+    """

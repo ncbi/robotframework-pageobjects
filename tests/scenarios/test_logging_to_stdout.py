@@ -19,7 +19,7 @@ class LoggingTestCase(unittest.TestCase):
             return ret
 
     def test_log_to_file_and_screen(self):
-        self.p.log_stuff("hello world")
+        self.p.log_stuff_to_stdout_and_file("hello world")
         self.assertEquals(self.read_from_log_file(), "hello world\n")
 
 unittest.main()

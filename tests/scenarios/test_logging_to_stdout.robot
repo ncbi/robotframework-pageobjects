@@ -8,5 +8,5 @@ Library    loggingpage.LoggingPage
 
 Test Log To File And Screen
     Open LoggingPage
-    Log Stuff  hello world
+    Log Stuff To Stdout And File  hello world
     [Teardown]  Close Logging Page
