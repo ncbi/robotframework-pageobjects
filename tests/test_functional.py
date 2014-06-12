@@ -386,11 +386,11 @@ class LoggingTestCase(BaseTestCase):
                         search_log="hello world")
     """
     def test_log_written_to_file_and_stdout_robot(self):
-        run = self.run_scenario("test_logging_to_stdout.robot", variable="baseurl:foo")
+        run = self.run_scenario("test_logging_to_stdout_and_file.robot", variable="baseurl:foo")
         self.assert_run(run, expected_returncode=0, search_output="hello world", search_log="hello world")
 
     """
     def test_log_written_only_to_file_robot(self):
-        run = self.run_scenario("test_logging_to_stdout.robot", variable="baseurl:foo")
+        run = self.run_scenario("test_logging_to_stdout_and_file.robot", variable="baseurl:foo")
         self.assert_run(run, expected_returncode=0, search_output="hello world", search_log="hello world")
     """
