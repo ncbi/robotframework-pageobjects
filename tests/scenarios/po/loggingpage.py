@@ -10,3 +10,4 @@ class LoggingPage(Page):
 
     def log_stuff_only_to_file(self, str):
         self.log("hello world", console=False)
+        return self
