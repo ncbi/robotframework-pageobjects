@@ -1,13 +1,12 @@
 *** Settings ***
 
-Documentation  Tests for Robot Framework Page Object package.
-...
-Library    widget_rel_uri_attr.Page
-Library    widget_rel_uri_attr.SearchResultPage
+Documentation  Logging
+
+Library    loggingpage.LoggingPage
 
 *** Test Cases ***
 
-Test Widget Site
-    Open Widget Page
-    Capture Page Screenshot
-    [Teardown]  Close Widget Page
+Test Log To File And Screen
+    Open LoggingPage
+    Log Stuff  hello world
+    [Teardown]  Close Logging Page

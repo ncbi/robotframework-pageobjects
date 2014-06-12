@@ -1,19 +1,11 @@
 import unittest
-from robotpageobjects import Page
+from po.loggingpage import LoggingPage
 
 
 class LoggingTestCase(unittest.TestCase):
 
     def setUp(self):
-
-        class P(Page):
-            uri = ""
-
-            def foo(self):
-                self.log("hello world")
-                return self
-
-        self.p = P()
+        self.p = LoggingPage()
 
     def read_from_log_file(self):
         log = open("po_log.txt")
@@ -27,7 +19,7 @@ class LoggingTestCase(unittest.TestCase):
             return ret
 
     def test_log_to_file_and_screen(self):
-        self.p.foo()
+        self.p.log_stuff("hello world")
         self.assertEquals(self.read_from_log_file(), "hello world\n")
 
 unittest.main()

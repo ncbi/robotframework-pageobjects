@@ -18,9 +18,9 @@
 .. moduleauthor:: Daniel Frishberg, Aaron Cohen <daniel.frishberg@nih.gov>, <aaron.cohen@nih.gov>
 
 """
+from __future__ import print_function
 import inspect
 import re
-import sys
 import uritemplate
 import urllib2
 import warnings
@@ -387,6 +387,7 @@ class _BaseActions(_SelectorsManager):
 
         self._option_handler = OptionHandler()
         self._logger = Context.get_logger(this_module_name)
+        self._in_robot = Context.in_robot()
         self.selenium_speed = self._option_handler.get("selenium_speed") or 0
         self.set_selenium_speed(self.selenium_speed)
         self.selenium_implicit_wait = self._option_handler.get("selenium_implicit_wait") or 10
@@ -533,7 +534,8 @@ class _BaseActions(_SelectorsManager):
         out_for_file = "\t".join(out_list)
         self._logger.info(out_for_file)
         if cons:
-            print("\n" + " ".join(out_list))
+            out_fn = self._logger.console if self._in_robot else lambda x: print(x)
+            out_fn("\n" + " ".join(out_list))
 
     def go_to(self, *args):
         """
