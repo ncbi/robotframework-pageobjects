@@ -900,7 +900,7 @@ class Page(_BaseActions):
             except Exception, e:
                 if e.message.find("No browser is open") != -1:
                     pass
-            raise
+            raise err
 
         if isinstance(ret, Page):
             # DCLT-829
