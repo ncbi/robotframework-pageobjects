@@ -38,6 +38,14 @@ class BaseTestCase(unittest.TestCase):
         filename = "log.html" if is_robot else "po_log.txt"
         return os.path.join(self.scenario_dir, filename)
 
+    def read_log(self, robot=False):
+        f = open(self.get_log_path(robot), "r")
+        try:
+            ret = f.read()
+        finally:
+            f.close()
+            return ret
+
     def get_sauce_creds(self):
         """
         Returns tuple of sauce username, SAUCE_APIKEY set in environment
@@ -194,7 +202,7 @@ class BaseTestCase(unittest.TestCase):
     def assert_run(self, run,
                    expected_returncode=0, expected_tests_ran=None,
                    expected_tests_failed=None,
-                   search_output=None, expected_browser=None
+                   search_output=None, search_log=None, expected_browser=None
     ):
         """
         Makes general assertions about a program run based on return code
@@ -208,6 +216,7 @@ class BaseTestCase(unittest.TestCase):
         :param search_output: Text to assert is present in stdout of run. Provide  regular expression
         """
         returncode = run.returncode
+        is_robot = "pybot" in run.cmd
 
         self.assertEquals(expected_returncode, returncode,
                           "Return code was %s, expecting %s with the command: '%s'" % (
@@ -226,26 +235,26 @@ class BaseTestCase(unittest.TestCase):
             self.assertIsNotNone(re.search(search_output, run.output),
                                  "string: '%s' not found in stdout when running %s" % (
                                      search_output, run.cmd))
+        if search_log:
+
+            self.assertIsNotNone(re.search(search_log, self.read_log(is_robot)),
+                                 "string: '%s' not found in log file when running %s" % (
+                                     search_output, run.cmd))
 
         if expected_browser:
-            if "pybot" in run.cmd:
-                try:
-                    robot_log = open(self.get_log_path(is_robot=True))
-                    self.assertTrue(expected_browser in robot_log.read(),
-                                    "Unexpected browser. Expected %s, got something else")
-                finally:
-                    robot_log.close()
+            log_content = self.read_log(is_robot)
+            if is_robot:
+                self.assertTrue(expected_browser in log_content,
+                                "Unexpected browser. Expected %s, got something else")
+
             else:
-                try:
-                    po_log = open(self.get_log_path())
-                    log_fields = po_log.read().split("\t")
-                    logged_browser = log_fields[2]
-                    self.assertTrue(expected_browser.lower() in logged_browser.lower(),
-                                    "Unexpected browser. Expected %s, "
-                                    "got %s" % (expected_browser,
-                                                logged_browser))
-                finally:
-                    po_log.close()
+                log_fields = log_content.split("\t")
+                logged_browser = log_fields[2]
+                self.assertTrue(expected_browser.lower() in logged_browser.lower(),
+                                "Unexpected browser. Expected %s, "
+                                "got %s" % (expected_browser,
+                                            logged_browser))
+
 
     def write_var_file(self, *args, **kwargs):
         f = None
