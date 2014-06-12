@@ -243,6 +243,20 @@ class ComponentTestCase(BaseTestCase):
         self.homepage_with_dom_toggler = HomePageWithDOMAdvancedToggler()
 
 
+    def test_selenium_implicit_wait_not_reset_within_component(self):
+
+        self.result_page_with_str_locator.open()
+
+        self.assertEquals(
+                self.result_page_with_str_locator.get_selenium_implicit_wait(),
+                "10 seconds"
+        )
+
+        self.assertEquals(
+                self.result_page_with_str_locator.result.get_selenium_implicit_wait(),
+                "10 seconds"
+        )
+
     def test_get_instance_and_instances(self):
 
         # Test get_instance and get_instances in same test. get_instance()
@@ -343,7 +357,7 @@ class KeywordsTestCase(BaseTestCase):
 
     def test_keyword_does_not_return_page_object(self):
         run = self.run_scenario("test_does_not_return.robot", variable="baseurl:%s" % self.base_file_url)
-        self.assert_run(run, expected_returncode=1, search_output="Every page object method must have a return value.")
+        self.assert_run(run, expected_returncode=1, search_output="You must return either a page object or an appropriate value from the page object method")
 
     def test_can_alias_without_page_name(self):
         run = self.run_scenario("test_can_call_aliased_method_without_page_name.robot", variable="baseurl:%s" % self.base_file_url)
@@ -374,3 +388,4 @@ class WaitingTestCase(BaseTestCase):
         else:
             del os.environ["PO_SELENIUM_IMPLICIT_WAIT"]
         self.assert_run(run, expected_returncode=1, search_output="FAIL")
+
