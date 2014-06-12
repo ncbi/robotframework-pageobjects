@@ -243,17 +243,15 @@ class BaseTestCase(unittest.TestCase):
 
         if expected_browser:
             log_content = self.read_log(is_robot)
+
             if is_robot:
                 self.assertTrue(expected_browser in log_content,
-                                "Unexpected browser. Expected %s, got something else")
+                                "Unexpected browser logged")
 
             else:
-                log_fields = log_content.split("\t")
-                logged_browser = log_fields[2]
-                self.assertTrue(expected_browser.lower() in logged_browser.lower(),
-                                "Unexpected browser. Expected %s, "
-                                "got %s" % (expected_browser,
-                                            logged_browser))
+
+                self.assertTrue(expected_browser in log_content,
+                                "Unexpected browser logged")
 
 
     def write_var_file(self, *args, **kwargs):

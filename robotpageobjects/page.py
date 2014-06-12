@@ -513,29 +513,21 @@ class _BaseActions(_SelectorsManager):
             return False
 
 
-    def log(self, *args, **kwargs):
+    def log(self, txt, console=True):
         """
-        Logs either to Robot log file or to a file if outside robot. If logging to a file,
-        prints each argument delimited by tabs.
+        Logs either to Robot log file or to a file called po_log.txt
+        at the current directory.
+
+        :param console: Controls whether text being logged
+        goes to stdout.
         """
-        self._log(*args, **kwargs)
+        self._log(txt, console)
 
-    def _log(self, *args, **kwargs):
-
-        cons = False
-        try:
-            kwargs["console"]
-        except KeyError:
-            cons = True
-
-        kwargs["console"] = cons
-
-        out_list = [str(arg) for arg in args]
-        out_for_file = "\t".join(out_list)
-        self._logger.info(out_for_file)
-        if cons:
+    def _log(self, txt, console=True):
+        self._logger.info(txt)
+        if console:
             out_fn = self._logger.console if self._in_robot else lambda x: print(x)
-            out_fn("\n" + " ".join(out_list))
+            out_fn("\n" + txt)
 
     def go_to(self, *args):
         """
@@ -594,15 +586,13 @@ class _BaseActions(_SelectorsManager):
                                                       "apikey")
 
             self.session_id = self.get_current_browser().session_id
-            self._log("session ID: %s" % self.session_id)
+            self.log("session ID: %s" % self.session_id)
 
         else:
             self.open_browser(resolved_url, self.browser)
 
-        # Probably don't need this check here. We should log no matter
-        # what and the user sets the log level. When we take this check out
-        # also take out of base class __init__ parameter.
-        self._log("open", self.__class__.__name__, str(self.get_current_browser()), resolved_url)
+        self.log("PO_BROWSER: %s" % (str(self.get_current_browser())),
+                 console=False)
 
         return self
 
