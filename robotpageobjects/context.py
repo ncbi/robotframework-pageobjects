@@ -70,13 +70,6 @@ class Context(object):
         logger = logging.getLogger(module_name)
         logger.setLevel(logging.INFO)
         fh = logging.FileHandler("po_log.txt")
-        loglevel_as_str = "INFO"
-
-        try:
-            level = getattr(logging, loglevel_as_str)
-        except AttributeError:
-            raise Exception("No such loglevel exists: %s" % loglevel_as_str)
-        fh.setLevel(level)
         logger.addHandler(fh)
         return logger
 

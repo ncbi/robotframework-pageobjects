@@ -20,6 +20,7 @@
 """
 from __future__ import print_function
 import inspect
+import logging
 import re
 import uritemplate
 import urllib2
@@ -386,8 +387,18 @@ class _BaseActions(_SelectorsManager):
         super(_BaseActions, self).__init__(*args, **kwargs)
 
         self._option_handler = OptionHandler()
+        self._is_robot = Context.in_robot()
+
         self._logger = Context.get_logger(this_module_name)
-        self._in_robot = Context.in_robot()
+        if not self._is_robot:
+            loglevel_as_str = self._option_handler.get("log_level") or "INFO"
+            try:
+                loglevel = getattr(logging, loglevel_as_str)
+            except AttributeError:
+                raise Exception("Invalid log level specified: %s" % loglevel_as_str)
+
+            self._logger.setLevel(loglevel)
+
         self.selenium_speed = self._option_handler.get("selenium_speed") or 0
         self.set_selenium_speed(self.selenium_speed)
         self.selenium_implicit_wait = self._option_handler.get("selenium_implicit_wait") or 10
@@ -526,7 +537,7 @@ class _BaseActions(_SelectorsManager):
     def _log(self, txt, console=True):
         self._logger.info(txt)
         if console:
-            out_fn = self._logger.console if self._in_robot else lambda x: print(x)
+            out_fn = self._logger.console if self._is_robot else lambda x: print(x)
             out_fn("\n" + txt)
 
     def go_to(self, *args):
