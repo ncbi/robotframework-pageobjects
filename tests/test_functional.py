@@ -373,6 +373,8 @@ class WaitingTestCase(BaseTestCase):
 class LoggingTestCase(BaseTestCase):
 
     def test_log_written_to_file_and_stdout_python(self):
+
+        # logging info, with log_level set to INFO should print and write to file.
         run = self.run_scenario("test_logging_to_stdout_and_file.py")
 
         self.assert_run(run, expected_returncode=0, expected_tests_failed=0, search_output="hello world",
@@ -394,3 +396,15 @@ class LoggingTestCase(BaseTestCase):
         run = self.run_scenario("test_logging_to_just_file.robot", variable="baseurl:foo")
         self.assert_run(run, expected_returncode=0, search_log="hello world")
         self.assertFalse("hello world" in run.output)
+
+    def test_log_level_python(self):
+        run = self.run_scenario("test_logging_CRITICAL_to_stdout_and_file.py")
+        print run.cmd
+        print run.output
+        self.assertFalse("hello world" in run.output)
+
+    def tearDown(self):
+        super(LoggingTestCase, self).tearDown()
+        os.environ["PO_LOG_LEVEL"] = "INFO"
+
+

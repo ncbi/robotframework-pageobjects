@@ -22,6 +22,7 @@ from __future__ import print_function
 import inspect
 import logging
 import re
+import sys
 import uritemplate
 import urllib2
 import warnings
@@ -391,8 +392,8 @@ class _BaseActions(_SelectorsManager):
 
         self._option_handler = OptionHandler()
         self._is_robot = Context.in_robot()
-
-        self._logger = self.get_logger(this_module_name)
+        self._log_level = self._get_log_level_from_opt()
+        self._logger = self._get_logger(this_module_name)
 
         self.selenium_speed = self._option_handler.get("selenium_speed") or 0
         self.set_selenium_speed(self.selenium_speed)
@@ -420,29 +421,6 @@ class _BaseActions(_SelectorsManager):
 
         # There's only a session ID when using a remote webdriver (Sauce, for example)
         self.session_id = None
-
-    def get_logger(self, module_name):
-
-        if self._is_robot:
-            ret = robot_api.logger
-        else:
-            ret = self._get_logger_outside_robot(module_name)
-            loglevel_as_str = self._option_handler.get("log_level") or "INFO"
-            try:
-                loglevel = getattr(logging, loglevel_as_str)
-            except AttributeError:
-                raise Exception("Invalid log level specified: %s" % loglevel_as_str)
-
-            ret.setLevel(loglevel)
-        return ret
-
-    @staticmethod
-    def _get_logger_outside_robot(module_name):
-        logger = logging.getLogger(module_name)
-        logger.setLevel(logging.INFO)
-        fh = logging.FileHandler("po_log.txt")
-        logger.addHandler(fh)
-        return logger
 
     def _validate_sauce_options(self):
 
@@ -541,22 +519,67 @@ class _BaseActions(_SelectorsManager):
         else:
             return False
 
+    def _get_log_level_as_str(self):
+        l = self._option_handler.get("log_level")
+        return l.upper() if l else "INFO"
 
-    def log(self, txt, console=True):
+    def _get_log_level_from_str(self, str):
+        try:
+            return getattr(logging, str.upper())
+        except AttributeError:
+            raise ValueError("Invalid log level: '%s'" % str)
+
+    def _get_log_level_from_opt(self):
+        level_as_str = self._get_log_level_as_str()
+        ret = None
+        try:
+            ret = getattr(logging, level_as_str)
+        except AttributeError:
+            raise ValueError("Invalid log level set: %s" % level_as_str)
+        return ret
+
+    def _get_logger(self, module_name):
+
+        if self._is_robot:
+            ret = robot_api.logger
+        else:
+            ret = self._get_logger_outside_robot(module_name)
+        return ret
+
+    def _get_logger_outside_robot(self, module_name):
+        logging.basicConfig(stream=sys.stdout, filename="po_log.txt", level=self._log_level)
+        logger = logging.getLogger(module_name)
+
+        # We'll add a stream handler to stdout for the logger, but
+        # we have to do it in the _log() method, because that's where
+        # console gets passed.
+        return logger
+
+    def log(self, txt, level="INFO", console=True):
         """
         Logs either to Robot log file or to a file called po_log.txt
         at the current directory.
 
+        :param txt: The text to log
+        :param level: The level to log. Defaults to INFO
         :param console: Controls whether text being logged
         goes to stdout.
         """
-        self._log(txt, console)
+        self._log(txt, level, console)
 
-    def _log(self, txt, console=True):
-        self._logger.info(txt)
+    def _log(self, txt, level="INFO", console=True):
+        level_as_int = self._get_log_level_from_str(level)
         if console:
-            out_fn = self._logger.console if self._is_robot else lambda x: print(x)
-            out_fn("\n" + txt)
+            if self._is_robot:
+                self._logger.console("\n" + txt)
+            else:
+                sh = logging.StreamHandler(sys.stdout)
+                sh.setLevel(level_as_int)
+                self._logger.addHandler(sh)
+        if self._is_robot:
+            self._logger.write(txt, level_as_int)
+        else:
+            self._logger.log(level_as_int, txt)
 
     def go_to(self, *args):
         """
