@@ -25,6 +25,9 @@ import re
 import uritemplate
 import urllib2
 import warnings
+
+from robot import api as robot_api
+from robot.utils import asserts
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from Selenium2Library import Selenium2Library
@@ -34,7 +37,7 @@ from Selenium2Library.keywords.keywordgroup import KeywordGroupMetaClass
 from context import Context
 import exceptions
 from optionhandler import OptionHandler
-from robot.utils import asserts
+
 
 
 this_module_name = __name__
@@ -389,15 +392,7 @@ class _BaseActions(_SelectorsManager):
         self._option_handler = OptionHandler()
         self._is_robot = Context.in_robot()
 
-        self._logger = Context.get_logger(this_module_name)
-        if not self._is_robot:
-            loglevel_as_str = self._option_handler.get("log_level") or "INFO"
-            try:
-                loglevel = getattr(logging, loglevel_as_str)
-            except AttributeError:
-                raise Exception("Invalid log level specified: %s" % loglevel_as_str)
-
-            self._logger.setLevel(loglevel)
+        self._logger = self.get_logger(this_module_name)
 
         self.selenium_speed = self._option_handler.get("selenium_speed") or 0
         self.set_selenium_speed(self.selenium_speed)
@@ -425,6 +420,29 @@ class _BaseActions(_SelectorsManager):
 
         # There's only a session ID when using a remote webdriver (Sauce, for example)
         self.session_id = None
+
+    def get_logger(self, module_name):
+
+        if self._is_robot:
+            ret = robot_api.logger
+        else:
+            ret = self._get_logger_outside_robot(module_name)
+            loglevel_as_str = self._option_handler.get("log_level") or "INFO"
+            try:
+                loglevel = getattr(logging, loglevel_as_str)
+            except AttributeError:
+                raise Exception("Invalid log level specified: %s" % loglevel_as_str)
+
+            ret.setLevel(loglevel)
+        return ret
+
+    @staticmethod
+    def _get_logger_outside_robot(module_name):
+        logger = logging.getLogger(module_name)
+        logger.setLevel(logging.INFO)
+        fh = logging.FileHandler("po_log.txt")
+        logger.addHandler(fh)
+        return logger
 
     def _validate_sauce_options(self):
 
