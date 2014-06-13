@@ -67,7 +67,7 @@ class SmokeTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=1, search_output="must set a baseurl") 
 
     def test_no_uri_attr_gives_readable_error_in_robot(self):
-        run = self.run_scenario("test_no_uri.robot")
+        run = self.run_scenario("test_no_uri.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=1, search_output='must have a "uri" attribute set') 
 
 
