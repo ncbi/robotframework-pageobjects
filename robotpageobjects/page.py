@@ -887,11 +887,20 @@ class Page(_BaseActions):
         try:
             ret = meth(*args)
         except Exception, err:
+            # Try to take a screenshot. If it fails due to no browser being open,
+            # just raise the original exception. A failed screenshot is just noise here.
+            # QAR-47920
+
             # Hardcode capture_page_screenshot. This is because run_on_failure
             # is being set to "Nothing" (DCLT-659 and DCLT-726).
             # TODO: After DCLT-827 is addressed, we can use run_on_failure again.
-            self.capture_page_screenshot()
-            raise
+
+            try:
+                self.capture_page_screenshot()
+            except Exception, e:
+                if e.message.find("No browser is open") != -1:
+                    pass
+            raise err
 
         if isinstance(ret, Page):
             # DCLT-829
