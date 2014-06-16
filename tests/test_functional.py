@@ -397,10 +397,14 @@ class LoggingTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=0, search_log="hello world")
         self.assertFalse("hello world" in run.output)
 
-    def test_log_level_python(self):
+    def test_setting_log_level_to_critical_calling_log_info_should_not_log_python(self):
         run = self.run_scenario("test_logging_CRITICAL_to_stdout_and_file.py")
-        print run.cmd
-        print run.output
+        self.assertFalse("hello world" in run.output)
+        self.assertEquals(self.read_log(), "")
+
+    def test_setting_log_level_at_info_log_debug_should_not_produce_output_robot(self):
+        run = self.run_scenario("test_logging_set_to_info_log_debug.robot")
+        self.assert_run(run, expected_returncode=0)
         self.assertFalse("hello world" in run.output)
 
     def tearDown(self):

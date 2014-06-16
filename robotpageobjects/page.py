@@ -392,6 +392,7 @@ class _BaseActions(_SelectorsManager):
 
         self._option_handler = OptionHandler()
         self._is_robot = Context.in_robot()
+        self._default_log_level = "INFO"
         self._log_level = self._get_log_level_from_opt()
         self._logger = self._get_logger(this_module_name)
 
@@ -521,22 +522,21 @@ class _BaseActions(_SelectorsManager):
 
     def _get_log_level_as_str(self):
         l = self._option_handler.get("log_level")
-        return l.upper() if l else "INFO"
+        return l.upper() if l else self._default_log_level
 
     def _get_log_level_from_str(self, str):
+        """ Convert string log level to integer
+        logging level."""
+
         try:
             return getattr(logging, str.upper())
         except AttributeError:
-            raise ValueError("Invalid log level: '%s'" % str)
+            # If a non-existant log level is asked for,
+            # just default to "INFO".
+            return getattr(logging, self._default_log_level)
 
     def _get_log_level_from_opt(self):
-        level_as_str = self._get_log_level_as_str()
-        ret = None
-        try:
-            ret = getattr(logging, level_as_str)
-        except AttributeError:
-            raise ValueError("Invalid log level set: %s" % level_as_str)
-        return ret
+        return self._get_log_level_from_str(self._get_log_level_as_str())
 
     def _get_logger(self, module_name):
 
@@ -555,21 +555,24 @@ class _BaseActions(_SelectorsManager):
         # console gets passed.
         return logger
 
-    def log(self, txt, level="INFO", console=True):
-        """
-        Logs either to Robot log file or to a file called po_log.txt
+    def log(self, txt, level=None, console=True):
+        """ Logs either to Robot log file or to a file called po_log.txt
         at the current directory.
 
         :param txt: The text to log
-        :param level: The level to log. Defaults to INFO
+        :param level: The level to log. Defaults to "INFO"
         :param console: Controls whether text being logged
         goes to stdout.
         """
+        level = self._default_log_level
         self._log(txt, level, console)
 
-    def _log(self, txt, level="INFO", console=True):
+    def _log(self, txt, level=None, in_console=True):
+        """ See :func:`log`."""
+
+        level = self._default_log_level if level is None else level
         level_as_int = self._get_log_level_from_str(level)
-        if console:
+        if in_console:
             if self._is_robot:
                 self._logger.console("\n" + txt)
             else:
@@ -577,7 +580,7 @@ class _BaseActions(_SelectorsManager):
                 sh.setLevel(level_as_int)
                 self._logger.addHandler(sh)
         if self._is_robot:
-            self._logger.write(txt, level_as_int)
+            self._logger.write(txt, level)
         else:
             self._logger.log(level_as_int, txt)
 
