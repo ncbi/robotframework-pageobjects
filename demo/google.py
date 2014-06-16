@@ -40,7 +40,6 @@ class GoogleSearchResultPage(Page):
         "result links": "css=li.g div h3 a",
     }
 
-
     @robot_alias("click_result_on__name__")
     def click_result(self, i):
         self.wait_until_page_contains_element("result links")
