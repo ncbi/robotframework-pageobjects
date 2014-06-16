@@ -543,42 +543,48 @@ class _BaseActions(_SelectorsManager):
         if self._is_robot:
             ret = robot_api.logger
         else:
-            ret = self._get_logger_outside_robot(module_name)
+            ret = self._get_logger_outside_robot()
         return ret
 
-    def _get_logger_outside_robot(self, module_name):
-        logging.basicConfig(stream=sys.stdout, filename="po_log.txt", level=self._log_level)
-        logger = logging.getLogger(module_name)
+    def _get_logger_outside_robot(self):
+        logging.basicConfig(stream=sys.stdout, filename="po_log.txt", level=self._log_level, filemode="w")
+        logger = logging.getLogger(self.__class__.__name__)
 
         # We'll add a stream handler to stdout for the logger, but
         # we have to do it in the _log() method, because that's where
         # console gets passed.
         return logger
 
-    def log(self, txt, level=None, console=True):
+    def log(self, txt, level=None, is_console=True):
         """ Logs either to Robot log file or to a file called po_log.txt
         at the current directory.
 
         :param txt: The text to log
         :param level: The level to log. Defaults to "INFO"
-        :param console: Controls whether text being logged
+        :param is_console: Controls whether text being logged
         goes to stdout.
         """
-        level = self._default_log_level
-        self._log(txt, level, console)
+        self._log(txt, level, is_console)
 
-    def _log(self, txt, level=None, in_console=True):
+    def _log(self, txt, level=None, is_console=True):
         """ See :func:`log`."""
 
         level = self._default_log_level if level is None else level
         level_as_int = self._get_log_level_from_str(level)
-        if in_console:
+
+        if is_console:
             if self._is_robot:
                 self._logger.console("\n" + txt)
             else:
-                sh = logging.StreamHandler(sys.stdout)
-                sh.setLevel(level_as_int)
-                self._logger.addHandler(sh)
+
+                try:
+                    self._logger._attached_sh
+                except AttributeError:
+                    sh = logging.StreamHandler(sys.stdout)
+                    sh.setLevel(level_as_int)
+                    self._logger.addHandler(sh)
+                    self._logger._attached_sh = True
+
         if self._is_robot:
             self._logger.write(txt, level)
         else:
@@ -647,7 +653,7 @@ class _BaseActions(_SelectorsManager):
             self.open_browser(resolved_url, self.browser)
 
         self.log("PO_BROWSER: %s" % (str(self.get_current_browser())),
-                 console=False)
+                 is_console=False)
 
         return self
 

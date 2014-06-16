@@ -7,6 +7,6 @@ Library    loggingpage.LoggingPage
 *** Test Cases ***
 
 Test Log To File And Screen
-    Open LoggingPage
+    Open Logging Page
     Log Stuff To Stdout And File  hello world
     [Teardown]  Close Logging Page

@@ -9,9 +9,9 @@ class LoggingPage(Page):
         return self
 
     def log_stuff_only_to_file(self, str):
-        self.log("hello world", console=False)
+        self.log("hello world", is_console=False)
         return self
 
     def log_debug(self):
-        self.log("hello world", "DEBUG")
+        self.log("hello world", "INFO")
         return self
