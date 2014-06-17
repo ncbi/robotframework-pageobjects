@@ -1,4 +1,3 @@
-import glob
 import json
 import os
 import re
@@ -135,18 +134,6 @@ class SauceTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=1, search_output="Title should have been 'foo' but was 'Home - "
                                                                   "PubMed - NCBI")
 class ActionsTestCase(BaseTestCase):
-    @staticmethod
-    def get_screen_shot_paths(search_dir=os.getcwd()):
-        return glob.glob("%s/*.png" % search_dir)
-
-    def assert_screen_shots(self, expected_screen_shots):
-        screen_shots = self.get_screen_shot_paths()
-        if expected_screen_shots > 0:
-            self.assertTrue(len(screen_shots) > 0, "No screenshot was taken")
-
-        self.assertEquals(len(screen_shots), expected_screen_shots, "Exactly %s screen shots should have been taken, "
-                                                                    "got %s instead"
-                                                                    % (expected_screen_shots, screen_shots))
 
 
     """
@@ -388,4 +375,49 @@ class WaitingTestCase(BaseTestCase):
         else:
             del os.environ["PO_SELENIUM_IMPLICIT_WAIT"]
         self.assert_run(run, expected_returncode=1, search_output="FAIL")
+
+
+class LoggingTestCase(BaseTestCase):
+
+    def test_log_written_to_file_and_stdout_python(self):
+
+        # logging info, with log_level set to INFO should print and write to file.
+        run = self.run_scenario("test_logging_to_stdout_and_file.py")
+        self.assert_run(run, expected_returncode=0, expected_tests_failed=0, search_output="hello world",
+                        search_log="INFO:LoggingPage:hello world")
+
+    def test_log_written_to_file_and_stdout_robot(self):
+        run = self.run_scenario("test_logging_to_stdout_and_file.robot", variable="baseurl:foo")
+        self.assert_run(run, expected_returncode=0, search_output="hello world", search_log="hello world")
+
+    def test_log_is_console_false_python(self):
+        run = self.run_scenario("test_logging_to_just_file.py")
+
+        self.assert_run(run, expected_returncode=0, expected_tests_failed=0,
+                        search_log="INFO:LoggingPage:hello world")
+
+        self.assertFalse("hello world" in run.output)
+
+    def test_is_console_false_robot(self):
+        run = self.run_scenario("test_logging_to_just_file.robot", variable="baseurl:foo")
+        self.assert_run(run, expected_returncode=0, search_log="hello world")
+        self.assertFalse("hello world" in run.output)
+
+    def test_setting_log_level_to_critical_calling_log_info_should_not_log_anything_python(self):
+        run = self.run_scenario("test_logging_CRITICAL_to_stdout_and_file.py")
+        self.assertFalse("hello world" in run.output)
+        self.assertEquals(self.read_log(), "")
+
+    def test_setting_log_level_to_critical_calling_log_info_should_only_log_console_robot(self):
+        run = self.run_scenario("test_logging_set_to_info_log_debug.robot")
+        self.assert_run(run, expected_returncode=0, search_log="hello world")
+
+        # Logging to console in Robot is independent of logging level as per:
+        # https://code.google.com/p/robotframework/source/browse/src/robot/output/librarylogger.py
+        self.assertTrue("hello world" in run.output)
+
+    def tearDown(self):
+        super(LoggingTestCase, self).tearDown()
+        os.environ["PO_LOG_LEVEL"] = "INFO"
+
 

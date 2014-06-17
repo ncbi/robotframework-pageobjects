@@ -18,11 +18,17 @@
 .. moduleauthor:: Daniel Frishberg, Aaron Cohen <daniel.frishberg@nih.gov>, <aaron.cohen@nih.gov>
 
 """
+from __future__ import print_function
 import inspect
+import logging
 import re
+import sys
 import uritemplate
 import urllib2
 import warnings
+
+from robot import api as robot_api
+from robot.utils import asserts
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from Selenium2Library import Selenium2Library
@@ -32,7 +38,7 @@ from Selenium2Library.keywords.keywordgroup import KeywordGroupMetaClass
 from context import Context
 import exceptions
 from optionhandler import OptionHandler
-from robot.utils import asserts
+
 
 
 this_module_name = __name__
@@ -385,7 +391,11 @@ class _BaseActions(_SelectorsManager):
         super(_BaseActions, self).__init__(*args, **kwargs)
 
         self._option_handler = OptionHandler()
-        self._logger = Context.get_logger(this_module_name)
+        self._is_robot = Context.in_robot()
+        self._default_log_level = "INFO"
+        self._log_level = self._get_log_level_from_opt()
+        self._logger = self._get_logger(this_module_name)
+
         self.selenium_speed = self._option_handler.get("selenium_speed") or 0
         self.set_selenium_speed(self.selenium_speed)
         self.selenium_implicit_wait = self._option_handler.get("selenium_implicit_wait") or 10
@@ -510,12 +520,75 @@ class _BaseActions(_SelectorsManager):
         else:
             return False
 
-    def _log(self, *args):
+    def _get_log_level_as_str(self):
+        l = self._option_handler.get("log_level")
+        return l.upper() if l else self._default_log_level
+
+    def _get_log_level_from_str(self, str):
+        """ Convert string log level to integer
+        logging level."""
+
+        try:
+            return getattr(logging, str.upper())
+        except AttributeError:
+            # If a non-existant log level is asked for,
+            # just default to "INFO".
+            return getattr(logging, self._default_log_level)
+
+    def _get_log_level_from_opt(self):
+        return self._get_log_level_from_str(self._get_log_level_as_str())
+
+    def _get_logger(self, module_name):
+
+        if self._is_robot:
+            ret = robot_api.logger
+        else:
+            ret = self._get_logger_outside_robot()
+        return ret
+
+    def _get_logger_outside_robot(self):
+        logging.basicConfig(stream=sys.stdout, filename="po_log.txt", level=self._log_level, filemode="w")
+        logger = logging.getLogger(self.__class__.__name__)
+
+        # We'll add a stream handler to stdout for the logger, but
+        # we have to do it in the _log() method, because that's where
+        # console gets passed.
+        return logger
+
+    def log(self, txt, level=None, is_console=True):
+        """ Logs either to Robot log file or to a file called po_log.txt
+        at the current directory.
+
+        :param txt: The text to log
+        :param level: The level to log. Defaults to "INFO"
+        :param is_console: Controls whether text being logged
+        goes to stdout.
         """
-        Logs either to Robot or to a file if outside robot. If logging to a file,
-        prints each argument delimited by tabs.
-        """
-        self._logger.info("\t".join([str(arg) for arg in args]))
+        self._log(txt, level, is_console)
+
+    def _log(self, txt, level=None, is_console=True):
+        """ See :func:`log`."""
+
+        level = self._default_log_level if level is None else level
+        level_as_int = self._get_log_level_from_str(level)
+
+        if is_console:
+            if self._is_robot:
+                self._logger.console("\n" + txt)
+            else:
+
+                try:
+                    self._logger._attached_sh
+                except AttributeError:
+                    sh = logging.StreamHandler(sys.stdout)
+                    sh.setLevel(level_as_int)
+                    self._logger.addHandler(sh)
+                    self._logger._attached_sh = True
+
+        if self._is_robot:
+            self._logger.write(txt, level)
+        else:
+            self._logger.log(level_as_int, txt)
 
     def go_to(self, *args):
         """
@@ -574,15 +647,13 @@ class _BaseActions(_SelectorsManager):
                                                       "apikey")
 
             self.session_id = self.get_current_browser().session_id
-            self._log("session ID: %s" % self.session_id)
+            self.log("session ID: %s" % self.session_id)
 
         else:
             self.open_browser(resolved_url, self.browser)
 
-        # Probably don't need this check here. We should log no matter
-        # what and the user sets the log level. When we take this check out
-        # also take out of base class __init__ parameter.
-        self._log("open", self.__class__.__name__, str(self.get_current_browser()), resolved_url)
+        self.log("PO_BROWSER: %s" % (str(self.get_current_browser())),
+                 is_console=False)
 
         return self
 

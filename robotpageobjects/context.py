@@ -59,29 +59,6 @@ class Context(object):
             cls._s2l_instance = BuiltIn().import_library("Selenium2Library")
 
     @classmethod
-    def get_logger(cls, module_name):
-        if cls.in_robot():
-            return robot_api.logger
-        else:
-            return cls._get_logger_outside_robot(module_name)
-
-    @staticmethod
-    def _get_logger_outside_robot(module_name):
-        logger = logging.getLogger(module_name)
-        logger.setLevel(logging.INFO)
-        fh = logging.FileHandler("po_log.txt")
-        #loglevel_as_str = OptionHandler().get("loglevel", "INFO")
-        loglevel_as_str = "INFO"
-
-        try:
-            level = getattr(logging, loglevel_as_str)
-        except AttributeError:
-            raise Exception("No such loglevel exists: %s" % loglevel_as_str)
-        fh.setLevel(level)
-        logger.addHandler(fh)
-        return logger
-
-    @classmethod
     def set_keywords_exposed(cls):
         cls._keywords_exposed = True
         

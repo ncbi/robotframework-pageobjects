@@ -16,6 +16,8 @@ class BaseTestCase(unittest.TestCase):
     """
 
     test_dir = os.path.dirname(os.path.realpath(__file__))
+    scenario_dir = os.path.join(test_dir, "scenarios")
+
     base_file_url = "file:///%s/scenarios" % test_dir.replace("\\", "/")
     site_under_test_file_url = "%s/site/index.html" % base_file_url
 
@@ -34,7 +36,15 @@ class BaseTestCase(unittest.TestCase):
 
     def get_log_path(self, is_robot=False):
         filename = "log.html" if is_robot else "po_log.txt"
-        return os.path.join(os.getcwd(), filename)
+        return os.path.join(self.scenario_dir, filename)
+
+    def read_log(self, robot=False):
+        f = open(self.get_log_path(robot), "r")
+        try:
+            ret = f.read()
+        finally:
+            f.close()
+            return ret
 
     def get_sauce_creds(self):
         """
@@ -46,7 +56,7 @@ class BaseTestCase(unittest.TestCase):
     def setUp(self):
 
         # Remove png files
-        screenshot_locator = os.getcwd() + os.sep + "selenium-screenshot*.png"
+        screenshot_locator = os.path.join(self.scenario_dir, "selenium-screenshot*.png")
         for screenshot in glob.glob(screenshot_locator):
             os.unlink(screenshot)
 
@@ -91,15 +101,14 @@ class BaseTestCase(unittest.TestCase):
         a .py ending. The robot test must also live under tests/scenarios and have a .robot
         ending.
         """
-
         if scenario.endswith(".py"):
-            arg = "python %s%sscenarios%s%s" % (self.test_dir, os.sep, os.sep, scenario)
+            arg = "cd %s; python %s" % (self.scenario_dir, scenario)
 
             return self.run_program(arg)
         else:
-            return self.run_program("pybot", "-P %s%sscenarios%spo" % (self.test_dir, os.sep, os.sep),
-                                    "%s%sscenarios%s%s" % (
-                self.test_dir, os.sep, os.sep, scenario), **kwargs)
+            arg = "cd %s; pybot -P po %s" %(self.scenario_dir, scenario)
+            return self.run_program(arg, **kwargs)
+
 
     def run_program(self, base_cmd, *args, **opts):
 
@@ -118,7 +127,6 @@ class BaseTestCase(unittest.TestCase):
 
         :url: opts: Keywords of options to sanity. Use underscores in place of dashes.
         """
-
         class Ret(object):
             """
             The object to return from running the program
@@ -140,13 +148,17 @@ class BaseTestCase(unittest.TestCase):
 
         cmd = base_cmd + " " + " ".join(args) + " "
         cmd  = base_cmd + " "
+
+        opt_str = ""
         for name in opts:
             val = opts[name]
             if isinstance(val, bool):
-                cmd = cmd + "--" + name.replace("_", "-") + " "
+                opt_str += "--" + name.replace("_", "-") + " "
             else:
-                cmd = cmd + "--" + name.replace("_", "-") + "=" + val + " "
+                opt_str += "--" + name.replace("_", "-") + "=" + val + " "
 
+
+        cmd = cmd.replace("pybot ", "pybot " + opt_str + " ")
         cmd += " " + " ".join(args)
 
         p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -168,16 +180,29 @@ class BaseTestCase(unittest.TestCase):
             dom = None
 
         # Out is either stdout, or stderr
-        out = com[0] if com[1] == "" else com[1]
+        out = " ".join(com)
         # Splice out trailing new line
         out = out[:-1]
 
         return Ret(cmd, code, out, xmldoc=dom)
 
+    def get_screen_shot_paths(self):
+        return glob.glob("%s/*.png" % self.scenario_dir)
+
+    def assert_screen_shots(self, expected_screen_shots):
+        screen_shots = self.get_screen_shot_paths()
+        if expected_screen_shots > 0:
+            self.assertTrue(len(screen_shots) > 0, "No screenshot was taken")
+
+        self.assertEquals(len(screen_shots), expected_screen_shots, "Exactly %s screen shots should have been taken, "
+                                                                    "got %s instead"
+                                                                    % (expected_screen_shots, screen_shots))
+
+
     def assert_run(self, run,
                    expected_returncode=0, expected_tests_ran=None,
                    expected_tests_failed=None,
-                   search_output=None, expected_browser=None
+                   search_output=None, search_log=None, expected_browser=None
     ):
         """
         Makes general assertions about a program run based on return code
@@ -191,6 +216,7 @@ class BaseTestCase(unittest.TestCase):
         :param search_output: Text to assert is present in stdout of run. Provide  regular expression
         """
         returncode = run.returncode
+        is_robot = "pybot" in run.cmd
 
         self.assertEquals(expected_returncode, returncode,
                           "Return code was %s, expecting %s with the command: '%s'" % (
@@ -205,29 +231,28 @@ class BaseTestCase(unittest.TestCase):
                             "Did not find %s expected failures when running %s." % (expected_tests_failed,
                                                                                     run.cmd))
         if search_output:
+
             self.assertIsNotNone(re.search(search_output, run.output),
                                  "string: '%s' not found in stdout when running %s" % (
                                      search_output, run.cmd))
+        if search_log:
+
+            self.assertIsNotNone(re.search(search_log, self.read_log(is_robot)),
+                                 "string: '%s' not found in log file when running %s" % (
+                                     search_output, run.cmd))
 
         if expected_browser:
-            if "pybot" in run.cmd:
-                try:
-                    robot_log = open(self.get_log_path(is_robot=True))
-                    self.assertTrue(expected_browser in robot_log.read(),
-                                    "Unexpected browser. Expected %s, got something else")
-                finally:
-                    robot_log.close()
+            log_content = self.read_log(is_robot)
+
+            if is_robot:
+                self.assertTrue(expected_browser in log_content,
+                                "Unexpected browser logged")
+
             else:
-                try:
-                    po_log = open(self.get_log_path())
-                    log_fields = po_log.read().split("\t")
-                    logged_browser = log_fields[2]
-                    self.assertTrue(expected_browser.lower() in logged_browser.lower(),
-                                    "Unexpected browser. Expected %s, "
-                                    "got %s" % (expected_browser,
-                                                logged_browser))
-                finally:
-                    po_log.close()
+
+                self.assertTrue(expected_browser in log_content,
+                                "Unexpected browser logged")
+
 
     def write_var_file(self, *args, **kwargs):
         f = None
