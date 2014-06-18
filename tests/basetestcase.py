@@ -236,7 +236,6 @@ class BaseTestCase(unittest.TestCase):
                                  "string: '%s' not found in stdout when running %s" % (
                                      search_output, run.cmd))
         if search_log:
-
             self.assertIsNotNone(re.search(search_log, self.read_log(is_robot)),
                                  "string: '%s' not found in log file when running %s" % (
                                      search_output, run.cmd))

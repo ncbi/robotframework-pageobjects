@@ -40,7 +40,6 @@ import exceptions
 from optionhandler import OptionHandler
 
 
-
 this_module_name = __name__
 
 
@@ -392,7 +391,14 @@ class _BaseActions(_SelectorsManager):
 
         self._option_handler = OptionHandler()
         self._is_robot = Context.in_robot()
-        self._default_log_level = "INFO"
+
+        if self._is_robot:
+            self._default_log_threshold = "WARN"
+        else:
+            self._default_log_threshold = "WARNING"
+
+        self._default_log_level = "DEBUG"
+
         self._log_level = self._get_log_level_from_opt()
         self._logger = self._get_logger(this_module_name)
 
@@ -522,17 +528,33 @@ class _BaseActions(_SelectorsManager):
 
     def _get_log_level_as_str(self):
         l = self._option_handler.get("log_level")
-        return l.upper() if l else self._default_log_level
+        return l.upper() if l else self._default_log_threshold
+
+    def _normalize_warning_str(self, str):
+        if self._is_robot:
+            return "WARN"
+        else:
+            return "WARNING"
 
     def _get_log_level_from_str(self, str):
         """ Convert string log level to integer
         logging level."""
 
+        str_upper = str.upper()
+
         try:
-            return getattr(logging, str.upper())
+            return getattr(logging, str_upper)
         except AttributeError:
-            # If a non-existant log level is asked for,
-            # just default to "INFO".
+            # Problems getting the log level
+
+            # Uggh, Robot is WARN, Python is WARNING
+            if str_upper.startswith("WARN"):
+                warning_str = self._normalize_warning_str(str_upper)
+                if self._is_robot:
+                    return getattr(logging, warning_str)
+                else:
+                    return getattr(logging, warning_str)
+
             return getattr(logging, self._default_log_level)
 
     def _get_log_level_from_opt(self):
@@ -555,38 +577,43 @@ class _BaseActions(_SelectorsManager):
         # console gets passed.
         return logger
 
-    def log(self, txt, level=None, is_console=True):
+    def log(self, txt, level=None):
         """ Logs either to Robot log file or to a file called po_log.txt
         at the current directory.
 
         :param txt: The text to log
-        :param level: The level to log. Defaults to "INFO"
+        :param level: The level to log. Defaults to "WARNING"
         :param is_console: Controls whether text being logged
         goes to stdout.
         """
-        self._log(txt, level, is_console)
+        self._log(txt, level)
 
-    def _log(self, txt, level=None, is_console=True):
+    def _log(self, txt, level=None):
         """ See :func:`log`."""
 
-        level = self._default_log_level if level is None else level
-        level_as_int = self._get_log_level_from_str(level)
-
-        if is_console:
+        if level is not None and level.upper().startswith("WARN"):
             if self._is_robot:
-                self._logger.console("\n" + txt)
+                level_as_str = "WARN"
             else:
+                level_as_str = "WARNING"
 
-                try:
-                    self._logger._attached_sh
-                except AttributeError:
-                    sh = logging.StreamHandler(sys.stdout)
-                    sh.setLevel(level_as_int)
-                    self._logger.addHandler(sh)
-                    self._logger._attached_sh = True
+        else:
+            level_as_str = self._default_log_level if level is None else level.upper()
+
+
+        level_as_int = self._get_log_level_from_str(level_as_str)
+
+        if not self._is_robot:
+            try:
+                self._logger._attached_sh
+            except AttributeError:
+                sh = logging.StreamHandler(sys.stdout)
+                sh.setLevel(level_as_int)
+                self._logger.addHandler(sh)
+                self._logger._attached_sh = True
 
         if self._is_robot:
-            self._logger.write(txt, level)
+            self._logger.write(txt, level_as_str)
         else:
             self._logger.log(level_as_int, txt)
 
@@ -652,8 +679,7 @@ class _BaseActions(_SelectorsManager):
         else:
             self.open_browser(resolved_url, self.browser)
 
-        self.log("PO_BROWSER: %s" % (str(self.get_current_browser())),
-                 is_console=False)
+        self.log("PO_BROWSER: %s" % (str(self.get_current_browser())))
 
         return self
 
