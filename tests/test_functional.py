@@ -395,13 +395,13 @@ class LoggingTestCase(BaseTestCase):
         self.assertFalse("hello world" in run.output)
         self.assertEquals(self.read_log(), "")
 
-    def test_threshold_at_warning_log_critical_should_not_log_anything_robot(self):
-        run = self.run_scenario("test_logging_set_to_info_log_debug.robot")
-        self.assert_run(run, expected_returncode=0, search_log="hello world")
+    def test_threshold_at_info_log_warn_should_not_log_anything_robot(self):
+        run = self.run_scenario("test_logging_set_to_info_log_warn.robot")
+        self.assert_run(run, expected_returncode=0)
 
         # Logging to console in Robot is independent of logging level as per:
         # https://code.google.com/p/robotframework/source/browse/src/robot/output/librarylogger.py
-        self.assertTrue("hello world" in run.output)
+        self.assertTrue("hello world" not in run.output)
 
     def tearDown(self):
         super(LoggingTestCase, self).tearDown()

@@ -4,7 +4,7 @@ from robotpageobjects import Page
 class LoggingPage(Page):
     uri = ""
 
-    def log_warning(self, str):
+    def log_warning(self):
         self.log("hello world", "WARNING")
         return self
 

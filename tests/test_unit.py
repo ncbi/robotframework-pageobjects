@@ -244,3 +244,68 @@ class KeywordBehaviorTestCase(BaseTestCase):
 
     def test_private_method_returning_none_should_not_raise_exception(self):
         self.assertIsNone(self.p._return_none())
+
+class LoggingLevels(BaseTestCase):
+
+    def setUp(self):
+        super(LoggingLevels, self).setUp()
+        self.p = Page()
+
+    def test_log_CRITICAL_python(self):
+        level_tup = self.p._get_normalized_logging_levels("CRITICAL", is_robot=False)
+        self.assertEquals(level_tup, ("CRITICAL", 50))
+
+    def test_log_WARNING_python(self):
+        level_tup = self.p._get_normalized_logging_levels("WARN", is_robot=False)
+        self.assertEquals(level_tup, ("WARNING", 30))
+
+    def test_log_WARN_python(self):
+        level_tup = self.p._get_normalized_logging_levels("WARNING", is_robot=False)
+        self.assertEquals(level_tup, ("WARNING", 30))
+
+    def test_log_INFO_python(self):
+        level_tup = self.p._get_normalized_logging_levels("INFO", is_robot=False)
+        self.assertEquals(level_tup, ("INFO", 20))
+
+    def test_log_DEBUG_python(self):
+        level_tup = self.p._get_normalized_logging_levels("DEBUG", is_robot=False)
+        self.assertEquals(level_tup, ("DEBUG", 10))
+
+    def test_log_NOTSET_python(self):
+        level_tup = self.p._get_normalized_logging_levels("NOTSET", is_robot=False)
+        self.assertEquals(level_tup, ("NOTSET", 0))
+
+    def test_log_TRACE_python(self):
+        level_tup = self.p._get_normalized_logging_levels("TRACE", is_robot=False)
+        self.assertEquals(level_tup, ("NOTSET", 0))
+
+
+    def test_log_CRITICAL_robot(self):
+        level_tup = self.p._get_normalized_logging_levels("CRITICAL", is_robot=True)
+        self.assertEquals(level_tup, ("WARN", 30))
+
+    def test_log_WARNING_robot(self):
+        level_tup = self.p._get_normalized_logging_levels("WARN", is_robot=True)
+        self.assertEquals(level_tup, ("WARN", 30))
+
+    def test_log_WARN_robot(self):
+        level_tup = self.p._get_normalized_logging_levels("WARNING", is_robot=True)
+        self.assertEquals(level_tup, ("WARN", 30))
+
+    def test_log_INFO_robot(self):
+        level_tup = self.p._get_normalized_logging_levels("INFO", is_robot=True)
+        self.assertEquals(level_tup, ("INFO", 20))
+
+    def test_log_DEBUG_robot(self):
+        level_tup = self.p._get_normalized_logging_levels("DEBUG", is_robot=True)
+        self.assertEquals(level_tup, ("DEBUG", 10))
+
+    def test_log_NOTSET_robot(self):
+        level_tup = self.p._get_normalized_logging_levels("NOTSET", is_robot=True)
+        self.assertEquals(level_tup, ("TRACE", 0))
+
+    def test_log_TRACE_robot(self):
+        level_tup = self.p._get_normalized_logging_levels("TRACE", is_robot=True)
+        self.assertEquals(level_tup, ("TRACE", 0))
+
+

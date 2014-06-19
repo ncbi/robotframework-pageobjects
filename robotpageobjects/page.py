@@ -382,6 +382,8 @@ class _BaseActions(_SelectorsManager):
     Helper class that defines actions for PageObjectLibrary.
     """
 
+    _default_level_to_log = "INFO"
+
     def __init__(self, *args, **kwargs):
         """
         Initializes the options used by the actions defined in this class.
@@ -392,15 +394,9 @@ class _BaseActions(_SelectorsManager):
         self._option_handler = OptionHandler()
         self._is_robot = Context.in_robot()
 
-        if self._is_robot:
-            self._default_log_threshold = "WARN"
-        else:
-            self._default_log_threshold = "WARNING"
-
-        self._default_log_level = "DEBUG"
-
-        self._log_level = self._get_log_level_from_opt()
-        self._logger = self._get_logger(this_module_name)
+        self._log_warn_str = "WARN" if self._is_robot else "WARNING"
+        self._log_threshold_level_as_int = self._get_log_threshold_level_from_opt_as_int()
+        self._logger = self._get_logger()
 
         self.selenium_speed = self._option_handler.get("selenium_speed") or 0
         self.set_selenium_speed(self.selenium_speed)
@@ -526,41 +522,28 @@ class _BaseActions(_SelectorsManager):
         else:
             return False
 
-    def _get_log_level_as_str(self):
+    def _get_log_level_from_opt_as_str(self):
         l = self._option_handler.get("log_level")
-        return l.upper() if l else self._default_log_threshold
-
-    def _normalize_warning_str(self, str):
-        if self._is_robot:
-            return "WARN"
-        else:
-            return "WARNING"
+        return l.upper() if l else "INFO"
 
     def _get_log_level_from_str(self, str):
         """ Convert string log level to integer
         logging level."""
 
         str_upper = str.upper()
+        if str_upper.startswith("WARN"):
+            return getattr(logging, "WARNING")
 
         try:
             return getattr(logging, str_upper)
+
         except AttributeError:
-            # Problems getting the log level
+            return getattr(logging, self._default_level_to_log)
 
-            # Uggh, Robot is WARN, Python is WARNING
-            if str_upper.startswith("WARN"):
-                warning_str = self._normalize_warning_str(str_upper)
-                if self._is_robot:
-                    return getattr(logging, warning_str)
-                else:
-                    return getattr(logging, warning_str)
+    def _get_log_threshold_level_from_opt_as_int(self):
+        return self._get_log_level_from_str(self._get_log_level_from_opt_as_str())
 
-            return getattr(logging, self._default_log_level)
-
-    def _get_log_level_from_opt(self):
-        return self._get_log_level_from_str(self._get_log_level_as_str())
-
-    def _get_logger(self, module_name):
+    def _get_logger(self):
 
         if self._is_robot:
             ret = robot_api.logger
@@ -569,7 +552,7 @@ class _BaseActions(_SelectorsManager):
         return ret
 
     def _get_logger_outside_robot(self):
-        logging.basicConfig(stream=sys.stdout, filename="po_log.txt", level=self._log_level, filemode="w")
+        logging.basicConfig(stream=sys.stdout, filename="po_log.txt", level=self._log_threshold_level_as_int, filemode="w")
         logger = logging.getLogger(self.__class__.__name__)
 
         # We'll add a stream handler to stdout for the logger, but
@@ -579,27 +562,91 @@ class _BaseActions(_SelectorsManager):
 
     def log(self, txt, level=None):
         """ Logs either to Robot log file or to a file called po_log.txt
-        at the current directory.
+        at the current directory. Possible levels are:
+
+        - "WARN"
+        - "INFO"
+        - "DEBUG"
+        - "TRACE"
+
+        In Robot, you set the logging threshold using the --loglevel, or -L option
+        to filter out logging chatter. For example, by default the logging level is
+        set to "INFO" so if you logged "DEBUG" messages, the messages would not
+        get reported.
+
+        Robot logging messages get logged to stdout and to log.html.
+
+        Outside of Robot, you set the logging threshold level using the
+        PO_LOG_LEVEL environment variable or log_level variable in a variable file.
+
+        Although the Python logging module provides more logging levels than
+        Robot provides, logging levels, both passed to the log() method and the
+        threshold level are mapped to the closest supported Robot logging level.
 
         :param txt: The text to log
-        :param level: The level to log. Defaults to "WARNING"
-        :param is_console: Controls whether text being logged
-        goes to stdout.
+        :param level: The level to log.
         """
         self._log(txt, level)
 
-    def _log(self, txt, level=None):
+    def _get_normalized_logging_levels(self, level_as_str, is_robot):
+        """ Returns a tuple of normalized logging level
+        string to integer.
+        """
+        level_as_str_upper = level_as_str.upper()
+
+        # If in Robot figure out corresponding Python levels
+        if is_robot:
+            robot_to_python_levels= {
+                "CRITICAL": "WARN",
+                "WARNING": "WARN",
+                "WARN": "WARN",
+                "INFO": "INFO",
+                "DEBUG": "DEBUG",
+                "TRACE": "TRACE",
+                "NOTSET": "DEBUG"
+            }
+            try:
+                robot_level = robot_to_python_levels[level_as_str_upper]
+            except KeyError:
+                # level not listed in map
+                try:
+                    level_as_int = getattr(logging, level_as_str_upper)
+                except AttributeError:
+                    raise ValueError('Invalid logging level: "%s"' % level_as_str_upper)
+
+            return robot_level, level_as_int
+        else:
+            m = {
+                "CRITICAL": "CRITICAL",
+                "WARN": "WARNING",
+                "WARNING": "WARNING",
+                "INFO": "INFO",
+                "DEBUG": "DEBUG",
+                "TRACE": "NOTSET",
+                "NOTSET": "NOTSET"
+            }
+            level_as_int = None
+            try:
+                python_level = m[level_as_str_upper]
+            except KeyError:
+                # level not listed in map
+                try:
+                    level_as_int = getattr(logging, level_as_str_upper)
+                except AttributeError:
+                    raise ValueError('Invalid logging level: "%s"' % level_as_str_upper)
+
+
+            return python_level, getattr(logging, python_level)
+
+    def _log(self, txt, level="INFO"):
+
         """ See :func:`log`."""
+        self._get_normalized_log_level_str(level)
 
         if level is not None and level.upper().startswith("WARN"):
-            if self._is_robot:
-                level_as_str = "WARN"
-            else:
-                level_as_str = "WARNING"
-
+                level_as_str = self._log_warn_str
         else:
             level_as_str = self._default_log_level if level is None else level.upper()
-
 
         level_as_int = self._get_log_level_from_str(level_as_str)
 
@@ -608,11 +655,13 @@ class _BaseActions(_SelectorsManager):
                 self._logger._attached_sh
             except AttributeError:
                 sh = logging.StreamHandler(sys.stdout)
-                sh.setLevel(level_as_int)
+                sh.setLevel(self._log_threshold_level_as_int)
                 self._logger.addHandler(sh)
                 self._logger._attached_sh = True
 
         if self._is_robot:
+            #from robot.api.logger import console
+            #console(level_as_str)
             self._logger.write(txt, level_as_str)
         else:
             self._logger.log(level_as_int, txt)
