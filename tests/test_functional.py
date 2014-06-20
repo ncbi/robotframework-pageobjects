@@ -379,13 +379,25 @@ class WaitingTestCase(BaseTestCase):
 
 class LoggingTestCase(BaseTestCase):
 
-    def test_threshold_at_warning_log_warning_logs_warning_to_file_and_stdout_python(self):
+    def test_log_below_threshold_robot(self):
+        pass
 
-        # logging info, with log_level set to INFO should print and write to file.
-        run = self.run_scenario("test_threshold_at_warning_log_warning_logs_warning_to_file_and_stdout_python.py")
-        self.assert_run(run, expected_returncode=0, expected_tests_failed=0, search_output="hello world",
-                        search_log="WARNING:LoggingPage:hello world")
+    def test_log_below_threshold_python(self):
+        pass
 
+    def test_log_above_threshold_robot(self):
+        pass
+
+    def test_log_above_threshold_python(self):
+        pass
+
+    def test_log_at_threshold_robot(self):
+        pass
+
+    def test_log_at_threshold_python(self):
+        pass
+
+    """
     def test_threshold_at_warning_log_warning_logs_warning_to_file_and_stdout_robot(self):
         run = self.run_scenario("test_logging_to_stdout_and_file.robot", variable="baseurl:foo")
         self.assert_run(run, expected_returncode=0, search_output="hello world", search_log="hello world")
@@ -406,5 +418,6 @@ class LoggingTestCase(BaseTestCase):
     def tearDown(self):
         super(LoggingTestCase, self).tearDown()
         os.environ["PO_LOG_LEVEL"] = "INFO"
+    """
 
 

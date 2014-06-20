@@ -646,15 +646,7 @@ class _BaseActions(_SelectorsManager):
     def _log(self, txt, level="INFO"):
 
         """ See :func:`log`."""
-        self._get_normalized_log_level_str(level)
-
-        if level is not None and level.upper().startswith("WARN"):
-                level_as_str = self._log_warn_str
-        else:
-            level_as_str = self._default_log_level if level is None else level.upper()
-
-        level_as_int = self._get_log_level_from_str(level_as_str)
-
+        level_as_str, level_as_int = self._get_normalized_log_level_str(level, self._is_robot)
         if not self._is_robot:
             try:
                 self._logger._attached_sh
