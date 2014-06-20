@@ -590,7 +590,7 @@ class _BaseActions(_SelectorsManager):
         self._log(txt, level)
 
     def _get_normalized_logging_levels(self, level_as_str, is_robot):
-        """ Given a log string, returns the original string and the translated
+        """ Given a log string, returns the translated log level string and the translated
         python logging level integer. This is needed because there are logging level
         constants defined in Robot that are not in Python, and Python logging level
         constants that are not defined in Robot.
@@ -601,12 +601,18 @@ class _BaseActions(_SelectorsManager):
             "WARNING": "WARN",
             "NOTSET": "TRACE"
         }
+
         level_as_str_upper = level_as_str.upper()
+        translated_level_str = None
         if is_robot:
             robot_levels = robot_logging_conf.LEVELS
 
             # The level passed in is a Robot level, so look up corresponding
             # python integer logging level
+            if level_as_str_upper is "WARNING":
+                # There is no "WARNING" in Robot
+                level_as_str_upper = "WARN"
+
             if level_as_str_upper in robot_levels:
                 return level_as_str_upper, robot_levels[level_as_str_upper]
             else:
@@ -614,22 +620,27 @@ class _BaseActions(_SelectorsManager):
                 # Robot level, so translate it to one, then look it up.
 
                 try:
-                    translated_level = translation_map[level_as_str_upper]
+                    translated_level_str = translation_map[level_as_str_upper]
                 except KeyError:
                     raise ValueError("The log level '%s' is invalid" % level_as_str_upper)
-                return translated_level, robot_levels[translated_level]
+                return translated_level_str, robot_levels[translated_level_str]
 
         else:
             try:
                 # Try to get levels from python
                 return level_as_str_upper, getattr(logging, level_as_str_upper)
             except AttributeError:
-                # Woops, could be user is passing in a Robot log string that
+                 # Woops, could be user is passing in a Robot log string that
                 # doesn't exist for Python. So look up the Python level given the robot level
                 inv_translation_map = {v:k for k, v in translation_map.items()}
+
                 try:
-                    return level_as_str_upper, getattr(logging, inv_translation_map[level_as_str_upper])
+                    translated_level_str = inv_translation_map[level_as_str_upper]
                 except KeyError:
+                    translated_level_str = level_as_str_upper
+                try:
+                    return translated_level_str, getattr(logging, translated_level_str)
+                except AttributeError:
                     raise ValueError("The log level '%s' is invalid" % level_as_str_upper)
 
     def _log(self, txt, level="INFO"):
