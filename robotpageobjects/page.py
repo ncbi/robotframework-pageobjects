@@ -30,6 +30,7 @@ import warnings
 from robot import api as robot_api
 from robot.utils import asserts
 from selenium import webdriver
+import robot.output.pyloggingconf as robot_logging_conf
 from selenium.webdriver.support.ui import WebDriverWait
 from Selenium2Library import Selenium2Library
 from Selenium2Library.locators.elementfinder import ElementFinder
@@ -589,54 +590,47 @@ class _BaseActions(_SelectorsManager):
         self._log(txt, level)
 
     def _get_normalized_logging_levels(self, level_as_str, is_robot):
-        """ Returns a tuple of normalized logging level
-        string to integer.
+        """ Given a log string, returns the original string and the translated
+        python logging level integer. This is needed because there are logging level
+        constants defined in Robot that are not in Python, and Python logging level
+        constants that are not defined in Robot.
         """
+
+        translation_map  = {
+            "CRITICAL": "WARN",
+            "WARNING": "WARN",
+            "NOTSET": "TRACE"
+        }
         level_as_str_upper = level_as_str.upper()
-
-        # If in Robot figure out corresponding Python levels
         if is_robot:
-            robot_to_python_levels= {
-                "CRITICAL": "WARN",
-                "WARNING": "WARN",
-                "WARN": "WARN",
-                "INFO": "INFO",
-                "DEBUG": "DEBUG",
-                "TRACE": "TRACE",
-                "NOTSET": "DEBUG"
-            }
-            try:
-                robot_level = robot_to_python_levels[level_as_str_upper]
-            except KeyError:
-                # level not listed in map
-                try:
-                    level_as_int = getattr(logging, level_as_str_upper)
-                except AttributeError:
-                    raise ValueError('Invalid logging level: "%s"' % level_as_str_upper)
+            robot_levels = robot_logging_conf.LEVELS
 
-            return robot_level, level_as_int
+            # The level passed in is a Robot level, so look up corresponding
+            # python integer logging level
+            if level_as_str_upper in robot_levels:
+                return level_as_str_upper, robot_levels[level_as_str_upper]
+            else:
+                # The level passed-in doesn't correspond to a
+                # Robot level, so translate it to one, then look it up.
+
+                try:
+                    translated_level = translation_map[level_as_str_upper]
+                except KeyError:
+                    raise ValueError("The log level '%s' is invalid" % level_as_str_upper)
+                return translated_level, robot_levels[translated_level]
+
         else:
-            m = {
-                "CRITICAL": "CRITICAL",
-                "WARN": "WARNING",
-                "WARNING": "WARNING",
-                "INFO": "INFO",
-                "DEBUG": "DEBUG",
-                "TRACE": "NOTSET",
-                "NOTSET": "NOTSET"
-            }
-            level_as_int = None
             try:
-                python_level = m[level_as_str_upper]
-            except KeyError:
-                # level not listed in map
+                # Try to get levels from python
+                return level_as_str_upper, getattr(logging, level_as_str_upper)
+            except AttributeError:
+                # Woops, could be user is passing in a Robot log string that
+                # doesn't exist for Python. So look up the Python level given the robot level
+                inv_translation_map = {v:k for k, v in translation_map.items()}
                 try:
-                    level_as_int = getattr(logging, level_as_str_upper)
-                except AttributeError:
-                    raise ValueError('Invalid logging level: "%s"' % level_as_str_upper)
-
-
-            return python_level, getattr(logging, python_level)
+                    return level_as_str_upper, getattr(logging, inv_translation_map[level_as_str_upper])
+                except KeyError:
+                    raise ValueError("The log level '%s' is invalid" % level_as_str_upper)
 
     def _log(self, txt, level="INFO"):
 

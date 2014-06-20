@@ -247,6 +247,12 @@ class KeywordBehaviorTestCase(BaseTestCase):
 
 class LoggingLevels(BaseTestCase):
 
+    # Tests protected method Page._get_normalized_logging_levels, which given a
+    # String logging level should return a tuple of the attempted string logging level
+    # with the associated integer level from Python's logging module. This method
+    # deals with the fact that Robot has different logging levels than python. It's called
+    # by Page.log().
+
     def setUp(self):
         super(LoggingLevels, self).setUp()
         self.p = Page()
@@ -255,15 +261,31 @@ class LoggingLevels(BaseTestCase):
         level_tup = self.p._get_normalized_logging_levels("CRITICAL", is_robot=False)
         self.assertEquals(level_tup, ("CRITICAL", 50))
 
-    def test_log_WARNING_python(self):
-        level_tup = self.p._get_normalized_logging_levels("WARN", is_robot=False)
-        self.assertEquals(level_tup, ("WARNING", 30))
+    def test_log_CRITICAL_robot(self):
+        level_tup = self.p._get_normalized_logging_levels("CRITICAL", is_robot=True)
+        self.assertEquals(level_tup, ("WARN", 30))
 
     def test_log_WARN_python(self):
+        level_tup = self.p._get_normalized_logging_levels("WARN", is_robot=False)
+        self.assertEquals(level_tup, ("WARN", 30))
+
+    def test_log_WARNING_python(self):
         level_tup = self.p._get_normalized_logging_levels("WARNING", is_robot=False)
         self.assertEquals(level_tup, ("WARNING", 30))
 
+    def test_log_WARN_robot(self):
+        level_tup = self.p._get_normalized_logging_levels("WARN", is_robot=True)
+        self.assertEquals(level_tup, ("WARN", 30))
+
+    def test_log_WARN_python(self):
+        level_tup = self.p._get_normalized_logging_levels("WARNING", is_robot=True)
+        self.assertEquals(level_tup, ("WARN", 30))
+
     def test_log_INFO_python(self):
+        level_tup = self.p._get_normalized_logging_levels("INFO", is_robot=False)
+        self.assertEquals(level_tup, ("INFO", 20))
+
+    def test_log_INFO_robot(self):
         level_tup = self.p._get_normalized_logging_levels("INFO", is_robot=False)
         self.assertEquals(level_tup, ("INFO", 20))
 
@@ -277,24 +299,7 @@ class LoggingLevels(BaseTestCase):
 
     def test_log_TRACE_python(self):
         level_tup = self.p._get_normalized_logging_levels("TRACE", is_robot=False)
-        self.assertEquals(level_tup, ("NOTSET", 0))
-
-
-    def test_log_CRITICAL_robot(self):
-        level_tup = self.p._get_normalized_logging_levels("CRITICAL", is_robot=True)
-        self.assertEquals(level_tup, ("WARN", 30))
-
-    def test_log_WARNING_robot(self):
-        level_tup = self.p._get_normalized_logging_levels("WARN", is_robot=True)
-        self.assertEquals(level_tup, ("WARN", 30))
-
-    def test_log_WARN_robot(self):
-        level_tup = self.p._get_normalized_logging_levels("WARNING", is_robot=True)
-        self.assertEquals(level_tup, ("WARN", 30))
-
-    def test_log_INFO_robot(self):
-        level_tup = self.p._get_normalized_logging_levels("INFO", is_robot=True)
-        self.assertEquals(level_tup, ("INFO", 20))
+        self.assertEquals(level_tup, ("TRACE", 0))
 
     def test_log_DEBUG_robot(self):
         level_tup = self.p._get_normalized_logging_levels("DEBUG", is_robot=True)
@@ -307,5 +312,19 @@ class LoggingLevels(BaseTestCase):
     def test_log_TRACE_robot(self):
         level_tup = self.p._get_normalized_logging_levels("TRACE", is_robot=True)
         self.assertEquals(level_tup, ("TRACE", 0))
+
+    @raises(ValueError)
+    def test_log_invalid_log_level_should_raise_value_error_python(self):
+        level_tup = self.p._get_normalized_logging_levels("FOO", is_robot=False)
+        self.assertEquals(level_tup, ("FOO", 0))
+
+    @raises(ValueError)
+    def test_log_invalid_log_level_should_raise_value_error_robot(self):
+        level_tup = self.p._get_normalized_logging_levels("FOO", is_robot=True)
+        self.assertEquals(level_tup, ("FOO", 0))
+
+    def test_log_valid_but_lowercase_level_python(self):
+        level_tup = self.p._get_normalized_logging_levels("inFo", is_robot=False)
+        self.assertEquals(level_tup, ("INFO", 20))
 
 
