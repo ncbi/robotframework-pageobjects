@@ -39,6 +39,7 @@ class BaseTestCase(unittest.TestCase):
         return os.path.join(self.scenario_dir, filename)
 
     def read_log(self, robot=False):
+        print self.get_log_path(robot)
         f = open(self.get_log_path(robot), "r")
         try:
             ret = f.read()
@@ -202,7 +203,7 @@ class BaseTestCase(unittest.TestCase):
     def assert_run(self, run,
                    expected_returncode=0, expected_tests_ran=None,
                    expected_tests_failed=None,
-                   search_output=None, search_log=None, expected_browser=None
+                   search_output=None, search_log=None, not_in_log=None, expected_browser=None
     ):
         """
         Makes general assertions about a program run based on return code
@@ -214,10 +215,12 @@ class BaseTestCase(unittest.TestCase):
         :param expected_tests_ran: number of tests ran
         :param expected_tests_failed: number of tests failed
         :param search_output: Text to assert is present in stdout of run. Provide  regular expression
+        :param search_log: Regular expression to use to search log
+        :param not_in_log: String to assert that's NOT in log. Not a regular expression.
+
         """
         returncode = run.returncode
         is_robot = "pybot" in run.cmd
-
         self.assertEquals(expected_returncode, returncode,
                           "Return code was %s, expecting %s with the command: '%s'" % (
                               returncode, expected_returncode, run.cmd))
@@ -236,11 +239,15 @@ class BaseTestCase(unittest.TestCase):
                                  "string: '%s' not found in stdout when running %s" % (
                                      search_output, run.cmd))
         if search_log:
-            print search_log
-
-            self.assertIsNotNone(re.search(search_log, self.read_log(is_robot)),
+            log_contents = self.read_log(is_robot)
+            self.assertIsNotNone(re.search(search_log, log_contents),
                                  "string: '%s' not found in log file when running %s" % (
                                      search_output, run.cmd))
+
+        if not_in_log:
+            self.assertFalse(not_in_log in self.read_log(is_robot), '"%s" was found in the log file, '
+                                                                    'but shouldn\'t have been.'
+                                                                    % not_in_log)
 
         if expected_browser:
             log_content = self.read_log(is_robot)

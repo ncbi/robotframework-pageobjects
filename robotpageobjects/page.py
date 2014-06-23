@@ -28,6 +28,7 @@ import urllib2
 import warnings
 
 from robot import api as robot_api
+import robot.api
 from robot.utils import asserts
 from selenium import webdriver
 import robot.output.pyloggingconf as robot_logging_conf
@@ -384,6 +385,8 @@ class _BaseActions(_SelectorsManager):
     """
 
     _default_level_to_log = "INFO"
+    _logging_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
 
     def __init__(self, *args, **kwargs):
         """
@@ -395,7 +398,6 @@ class _BaseActions(_SelectorsManager):
         self._option_handler = OptionHandler()
         self._is_robot = Context.in_robot()
 
-        self._log_warn_str = "WARN" if self._is_robot else "WARNING"
         self._log_threshold_level_as_int = self._get_log_threshold_level_from_opt_as_int()
         self._logger = self._get_logger()
 
@@ -548,20 +550,24 @@ class _BaseActions(_SelectorsManager):
 
         if self._is_robot:
             ret = robot_api.logger
+
         else:
             ret = self._get_logger_outside_robot()
         return ret
 
     def _get_logger_outside_robot(self):
-        logging.basicConfig(stream=sys.stdout, filename="po_log.txt", level=self._log_threshold_level_as_int, filemode="w")
+        # Stream handler is set from _log() since
+        # that must be decided at run-time.
         logger = logging.getLogger(self.__class__.__name__)
-
-        # We'll add a stream handler to stdout for the logger, but
-        # we have to do it in the _log() method, because that's where
-        # console gets passed.
+        logger.setLevel(self._log_threshold_level_as_int)
+        fh = logging.FileHandler("po_log.txt", "w")
+        fh.setLevel(self._log_threshold_level_as_int)
+        fh.setFormatter(self._logging_formatter)
+        logger.addHandler(fh)
+        logger._attached_sh = False
         return logger
 
-    def log(self, txt, level=None):
+    def log(self, txt, level="INFO", is_console=True):
         """ Logs either to Robot log file or to a file called po_log.txt
         at the current directory. Possible levels are:
 
@@ -587,7 +593,7 @@ class _BaseActions(_SelectorsManager):
         :param txt: The text to log
         :param level: The level to log.
         """
-        self._log(txt, level)
+        return self._log(txt, level, is_console)
 
     def _get_normalized_logging_levels(self, level_as_str, is_robot):
         """ Given a log string, returns the translated log level string and the translated
@@ -643,25 +649,26 @@ class _BaseActions(_SelectorsManager):
                 except AttributeError:
                     raise ValueError("The log level '%s' is invalid" % level_as_str_upper)
 
-    def _log(self, txt, level="INFO"):
+    def _log(self, txt, level="INFO", is_console=True):
 
         """ See :func:`log`."""
-        level_as_str, level_as_int = self._get_normalized_log_level_str(level, self._is_robot)
-        if not self._is_robot:
-            try:
-                self._logger._attached_sh
-            except AttributeError:
-                sh = logging.StreamHandler(sys.stdout)
-                sh.setLevel(self._log_threshold_level_as_int)
-                self._logger.addHandler(sh)
-                self._logger._attached_sh = True
+        level_as_str, level_as_int = self._get_normalized_logging_levels(level, self._is_robot)
 
         if self._is_robot:
-            #from robot.api.logger import console
-            #console(level_as_str)
             self._logger.write(txt, level_as_str)
+            if is_console:
+                # Robot's logging only outputs to stdout if it's a warning, so allow
+                # always logging to console, unless caller specifies not to.
+                robot.api.logger.console(txt)
         else:
+            if is_console and not self._logger._attached_sh:
+                sh = logging.StreamHandler(sys.stdout)
+                sh.setLevel(self._log_threshold_level_as_int)
+                sh.setFormatter(self._logging_formatter)
+                self._logger.addHandler(sh)
+                self._logger.attached_sh = True
             self._logger.log(level_as_int, txt)
+        return self
 
     def go_to(self, *args):
         """
