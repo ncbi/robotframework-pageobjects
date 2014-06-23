@@ -39,7 +39,6 @@ class BaseTestCase(unittest.TestCase):
         return os.path.join(self.scenario_dir, filename)
 
     def read_log(self, robot=False):
-        print self.get_log_path(robot)
         f = open(self.get_log_path(robot), "r")
         try:
             ret = f.read()
