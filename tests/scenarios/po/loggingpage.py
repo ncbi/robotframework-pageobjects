@@ -12,6 +12,10 @@ class LoggingPage(Page):
         self.log("hello world", "DEBUG")
         return self
 
+    def log_info_is_console_false(self):
+        self.log("hello world", is_console=False)
+        return self
+
     def log_debug_is_console_false(self):
         self.log("hello world", "DEBUG", is_console=False)
         return self

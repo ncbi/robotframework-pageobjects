@@ -412,5 +412,10 @@ class LoggingTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=0, search_log="LoggingPage - INFO - hello world")
         self.assertTrue("hello world" in run.output)
 
+    def test_log_below_threshold_is_console_false_python(self):
+        run = self.run_scenario("test_log_below_threshold_is_console_false.py")
+        self.assert_run(run, expected_returncode=0, search_log="hello world")
+        self.assertFalse("hello world" in run.output)
+
 
 
