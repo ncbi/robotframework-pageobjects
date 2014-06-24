@@ -1,5 +1,6 @@
 import logging
 import sys
+
 import robot.api.logger
 import robot.output.pyloggingconf as robot_logging_conf
 
@@ -45,7 +46,6 @@ class Logger(object):
             fh.setLevel(self._threshold_level_as_int)
             fh.setFormatter(self.formatter)
             logger.addHandler(fh)
-            logger._attached_sh = False
             self.logger = logger
 
     def get_log_level_from_str(self, str):
@@ -123,8 +123,6 @@ class Logger(object):
                 except AttributeError:
                     raise ValueError("The log level '%s' is invalid" % level_as_str_upper)
 
-
-
     def log(self, msg, calling_page_name, level="INFO", is_console=True):
         level_as_str, level_as_int = self.get_normalized_logging_levels(level, self.in_robot)
         msg  = "%s - %s" %(calling_page_name, msg)
@@ -139,12 +137,5 @@ class Logger(object):
                 self.logger.addHandler(self.stream_handler)
 
             self.logger.log(level_as_int, msg)
-
-"""
-l = Logger()
-l.log("foo bar", "FooPage", is_console=False)
-l.log("ta ta", "BarPage")
-
-"""
 
 
