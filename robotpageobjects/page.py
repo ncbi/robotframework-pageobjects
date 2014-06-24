@@ -20,18 +20,14 @@
 """
 from __future__ import print_function
 import inspect
-import logging
+import abstractedlogger
 import re
-import sys
 import uritemplate
 import urllib2
 import warnings
 
-from robot import api as robot_api
-import robot.api
 from robot.utils import asserts
 from selenium import webdriver
-import robot.output.pyloggingconf as robot_logging_conf
 from selenium.webdriver.support.ui import WebDriverWait
 from Selenium2Library import Selenium2Library
 from Selenium2Library.locators.elementfinder import ElementFinder
@@ -384,9 +380,7 @@ class _BaseActions(_SelectorsManager):
     Helper class that defines actions for PageObjectLibrary.
     """
 
-    _default_level_to_log = "INFO"
-    _logging_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
+    _abstracted_logger = abstractedlogger.Logger()
 
     def __init__(self, *args, **kwargs):
         """
@@ -397,9 +391,6 @@ class _BaseActions(_SelectorsManager):
 
         self._option_handler = OptionHandler()
         self._is_robot = Context.in_robot()
-
-        self._log_threshold_level_as_int = self._get_log_threshold_level_from_opt_as_int()
-        self._logger = self._get_logger()
         self.selenium_speed = self._option_handler.get("selenium_speed") or 0
         self.set_selenium_speed(self.selenium_speed)
         self.selenium_implicit_wait = self._option_handler.get("selenium_implicit_wait") or 10
@@ -524,49 +515,7 @@ class _BaseActions(_SelectorsManager):
         else:
             return False
 
-    def _get_log_level_from_opt_as_str(self):
-        l = self._option_handler.get("log_level")
-        return l.upper() if l else "INFO"
-
-    def _get_log_level_from_str(self, str):
-        """ Convert string log level to integer
-        logging level."""
-
-        str_upper = str.upper()
-        if str_upper.startswith("WARN"):
-            return getattr(logging, "WARNING")
-
-        try:
-            return getattr(logging, str_upper)
-
-        except AttributeError:
-            return getattr(logging, self._default_level_to_log)
-
-    def _get_log_threshold_level_from_opt_as_int(self):
-        return self._get_log_level_from_str(self._get_log_level_from_opt_as_str())
-
-    def _get_logger(self):
-        if self._is_robot:
-            ret = robot_api.logger
-
-        else:
-            ret = self._get_logger_outside_robot()
-
-        return ret
-
-    def _get_logger_outside_robot(self):
-        # Stream handler is set from _log() since
-        # that must be decided at run-time.
-        logger = logging.getLogger(self.__class__.__name__)
-        logger.setLevel(self._log_threshold_level_as_int)
-        fh = logging.FileHandler("po_log.txt", "w")
-        fh.setLevel(self._log_threshold_level_as_int)
-        fh.setFormatter(self._logging_formatter)
-        logger.addHandler(fh)
-        logger._attached_sh = False
-        return logger
-
-    def log(self, txt, level="INFO", is_console=True):
+    def log(self, msg, level="INFO", is_console=True):
         """ Logs either to Robot log file or to a file called po_log.txt
         at the current directory. Possible levels are:
 
@@ -589,92 +538,16 @@ class _BaseActions(_SelectorsManager):
         Robot provides, logging levels, both passed to the log() method and the
         threshold level are mapped to the closest supported Robot logging level.
 
-        :param txt: The text to log
+        :param msg: The text to log
         :param level: The level to log.
         """
 
-        return self._log(txt, level, is_console)
+        return self._log(msg, self.name, level, is_console)
 
-    def _get_normalized_logging_levels(self, level_as_str, is_robot):
-        """ Given a log string, returns the translated log level string and the translated
-        python logging level integer. This is needed because there are logging level
-        constants defined in Robot that are not in Python, and Python logging level
-        constants that are not defined in Robot.
-        """
-
-        translation_map  = {
-            "CRITICAL": "WARN",
-            "WARNING": "WARN",
-            "NOTSET": "TRACE"
-        }
-
-        level_as_str_upper = level_as_str.upper()
-        translated_level_str = None
-        if is_robot:
-            robot_levels = robot_logging_conf.LEVELS
-
-            # The level passed in is a Robot level, so look up corresponding
-            # python integer logging level
-            if level_as_str_upper is "WARNING":
-                # There is no "WARNING" in Robot
-                level_as_str_upper = "WARN"
-
-            if level_as_str_upper in robot_levels:
-                return level_as_str_upper, robot_levels[level_as_str_upper]
-            else:
-                # The level passed-in doesn't correspond to a
-                # Robot level, so translate it to one, then look it up.
-
-                try:
-                    translated_level_str = translation_map[level_as_str_upper]
-                except KeyError:
-                    raise ValueError("The log level '%s' is invalid" % level_as_str_upper)
-                return translated_level_str, robot_levels[translated_level_str]
-
-        else:
-            try:
-                # Try to get levels from python
-                return level_as_str_upper, getattr(logging, level_as_str_upper)
-            except AttributeError:
-                 # Woops, could be user is passing in a Robot log string that
-                # doesn't exist for Python. So look up the Python level given the robot level
-                inv_translation_map = {v:k for k, v in translation_map.items()}
-
-                try:
-                    translated_level_str = inv_translation_map[level_as_str_upper]
-                except KeyError:
-                    translated_level_str = level_as_str_upper
-                try:
-                    return translated_level_str, getattr(logging, translated_level_str)
-                except AttributeError:
-                    raise ValueError("The log level '%s' is invalid" % level_as_str_upper)
-
-    def _log(self, txt, level="INFO", is_console=True):
+    def _log(self, msg, page_name, level="INFO", is_console=True):
 
         """ See :func:`log`."""
-
-        level_as_str, level_as_int = self._get_normalized_logging_levels(level, self._is_robot)
-        if self._is_robot:
-            self._logger.write(txt, level_as_str)
-            if is_console:
-                # Robot's logging only outputs to stdout if it's a warning, so allow
-                # always logging to console, unless caller specifies not to.
-                robot.api.logger.console(txt)
-        else:
-            if is_console and not self._logger._attached_sh:
-                sh = logging.StreamHandler(sys.stdout)
-                sh.setLevel(self._log_threshold_level_as_int)
-                sh.setFormatter(self._logging_formatter)
-                self._logger.addHandler(sh)
-                self._logger.attached_sh = True
-
-            self._logger.log(level_as_int, txt)
-            """
-            f = open("po_log.txt")
-            print ("read log:")
-            print(f.read())
-            f.close()
-            """
+        self._abstracted_logger.log(msg, page_name, level, is_console)
         return self
 
     def go_to(self, *args):
