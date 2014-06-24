@@ -60,15 +60,6 @@ class Logger(object):
         except AttributeError:
             return getattr(logging, self._default_level_to_log)
 
-    def _get_logger(self):
-        if self.in_robot:
-            ret = robot.api.logger
-
-        else:
-            ret = self._get_logger_outside_robot()
-
-        return ret
-
     def get_normalized_logging_levels(self, level_as_str, in_robot):
         """ Given a log string, returns the translated log level string and the translated
         python logging level integer. This is needed because there are logging level
