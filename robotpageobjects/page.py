@@ -400,7 +400,6 @@ class _BaseActions(_SelectorsManager):
 
         self._log_threshold_level_as_int = self._get_log_threshold_level_from_opt_as_int()
         self._logger = self._get_logger()
-
         self.selenium_speed = self._option_handler.get("selenium_speed") or 0
         self.set_selenium_speed(self.selenium_speed)
         self.selenium_implicit_wait = self._option_handler.get("selenium_implicit_wait") or 10
@@ -547,12 +546,12 @@ class _BaseActions(_SelectorsManager):
         return self._get_log_level_from_str(self._get_log_level_from_opt_as_str())
 
     def _get_logger(self):
-
         if self._is_robot:
             ret = robot_api.logger
 
         else:
             ret = self._get_logger_outside_robot()
+
         return ret
 
     def _get_logger_outside_robot(self):
@@ -593,6 +592,7 @@ class _BaseActions(_SelectorsManager):
         :param txt: The text to log
         :param level: The level to log.
         """
+
         return self._log(txt, level, is_console)
 
     def _get_normalized_logging_levels(self, level_as_str, is_robot):
@@ -652,8 +652,8 @@ class _BaseActions(_SelectorsManager):
     def _log(self, txt, level="INFO", is_console=True):
 
         """ See :func:`log`."""
-        level_as_str, level_as_int = self._get_normalized_logging_levels(level, self._is_robot)
 
+        level_as_str, level_as_int = self._get_normalized_logging_levels(level, self._is_robot)
         if self._is_robot:
             self._logger.write(txt, level_as_str)
             if is_console:
@@ -667,7 +667,14 @@ class _BaseActions(_SelectorsManager):
                 sh.setFormatter(self._logging_formatter)
                 self._logger.addHandler(sh)
                 self._logger.attached_sh = True
+
             self._logger.log(level_as_int, txt)
+            """
+            f = open("po_log.txt")
+            print ("read log:")
+            print(f.read())
+            f.close()
+            """
         return self
 
     def go_to(self, *args):
@@ -732,7 +739,7 @@ class _BaseActions(_SelectorsManager):
         else:
             self.open_browser(resolved_url, self.browser)
 
-        self.log("PO_BROWSER: %s" % (str(self.get_current_browser())))
+        self.log("PO_BROWSER: %s" % (str(self.get_current_browser())), is_console=False)
 
         return self
 

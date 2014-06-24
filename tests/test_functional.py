@@ -42,6 +42,7 @@ class SmokeTestCase(BaseTestCase):
     def test_unittest_rel_uri_set(self):
         self.set_baseurl_env()
         run = self.run_scenario("test_rel_uri_attr.py")
+        print run.cmd
         self.assert_run(run, search_output="OK", expected_browser="phantomjs")
 
     def test_robot_rel_uri_set(self):
