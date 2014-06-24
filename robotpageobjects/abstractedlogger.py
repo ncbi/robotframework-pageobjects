@@ -13,7 +13,6 @@ class Logger(object):
     """
     in_robot = Context.in_robot()
     _instance = None
-    _new_called = 0
     threshold_level_as_str = OptionHandler().get("log_level") or "INFO"
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
@@ -26,10 +25,8 @@ class Logger(object):
         """
         if cls._instance is None:
             cls._instance = super(Logger, cls).__new__(cls, *args, **kwargs)
-            cls._new_called += 1
 
         return cls._instance
-
 
     def __init__(self):
         self.threshold_level_as_str = self.threshold_level_as_str.upper()
@@ -56,8 +53,6 @@ class Logger(object):
         logging level."""
 
         str_upper = str.upper()
-        if str_upper.startswith("WARN"):
-            return getattr(logging, "WARNING")
 
         try:
             return getattr(logging, str_upper)
