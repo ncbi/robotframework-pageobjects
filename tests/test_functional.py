@@ -378,21 +378,51 @@ class WaitingTestCase(BaseTestCase):
 
 
 class LoggingTestCase(BaseTestCase):
+    """
+    # Tests that assert whether or not messages are logged depending on the log level
+    # logged in relation to the log level threshold.
 
-    def test_log_below_threshold_should_not_log_to_stdout_but_not_file_robot(self):
+    # For example, given these logging levels (from severe to less severe):
+
+    CRITICAL
+    ERROR
+    WARNING
+    INFO
+    DEBUG
+    NOTSET
+
+    Let's say that the threshold is set at INFO, and we log "above" the threshold at
+    CRITICAL by calling
+
+    self.log("hello world", "CRITICAL")
+
+    We expect that this message would get logged.
+
+    If, on the other hand, we logged below
+    the threshold at "DEBUG", we'd expect the message to not get logged.
+    """
+
+    def test_log_below_threshold_should_log_to_stdout_but_not_to_file_robot(self):
         # Unless we specify is_console=False, we always log to stdout in Robot
         run = self.run_scenario("test_log_below_threshold.robot")
         self.assert_run(run, expected_returncode=0, not_in_log="hello world")
         self.assertTrue("hello world" in run.output)
 
-    def test_log_below_threshold_should_not_log_to_stdout_and_file_if_is_console_false_robot(self):
+    def test_log_below_threshold_should_not_log_to_stdout_and_to_file_if_is_console_false_robot(self):
         # Unless we specify is_console=False, we always log to stdout in Robot
         run = self.run_scenario("test_log_below_threshold_is_console_false.robot")
         self.assert_run(run, expected_returncode=0, not_in_log="hello world")
         self.assertFalse("hello world" in run.output)
 
-    def test_log_below_threshold_python(self):
-        pass
+    def test_log_below_threshold_should_not_log_to_stdout_and_file_python(self):
+        run = self.run_scenario("test_log_below_threshold.py")
+        self.assert_run(run, expected_returncode=0, not_in_log="hello world")
+        self.assertFalse("hello world" in run.output)
+
+    def test_log_below_threshold_is_console_false_should_log_to_file_but_not_console_python(self):
+        run = self.run_scenario("test_log_below_threshold_is_console_false.py")
+        self.assert_run(run, expected_returncode=0, search_log="hello world")
+        self.assertFalse("hello world" in run.output)
 
     def test_log_above_threshold_should_log_to_stdout_and_file_robot(self):
         run = self.run_scenario("test_log_above_threshold.robot")
@@ -411,11 +441,3 @@ class LoggingTestCase(BaseTestCase):
         run = self.run_scenario("test_log_at_threshold.py")
         self.assert_run(run, expected_returncode=0, search_log="LoggingPage - INFO - hello world")
         self.assertTrue("hello world" in run.output)
-
-    def test_log_below_threshold_is_console_false_python(self):
-        run = self.run_scenario("test_log_below_threshold_is_console_false.py")
-        self.assert_run(run, expected_returncode=0, search_log="hello world")
-        self.assertFalse("hello world" in run.output)
-
-
-
