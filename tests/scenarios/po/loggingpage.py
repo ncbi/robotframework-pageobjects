@@ -23,3 +23,7 @@ class LoggingPage(Page):
     def log_info(self):
         self.log("hello world")
         return self
+
+    def log_invalid(self):
+        self.log("hello workd", "BAR")
+        return self
