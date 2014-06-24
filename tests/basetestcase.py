@@ -202,7 +202,7 @@ class BaseTestCase(unittest.TestCase):
     def assert_run(self, run,
                    expected_returncode=0, expected_tests_ran=None,
                    expected_tests_failed=None,
-                   search_output=None, search_log=None, not_in_log=None, expected_browser=None
+                   search_output=None, search_log=None, not_in_output=None, not_in_log=None, expected_browser=None
     ):
         """
         Makes general assertions about a program run based on return code
@@ -247,6 +247,10 @@ class BaseTestCase(unittest.TestCase):
             self.assertFalse(not_in_log in self.read_log(is_robot), '"%s" was found in the log file, '
                                                                     'but shouldn\'t have been.'
                                                                     % not_in_log)
+
+        if not_in_output:
+            self.assertFalse(not_in_output in run.output, '%s not in output when running command: %s' %(
+                not_in_output, run.cmd))
 
         if expected_browser:
             log_content = self.read_log(is_robot)
