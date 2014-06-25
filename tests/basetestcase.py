@@ -260,9 +260,6 @@ class BaseTestCase(unittest.TestCase):
                                 "Unexpected browser logged")
 
             else:
-                print "log content:"
-                print log_content
-                print "**"
 
                 self.assertTrue(expected_browser in log_content,
                                 "Unexpected browser logged")

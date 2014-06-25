@@ -5,6 +5,8 @@ import unittest
 from nose.tools import raises
 import requests
 
+from robotpageobjects import Page
+
 from scenarios.po.result_component import ResultPage, ResultPageWithDOMStrategyLocator, HomePage, \
     HomePageWithDOMAdvancedToggler
 from scenarios.po.loggingpage import LoggingPage
@@ -445,6 +447,25 @@ class LoggingTestCase(BaseTestCase):
     def test_log_at_or_above_threshold_console_false_should_log_to_file_but_not_stdout_python(self):
         run = self.run_scenario("test_log_at_threshold_is_console_false.py")
         self.assert_run(run, expected_returncode=0, not_in_output="hello world", search_log="INFO - Logging Page - hello world")
+
+    def test_one_instance_of_file_logger(self):
+
+        class MyPage(Page):
+            pass
+
+        path_to_log = os.path.join(os.getcwd(), "po_log.txt")
+
+        try:
+            Page().log("hello", is_console=False)
+            MyPage().log("world", is_console=False)
+            f = open(path_to_log)
+            log_content =  f.read()
+            self.assertRegexpMatches(log_content, r".+ - INFO - Page - hello\n.+ - INFO - My Page - world$")
+            self.assertEquals(len(log_content.split("\n")), 3, "Log should be two lines")
+
+        finally:
+            f.close()
+            os.unlink(path_to_log)
 
     @raises(ValueError)
     def test_log_at_invalid_level_python(self):
