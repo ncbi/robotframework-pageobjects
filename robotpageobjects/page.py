@@ -517,7 +517,14 @@ class _BaseActions(_SelectorsManager):
 
     def log(self, msg, level="INFO", is_console=True):
         """ Logs either to Robot log file or to a file called po_log.txt
-        at the current directory. Possible levels are:
+        at the current directory.
+
+        :param msg: The message to log
+        :param level: The level to log at
+        :param is_console: Whether or not to log to stdout
+        :type is_console: Boolean
+
+        Possible levels are:
 
         - "WARN"
         - "INFO"
