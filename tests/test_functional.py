@@ -44,7 +44,6 @@ class SmokeTestCase(BaseTestCase):
     def test_unittest_rel_uri_set(self):
         self.set_baseurl_env()
         run = self.run_scenario("test_rel_uri_attr.py")
-        print run.cmd
         self.assert_run(run, search_output="OK", expected_browser="phantomjs")
 
     def test_robot_rel_uri_set(self):
@@ -469,8 +468,6 @@ class LoggingTestCase(BaseTestCase):
         try:
             # We expect to see two lines in the log, logged in order from Page to My Page.
             self.assertRegexpMatches(log_content, r".+ - INFO - Page - hello\n.+ - INFO - My Page - world$")
-            print log_content
-            print log_content.split("\n")
 
             # 3 lines are really 2 lines because of final line break
             self.assertEquals(len(log_content.split("\n")), 3)
