@@ -20,11 +20,17 @@ class Logger(object):
         if self.in_robot:
             self.logger = robot.api.logger
         else:
+
             # Stream handler is attached from log() since
             # that must be decided at run-time, but here we might as well
             # do the setup to keep log() clean.
             self.stream_handler = logging.StreamHandler(sys.stdout)
             self.stream_handler.setFormatter(self.formatter)
+
+            # We have to instantiate a logger to something and this is a global
+            # logger so we name it by this class. Later in this class'
+            # log method, we manipulate the msg string to include the calling
+            # page class name.
             logger = logging.getLogger(self.__class__.__name__)
             logger.setLevel(self.threshold_level_as_int)
             fh = logging.FileHandler("po_log.txt", "w")
