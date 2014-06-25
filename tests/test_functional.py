@@ -455,18 +455,30 @@ class LoggingTestCase(BaseTestCase):
 
         path_to_log = os.path.join(os.getcwd(), "po_log.txt")
 
+        # Clear the log in case any other test has written to it. Set up deals with
+        # po_log.txt at tests/scenarios directory.
+        f = open(path_to_log, "w")
+        f.write("")
+        f.close()
+
+        # Now log from two different page objects
+        Page().log("hello", is_console=False)
+        MyPage().log("world", is_console=False)
+        f = open(path_to_log)
+        log_content =  f.read()
         try:
-            Page().log("hello", is_console=False)
-            MyPage().log("world", is_console=False)
-            f = open(path_to_log)
-            log_content =  f.read()
+            # We expect to see two lines in the log, logged in order from Page to My Page.
             self.assertRegexpMatches(log_content, r".+ - INFO - Page - hello\n.+ - INFO - My Page - world$")
             print log_content
             print log_content.split("\n")
+
+            # 3 lines are really 2 lines because of final line break
             self.assertEquals(len(log_content.split("\n")), 3)
 
         finally:
             f.close()
+
+
             os.unlink(path_to_log)
 
     @raises(ValueError)
