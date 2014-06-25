@@ -521,10 +521,13 @@ class _BaseActions(_SelectorsManager):
 
         :param msg: The message to log
         :param level: The level to log at
+        :type level: String corresponding to Robot or Python logging levels. See
+        http://robot-framework.readthedocs.org/en/2.8.4/autodoc/robot.api.html?#log-levels for Robot log levels and
+        http://docs.python.org/2/library/logging.html#levels for Python logging levels outside Robot.
         :param is_console: Whether or not to log to stdout
         :type is_console: Boolean
 
-        Possible levels are:
+        Possible Robot levels are:
 
         - "WARN"
         - "INFO"
@@ -538,15 +541,24 @@ class _BaseActions(_SelectorsManager):
 
         Robot logging messages get logged to stdout and to log.html.
 
-        Outside of Robot, you set the logging threshold level using the
+        Outside of Robot, possible logging levels are:
+
+         - "CRITICAL"
+         - "ERROR"
+         - "WARNING"
+         - "INFO"
+         - "DEBUG"
+         - "NOSET"
+
+        and you set the logging threshold level using the
         PO_LOG_LEVEL environment variable or log_level variable in a variable file.
 
         Although the Python logging module provides more logging levels than
         Robot provides, logging levels, both passed to the log() method and the
-        threshold level are mapped to the closest supported Robot logging level.
+        threshold level are mapped to the closest supported Robot logging level and vice versa.
 
-        :param msg: The text to log
-        :param level: The level to log.
+        The default threshold for both Robot and Python is "INFO".
+
         """
 
         return self._log(msg, self.name, level, is_console)
