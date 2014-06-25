@@ -461,7 +461,7 @@ class LoggingTestCase(BaseTestCase):
             f = open(path_to_log)
             log_content =  f.read()
             self.assertRegexpMatches(log_content, r".+ - INFO - Page - hello\n.+ - INFO - My Page - world$")
-            self.assertEquals(len(log_content.split("\n")), 3, "Log should be two lines")
+            self.assertEquals(len(log_content.split("\n")), 3)
 
         finally:
             f.close()
