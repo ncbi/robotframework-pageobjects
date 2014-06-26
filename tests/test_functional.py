@@ -478,6 +478,12 @@ class LoggingTestCase(BaseTestCase):
 
             os.unlink(path_to_log)
 
+    def test_log_non_string(self):
+        try:
+            Page().log([1,2,3])
+        except TypeError:
+            self.fail("Logging a non string causes a TypeError")
+            
     @raises(ValueError)
     def test_log_at_invalid_level_python(self):
         LoggingPage().log_invalid()
