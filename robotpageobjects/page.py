@@ -26,6 +26,7 @@ import uritemplate
 import urllib2
 import warnings
 
+import decorator
 from robot.utils import asserts
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -787,24 +788,20 @@ class _PageMeta(type):
     meta class happens before the class is instantiated.
     """
 
+    @staticmethod
+    def _must_return(f, *args, **kwargs):
+        ret = f(*args, **kwargs)
+        if ret is None:
+            raise exceptions.KeywordReturnsNoneError(
+                "You must return either a page object or an appropriate value from the page object method, "
+                "'%s'" % f.__name__)
+        else:
+            return ret
+
     @classmethod
     def must_return(cls, f):
-        # Decorator that throws an exception if a page object method returns None
-
-        def wrapper(*args, **kwargs):
-
-            # Call the original function, if it returns None raise exception, otherwise
-            # return what the original function returns.
-            ret = f(*args, **kwargs)
-            if ret is None:
-                raise exceptions.KeywordReturnsNoneError(
-                    "You must return either a page object or an appropriate value from the page object method, "
-                    "'%s'" % f.__name__)
-            else:
-                return ret
-
-        wrapper.__doc__ = inspect.getdoc(f)
-        return wrapper
+        # Use decorator module to preserve docstings and signatures for Sphinx
+        return decorator.decorator(_PageMeta._must_return, f)
 
     def __new__(cls, name, bases, classdict):
 
