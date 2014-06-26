@@ -803,6 +803,7 @@ class _PageMeta(type):
             else:
                 return ret
 
+        wrapper.__doc__ = inspect.getdoc(f)
         return wrapper
 
     def __new__(cls, name, bases, classdict):
