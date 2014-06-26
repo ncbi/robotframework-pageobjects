@@ -244,3 +244,87 @@ class KeywordBehaviorTestCase(BaseTestCase):
 
     def test_private_method_returning_none_should_not_raise_exception(self):
         self.assertIsNone(self.p._return_none())
+
+class LoggingLevelsTestCase(BaseTestCase):
+
+    # Tests protected method Page._get_normalized_logging_levels, which given a
+    # String logging level should return a tuple of the attempted string logging level
+    # with the associated integer level from Python's logging module. This method
+    # deals with the fact that Robot has different logging levels than python. It's called
+    # by Page.log().
+
+    def setUp(self):
+        super(LoggingLevelsTestCase, self).setUp()
+        self.normalize_fn = Page._abstracted_logger.get_normalized_logging_levels
+
+    def test_log_CRITICAL_python(self):
+        level_tup = self.normalize_fn("CRITICAL", False)
+        self.assertEquals(level_tup, ("CRITICAL", 50))
+
+    def test_log_CRITICAL_robot(self):
+        level_tup = self.normalize_fn("CRITICAL", True)
+        self.assertEquals(level_tup, ("WARN", 30))
+
+    def test_log_WARN_python(self):
+        level_tup = self.normalize_fn("WARN", False)
+        self.assertEquals(level_tup, ("WARN", 30))
+
+    def test_log_WARNING_python(self):
+        level_tup = self.normalize_fn("WARNING", False)
+        self.assertEquals(level_tup, ("WARNING", 30))
+
+    def test_log_WARN_robot(self):
+        level_tup = self.normalize_fn("WARN", True)
+        self.assertEquals(level_tup, ("WARN", 30))
+
+    def test_log_WARNING_robot(self):
+        level_tup = self.normalize_fn("WARNING", True)
+        self.assertEquals(level_tup, ("WARN", 30))
+
+    def test_log_INFO_python(self):
+        level_tup = self.normalize_fn("INFO", False)
+        self.assertEquals(level_tup, ("INFO", 20))
+
+    def test_log_INFO_robot(self):
+        level_tup = self.normalize_fn("INFO", False)
+        self.assertEquals(level_tup, ("INFO", 20))
+
+    def test_log_DEBUG_python(self):
+        level_tup = self.normalize_fn("DEBUG", False)
+        self.assertEquals(level_tup, ("DEBUG", 10))
+
+    def test_log_DEBUG_robot(self):
+        level_tup = self.normalize_fn("DEBUG", True)
+        self.assertEquals(level_tup, ("DEBUG", 10))
+
+    def test_log_TRACE_python(self):
+        level_tup = self.normalize_fn("TRACE", False)
+        self.assertEquals(level_tup, ("NOTSET", 0))
+
+    def test_log_TRACE_robot(self):
+        level_tup = self.normalize_fn("TRACE", True)
+        self.assertEquals(level_tup, ("TRACE", 0))
+
+    def test_log_NOTSET_python(self):
+        level_tup = self.normalize_fn("NOTSET", False)
+        self.assertEquals(level_tup, ("NOTSET", 0))
+
+    def test_log_NOTSET_robot(self):
+        level_tup = self.normalize_fn("NOTSET", True)
+        self.assertEquals(level_tup, ("TRACE", 0))
+
+    @raises(ValueError)
+    def test_log_invalid_log_level_should_raise_value_error_python(self):
+        level_tup = self.normalize_fn("FOO", False)
+        self.assertEquals(level_tup, ("FOO", 0))
+
+    @raises(ValueError)
+    def test_log_invalid_log_level_should_raise_value_error_robot(self):
+        level_tup = self.normalize_fn("FOO", True)
+        self.assertEquals(level_tup, ("FOO", 0))
+
+    def test_log_valid_but_lowercase_level_python(self):
+        level_tup = self.normalize_fn("inFo", False)
+        self.assertEquals(level_tup, ("INFO", 20))
+
+

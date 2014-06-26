@@ -2,10 +2,14 @@ import json
 import os
 import re
 import unittest
-from scenarios.po.result_component import ResultPage, ResultPageWithDOMStrategyLocator, HomePage, HomePageWithDOMAdvancedToggler
-
+from nose.tools import raises
 import requests
 
+from robotpageobjects import Page
+
+from scenarios.po.result_component import ResultPage, ResultPageWithDOMStrategyLocator, HomePage, \
+    HomePageWithDOMAdvancedToggler
+from scenarios.po.loggingpage import LoggingPage
 from basetestcase import BaseTestCase
 
 
@@ -63,15 +67,14 @@ class SmokeTestCase(BaseTestCase):
 
     def test_no_baseurl_gives_readable_error_in_robot(self):
         run = self.run_scenario("test_template_passed.robot")
-        self.assert_run(run, expected_returncode=1, search_output="must set a baseurl") 
+        self.assert_run(run, expected_returncode=1, search_output="must set a baseurl")
 
     def test_no_uri_attr_gives_readable_error_in_robot(self):
         run = self.run_scenario("test_no_uri.robot", variable="baseurl:%s" % self.base_file_url)
-        self.assert_run(run, expected_returncode=1, search_output='must have a "uri" attribute set') 
+        self.assert_run(run, expected_returncode=1, search_output='must have a "uri" attribute set')
 
 
 class SauceTestCase(BaseTestCase):
-
     """
     Sauce exception tests are in the unit tests, not the
     functional tests.
@@ -79,7 +82,7 @@ class SauceTestCase(BaseTestCase):
 
     def get_job_data(self, sid):
         username, apikey = self.get_sauce_creds()
-        rest_url = "https://%s:%s@saucelabs.com/rest/v1/%s/jobs/%s" %(username, apikey, username, sid)
+        rest_url = "https://%s:%s@saucelabs.com/rest/v1/%s/jobs/%s" % (username, apikey, username, sid)
         resp = requests.get(rest_url)
         return json.loads(resp.content)
 
@@ -100,11 +103,12 @@ class SauceTestCase(BaseTestCase):
         finally:
             f.close()
 
-    @unittest.skipUnless(BaseTestCase.are_sauce_creds_set_for_testing(), "Must set 'SAUCE_USERNAME' and 'SAUCE_APIKEY' ("
-                                                                     "not PO_SAUCE."
-                                                         ".) "
-                                                        "as an env "
-                                                         "variables to run this test")
+    @unittest.skipUnless(BaseTestCase.are_sauce_creds_set_for_testing(),
+                         "Must set 'SAUCE_USERNAME' and 'SAUCE_APIKEY' ("
+                         "not PO_SAUCE."
+                         ".) "
+                         "as an env "
+                         "variables to run this test")
     def test_sauce_unittest(self):
         self.assertFalse(os.path.exists(self.get_log_path()))
         run = self.run_scenario("test_sauce.py")
@@ -118,11 +122,12 @@ class SauceTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=1, search_output="Title should have been 'foo' but was 'Home - "
                                                                   "PubMed - NCBI")
 
-    @unittest.skipUnless(BaseTestCase.are_sauce_creds_set_for_testing(), "Must set 'SAUCE_USERNAME' and 'SAUCE_APIKEY' ("
-                                                                     "not "
-                                                           "PO_SAUCE..) "
-                                                        "as an env "
-                                                         "variables to run this test")
+    @unittest.skipUnless(BaseTestCase.are_sauce_creds_set_for_testing(),
+                         "Must set 'SAUCE_USERNAME' and 'SAUCE_APIKEY' ("
+                         "not "
+                         "PO_SAUCE..) "
+                         "as an env "
+                         "variables to run this test")
     def test_sauce_robot(self):
         self.assertFalse(os.path.exists(self.get_log_path(is_robot=True)))
         run = self.run_scenario("test_sauce.robot", variablefile=os.path.join(self.test_dir, "sauce_vars.py"))
@@ -133,9 +138,9 @@ class SauceTestCase(BaseTestCase):
         self.assertEquals(job_data["browser"], "firefox", "The job ran in Sauce")
         self.assert_run(run, expected_returncode=1, search_output="Title should have been 'foo' but was 'Home - "
                                                                   "PubMed - NCBI")
+
+
 class ActionsTestCase(BaseTestCase):
-
-
     """
     DCLT-768: TODO
     @unittest.skip("NOT IMPLEMENTED YET. ")
@@ -185,7 +190,6 @@ class ActionsTestCase(BaseTestCase):
 
 
 class SelectorsTestCase(BaseTestCase):
-
     """
     @unittest.skip("NOT IMPLEMENTED YET: See DCLT-728")
     def test_s2l_keyword_with_selector(self):
@@ -219,8 +223,8 @@ class SelectorsTestCase(BaseTestCase):
         run = self.run_scenario("test_se2lib_imported_before_po.robot")
         self.assert_run(run, expected_returncode=0, search_output="PASSED")
 
-class ComponentTestCase(BaseTestCase):
 
+class ComponentTestCase(BaseTestCase):
     def setUp(self):
         super(ComponentTestCase, self).setUp()
         self.set_baseurl_env()
@@ -231,21 +235,19 @@ class ComponentTestCase(BaseTestCase):
 
 
     def test_selenium_implicit_wait_not_reset_within_component(self):
-
         self.result_page_with_str_locator.open()
 
         self.assertEquals(
-                self.result_page_with_str_locator.get_selenium_implicit_wait(),
-                "10 seconds"
+            self.result_page_with_str_locator.get_selenium_implicit_wait(),
+            "10 seconds"
         )
 
         self.assertEquals(
-                self.result_page_with_str_locator.result.get_selenium_implicit_wait(),
-                "10 seconds"
+            self.result_page_with_str_locator.result.get_selenium_implicit_wait(),
+            "10 seconds"
         )
 
     def test_get_instance_and_instances(self):
-
         # Test get_instance and get_instances in same test. get_instance()
         # get_instances() are called by the component admin class to set
         # component instances on the page object.
@@ -277,7 +279,6 @@ class ComponentTestCase(BaseTestCase):
         self.assertEquals(results[0].price, "$14.00")
 
     def test_component_inside_component(self):
-
         # A component should be able to contain other components. You'd access
         # sub component by accessing the sub component name as a property on the
         # parent component.
@@ -306,7 +307,6 @@ class ComponentTestCase(BaseTestCase):
         self.homepage.element_should_be_visible("id=advanced-search-content")
 
     def test_component_inside_component_with_dom(self):
-
         # When you have a component inside another component, the parent should be
         # able to search for the child using the child's locator. The child's locator
         # should be interpreted with reference to the parent's reference_webelement.
@@ -328,34 +328,41 @@ class ComponentTestCase(BaseTestCase):
         self.result_page_with_dom_strategy_locator.close()
         self.homepage.close()
 
-class KeywordsTestCase(BaseTestCase):
 
+class KeywordsTestCase(BaseTestCase):
     def test_dont_have_to_specify_page_name_in_keyword_when_2_page_objects_inherit_it(self):
-        run = self.run_scenario("test_dont_have_to_specify_page_name_in_keyword_when_2_page_objects_inherit_it.robot", variable="baseurl:%s" % self.base_file_url)
+        run = self.run_scenario("test_dont_have_to_specify_page_name_in_keyword_when_2_page_objects_inherit_it.robot",
+                                variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
     def test_dont_have_to_specify_page_name_for_keyword_when_2_page_objects_define_it(self):
-        run = self.run_scenario("test_dont_have_to_specify_page_name_for_keyword_when_2_page_objects_define_it.robot", variable="baseurl:%s" % self.base_file_url)
+        run = self.run_scenario("test_dont_have_to_specify_page_name_for_keyword_when_2_page_objects_define_it.robot",
+                                variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
     def test_dont_have_to_specify_page_name_when_extending_se2lib_keyword(self):
-        run = self.run_scenario("test_dont_have_to_specify_page_name_when_extending_se2lib_keyword.robot", variable="baseurl:%s" % self.base_file_url)
+        run = self.run_scenario("test_dont_have_to_specify_page_name_when_extending_se2lib_keyword.robot",
+                                variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
     def test_keyword_does_not_return_page_object(self):
         run = self.run_scenario("test_does_not_return.robot", variable="baseurl:%s" % self.base_file_url)
-        self.assert_run(run, expected_returncode=1, search_output="You must return either a page object or an appropriate value from the page object method")
+        self.assert_run(run, expected_returncode=1,
+                        search_output="You must return either a page object or an appropriate value from the page object method")
 
     def test_can_alias_without_page_name(self):
-        run = self.run_scenario("test_can_call_aliased_method_without_page_name.robot", variable="baseurl:%s" % self.base_file_url)
+        run = self.run_scenario("test_can_call_aliased_method_without_page_name.robot",
+                                variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
     def test_can_alias_with_page_name(self):
-        run = self.run_scenario("test_can_call_aliased_method_with_page_name.robot", variable="baseurl:%s" % self.base_file_url)
+        run = self.run_scenario("test_can_call_aliased_method_with_page_name.robot",
+                                variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
     def test_can_call_unaliased_with_page_name(self):
-        run = self.run_scenario("test_can_call_unaliased_method_with_page_name.robot", variable="baseurl:%s" % self.base_file_url)
+        run = self.run_scenario("test_can_call_unaliased_method_with_page_name.robot",
+                                variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
 
@@ -378,46 +385,105 @@ class WaitingTestCase(BaseTestCase):
 
 
 class LoggingTestCase(BaseTestCase):
+    """
+    # Tests that assert whether or not messages are logged depending on the log level
+    # logged in relation to the log level threshold.
 
-    def test_log_written_to_file_and_stdout_python(self):
+    # For example, given these logging levels (from severe to less severe):
 
-        # logging info, with log_level set to INFO should print and write to file.
-        run = self.run_scenario("test_logging_to_stdout_and_file.py")
-        self.assert_run(run, expected_returncode=0, expected_tests_failed=0, search_output="hello world",
-                        search_log="INFO:LoggingPage:hello world")
+    CRITICAL
+    ERROR
+    WARNING
+    INFO
+    DEBUG
+    NOTSET
 
-    def test_log_written_to_file_and_stdout_robot(self):
-        run = self.run_scenario("test_logging_to_stdout_and_file.robot", variable="baseurl:foo")
-        self.assert_run(run, expected_returncode=0, search_output="hello world", search_log="hello world")
+    Let's say that the threshold is set at INFO, and we log "above" the threshold at
+    CRITICAL by calling
 
-    def test_log_is_console_false_python(self):
-        run = self.run_scenario("test_logging_to_just_file.py")
+    self.log("hello world", "CRITICAL")
 
-        self.assert_run(run, expected_returncode=0, expected_tests_failed=0,
-                        search_log="INFO:LoggingPage:hello world")
+    We expect that this message would get logged.
 
-        self.assertFalse("hello world" in run.output)
+    If, on the other hand, we logged below
+    the threshold at "DEBUG", we'd expect the message to not get logged.
+    """
 
-    def test_is_console_false_robot(self):
-        run = self.run_scenario("test_logging_to_just_file.robot", variable="baseurl:foo")
-        self.assert_run(run, expected_returncode=0, search_log="hello world")
-        self.assertFalse("hello world" in run.output)
+    def test_log_below_threshold_should_log_to_stdout_but_not_to_file_robot(self):
+        # Unless we specify is_console=False, we always log to stdout in Robot
+        run = self.run_scenario("test_log_below_threshold.robot")
+        self.assert_run(run, expected_returncode=0, search_output="DEBUG - Logging Page - hello world",
+                        not_in_log="hello world")
 
-    def test_setting_log_level_to_critical_calling_log_info_should_not_log_anything_python(self):
-        run = self.run_scenario("test_logging_CRITICAL_to_stdout_and_file.py")
-        self.assertFalse("hello world" in run.output)
-        self.assertEquals(self.read_log(), "")
+    def test_log_below_threshold_should_not_log_to_stdout_and_not_to_file_if_is_console_false_robot(self):
+        # Unless we specify is_console=False, we always log to stdout in Robot
+        run = self.run_scenario("test_log_below_threshold_is_console_false.robot")
+        self.assert_run(run, expected_returncode=0, not_in_output="hello world", not_in_log="hello world")
 
-    def test_setting_log_level_to_critical_calling_log_info_should_only_log_console_robot(self):
-        run = self.run_scenario("test_logging_set_to_info_log_debug.robot")
-        self.assert_run(run, expected_returncode=0, search_log="hello world")
+    def test_log_below_threshold_should_not_log_to_stdout_and_file_python(self):
+        run = self.run_scenario("test_log_below_threshold.py")
+        self.assert_run(run, expected_returncode=0, not_in_output="hello world", not_in_log="hello world")
 
-        # Logging to console in Robot is independent of logging level as per:
-        # https://code.google.com/p/robotframework/source/browse/src/robot/output/librarylogger.py
-        self.assertTrue("hello world" in run.output)
+    def test_log_below_threshold_is_console_false_should_not_log_to_file_and_not_to_console_python(self):
+        run = self.run_scenario("test_log_below_threshold_is_console_false.py")
+        self.assert_run(run, expected_returncode=0, not_in_output="hello world", not_in_log="hello world")
 
-    def tearDown(self):
-        super(LoggingTestCase, self).tearDown()
-        os.environ["PO_LOG_LEVEL"] = "INFO"
+    def test_log_above_threshold_should_log_to_stdout_and_file_robot(self):
+        run = self.run_scenario("test_log_above_threshold.robot")
+        self.assert_run(run, expected_returncode=0, search_output="WARNING - Logging Page - hello world",
+                        search_log="hello world")
+
+    def test_log_at_threshold_should_log_to_stdout_and_file_robot(self):
+        run = self.run_scenario("test_log_at_threshold.robot")
+        self.assert_run(run, expected_returncode=0, search_output="INFO - Logging Page - hello world",
+                        search_log="hello world")
+
+    def test_log_at_or_above_threshold_should_log_to_stdout_and_file_python(self):
+        run = self.run_scenario("test_log_at_threshold.py")
+        self.assert_run(run, expected_returncode=0, search_output="INFO - Logging Page - hello world",
+                        search_log="INFO - Logging Page - hello world")
+
+    def test_log_at_or_above_threshold_console_false_should_log_to_file_but_not_stdout_python(self):
+        run = self.run_scenario("test_log_at_threshold_is_console_false.py")
+        self.assert_run(run, expected_returncode=0, not_in_output="hello world", search_log="INFO - Logging Page - hello world")
+
+    def test_one_instance_of_file_logger(self):
+
+        class MyPage(Page):
+            pass
+
+        path_to_log = os.path.join(os.getcwd(), "po_log.txt")
+
+        # Clear the log in case any other test has written to it. Set up deals with
+        # po_log.txt at tests/scenarios directory.
+        f = open(path_to_log, "w")
+        f.write("")
+        f.close()
+
+        # Now log from two different page objects
+        Page().log("hello", is_console=False)
+        MyPage().log("world", is_console=False)
+        f = open(path_to_log)
+        log_content =  f.read()
+        try:
+            # We expect to see two lines in the log, logged in order from Page to My Page.
+            self.assertRegexpMatches(log_content, r".+ - INFO - Page - hello\n.+ - INFO - My Page - world$")
+
+            # 3 lines are really 2 lines because of final line break
+            self.assertEquals(len(log_content.split("\n")), 3)
+
+        finally:
+            f.close()
 
 
+            os.unlink(path_to_log)
+
+    def test_log_non_string(self):
+        try:
+            Page().log([1,2,3])
+        except TypeError:
+            self.fail("Logging a non string causes a TypeError")
+            
+    @raises(ValueError)
+    def test_log_at_invalid_level_python(self):
+        LoggingPage().log_invalid()
