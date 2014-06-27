@@ -218,6 +218,16 @@ class SelectorsDict(dict):
                                             Only subclasses can override selector keys." % key)
             self[str(key)] = value
 
+    def resolve(self, selector_name, *args):
+        """
+        Replace the wildcards in the locator indicated by selector_name with args.
+        :param selector_name: The selector name to resolve
+        :type selector_name: str
+        :param args: The arguments to insert into the locator
+        :returns: str
+        """
+        return self[selector_name] % args
+
 
 class _S2LWrapper(Selenium2Library):
     """
@@ -282,6 +292,13 @@ class _SelectorsManager(_S2LWrapper):
 
     And a Page2 object will have access to "search button", which maps to "id=go",
     and "input box", which maps to "id=bar".
+
+    Selectors can also define wildcards, which can be used with Page.resolve_selector():
+    class MyPage(Page):
+        selectors = {"display settings option": "xpath=id('display_settings_menu')//label[text() = '%s']"}
+
+        def click_option(self, option_name):
+            self.click_element(self.resolve_selector("display settings option", option_name))
     """
     selectors = {}
 
@@ -348,6 +365,16 @@ class _SelectorsManager(_S2LWrapper):
                     raise ValueError("\"%s\" looks like a selector, but it is not in the selectors dict." % locator)
                 else:
                     raise
+
+    def _resolve_selector(self, selector_name, *args):
+        """
+        Replace the wildcards in the locator indicated by selector_name with args.
+        :param selector_name: The selector name to resolve
+        :type selector_name: str
+        :param args: The arguments to insert into the locator
+        :returns: str
+        """
+        return self.selectors.resolve(selector_name, *args)
 
     @not_keyword
     def find_element(self, locator, required=True, **kwargs):

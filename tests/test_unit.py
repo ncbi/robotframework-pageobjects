@@ -8,7 +8,7 @@ import selenium
 
 from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
-from robotpageobjects.page import Page, Override, not_keyword
+from robotpageobjects.page import Page, Override, not_keyword, SelectorsDict
 from robotpageobjects.optionhandler import OptionHandler
 
 
@@ -177,7 +177,7 @@ class ResolveUrlTestCase(BaseTestCase):
         self.assertEquals("123", pid)
         self.assertEquals("http://www.ncbi.nlm.nih.gov/pubmed/123", url)
 
-    ### Selectors ##
+class SelectorsTestCase(BaseTestCase):
     @raises(exceptions.DuplicateKeyError)
     def test_selectors_dup(self):
         class BaseFoo(object):
@@ -206,6 +206,26 @@ class ResolveUrlTestCase(BaseTestCase):
         self.assertEqual(selectors.get("foo"), "foo", "Selectors should contain 'foo' from BaseFoo.")
         self.assertEqual(selectors.get("bar"), "bar", "Selectors should contain 'bar' from BaseBar.")
         self.assertEqual(selectors.get("baz"), "baz", "Selector 'baz' should be overridden in FooBarPage." )
+
+    def test_page_resolve_selectors(self):
+        class Foo(Page):
+            selectors = {"foo": "xpath=id('display_settings_menu')//label[text() = '%s']"}
+
+        foo = Foo()
+        resolved = Foo()._resolve_selector("foo", "bar")
+        expected = "xpath=id('display_settings_menu')//label[text() = 'bar']"
+        self.assertEqual(resolved, expected,
+                         "Page._resolve_selector should resolve selectors with wildcards. Result was %s, but expected \"%s\"." % (resolved, expected))
+
+    def test_selectors_resolve_selectors(self):
+        selectors = SelectorsDict()
+        selectors.merge({"foo": "xpath=id('display_settings_menu')//label[text() = '%s']"})
+
+        resolved = selectors.resolve("foo", "bar")
+        expected = "xpath=id('display_settings_menu')//label[text() = 'bar']"
+        self.assertEqual(resolved, expected,
+                         "SelectorsDict.resolve should resolve selectors with wildcards. Result was %s, but expected \"%s\"." % (resolved, expected))
+
 
 class KeywordBehaviorTestCase(BaseTestCase):
 
