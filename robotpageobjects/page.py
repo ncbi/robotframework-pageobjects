@@ -366,9 +366,10 @@ class _SelectorsManager(_S2LWrapper):
                 else:
                     raise
 
-    def _resolve_selector(self, selector_name, *args):
+    @not_keyword
+    def resolve_selector(self, selector_name, *args):
         """
-        Replace the wildcards in the locator indicated by selector_name with args.
+        Replace the wildcards in the locator indicated by selector_name with args. This should be used within page objects. If you find that you need to use wildcards in a locator in your test, it is probably worth creating a method to do this in the page object.
         :param selector_name: The selector name to resolve
         :type selector_name: str
         :param args: The arguments to insert into the locator

@@ -212,10 +212,10 @@ class SelectorsTestCase(BaseTestCase):
             selectors = {"foo": "xpath=id('display_settings_menu')//label[text() = '%s']"}
 
         foo = Foo()
-        resolved = Foo()._resolve_selector("foo", "bar")
+        resolved = Foo().resolve_selector("foo", "bar")
         expected = "xpath=id('display_settings_menu')//label[text() = 'bar']"
         self.assertEqual(resolved, expected,
-                         "Page._resolve_selector should resolve selectors with wildcards. Result was %s, but expected \"%s\"." % (resolved, expected))
+                         "Page.resolve_selector should resolve selectors with wildcards. Result was %s, but expected \"%s\"." % (resolved, expected))
 
     def test_selectors_resolve_selectors(self):
         selectors = SelectorsDict()
