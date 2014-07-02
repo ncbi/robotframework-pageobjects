@@ -218,7 +218,7 @@ class SelectorsDict(dict):
                                             Only subclasses can override selector keys." % key)
             self[str(key)] = value
 
-    def resolve(self, selector_name, *args):
+    def _resolve_template(self, locator_key, vars):
         """
         Replace the wildcards in the locator indicated by selector_name with args.
         :param selector_name: The selector name to resolve
@@ -226,7 +226,7 @@ class SelectorsDict(dict):
         :param args: The arguments to insert into the locator
         :returns: str
         """
-        return self[selector_name] % args
+        return self[locator_key] % vars
 
 
 class _S2LWrapper(Selenium2Library):
@@ -345,7 +345,6 @@ class _SelectorsManager(_S2LWrapper):
         prefix = finder._parse_locator(locator)[0]
         return prefix is not None or locator.startswith("//")
 
-
     def _element_find(self, locator, *args, **kwargs):
         """
         Override built-in _element_find() method and map selectors. Try to use _element_find with the
@@ -354,6 +353,9 @@ class _SelectorsManager(_S2LWrapper):
         :type locator: str
         :returns: WebElement or list
         """
+        if isinstance(locator, tuple):
+            locator = self.selectors._resolve_template(locator[0], locator[1:])
+
         if locator in self.selectors:
             return super(_SelectorsManager, self)._element_find(self.selectors[locator], *args, **kwargs)
         else:
@@ -375,7 +377,7 @@ class _SelectorsManager(_S2LWrapper):
         :param args: The arguments to insert into the locator
         :returns: str
         """
-        return self.selectors.resolve(selector_name, *args)
+        return self.selectors.resolve_template(selector_name, *args)
 
     @not_keyword
     def find_element(self, locator, required=True, **kwargs):
