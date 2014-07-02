@@ -301,12 +301,18 @@ class _SelectorsManager(_S2LWrapper):
     And a Page2 object will have access to "search button", which maps to "id=go",
     and "input box", which maps to "id=bar".
 
-    Selectors can also define wildcards, which can be used with Page.resolve_selector():
-    class MyPage(Page):
-        selectors = {"display settings option": "xpath=id('display_settings_menu')//label[text() = '%s']"}
+    Selectors can also be templates which define variables:
+    class GoogleResultsPage(Page):
 
-        def click_option(self, option_name):
-            self.click_element(self.resolve_selector("display settings option", option_name))
+        selectors = {
+            # This is a selector template. "%s" will get filled in at run-time.
+            "results tab": "css=#top_nav div#tabs a:contains('%s')"
+        }
+
+        def select_results_tab(self, tab):
+            # Select the provided tab (such as "Web", "Images", "Videos", etc.) at the top of the
+            #  Google search results page
+            self.click_element(("results tab", tab))
     """
     selectors = {}
 
