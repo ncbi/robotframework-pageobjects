@@ -228,7 +228,13 @@ class SelectorsDict(dict):
         :param args: The variables to insert into the selector template.
         :returns: str
         """
-        return self[selector_name] % vars
+        try:
+            return self[selector_name] % vars
+        except TypeError, e:
+            raise exceptions.SelectorException('Problem expanding selector template "%s"'
+                                                                 'with vars (%s). %s' %(self.selectors[selector_name],
+                                                                                        ",".join(vars),
+                                                                                        e.message ))
 
 
 class _S2LWrapper(Selenium2Library):
@@ -349,35 +355,30 @@ class _SelectorsManager(_S2LWrapper):
 
     def _element_find(self, locator, *args, **kwargs):
         """
-        Override built-in _element_find() method and map selectors. Try to use _element_find with the
-        locator as is, then try, if a selector exists, try that.
+        Override built-in _element_find() method and map selectors.
+        If the locator is a tuple or list, expand it as a selector template.
+        Otherwise, try to use _element_find with the
+        locator as is, then if a selector exists, try that.
         :param locator: The Selenium2Library-style locator (or IFT selector) to use
         :type locator: str
         :returns: WebElement or list
         """
         if isinstance(locator, tuple) or isinstance(locator, list):
-            locator_key = locator[0]
-            vars = locator[1:]
-            try:
-                locator = self.selectors.expand_selector_template(locator_key, vars)
+            selector_template = locator[0]
+            args = locator[1:]
+            locator = self.selectors.expand_selector_template(selector_template, args)
 
-            except TypeError, e:
-                raise exceptions.BadSelectorVariablesPassedError('Problem passing selector variables %s to '
-                                                                 'selector template "%s". %s' %(",".join(vars),
-                                                                                                self.selectors[locator_key],
-                                                                                                e.message ))
+        elif locator in self.selectors:
+            locator = self.selectors[locator]
 
-        if locator in self.selectors:
-            return super(_SelectorsManager, self)._element_find(self.selectors[locator], *args, **kwargs)
-        else:
-            try:
-                return super(_SelectorsManager, self)._element_find(locator, *args, **kwargs)
-            except ValueError:
-                if not self._is_locator_format(locator):
-                    # Not found, doesn't look like a locator, not in selectors dict
-                    raise ValueError("\"%s\" looks like a selector, but it is not in the selectors dict." % locator)
-                else:
-                    raise
+        try:
+            return super(_SelectorsManager, self)._element_find(locator, *args, **kwargs)
+        except ValueError:
+            if not self._is_locator_format(locator):
+                # Not found, doesn't look like a locator, not in selectors dict
+                raise exceptions.SelectorException("\"%s\" is not a valid locator. If this is a selector name, make sure it is spelled correctly." % locator)
+            else:
+                raise
 
     @not_keyword
     def find_element(self, locator, required=True, **kwargs):

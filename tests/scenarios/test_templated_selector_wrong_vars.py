@@ -10,7 +10,7 @@ class TemplatedSelectorTestCaseWrongVars(unittest.TestCase):
         self.p = Page()
         self.p.open()
 
-    @raises(exceptions.BadSelectorVariablesPassedError)
+    @raises(exceptions.SelectorException)
     def test_templated_selector_test_case(self):
         self.assertEquals(self.p.get_templated_selector_element_text_wrong_vars(), "I am another paragraph")
 
