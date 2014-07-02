@@ -218,7 +218,7 @@ class SelectorsDict(dict):
                                             Only subclasses can override selector keys." % key)
             self[str(key)] = value
 
-    def _expand_selector_template(self, selector_name, vars):
+    def expand_selector_template(self, selector_name, vars):
         """
         Expands the selector template string identified by locator_name
         with the variables passed as a tuple or list.
@@ -359,7 +359,7 @@ class _SelectorsManager(_S2LWrapper):
             locator_key = locator[0]
             vars = locator[1:]
             try:
-                locator = self.selectors._expand_selector_template(locator_key, vars)
+                locator = self.selectors.expand_selector_template(locator_key, vars)
 
             except TypeError, e:
                 raise exceptions.BadSelectorVariablesPassedError('Problem passing selector variables %s to '
