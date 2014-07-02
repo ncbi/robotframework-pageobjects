@@ -207,25 +207,6 @@ class SelectorsTestCase(BaseTestCase):
         self.assertEqual(selectors.get("bar"), "bar", "Selectors should contain 'bar' from BaseBar.")
         self.assertEqual(selectors.get("baz"), "baz", "Selector 'baz' should be overridden in FooBarPage." )
 
-    def test_page_resolve_selectors(self):
-        class Foo(Page):
-            selectors = {"foo": "xpath=id('display_settings_menu')//label[text() = '%s']"}
-
-        foo = Foo()
-        resolved = Foo().resolve_selector("foo", "bar")
-        expected = "xpath=id('display_settings_menu')//label[text() = 'bar']"
-        self.assertEqual(resolved, expected,
-                         "Page.resolve_selector should resolve selectors with wildcards. Result was %s, but expected \"%s\"." % (resolved, expected))
-
-    def test_selectors_resolve_selectors(self):
-        selectors = SelectorsDict()
-        selectors.merge({"foo": "xpath=id('display_settings_menu')//label[text() = '%s']"})
-
-        resolved = selectors.resolve("foo", "bar")
-        expected = "xpath=id('display_settings_menu')//label[text() = 'bar']"
-        self.assertEqual(resolved, expected,
-                         "SelectorsDict.resolve should resolve selectors with wildcards. Result was %s, but expected \"%s\"." % (resolved, expected))
-
 
 class KeywordBehaviorTestCase(BaseTestCase):
 
