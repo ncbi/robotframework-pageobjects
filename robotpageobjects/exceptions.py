@@ -12,6 +12,11 @@ class KeyOverrideWarning(Warning):
     """
     pass
 
+class BadSelectorVariablesPassedError(ValueError):
+    """ Raised when the wrong number of variables are passed to a selector template
+    """
+    pass
+
 
 class NoBaseUrlError(AttributeError):
     """

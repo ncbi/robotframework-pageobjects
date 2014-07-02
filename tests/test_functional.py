@@ -224,7 +224,13 @@ class SelectorsTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=0, search_output="PASSED")
 
     def test_selector_template(self):
+        self.set_baseurl_env()
         run = self.run_scenario("test_templated_selector.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")
+
+    def test_selector_vars_passed_dont_match_template(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_templated_selector_wrong_vars.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
 

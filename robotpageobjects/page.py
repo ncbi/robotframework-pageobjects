@@ -354,7 +354,16 @@ class _SelectorsManager(_S2LWrapper):
         :returns: WebElement or list
         """
         if isinstance(locator, tuple):
-            locator = self.selectors._resolve_template(locator[0], locator[1:])
+            locator_key = locator[0]
+            vars = locator[1:]
+            try:
+                locator = self.selectors._resolve_template(locator_key, vars)
+
+            except TypeError, e:
+                raise exceptions.BadSelectorVariablesPassedError('Problem passing selector variables %s to '
+                                                                 'selector template "%s". %s' %(",".join(vars),
+                                                                                                self.selectors[locator_key],
+                                                                                                e.message ))
 
         if locator in self.selectors:
             return super(_SelectorsManager, self)._element_find(self.selectors[locator], *args, **kwargs)

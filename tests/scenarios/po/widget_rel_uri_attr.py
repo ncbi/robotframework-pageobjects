@@ -34,6 +34,9 @@ class Page(Page):
     def get_templated_selector_element_text(self):
         return self.get_text(("another-paragraph", "ct", "foo"))
 
+    def get_templated_selector_element_text_wrong_vars(self):
+        return self.get_text(("another-paragraph", "ct"))
+
 
 class SearchResultPage(Page):
     name = "Widget Search Result Page"
