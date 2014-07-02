@@ -17,7 +17,6 @@ class SelectorException(Exception):
     Raised when there is a problem with selectors.
     """
 
-
 class NoBaseUrlError(AttributeError):
     """
     Raised when no baseurl is set for the page object. A baseurl

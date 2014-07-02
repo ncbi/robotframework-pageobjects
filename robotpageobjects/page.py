@@ -232,7 +232,7 @@ class SelectorsDict(dict):
             return self[selector_name] % vars
         except TypeError, e:
             raise exceptions.SelectorException('Problem expanding selector template "%s"'
-                                                                 'with vars (%s). %s' %(self.selectors[selector_name],
+                                                                 'with vars (%s). %s' %(self[selector_name],
                                                                                         ",".join(vars),
                                                                                         e.message ))
 
