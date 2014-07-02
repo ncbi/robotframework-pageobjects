@@ -355,7 +355,7 @@ class _SelectorsManager(_S2LWrapper):
         :type locator: str
         :returns: WebElement or list
         """
-        if isinstance(locator, tuple):
+        if isinstance(locator, tuple) or isinstance(locator, list):
             locator_key = locator[0]
             vars = locator[1:]
             try:
