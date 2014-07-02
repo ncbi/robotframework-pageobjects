@@ -218,15 +218,17 @@ class SelectorsDict(dict):
                                             Only subclasses can override selector keys." % key)
             self[str(key)] = value
 
-    def _resolve_template(self, locator_key, vars):
+    def _expand_selector_template(self, selector_name, vars):
         """
-        Replace the wildcards in the locator indicated by selector_name with args.
-        :param selector_name: The selector name to resolve
+        Expands the selector template string identified by locator_name
+        with the variables passed as a tuple or list.
+
+        :param selector_name: The selector name to expand.
         :type selector_name: str
-        :param args: The arguments to insert into the locator
+        :param args: The variables to insert into the selector template.
         :returns: str
         """
-        return self[locator_key] % vars
+        return self[selector_name] % vars
 
 
 class _S2LWrapper(Selenium2Library):
@@ -357,7 +359,7 @@ class _SelectorsManager(_S2LWrapper):
             locator_key = locator[0]
             vars = locator[1:]
             try:
-                locator = self.selectors._resolve_template(locator_key, vars)
+                locator = self.selectors._expand_selector_template(locator_key, vars)
 
             except TypeError, e:
                 raise exceptions.BadSelectorVariablesPassedError('Problem passing selector variables %s to '
