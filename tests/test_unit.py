@@ -10,7 +10,7 @@ from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
 from robotpageobjects.page import Page, Override, not_keyword, SelectorsDict
 from robotpageobjects.optionhandler import OptionHandler
-
+from robotpageobjects import selectortemplate
 
 class InheritFromSe2LibTestCase(BaseTestCase):
 
@@ -329,3 +329,12 @@ class LoggingLevelsTestCase(BaseTestCase):
         self.assertEquals(level_tup, ("INFO", 20))
 
 
+class SelectorTemplateTestCase(BaseTestCase):
+
+    def test_basic(self):
+        expanded = selectortemplate.expand("/{var1}/{var2}", {"var1": "foo", "var2": "bar"})
+        self.assertEquals(expanded, "/foo/bar")
+
+    def test_no_quoting(self):
+        expanded = selectortemplate.expand("{host}/{query}", {"host": "http://www.google.com", "query": "?q=foo"})
+        self.assertEquals(expanded, "http://www.google.com/?q=foo", expanded)
