@@ -12,7 +12,7 @@ class KeyOverrideWarning(Warning):
     """
     pass
 
-class SelectorException(Exception):
+class SelectorError(Exception):
     """
     Raised when there is a problem with selectors.
     """

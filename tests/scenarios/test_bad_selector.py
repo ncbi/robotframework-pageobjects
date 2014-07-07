@@ -11,7 +11,7 @@ class BadSelectorTestCase(unittest.TestCase):
         found = False
         try:
             self.page.find_element("foobar")
-        except exceptions.SelectorException, e:
+        except exceptions.SelectorError, e:
             msg_found = e.message.find("not a valid locator") != -1
         self.assertTrue(msg_found,
                         "ValueError should detect that the locator looks like a selector.")

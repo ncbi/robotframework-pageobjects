@@ -341,6 +341,22 @@ class _SelectorsManager(_S2LWrapper):
         prefix = finder._parse_locator(locator)[0]
         return prefix is not None or locator.startswith("//")
 
+    @staticmethod
+    def _vars_match_template(template, vars):
+        """Validates that the provided variables match the template.
+        :param template: The template
+        :type template: str
+        :param vars: The variables to match against the template
+        :type vars: tuple or list
+        :returns: bool"""
+        keys = vars.keys()
+        keys.sort()
+        # We're using uritemplate's variables function, which is general enough for
+        # non-uri templates.
+        template_vars = list(uritemplate.variables(template))
+        template_vars.sort()
+        return template_vars == keys
+
     def _element_find(self, locator, *args, **kwargs):
         """
         Override built-in _element_find() method and intelligently
@@ -353,18 +369,15 @@ class _SelectorsManager(_S2LWrapper):
         :type locator: str
         :returns: WebElement or list
         """
-        if isinstance(locator, tuple):
+        if isinstance(locator, tuple) or isinstance(locator, list):
             # First arg us a tuple of selector name and
             # dictionary of template variables.
             selector_key = locator[0]
             selector_template = self.selectors[selector_key]
             passed_template_vars = locator[1]
-            passed_template_keys = passed_template_vars.keys()
-            passed_template_keys.sort()
-            template_vars = list(selectortemplate.variables(selector_template))
-            template_vars.sort()
-            if passed_template_keys != template_vars:
-                raise ValueError
+            if not self._vars_match_template(selector_template, passed_template_vars):
+                raise exceptions.SelectorError("The variables %s did not match selector template %s"
+                                                   % (passed_template_vars, selector_template))
 
             locator = selectortemplate.expand(selector_template, passed_template_vars)
 
@@ -376,7 +389,7 @@ class _SelectorsManager(_S2LWrapper):
         except ValueError:
             if not self._is_locator_format(locator):
                 # Not found, doesn't look like a locator, not in selectors dict
-                raise exceptions.SelectorException(
+                raise exceptions.SelectorError(
                     "\"%s\" is not a valid locator. If this is a selector name, make sure it is spelled correctly." % locator)
             else:
                 raise
@@ -542,14 +555,11 @@ class _BaseActions(_SelectorsManager):
                 uri_vars = args[0]
 
             # Check that variables are correct and match template.
-            for uri_var in uri_vars:
-                if uri_var not in uritemplate.variables(self.uri_template):
-                    raise exceptions.UriResolutionError(
-                        "The variable passed in, \"%s\" does not match "
-                        "template \"%s\" for page object \"%s\"" % (uri_var,
-                                                                    self
-                                                                    .uri_template,
-                                                                    pageobj_name))
+            if not self._vars_match_template(self.uri_template, uri_vars):
+                raise exceptions.UriResolutionError(
+                    "The variables %s do not match template %s for page object %s"
+                    % (uri_vars, self.uri_template, pageobj_name)
+                )
             self.uri_vars = uri_vars
             return uritemplate.expand(self.baseurl + self.uri_template, uri_vars)
 

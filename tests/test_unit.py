@@ -184,7 +184,6 @@ class ResolveUrlTestCase(BaseTestCase):
         self.PO.uri_template = "/pubmed/{pid}"
         self.PO()._resolve_url({"foo": "bar"})
 
-    @skip
     @raises(exceptions.UriResolutionError)
     def test_too_many_vars_passed_to_uri_template_in_robot(self):
         self.set_baseurl_env()
@@ -225,7 +224,6 @@ class ResolveUrlTestCase(BaseTestCase):
         url = po._resolve_url(path)
         self.assertEquals(url, po.baseurl + path)
 
-    @skip
     def test_url_string_bypasses_uri(self):
         """A path was passed in as a string (inside or outside Robot). It should just be appended to
         the baseurl, even if there is a uri set in the PO."""
@@ -246,7 +244,6 @@ class ResolveUrlTestCase(BaseTestCase):
         resolved_url = po._resolve_url(abs_url)
         self.assertEquals(resolved_url, abs_url)
 
-    @skip
     def test_absolute_url_bypasses_uri(self):
         """An absolute url was passed in as a string (inside or outside Robot). It should just be used instead of
         the PO's uri."""
