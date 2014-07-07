@@ -349,7 +349,7 @@ class _SelectorsManager(_S2LWrapper):
          :param selector: The name of the selector
          :type selector: String
 
-         Usage::::
+         Usage::
 
              class MyPage(Page):
 
