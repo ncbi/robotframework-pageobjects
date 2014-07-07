@@ -459,7 +459,7 @@ class _BaseActions(_SelectorsManager):
 
         if len(args) > 0 and hasattr(self, "uri") and self.uri is not None:
             raise exceptions.UriTemplateException("URI %s is set for page object %s. No arguments may be used with it." %
-                                                  (self.uri, self.__class__.__name__))
+                                                  (self.uri, pageobj_name))
         elif len(args) > 0 and self._is_url_absolute(self.uri_template):
             # URI template variables are being passed in, so the page object encapsulates
             # a page that follows some sort of URL pattern. Eg, /pubmed/SOME_ARTICLE_ID.
