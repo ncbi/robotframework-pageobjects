@@ -344,11 +344,13 @@ class _SelectorsManager(_S2LWrapper):
 
     def _element_find(self, locator, *args, **kwargs):
         """
-        Override built-in _element_find() method and map selectors.
-        If the locator is a tuple or list, expand it as a selector template.
+        Override built-in _element_find() method and intelligently
+        determine the locator for a passed-in selector name.
+
+        If the locator is a tuple , expand it as a selector template.
         Otherwise, try to use _element_find with the
         locator as is, then if a selector exists, try that.
-        :param locator: The Selenium2Library-style locator (or IFT selector) to use
+        :param locator: The Selenium2Library-style locator, or IFT selector, or template tuple to use
         :type locator: str
         :returns: WebElement or list
         """
