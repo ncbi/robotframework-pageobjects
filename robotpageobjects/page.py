@@ -493,7 +493,6 @@ class _BaseActions(_SelectorsManager):
 
         Called by open().
         """
-
         pageobj_name = self.__class__.__name__
 
         # We always need a baseurl set. This enforces parameterization of the
@@ -502,11 +501,9 @@ class _BaseActions(_SelectorsManager):
         if self.baseurl is None:
             raise exceptions.UriResolutionError("To open page object, \"%s\" you must set a baseurl." % pageobj_name)
 
-        if len(args) > 0 and hasattr(self, "uri") and self.uri is not None:
-            raise exceptions.UriResolutionError(
-                "URI %s is set for page object %s. It is not a template, so no arguments are allowed." %
-                (self.uri, pageobj_name))
-        elif len(args) > 0 and self._is_url_absolute(self.uri_template):
+        #if len(args) > 0 and hasattr(self, "uri") and self.uri is not None:
+
+        elif len(args) > 0 and hasattr(self, "uri_template") and self._is_url_absolute(self.uri_template):
             # URI template variables are being passed in, so the page object encapsulates
             # a page that follows some sort of URL pattern. Eg, /pubmed/SOME_ARTICLE_ID.
 
@@ -531,6 +528,11 @@ class _BaseActions(_SelectorsManager):
                     arg_type = "url"
                 else:
                     arg_type = "robot"
+
+            if arg_type != "url" and hasattr(self, "uri") and self.uri is not None:
+                raise exceptions.UriResolutionError(
+                    "URI %s is set for page object %s. It is not a template, so no arguments are allowed." %
+                        (self.uri, pageobj_name))
 
             if arg_type == "url":
                 if self._is_url_absolute(first_arg):

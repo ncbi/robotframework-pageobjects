@@ -188,7 +188,9 @@ class ResolveUrlTestCase(BaseTestCase):
     def test_too_many_vars_passed_to_uri_template_in_robot(self):
         self.set_baseurl_env()
         self.PO.uri_template = "/pubmed/{pid}"
-        self.PO()._resolve_url("pid=foo", "bar=baz")
+        po = self.PO()
+        po._is_robot = True
+        po._resolve_url("pid=foo", "bar=baz")
 
     @raises(exceptions.UriResolutionError)
     def test_wrong_var_name_in_robot(self):
