@@ -72,52 +72,14 @@ class OptionHandlerTestCase(BaseTestCase):
         handler = OptionHandler()
         self.assertEquals(handler.get("browser"), "foobar")
 
-
-class ResolveUrlTestCase(BaseTestCase):
+class SauceTestCase(BaseTestCase):
     def setUp(self):
-        super(ResolveUrlTestCase, self).setUp()
+        super(SauceTestCase, self).setUp()
 
         class PO(Page):
             pass
 
         self.PO = PO
-
-    ### Exceptions ###
-    @raises(exceptions.NoBaseUrlError)
-    def test_no_baseurl_set_no_uri_attr_set_should_raise_NoBaseUrlException(self):
-        self.PO()._resolve_url()
-
-    @raises(exceptions.NoBaseUrlError)
-    def test_no_baseurl_set_no_uri_attr_set_uri_vars_set_should_raise_NoBaseUrlExeption(self):
-        self.PO()._resolve_url("bar")
-
-    @raises(exceptions.NoBaseUrlError)
-    def test_no_baseurl_set_uri_attr_set_uri_vars_set_should_raise_NoBaseUrlExeption(self):
-        self.PO.uri = "/foo"
-        self.PO()._resolve_url("bar")
-
-    @raises(exceptions.NoUriAttributeError)
-    def test_baseurl_set_no_uri_attr_set_should_raise_NoUriAttributeException(self):
-        self.set_baseurl_env()
-        self.PO()._resolve_url()
-
-    @raises(exceptions.AbsoluteUriAttributeError)
-    def test_baseurl_set_abs_uri_attr_should_raise_AbsoulteUrlAttributeException(self):
-        self.set_baseurl_env()
-        self.PO.uri = "http://www.example.com"
-        self.PO()._resolve_url()
-
-    @raises(exceptions.UriTemplateException)
-    def test_baseurl_set_abs_uri_template_should_raise_AbsoluteUriTemplateException(self):
-        self.set_baseurl_env()
-        self.PO.uri_template = "http://www.ncbi.nlm.nih.gov/pubmed/{pid}"
-        self.PO()._resolve_url({"pid": "123"})
-
-    @raises(exceptions.UriTemplateException)
-    def test_baseurl_set_bad_vars_passed_to_uri_template(self):
-        self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
-        self.PO.uri_template = "/pubmed/{pid}"
-        self.PO()._resolve_url({"foo": "bar"})
 
     @raises(exceptions.MissingSauceOptionError)
     def test_missing_sauce_apikey_should_raise_missing_sauce_option_error(self):
@@ -159,8 +121,70 @@ class ResolveUrlTestCase(BaseTestCase):
         p = self.PO()
         p.open()
 
+
+class ResolveUrlTestCase(BaseTestCase):
+    def setUp(self):
+        super(ResolveUrlTestCase, self).setUp()
+
+        class PO(Page):
+            pass
+
+        self.PO = PO
+
+    ### Exceptions ###
+    @raises(exceptions.NoBaseUrlError)
+    def test_no_baseurl_set_and_no_uri_attr_set(self):
+        """No baseurl is set, and there is no "uri" set in the PO."""
+
+        self.PO()._resolve_url()
+
+    @raises(exceptions.NoBaseUrlError)
+    def test_no_baseurl_set_and_no_uri_attr_set_and_uri_vars_set(self):
+        """No baseurl is set, and there is no "uri" set in the PO,
+        and a variable was passed in."""
+
+        self.PO()._resolve_url("bar")
+
+    @raises(exceptions.NoBaseUrlError)
+    def test_no_baseurl_set_and_uri_attr_set_and_uri_vars_set(self):
+        """No baseurl is set. A uri is set, but a variable was passed in."""
+
+        self.PO.uri = "/foo"
+        self.PO()._resolve_url("bar")
+
+    @raises(exceptions.NoUriAttributeError)
+    def test_baseurl_set_no_uri_attr_set(self):
+        """A baseurl is set, but no variables were passed in and no "uri" was set."""
+
+        self.set_baseurl_env()
+        self.PO()._resolve_url()
+
+    @raises(exceptions.AbsoluteUriAttributeError)
+    def test_baseurl_set_abs_uri_attr_should_raise_AbsoulteUrlAttributeException(self):
+        """An absolute url (with scheme) was set as the uri."""
+
+        self.set_baseurl_env()
+        self.PO.uri = "http://www.example.com"
+        self.PO()._resolve_url()
+
+    @raises(exceptions.UriTemplateException)
+    def test_baseurl_set_and_abs_uri_template(self):
+        """An absolute url template was set."""
+
+        self.set_baseurl_env()
+        self.PO.uri_template = "http://www.ncbi.nlm.nih.gov/pubmed/{pid}"
+        self.PO()._resolve_url({"pid": "123"})
+
+    @raises(exceptions.UriTemplateException)
+    def test_baseurl_set_and_bad_vars_passed_to_uri_template(self):
+        """The variable names passed in do not match the template."""
+
+        self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
+        self.PO.uri_template = "/pubmed/{pid}"
+        self.PO()._resolve_url({"foo": "bar"})
+
     ### Normative Cases ###
-    def test_rel_uri_attr_set(self):
+    def test_rel_uri_is_resolved(self):
         self.set_baseurl_env()
         self.PO.uri = "/foo"
         po_inst = self.PO()
@@ -168,7 +192,7 @@ class ResolveUrlTestCase(BaseTestCase):
         self.assertEquals(url, po_inst.baseurl + po_inst.uri)
         self.assertRegexpMatches(url, "file:///.+/foo$")
 
-    def test_uri_vars_set(self):
+    def test_uri_template_is_resolved(self):
         self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
         self.PO.uri_template = "/pubmed/{pid}"
         p = self.PO()

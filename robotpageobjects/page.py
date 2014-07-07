@@ -506,13 +506,13 @@ class _BaseActions(_SelectorsManager):
             uri_vars = {}
 
             first_arg = args[0]
-            if not Context.in_robot():
+            if not self._is_robot:
                 if isinstance(first_arg, basestring):
                     # In Python, if the first argument is a string and not a dict, it's a url or path.
                     arg_type = "url"
                 else:
                     arg_type = "dict"
-            elif Context.in_robot():
+            elif self._is_robot:
                 # We'll always get string args in Robot
                 if self._is_url_absolute(first_arg) or first_arg.startswith("/"):
                     arg_type = "url"
