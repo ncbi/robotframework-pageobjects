@@ -427,10 +427,21 @@ class LoggingLevelsTestCase(BaseTestCase):
 
 class SelectorTemplateTestCase(BaseTestCase):
 
-    def test_basic(self):
-        expanded = selectortemplate.expand("/{var1}/{var2}", {"var1": "foo", "var2": "bar"})
-        self.assertEquals(expanded, "/foo/bar")
+    def setUp(self):
+        super(SelectorTemplateTestCase, self).setUp()
+        self.p = Page()
+        self.p.selectors["foo"] = "xpath=//foo[{n}]/{el}"
 
-    def test_no_quoting(self):
-        expanded = selectortemplate.expand("{host}/{query}", {"host": "http://www.google.com", "query": "?q=foo"})
-        self.assertEquals(expanded, "http://www.google.com/?q=foo", expanded)
+    def test_basic(self):
+        self.assertEquals("xpath=//foo[3]/p", self.p.resolve_selector("foo", n=3, el="p"))
+
+    def test_too_many_args(self):
+        self.assertEquals("xpath=//foo[3]/p", self.p.resolve_selector("foo", n=3, el="p", boo="bat"))
+
+    @raises(exceptions.SelectorError)
+    def test_not_enough_args(self):
+        self.p.resolve_selector("foo", n=3)
+
+    @raises
+    def test_wrong_args(self):
+        self.p.resolve_selector("foo", n=3, ep="p")

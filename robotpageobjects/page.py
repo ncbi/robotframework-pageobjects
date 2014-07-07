@@ -341,6 +341,13 @@ class _SelectorsManager(_S2LWrapper):
         prefix = finder._parse_locator(locator)[0]
         return prefix is not None or locator.startswith("//")
 
+    def resolve_selector(self, selector, **kwargs):
+        template = self.selectors[selector]
+        try:
+            return template.format(**kwargs)
+        except KeyError:
+            raise exceptions.SelectorError("Variables {vars} don't match template {template}".format(vars=kwargs,
+                                                                                                     template=template))
     @staticmethod
     def _vars_match_template(template, vars):
         """Validates that the provided variables match the template.
