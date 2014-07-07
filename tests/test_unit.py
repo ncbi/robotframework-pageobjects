@@ -107,13 +107,13 @@ class ResolveUrlTestCase(BaseTestCase):
         self.PO.uri = "http://www.example.com"
         self.PO()._resolve_url()
 
-    @raises(exceptions.AbsoluteUriTemplateError)
+    @raises(exceptions.UriTemplateException)
     def test_baseurl_set_abs_uri_template_should_raise_AbsoluteUriTemplateException(self):
         self.set_baseurl_env()
         self.PO.uri_template = "http://www.ncbi.nlm.nih.gov/pubmed/{pid}"
         self.PO()._resolve_url({"pid": "123"})
 
-    @raises(exceptions.InvalidUriTemplateVariableError)
+    @raises(exceptions.UriTemplateException)
     def test_baseurl_set_bad_vars_passed_to_uri_template(self):
         self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
         self.PO.uri_template = "/pubmed/{pid}"

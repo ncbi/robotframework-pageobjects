@@ -20,12 +20,10 @@
 """
 from __future__ import print_function
 import inspect
-import abstractedlogger
 import re
 import uritemplate
 import urllib2
 import warnings
-
 import decorator
 from robot.utils import asserts
 from selenium import webdriver
@@ -33,8 +31,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from Selenium2Library import Selenium2Library
 from Selenium2Library.locators.elementfinder import ElementFinder
 from Selenium2Library.keywords.keywordgroup import KeywordGroupMetaClass
-import selectortemplate
 
+import abstractedlogger
+import selectortemplate
 from context import Context
 import exceptions
 from optionhandler import OptionHandler
@@ -377,7 +376,8 @@ class _SelectorsManager(_S2LWrapper):
         except ValueError:
             if not self._is_locator_format(locator):
                 # Not found, doesn't look like a locator, not in selectors dict
-                raise exceptions.SelectorException("\"%s\" is not a valid locator. If this is a selector name, make sure it is spelled correctly." % locator)
+                raise exceptions.SelectorException(
+                    "\"%s\" is not a valid locator. If this is a selector name, make sure it is spelled correctly." % locator)
             else:
                 raise
 
@@ -490,15 +490,17 @@ class _BaseActions(_SelectorsManager):
             raise exceptions.NoBaseUrlError("To open page object, \"%s\" you must set a baseurl." % pageobj_name)
 
         if len(args) > 0 and hasattr(self, "uri") and self.uri is not None:
-            raise exceptions.UriTemplateException("URI %s is set for page object %s. No arguments may be used with it." %
-                                                  (self.uri, pageobj_name))
+            raise exceptions.UriTemplateException(
+                "URI %s is set for page object %s. No arguments may be used with it." %
+                (self.uri, pageobj_name))
         elif len(args) > 0 and self._is_url_absolute(self.uri_template):
             # URI template variables are being passed in, so the page object encapsulates
             # a page that follows some sort of URL pattern. Eg, /pubmed/SOME_ARTICLE_ID.
 
             raise exceptions.UriTemplateException("The URI Template \"%s\" in \"%s\" is an absolute URL. "
-                                                      "It should be relative and used with baseurl" % (self.uri_template))
-
+                                                  "It should be relative and used with baseurl" % (self
+                                                                                                   .uri_template,
+                                                                                                   pageobj_name))
 
         if len(args) > 0:
             uri_vars = {}
@@ -525,7 +527,7 @@ class _BaseActions(_SelectorsManager):
                 elif first_arg.startswith("//"):
                     raise exceptions.UriTemplateException("%s is neither a URL with a scheme nor a relative path"
                                                           % first_arg)
-                else: # starts with "/"
+                else:  # starts with "/"
                     # so it doesn't need resolution, except for appending to baseurl and stripping leading slash
                     # if it needed: i.e., if the base url ends with "/" and the url starts with "/".
 
@@ -755,8 +757,8 @@ class _BaseActions(_SelectorsManager):
         """
         return self._is_visible(selector)
 
-class ComponentManager(_BaseActions):
 
+class ComponentManager(_BaseActions):
     @not_keyword
     def get_instance(self, component_class):
 
@@ -786,7 +788,8 @@ class ComponentManager(_BaseActions):
 
         :param component_class: The page component class
         """
-        return [component_class(reference_webelement) for reference_webelement in self.get_reference_elements(component_class)]
+        return [component_class(reference_webelement) for reference_webelement in
+                self.get_reference_elements(component_class)]
 
     @not_keyword
     def get_reference_elements(self, component_class):
@@ -829,8 +832,8 @@ class _ComponentElementFinder(ElementFinder):
         else:
             return super(_ComponentElementFinder, self).find(self._reference_webelement, locator, tag=tag)
 
-class Component(_BaseActions):
 
+class Component(_BaseActions):
     def __init__(self, reference_webelement, *args, **kwargs):
         super(Component, self).__init__(*args, **kwargs)
         self.reference_webelement = reference_webelement
@@ -1029,7 +1032,7 @@ class Page(_BaseActions):
                 # If we find a match for the class name, set the pointer in Context.
                 if name.split(".")[-1:][0] == classname:
                     Context.set_current_page(name)
-                    
+
         # The case of raising an exception if a page object method returns None is handled
         # by Page's meta class, because we need to raise this exception for Robot and
         # outside Robot.
