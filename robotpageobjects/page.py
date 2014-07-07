@@ -33,7 +33,6 @@ from Selenium2Library.locators.elementfinder import ElementFinder
 from Selenium2Library.keywords.keywordgroup import KeywordGroupMetaClass
 
 import abstractedlogger
-import selectortemplate
 from context import Context
 import exceptions
 from optionhandler import OptionHandler
@@ -358,8 +357,6 @@ class _SelectorsManager(_S2LWrapper):
         :returns: bool"""
         keys = vars.keys()
         keys.sort()
-        # We're using uritemplate's variables function, which is general enough for
-        # non-uri templates.
         template_vars = list(uritemplate.variables(template))
         template_vars.sort()
         return template_vars == keys
@@ -369,24 +366,12 @@ class _SelectorsManager(_S2LWrapper):
         Override built-in _element_find() method and intelligently
         determine the locator for a passed-in selector name.
 
-        If the locator is a tuple , expand it as a selector template.
-        Otherwise, try to use _element_find with the
+        Try to use _element_find with the
         locator as is, then if a selector exists, try that.
-        :param locator: The Selenium2Library-style locator, or IFT selector, or template tuple to use
+        :param locator: The Selenium2Library-style locator, or IFT selector.
         :type locator: str
         :returns: WebElement or list
         """
-        if isinstance(locator, tuple) or isinstance(locator, list):
-            # First arg us a tuple of selector name and
-            # dictionary of template variables.
-            selector_key = locator[0]
-            selector_template = self.selectors[selector_key]
-            passed_template_vars = locator[1]
-            if not self._vars_match_template(selector_template, passed_template_vars):
-                raise exceptions.SelectorError("The variables %s did not match selector template %s"
-                                                   % (passed_template_vars, selector_template))
-
-            locator = selectortemplate.expand(selector_template, passed_template_vars)
 
         if locator in self.selectors:
             locator = self.selectors[locator]

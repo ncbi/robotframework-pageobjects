@@ -215,13 +215,6 @@ class SelectorsTestCase(BaseTestCase):
     def test_selector_template(self):
         self.set_baseurl_env()
         run = self.run_scenario("test_templated_selector.py")
-        print run.cmd
-
-        self.assert_run(run, expected_returncode=0, search_output="OK")
-
-    def test_wrong_num_selector_vars(self):
-        self.set_baseurl_env()
-        run = self.run_scenario("test_templated_selector_wrong_num.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_no_robot_action_failing_should_not_warn_about_screenshot(self):
@@ -497,7 +490,7 @@ class LoggingTestCase(BaseTestCase):
 
     def test_log_non_string(self):
         try:
-            Page().log([1,2,3])
+            Page().log([1,2,3], is_console=False)
         except TypeError:
             self.fail("Logging a non string causes a TypeError")
             

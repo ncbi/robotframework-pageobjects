@@ -10,8 +10,6 @@ from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
 from robotpageobjects.page import Page, Override, not_keyword, SelectorsDict
 from robotpageobjects.optionhandler import OptionHandler
-from robotpageobjects import selectortemplate
-from unittest import skip
 
 class InheritFromSe2LibTestCase(BaseTestCase):
 
