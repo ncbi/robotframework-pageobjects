@@ -363,18 +363,8 @@ class _SelectorsManager(_S2LWrapper):
             template_vars = list(uritemplate.variables(selector_template))
             template_vars.sort()
             if passed_template_keys != template_vars:
-                print ("Don't match")
+                raise ValueError
 
-            """
-            if len(passed_template_vars) != len(template_vars):
-                print (passed_template_vars)
-                print(template_vars)
-                print ("WRONG number")
-
-            print ("template var kyes")
-            print (passed_template_vars.keys())
-            print (list(template_vars))
-            """
             locator = selectortemplate.expand(selector_template, passed_template_vars)
 
         if locator in self.selectors:

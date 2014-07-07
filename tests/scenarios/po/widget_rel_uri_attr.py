@@ -34,7 +34,7 @@ class Page(Page):
     def get_templated_selector_element_text(self):
         return self.get_text(("another-paragraph", {"class":"ct", "id": "foo"}))
 
-    def get_templated_selector_element_text_wrong__num_vars(self):
+    def get_templated_selector_element_text_wrong_num_vars(self):
         return self.get_text(("another-paragraph", {"foo": "bar", "class":"ct", "id": "foo"}))
 
 

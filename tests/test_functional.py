@@ -222,9 +222,7 @@ class SelectorsTestCase(BaseTestCase):
     def test_wrong_num_selector_vars(self):
         self.set_baseurl_env()
         run = self.run_scenario("test_templated_selector_wrong_num.py")
-        print run.cmd
-
-        self.assert_run(run, expected_returncode=1)
+        self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_no_robot_action_failing_should_not_warn_about_screenshot(self):
         self.set_baseurl_env()
