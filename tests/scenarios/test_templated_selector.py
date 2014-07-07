@@ -5,8 +5,6 @@ from po.widget_rel_uri_attr import Page
 class TemplatedSelectorTestCase(unittest.TestCase):
 
     def setUp(self):
-        import os
-        os.environ["PO_BASEURL"] = "file:////home/cohenaa/projects/ift/robotframework-pageobjects/tests/scenarios"
         self.p = Page()
         self.p.open()
 

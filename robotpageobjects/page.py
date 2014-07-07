@@ -341,6 +341,29 @@ class _SelectorsManager(_S2LWrapper):
         return prefix is not None or locator.startswith("//")
 
     def resolve_selector(self, selector, **kwargs):
+        """ Expands a selector template and returns a locator
+         for use by Selenium2Library methods like click_element().
+         Pass the name of the selector template followed by keyword arguments
+         matching the variables in the template.
+
+         :param selector: The name of the selector
+         :type selector: String
+
+         Usage::::
+
+             class MyPage(Page):
+
+                 self.selectors = {
+                    "nth-para": "xpath=//p[{n}",
+                    ...
+
+                ...
+
+                def click_nth_para(self, n):
+                    loc = self.resolve_selector("nth-para", n=n)
+                    self.click_element(loc)
+        """
+
         template = self.selectors[selector]
         try:
             return template.format(**kwargs)
