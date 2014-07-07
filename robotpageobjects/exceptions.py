@@ -39,22 +39,10 @@ class AbsoluteUriAttributeError(ValueError):
     pass
 
 
-class AbsoluteUriTemplateError(ValueError):
+class UriTemplateException(ValueError):
     """
-    Raised when a uri_template attribute on a page object is
-    set to an absolute URL.
+    Raised when there is a problem with resolving a uri using a template.
     """
-    pass
-
-
-class InvalidUriTemplateVariableError(ValueError):
-    """
-    Raised when a variable passed to a page object's open
-    method doesn't match a variable in the page object's
-    `uri_template` attribute.
-    """
-    pass
-
 
 class VarFileImportErrorError(ImportError):
     """

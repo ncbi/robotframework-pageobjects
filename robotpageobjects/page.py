@@ -457,32 +457,60 @@ class _BaseActions(_SelectorsManager):
         if self.baseurl is None:
             raise exceptions.NoBaseUrlError("To open page object, \"%s\" you must set a baseurl." % pageobj_name)
 
-        if len(args) > 0:
+        if len(args) > 0 and hasattr(self, "uri") and self.uri is not None:
+            raise exceptions.UriTemplateException("URI %s is set for page object %s. No arguments may be used with it." %
+                                                  (self.uri, self.__class__.__name__))
+        elif len(args) > 0 and self._is_url_absolute(self.uri_template):
             # URI template variables are being passed in, so the page object encapsulates
             # a page that follows some sort of URL pattern. Eg, /pubmed/SOME_ARTICLE_ID.
 
-            if self._is_url_absolute(self.uri_template):
-                raise exceptions.AbsoluteUriTemplateError("The URI Template \"%s\" in \"%s\" is an absolute URL. "
-                                                          "It should be relative and used with baseurl")
+            raise exceptions.UriTemplateException("The URI Template \"%s\" in \"%s\" is an absolute URL. "
+                                                      "It should be relative and used with baseurl" % (self.uri_template))
 
-            # Parse the keywords, don't check context here, because we want
-            # to be able to unittest outside of any context.
+
+        if len(args) > 0:
             uri_vars = {}
 
-            # If passed in from Robot, it's a series of strings that need to be
-            # parsed by the "=" char., otherwise it's a python dictionary, which is
-            # the only argument.
-            if isinstance(args[0], basestring):
+            first_arg = args[0]
+            if not Context.in_robot():
+                if isinstance(first_arg, basestring):
+                    # In Python, if the first argument is a string and not a dict, it's a url or path.
+                    is_url = True
+                else:
+                    is_dict = True
+            elif Context.in_robot():
+                # We'll always get string args in Robot
+                if self._is_url_absolute(first_arg) or first_arg.startswith("/"):
+                    is_url = True
+                else:
+                    is_robot_args = True
+
+            if is_url:
+                if self._is_url_absolute(first_arg):
+                    # In Robot, the first argument is always a string, so we need to check if it starts with "/" or a scheme.
+                    # (We're not allowing relative paths right now._
+                    return first_arg
+                elif first_arg.startswith("//"):
+                    raise exceptions.UriTemplateException("%s is neither a URL with a scheme nor a relative path"
+                                                          % first_arg)
+                else: # starts with "/"
+                    # so it doesn't need resolution, except for appending to baseurl and stripping leading slash
+                    # if it needed: i.e., if the base url ends with "/" and the url starts with "/".
+
+                    return re.sub("\/$", "", self.baseurl) + first_arg
+            elif is_robot_args:
+                # Robot args need to be parsed as "arg1=123", "arg2=foo", etc.
                 for arg in args:
                     split_arg = arg.split("=")
-                    uri_vars[split_arg[0]] = split_arg[1]
+                    uri_vars[split_arg[0]] = "=".join(split_arg[1:])
             else:
+                # dict just contains the args as keys and values
                 uri_vars = args[0]
 
             # Check that variables are correct and match template.
             for uri_var in uri_vars:
                 if uri_var not in uritemplate.variables(self.uri_template):
-                    raise exceptions.InvalidUriTemplateVariableError(
+                    raise exceptions.UriTemplateException(
                         "The variable passed in, \"%s\" does not match "
                         "template \"%s\" for page object \"%s\"" % (uri_var,
                                                                     self
@@ -511,10 +539,10 @@ class _BaseActions(_SelectorsManager):
 
     @staticmethod
     def _is_url_absolute(url):
-        if url[:7] in ["http://", "https://", "file://"]:
-            return True
-        else:
-            return False
+        """
+        We're making the scheme mandatory, because webdriver can't handle just "//".
+        """
+        return re.match("^(\w+:(\d+)?)\/\/", url) is not None
 
     def log(self, msg, level="INFO", is_console=True):
         """ Logs either to Robot log file or to a file called po_log.txt
