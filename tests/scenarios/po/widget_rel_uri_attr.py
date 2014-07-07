@@ -9,7 +9,7 @@ class Page(Page):
 
     selectors = {
         "search-button": "go",
-        "another-paragraph": "css=div.{class} p{id}",
+        "another-paragraph": "css=div.{class} p#{id}",
         "delayed content button": "id=delayed-content",
         "delayed content holder": "id=delayed-content-holder",
         "delayed content": "css=#delayed-content-holder > p"
@@ -32,10 +32,10 @@ class Page(Page):
         return self
 
     def get_templated_selector_element_text(self):
-        return self.get_text("another-paragraph", {"class":"ct", "id": "foo"})
+        return self.get_text(("another-paragraph", {"class":"ct", "id": "foo"}))
 
-    def get_templated_selector_element_text_wrong_vars(self):
-        return self.get_text("another-paragraph", {"klass":"ct", "id": "foo"})
+    def get_templated_selector_element_text_wrong__num_vars(self):
+        return self.get_text(("another-paragraph", {"foo": "bar", "class":"ct", "id": "foo"}))
 
 
 class SearchResultPage(Page):

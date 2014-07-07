@@ -33,6 +33,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from Selenium2Library import Selenium2Library
 from Selenium2Library.locators.elementfinder import ElementFinder
 from Selenium2Library.keywords.keywordgroup import KeywordGroupMetaClass
+import selectortemplate
 
 from context import Context
 import exceptions
@@ -218,24 +219,6 @@ class SelectorsDict(dict):
                                             Only subclasses can override selector keys." % key)
             self[str(key)] = value
 
-    def expand_selector_template(self, selector_name, vars):
-        """
-        Expands the selector template string identified by locator_name
-        with the variables passed as a tuple or list.
-
-        :param selector_name: The selector name to expand.
-        :type selector_name: str
-        :param args: The variables to insert into the selector template.
-        :returns: str
-        """
-        try:
-            return self[selector_name] % vars
-        except TypeError, e:
-            raise exceptions.SelectorException('Problem expanding selector template "%s"'
-                                                                 'with vars (%s). %s' %(self[selector_name],
-                                                                                        ",".join(vars),
-                                                                                        e.message ))
-
 
 class _S2LWrapper(Selenium2Library):
     """
@@ -369,12 +352,32 @@ class _SelectorsManager(_S2LWrapper):
         :type locator: str
         :returns: WebElement or list
         """
-        if isinstance(locator, tuple) or isinstance(locator, list):
-            selector_template = locator[0]
-            args = locator[1:]
-            locator = self.selectors.expand_selector_template(selector_template, args)
+        if isinstance(locator, tuple):
+            # First arg us a tuple of selector name and
+            # dictionary of template variables.
+            selector_key = locator[0]
+            selector_template = self.selectors[selector_key]
+            passed_template_vars = locator[1]
+            passed_template_keys = passed_template_vars.keys()
+            passed_template_keys.sort()
+            template_vars = list(uritemplate.variables(selector_template))
+            template_vars.sort()
+            if passed_template_keys != template_vars:
+                print ("Don't match")
 
-        elif locator in self.selectors:
+            """
+            if len(passed_template_vars) != len(template_vars):
+                print (passed_template_vars)
+                print(template_vars)
+                print ("WRONG number")
+
+            print ("template var kyes")
+            print (passed_template_vars.keys())
+            print (list(template_vars))
+            """
+            locator = selectortemplate.expand(selector_template, passed_template_vars)
+
+        if locator in self.selectors:
             locator = self.selectors[locator]
 
         try:
