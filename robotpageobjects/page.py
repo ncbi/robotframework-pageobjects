@@ -397,7 +397,7 @@ class _SelectorsManager(_S2LWrapper):
         """
 
         if locator in self.selectors:
-            locator = self.selectors[locator]
+            locator = self.resolve_selector(locator)
 
         try:
             return super(_SelectorsManager, self)._element_find(locator, *args, **kwargs)
