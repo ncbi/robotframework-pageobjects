@@ -487,17 +487,17 @@ class _BaseActions(_SelectorsManager):
         # domain under test.
 
         if self.baseurl is None:
-            raise exceptions.NoBaseUrlError("To open page object, \"%s\" you must set a baseurl." % pageobj_name)
+            raise exceptions.UriResolutionError("To open page object, \"%s\" you must set a baseurl." % pageobj_name)
 
         if len(args) > 0 and hasattr(self, "uri") and self.uri is not None:
-            raise exceptions.UriTemplateException(
-                "URI %s is set for page object %s. No arguments may be used with it." %
+            raise exceptions.UriResolutionError(
+                "URI %s is set for page object %s. It is not a template, so no arguments are allowed." %
                 (self.uri, pageobj_name))
         elif len(args) > 0 and self._is_url_absolute(self.uri_template):
             # URI template variables are being passed in, so the page object encapsulates
             # a page that follows some sort of URL pattern. Eg, /pubmed/SOME_ARTICLE_ID.
 
-            raise exceptions.UriTemplateException("The URI Template \"%s\" in \"%s\" is an absolute URL. "
+            raise exceptions.UriResolutionError("The URI Template \"%s\" in \"%s\" is an absolute URL. "
                                                   "It should be relative and used with baseurl" % (self
                                                                                                    .uri_template,
                                                                                                    pageobj_name))
@@ -525,7 +525,7 @@ class _BaseActions(_SelectorsManager):
                     # (We're not allowing relative paths right now._
                     return first_arg
                 elif first_arg.startswith("//"):
-                    raise exceptions.UriTemplateException("%s is neither a URL with a scheme nor a relative path"
+                    raise exceptions.UriResolutionError("%s is neither a URL with a scheme nor a relative path"
                                                           % first_arg)
                 else:  # starts with "/"
                     # so it doesn't need resolution, except for appending to baseurl and stripping leading slash
@@ -544,7 +544,7 @@ class _BaseActions(_SelectorsManager):
             # Check that variables are correct and match template.
             for uri_var in uri_vars:
                 if uri_var not in uritemplate.variables(self.uri_template):
-                    raise exceptions.UriTemplateException(
+                    raise exceptions.UriResolutionError(
                         "The variable passed in, \"%s\" does not match "
                         "template \"%s\" for page object \"%s\"" % (uri_var,
                                                                     self
@@ -559,12 +559,12 @@ class _BaseActions(_SelectorsManager):
         try:
             self.uri
         except AttributeError:
-            raise exceptions.NoUriAttributeError(
+            raise exceptions.UriResolutionError(
                 "Page object \"%s\" must have a \"uri\" attribute set." % pageobj_name)
 
         # Don't allow absolute uri attribute.
         if self._is_url_absolute(self.uri):
-            raise exceptions.AbsoluteUriAttributeError(
+            raise exceptions.UriResolutionError(
                 "Page object \"%s\" must not have an absolute \"uri\" attribute set. Use a relative URL "
                 "instead." % pageobj_name)
 

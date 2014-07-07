@@ -17,33 +17,7 @@ class SelectorException(Exception):
     Raised when there is a problem with selectors.
     """
 
-class NoBaseUrlError(AttributeError):
-    """
-    Raised when no baseurl is set for the page object. A baseurl
-    must always be set and url/uri_template attributes must be relative
-    URIs.
-    """
-    pass
-
-
-class NoUriAttributeError(AttributeError):
-    """
-    Raised when nothing is passed to a page object's open method
-    but no url attribute is set on the page object.
-    """
-    pass
-
-
-class AbsoluteUriAttributeError(ValueError):
-    """
-    Raised when nothing is passed to a page object's open
-    method and the page object's `url` attribute is set to an
-    absolute URL.
-    """
-    pass
-
-
-class UriTemplateException(ValueError):
+class UriResolutionError(ValueError):
     """
     Raised when there is a problem with resolving a uri using a template.
     """
