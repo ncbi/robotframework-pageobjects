@@ -2,6 +2,7 @@
 """
 
 import uritemplate
+from uritemplate import variables
 
 orig_quote = uritemplate._quote
 
@@ -10,6 +11,7 @@ def expand(template, variables):
     ret = uritemplate.expand(template, variables)
     uritemplate._quote = orig_quote
     return ret
+
 
 def _no_quote(value, safe, prefix=None):
     return value

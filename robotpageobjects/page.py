@@ -360,7 +360,7 @@ class _SelectorsManager(_S2LWrapper):
             passed_template_vars = locator[1]
             passed_template_keys = passed_template_vars.keys()
             passed_template_keys.sort()
-            template_vars = list(uritemplate.variables(selector_template))
+            template_vars = list(selectortemplate.variables(selector_template))
             template_vars.sort()
             if passed_template_keys != template_vars:
                 raise ValueError
