@@ -475,17 +475,17 @@ class _BaseActions(_SelectorsManager):
             if not Context.in_robot():
                 if isinstance(first_arg, basestring):
                     # In Python, if the first argument is a string and not a dict, it's a url or path.
-                    is_url = True
+                    arg_type = "url"
                 else:
-                    is_dict = True
+                    arg_type = "dict"
             elif Context.in_robot():
                 # We'll always get string args in Robot
                 if self._is_url_absolute(first_arg) or first_arg.startswith("/"):
-                    is_url = True
+                    arg_type = "url"
                 else:
-                    is_robot_args = True
+                    arg_type = "robot"
 
-            if is_url:
+            if arg_type == "url":
                 if self._is_url_absolute(first_arg):
                     # In Robot, the first argument is always a string, so we need to check if it starts with "/" or a scheme.
                     # (We're not allowing relative paths right now._
@@ -498,7 +498,7 @@ class _BaseActions(_SelectorsManager):
                     # if it needed: i.e., if the base url ends with "/" and the url starts with "/".
 
                     return re.sub("\/$", "", self.baseurl) + first_arg
-            elif is_robot_args:
+            elif arg_type == "robot":
                 # Robot args need to be parsed as "arg1=123", "arg2=foo", etc.
                 for arg in args:
                     split_arg = arg.split("=")
