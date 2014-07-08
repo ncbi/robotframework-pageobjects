@@ -268,33 +268,40 @@ class _SelectorsManager(_S2LWrapper):
     Class to manage selectors, which map to S2L locators.
     This allows page object authors to define a class-level dict.
     These selectors can be defined in any ancestor class, and
-    are inherited. A subclass can override its parent's selectors:
+    are inherited. A subclass can override its parent's selectors::
 
-    from robotpageobjects.page import Page, Override
-    class Page1(Page):
-        selectors = {"search button": "id=go",
-              "input box": "xpath=//input[@id="foo"]"}
+        from robotpageobjects.page import Page, Override
+        class Page1(Page):
+            selectors = {"search button": "id=go",
+                  "input box": "xpath=//input[@id="foo"]"}
 
-    class Page2(Page1):
-        selectors = {Override("input box"): "id=bar"}
-        ...
+        class Page2(Page1):
+            selectors = {Override("input box"): "id=bar"}
+            ...
 
     And a Page2 object will have access to "search button", which maps to "id=go",
     and "input box", which maps to "id=bar".
 
-    Selectors can also be templates which define variables:
-    class GoogleResultsPage(Page):
+    Selectors can also be templated which allows variables in locators::
 
-        selectors = {
-            # This is a selector template. "%s" will get filled in at run-time.
-            "results tab": "css=#top_nav div#tabs a:contains('%s')"
-        }
 
-        def select_results_tab(self, tab):
-            # Select the provided tab (such as "Web", "Images", "Videos", etc.) at the top of the
-            #  Google search results page
-            self.click_element(("results tab", tab))
+        ...
+
+        class MyPage(Page):
+
+            selectors = {
+                "nth result link": "xpath=id('product-list')/li/a[{n}]",
+                ...
+            }
+
+            @robot_alias("click_result_link_on__name__")
+            def click_result_link(self, index=0):
+                xpath_index = index + 1
+                locator = self.resolve_selector("nth result link", index=xpath_index)
+                self.click_link(locator)
+                return ProductPage()
     """
+
     selectors = {}
 
     def __init__(self, *args, **kwargs):
