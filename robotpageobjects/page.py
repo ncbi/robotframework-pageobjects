@@ -218,6 +218,91 @@ class SelectorsDict(dict):
             self[str(key)] = value
 
 
+
+class _PageMeta(type):
+    """Meta class that allows decorating of all page object methods
+    with must_return decorator. This ensures that all page object
+    methods return something, whether it's a page object or other
+    appropriate value. We must do this in a meta class since decorating
+    methods and returning a wrapping function then rebinding that to the
+    page object is tricky. Instead the binding of the decorated function in the
+    meta class happens before the class is instantiated.
+    """
+
+    @staticmethod
+    def _must_return(f, *args, **kwargs):
+        ret = f(*args, **kwargs)
+        if ret is None:
+            raise exceptions.KeywordReturnsNoneError(
+                "You must return either a page object or an appropriate value from the page object method, "
+                "'%s'" % f.__name__)
+        else:
+            return ret
+
+    @classmethod
+    def must_return(cls, f):
+        # Use decorator module to preserve docstings and signatures for Sphinx
+        return decorator.decorator(_PageMeta._must_return, f)
+
+    @classmethod
+    def _fix_docstrings(cls, bases):
+
+        for base in bases:
+            if not hasattr(base, "_fixed_docstring"):
+
+                for member_name, member in inspect.getmembers(base):
+                    try:
+                        obj = getattr(base, member_name)
+                    except:
+                        continue
+
+                    if not inspect.isroutine(obj) or member_name.startswith("_") or _Keywords.is_method_excluded(member_name):
+                        continue
+
+                    try:
+                        inspect.getargspec(member)[0][1]
+                    except IndexError:
+                        continue
+                    print ("fix docstring for %s" % member_name)
+                    print ("**")
+                    orig_doc = inspect.getdoc(member)
+                    if orig_doc is not None:
+                        fixed_doc = orig_doc.replace("`locator`", "`selector` or `locator`")
+                        fixed_doc = fixed_doc.replace(" locator ", " selector or locator ")
+                    member.__func__.__doc__ = fixed_doc
+
+                base._fixed_docstring = True
+
+
+    def __new__(cls, name, bases, classdict):
+
+        # Don't do inspect.getmembers since it will try to evaluate functions
+        # that are decorated as properties.
+        for member_name in classdict:
+
+            try:
+                obj = classdict[member_name]
+            except:
+                continue
+
+            if not inspect.isroutine(obj) or member_name.startswith("_") or _Keywords.is_method_excluded(member_name):
+                continue
+
+            classdict[member_name] = _PageMeta.must_return(classdict[member_name])
+
+        cls._fix_docstrings(bases)
+
+        return type.__new__(cls, name, bases, classdict)
+
+
+class _SuperPageMeta(_PageMeta, KeywordGroupMetaClass):
+    """ We need to create a super meta class that inherits from all
+    the meta classes set in the inheritence chain of Page, or we'll get
+    the dreaded error about meta conflicts. Then Page can set this meta class.
+    """
+    pass
+
+
 class _S2LWrapper(Selenium2Library):
     """
     Helper class that wraps Selenium2Library and manages the browser cache.
@@ -876,57 +961,6 @@ class Component(_BaseActions):
         self._element_finder = _ComponentElementFinder(self.reference_webelement)
 
 
-class _PageMeta(type):
-    """Meta class that allows decorating of all page object methods
-    with must_return decorator. This ensures that all page object
-    methods return something, whether it's a page object or other
-    appropriate value. We must do this in a meta class since decorating
-    methods and returning a wrapping function then rebinding that to the
-    page object is tricky. Instead the binding of the decorated function in the
-    meta class happens before the class is instantiated.
-    """
-
-    @staticmethod
-    def _must_return(f, *args, **kwargs):
-        ret = f(*args, **kwargs)
-        if ret is None:
-            raise exceptions.KeywordReturnsNoneError(
-                "You must return either a page object or an appropriate value from the page object method, "
-                "'%s'" % f.__name__)
-        else:
-            return ret
-
-    @classmethod
-    def must_return(cls, f):
-        # Use decorator module to preserve docstings and signatures for Sphinx
-        return decorator.decorator(_PageMeta._must_return, f)
-
-    def __new__(cls, name, bases, classdict):
-
-        # Don't do inspect.getmembers since it will try to evaluate functions
-        # that are decorated as properties.
-        for member_name in classdict:
-            try:
-                obj = classdict[member_name]
-            except:
-                continue
-
-            if not inspect.isroutine(obj) or member_name.startswith("_") or _Keywords.is_method_excluded(member_name):
-                continue
-
-            classdict[member_name] = _PageMeta.must_return(classdict[member_name])
-
-        return type.__new__(cls, name, bases, classdict)
-
-
-class _SuperPageMeta(_PageMeta, KeywordGroupMetaClass):
-    """ We need to create a super meta class that inherits from all
-    the meta classes set in the inheritence chain of Page, or we'll get
-    the dreaded error about meta conflicts. Then Page can set this meta class.
-    """
-    pass
-
-
 class Page(_BaseActions):
     """
     Base RF page object.
@@ -938,8 +972,8 @@ class Page(_BaseActions):
     This class then provides the behavior used by the RF's dynamic API.
     Optional constructor arguments:
     """
-
     __metaclass__ = _SuperPageMeta
+
 
     def __init__(self, *args, **kwargs):
         """
