@@ -8,9 +8,8 @@ import selenium
 
 from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
-from robotpageobjects.page import Page, Override, not_keyword
+from robotpageobjects.page import Page, Override, not_keyword, SelectorsDict
 from robotpageobjects.optionhandler import OptionHandler
-
 
 class InheritFromSe2LibTestCase(BaseTestCase):
 
@@ -72,52 +71,14 @@ class OptionHandlerTestCase(BaseTestCase):
         handler = OptionHandler()
         self.assertEquals(handler.get("browser"), "foobar")
 
-
-class ResolveUrlTestCase(BaseTestCase):
+class SauceTestCase(BaseTestCase):
     def setUp(self):
-        super(ResolveUrlTestCase, self).setUp()
+        super(SauceTestCase, self).setUp()
 
         class PO(Page):
             pass
 
         self.PO = PO
-
-    ### Exceptions ###
-    @raises(exceptions.NoBaseUrlError)
-    def test_no_baseurl_set_no_uri_attr_set_should_raise_NoBaseUrlException(self):
-        self.PO()._resolve_url()
-
-    @raises(exceptions.NoBaseUrlError)
-    def test_no_baseurl_set_no_uri_attr_set_uri_vars_set_should_raise_NoBaseUrlExeption(self):
-        self.PO()._resolve_url("bar")
-
-    @raises(exceptions.NoBaseUrlError)
-    def test_no_baseurl_set_uri_attr_set_uri_vars_set_should_raise_NoBaseUrlExeption(self):
-        self.PO.uri = "/foo"
-        self.PO()._resolve_url("bar")
-
-    @raises(exceptions.NoUriAttributeError)
-    def test_baseurl_set_no_uri_attr_set_should_raise_NoUriAttributeException(self):
-        self.set_baseurl_env()
-        self.PO()._resolve_url()
-
-    @raises(exceptions.AbsoluteUriAttributeError)
-    def test_baseurl_set_abs_uri_attr_should_raise_AbsoulteUrlAttributeException(self):
-        self.set_baseurl_env()
-        self.PO.uri = "http://www.example.com"
-        self.PO()._resolve_url()
-
-    @raises(exceptions.AbsoluteUriTemplateError)
-    def test_baseurl_set_abs_uri_template_should_raise_AbsoluteUriTemplateException(self):
-        self.set_baseurl_env()
-        self.PO.uri_template = "http://www.ncbi.nlm.nih.gov/pubmed/{pid}"
-        self.PO()._resolve_url({"pid": "123"})
-
-    @raises(exceptions.InvalidUriTemplateVariableError)
-    def test_baseurl_set_bad_vars_passed_to_uri_template(self):
-        self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
-        self.PO.uri_template = "/pubmed/{pid}"
-        self.PO()._resolve_url({"foo": "bar"})
 
     @raises(exceptions.MissingSauceOptionError)
     def test_missing_sauce_apikey_should_raise_missing_sauce_option_error(self):
@@ -159,8 +120,141 @@ class ResolveUrlTestCase(BaseTestCase):
         p = self.PO()
         p.open()
 
+
+class ResolveUrlTestCase(BaseTestCase):
+    def setUp(self):
+        super(ResolveUrlTestCase, self).setUp()
+
+        class PO(Page):
+            pass
+
+        self.PO = PO
+
+    ### Exceptions ###
+    @raises(exceptions.UriResolutionError)
+    def test_no_baseurl_set_and_no_uri_attr_set(self):
+        """No baseurl is set, and there is no "uri" set in the PO."""
+
+        self.PO()._resolve_url()
+
+    @raises(exceptions.UriResolutionError)
+    def test_no_baseurl_set_and_no_uri_attr_set_and_uri_vars_set(self):
+        """No baseurl is set, and there is no "uri" set in the PO,
+        and a variable was passed in."""
+
+        self.PO()._resolve_url("bar")
+
+    @raises(exceptions.UriResolutionError)
+    def test_no_baseurl_set_and_uri_attr_set_and_uri_vars_set(self):
+        """No baseurl is set. A uri is set, but a variable was passed in."""
+
+        self.PO.uri = "/foo"
+        self.PO()._resolve_url("bar")
+
+    @raises(exceptions.UriResolutionError)
+    def test_baseurl_set_no_uri_attr_set(self):
+        """A baseurl is set, but no variables were passed in and no "uri" was set."""
+
+        self.set_baseurl_env()
+        self.PO()._resolve_url()
+
+    @raises(exceptions.UriResolutionError)
+    def test_baseurl_set_abs_uri_attr(self):
+        """An absolute url (with scheme) was set as the uri."""
+
+        self.set_baseurl_env()
+        self.PO.uri = "http://www.example.com"
+        self.PO()._resolve_url()
+
+    @raises(exceptions.UriResolutionError)
+    def test_baseurl_set_and_abs_uri_template(self):
+        """An absolute uri template was set."""
+
+        self.set_baseurl_env()
+        self.PO.uri_template = "http://www.ncbi.nlm.nih.gov/pubmed/{pid}"
+        self.PO()._resolve_url({"pid": "123"})
+
+    @raises(exceptions.UriResolutionError)
+    def test_bad_vars_passed_to_uri_template(self):
+        """The variable names passed in do not match the template."""
+
+        self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
+        self.PO.uri_template = "/pubmed/{pid}"
+        self.PO()._resolve_url({"foo": "bar"})
+
+    @raises(exceptions.UriResolutionError)
+    def test_too_many_vars_passed_to_uri_template_in_robot(self):
+        self.set_baseurl_env()
+        self.PO.uri_template = "/pubmed/{pid}"
+        po = self.PO()
+        po._is_robot = True
+        po._resolve_url("pid=foo", "bar=baz")
+
+    @raises(exceptions.UriResolutionError)
+    def test_wrong_var_name_in_robot(self):
+        self.set_baseurl_env()
+        self.PO.uri_template = "/pubmed/{pid}"
+        po = self.PO()
+        po._is_robot = True
+        po._resolve_url("foo=bar")
+
+    @raises(exceptions.UriResolutionError)
+    def test_names_not_provided_in_robot(self):
+        self.set_baseurl_env()
+        self.PO.uri_template = "/pubmed/{pid}"
+        po = self.PO()
+        po._is_robot = True
+        po._resolve_url("1234")
+
+    @raises(exceptions.UriResolutionError)
+    def test_absolute_url_without_scheme(self):
+        self.set_baseurl_env()
+        self.PO.uri_template = "/pubmed/{pid}"
+        po = self.PO()
+        po._resolve_url("//www.google.com")
+
     ### Normative Cases ###
-    def test_rel_uri_attr_set(self):
+    def test_url_string_bypasses_uri_template(self):
+        """A path was passed in as a string (inside or outside Robot). It should just be appended to
+        the baseurl, even if there is a template in the PO."""
+        self.set_baseurl_env()
+        self.PO.uri_template = "/pubmed/{pid}"
+        po = self.PO()
+        path = "/pmc/1234"
+        url = po._resolve_url(path)
+        self.assertEquals(url, po.baseurl + path)
+
+    def test_url_string_bypasses_uri(self):
+        """A path was passed in as a string (inside or outside Robot). It should just be appended to
+        the baseurl, even if there is a uri set in the PO."""
+        self.set_baseurl_env()
+        self.PO.uri = "/pubmed"
+        po = self.PO()
+        path = "/pmc/1234"
+        url = po._resolve_url(path)
+        self.assertEquals(url, po.baseurl + path)
+
+    def test_absolute_url_bypasses_uri_template(self):
+        """An absolute url was passed in as a string (inside or outside Robot). It should just be used instead of
+        the PO's uri_template."""
+        self.set_baseurl_env()
+        self.PO.uri_template = "/pubmed/{pid}"
+        po = self.PO()
+        abs_url = "http://www.google.com"
+        resolved_url = po._resolve_url(abs_url)
+        self.assertEquals(resolved_url, abs_url)
+
+    def test_absolute_url_bypasses_uri(self):
+        """An absolute url was passed in as a string (inside or outside Robot). It should just be used instead of
+        the PO's uri."""
+        self.set_baseurl_env()
+        self.PO.uri = "/pubmed/{pid}"
+        po = self.PO()
+        abs_url = "http://www.google.com"
+        resolved_url = po._resolve_url(abs_url)
+        self.assertEquals(resolved_url, abs_url)
+
+    def test_rel_uri_is_resolved(self):
         self.set_baseurl_env()
         self.PO.uri = "/foo"
         po_inst = self.PO()
@@ -168,7 +262,7 @@ class ResolveUrlTestCase(BaseTestCase):
         self.assertEquals(url, po_inst.baseurl + po_inst.uri)
         self.assertRegexpMatches(url, "file:///.+/foo$")
 
-    def test_uri_vars_set(self):
+    def test_uri_template_is_resolved(self):
         self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
         self.PO.uri_template = "/pubmed/{pid}"
         p = self.PO()
@@ -177,7 +271,7 @@ class ResolveUrlTestCase(BaseTestCase):
         self.assertEquals("123", pid)
         self.assertEquals("http://www.ncbi.nlm.nih.gov/pubmed/123", url)
 
-    ### Selectors ##
+class SelectorsTestCase(BaseTestCase):
     @raises(exceptions.DuplicateKeyError)
     def test_selectors_dup(self):
         class BaseFoo(object):
@@ -206,6 +300,7 @@ class ResolveUrlTestCase(BaseTestCase):
         self.assertEqual(selectors.get("foo"), "foo", "Selectors should contain 'foo' from BaseFoo.")
         self.assertEqual(selectors.get("bar"), "bar", "Selectors should contain 'bar' from BaseBar.")
         self.assertEqual(selectors.get("baz"), "baz", "Selector 'baz' should be overridden in FooBarPage." )
+
 
 class KeywordBehaviorTestCase(BaseTestCase):
 
@@ -328,3 +423,23 @@ class LoggingLevelsTestCase(BaseTestCase):
         self.assertEquals(level_tup, ("INFO", 20))
 
 
+class SelectorTemplateTestCase(BaseTestCase):
+
+    def setUp(self):
+        super(SelectorTemplateTestCase, self).setUp()
+        self.p = Page()
+        self.p.selectors["foo"] = "xpath=//foo[{n}]/{el}"
+
+    def test_basic(self):
+        self.assertEquals("xpath=//foo[3]/p", self.p.resolve_selector("foo", n=3, el="p"))
+
+    def test_too_many_args(self):
+        self.assertEquals("xpath=//foo[3]/p", self.p.resolve_selector("foo", n=3, el="p", boo="bat"))
+
+    @raises(exceptions.SelectorError)
+    def test_not_enough_args(self):
+        self.p.resolve_selector("foo", n=3)
+
+    @raises
+    def test_wrong_args(self):
+        self.p.resolve_selector("foo", n=3, ep="p")

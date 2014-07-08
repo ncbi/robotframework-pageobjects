@@ -12,49 +12,15 @@ class KeyOverrideWarning(Warning):
     """
     pass
 
-
-class NoBaseUrlError(AttributeError):
+class SelectorError(Exception):
     """
-    Raised when no baseurl is set for the page object. A baseurl
-    must always be set and url/uri_template attributes must be relative
-    URIs.
+    Raised when there is a problem with selectors.
     """
-    pass
 
-
-class NoUriAttributeError(AttributeError):
+class UriResolutionError(ValueError):
     """
-    Raised when nothing is passed to a page object's open method
-    but no url attribute is set on the page object.
+    Raised when there is a problem with resolving a uri using a template.
     """
-    pass
-
-
-class AbsoluteUriAttributeError(ValueError):
-    """
-    Raised when nothing is passed to a page object's open
-    method and the page object's `url` attribute is set to an
-    absolute URL.
-    """
-    pass
-
-
-class AbsoluteUriTemplateError(ValueError):
-    """
-    Raised when a uri_template attribute on a page object is
-    set to an absolute URL.
-    """
-    pass
-
-
-class InvalidUriTemplateVariableError(ValueError):
-    """
-    Raised when a variable passed to a page object's open
-    method doesn't match a variable in the page object's
-    `uri_template` attribute.
-    """
-    pass
-
 
 class VarFileImportErrorError(ImportError):
     """

@@ -20,12 +20,10 @@
 """
 from __future__ import print_function
 import inspect
-import abstractedlogger
 import re
 import uritemplate
 import urllib2
 import warnings
-
 import decorator
 from robot.utils import asserts
 from selenium import webdriver
@@ -34,6 +32,7 @@ from Selenium2Library import Selenium2Library
 from Selenium2Library.locators.elementfinder import ElementFinder
 from Selenium2Library.keywords.keywordgroup import KeywordGroupMetaClass
 
+import abstractedlogger
 from context import Context
 import exceptions
 from optionhandler import OptionHandler
@@ -269,20 +268,40 @@ class _SelectorsManager(_S2LWrapper):
     Class to manage selectors, which map to S2L locators.
     This allows page object authors to define a class-level dict.
     These selectors can be defined in any ancestor class, and
-    are inherited. A subclass can override its parent's selectors:
+    are inherited. A subclass can override its parent's selectors::
 
-    from robotpageobjects.page import Page, Override
-    class Page1(Page):
-        selectors = {"search button": "id=go",
-              "input box": "xpath=//input[@id="foo"]"}
+        from robotpageobjects.page import Page, Override
+        class Page1(Page):
+            selectors = {"search button": "id=go",
+                  "input box": "xpath=//input[@id="foo"]"}
 
-    class Page2(Page1):
-        selectors = {Override("input box"): "id=bar"}
-        ...
+        class Page2(Page1):
+            selectors = {Override("input box"): "id=bar"}
+            ...
 
     And a Page2 object will have access to "search button", which maps to "id=go",
     and "input box", which maps to "id=bar".
+
+    Selectors can also be templated which allows variables in locators::
+
+
+        ...
+
+        class MyPage(Page):
+
+            selectors = {
+                "nth result link": "xpath=id('product-list')/li/a[{n}]",
+                ...
+            }
+
+            @robot_alias("click_result_link_on__name__")
+            def click_result_link(self, index=0):
+                xpath_index = index + 1
+                locator = self.resolve_selector("nth result link", index=xpath_index)
+                self.click_link(locator)
+                return ProductPage()
     """
+
     selectors = {}
 
     def __init__(self, *args, **kwargs):
@@ -328,26 +347,74 @@ class _SelectorsManager(_S2LWrapper):
         prefix = finder._parse_locator(locator)[0]
         return prefix is not None or locator.startswith("//")
 
+    def resolve_selector(self, selector, **kwargs):
+        """ Expands a selector template and returns a locator
+         for use by Selenium2Library methods like click_element().
+         Pass the name of the selector template followed by keyword arguments
+         matching the variables in the template.
+
+         :param selector: The name of the selector
+         :type selector: String
+
+         Usage::
+
+             class MyPage(Page):
+
+                 self.selectors = {
+                    "nth-para": "xpath=//p[{n}",
+                    ...
+
+                ...
+
+                def click_nth_para(self, n):
+                    loc = self.resolve_selector("nth-para", n=n)
+                    self.click_element(loc)
+        """
+
+        template = self.selectors[selector]
+        try:
+            return template.format(**kwargs)
+        except KeyError:
+            raise exceptions.SelectorError("Variables {vars} don't match template {template}".format(vars=kwargs,
+                                                                                                     template=template))
+    @staticmethod
+    def _vars_match_template(template, vars):
+        """Validates that the provided variables match the template.
+        :param template: The template
+        :type template: str
+        :param vars: The variables to match against the template
+        :type vars: tuple or list
+        :returns: bool"""
+        keys = vars.keys()
+        keys.sort()
+        template_vars = list(uritemplate.variables(template))
+        template_vars.sort()
+        return template_vars == keys
 
     def _element_find(self, locator, *args, **kwargs):
         """
-        Override built-in _element_find() method and map selectors. Try to use _element_find with the
-        locator as is, then try, if a selector exists, try that.
-        :param locator: The Selenium2Library-style locator (or IFT selector) to use
+        Override built-in _element_find() method and intelligently
+        determine the locator for a passed-in selector name.
+
+        Try to use _element_find with the
+        locator as is, then if a selector exists, try that.
+        :param locator: The Selenium2Library-style locator, or IFT selector.
         :type locator: str
         :returns: WebElement or list
         """
+
         if locator in self.selectors:
-            return super(_SelectorsManager, self)._element_find(self.selectors[locator], *args, **kwargs)
-        else:
-            try:
-                return super(_SelectorsManager, self)._element_find(locator, *args, **kwargs)
-            except ValueError:
-                if not self._is_locator_format(locator):
-                    # Not found, doesn't look like a locator, not in selectors dict
-                    raise ValueError("\"%s\" looks like a selector, but it is not in the selectors dict." % locator)
-                else:
-                    raise
+            locator = self.resolve_selector(locator)
+
+        try:
+            return super(_SelectorsManager, self)._element_find(locator, *args, **kwargs)
+        except ValueError:
+            if not self._is_locator_format(locator):
+                # Not found, doesn't look like a locator, not in selectors dict
+                raise exceptions.SelectorError(
+                    "\"%s\" is not a valid locator. If this is a selector name, make sure it is spelled correctly." % locator)
+            else:
+                raise
 
     @not_keyword
     def find_element(self, locator, required=True, **kwargs):
@@ -448,46 +515,75 @@ class _BaseActions(_SelectorsManager):
 
         Called by open().
         """
-
         pageobj_name = self.__class__.__name__
 
         # We always need a baseurl set. This enforces parameterization of the
         # domain under test.
 
         if self.baseurl is None:
-            raise exceptions.NoBaseUrlError("To open page object, \"%s\" you must set a baseurl." % pageobj_name)
+            raise exceptions.UriResolutionError("To open page object, \"%s\" you must set a baseurl." % pageobj_name)
 
-        if len(args) > 0:
+        #if len(args) > 0 and hasattr(self, "uri") and self.uri is not None:
+
+        elif len(args) > 0 and hasattr(self, "uri_template") and self._is_url_absolute(self.uri_template):
             # URI template variables are being passed in, so the page object encapsulates
             # a page that follows some sort of URL pattern. Eg, /pubmed/SOME_ARTICLE_ID.
 
-            if self._is_url_absolute(self.uri_template):
-                raise exceptions.AbsoluteUriTemplateError("The URI Template \"%s\" in \"%s\" is an absolute URL. "
-                                                          "It should be relative and used with baseurl")
+            raise exceptions.UriResolutionError("The URI Template \"%s\" in \"%s\" is an absolute URL. "
+                                                  "It should be relative and used with baseurl" % (self
+                                                                                                   .uri_template,
+                                                                                                   pageobj_name))
 
-            # Parse the keywords, don't check context here, because we want
-            # to be able to unittest outside of any context.
+        if len(args) > 0:
             uri_vars = {}
 
-            # If passed in from Robot, it's a series of strings that need to be
-            # parsed by the "=" char., otherwise it's a python dictionary, which is
-            # the only argument.
-            if isinstance(args[0], basestring):
+            first_arg = args[0]
+            if not self._is_robot:
+                if isinstance(first_arg, basestring):
+                    # In Python, if the first argument is a string and not a dict, it's a url or path.
+                    arg_type = "url"
+                else:
+                    arg_type = "dict"
+            elif self._is_robot:
+                # We'll always get string args in Robot
+                if self._is_url_absolute(first_arg) or first_arg.startswith("/"):
+                    arg_type = "url"
+                else:
+                    arg_type = "robot"
+
+            if arg_type != "url" and hasattr(self, "uri") and self.uri is not None:
+                raise exceptions.UriResolutionError(
+                    "URI %s is set for page object %s. It is not a template, so no arguments are allowed." %
+                        (self.uri, pageobj_name))
+
+            if arg_type == "url":
+                if self._is_url_absolute(first_arg):
+                    # In Robot, the first argument is always a string, so we need to check if it starts with "/" or a scheme.
+                    # (We're not allowing relative paths right now._
+                    return first_arg
+                elif first_arg.startswith("//"):
+                    raise exceptions.UriResolutionError("%s is neither a URL with a scheme nor a relative path"
+                                                          % first_arg)
+                else:  # starts with "/"
+                    # so it doesn't need resolution, except for appending to baseurl and stripping leading slash
+                    # if it needed: i.e., if the base url ends with "/" and the url starts with "/".
+
+                    return re.sub("\/$", "", self.baseurl) + first_arg
+            elif arg_type == "robot":
+                # Robot args need to be parsed as "arg1=123", "arg2=foo", etc.
                 for arg in args:
                     split_arg = arg.split("=")
-                    uri_vars[split_arg[0]] = split_arg[1]
+                    uri_vars[split_arg[0]] = "=".join(split_arg[1:])
             else:
+                # dict just contains the args as keys and values
                 uri_vars = args[0]
 
             # Check that variables are correct and match template.
-            for uri_var in uri_vars:
-                if uri_var not in uritemplate.variables(self.uri_template):
-                    raise exceptions.InvalidUriTemplateVariableError(
-                        "The variable passed in, \"%s\" does not match "
-                        "template \"%s\" for page object \"%s\"" % (uri_var,
-                                                                    self
-                                                                    .uri_template,
-                                                                    pageobj_name))
+            if not self._vars_match_template(self.uri_template, uri_vars):
+                raise exceptions.UriResolutionError(
+                    "The variables %s do not match template %s for page object %s"
+                    % (uri_vars, self.uri_template, pageobj_name)
+                )
             self.uri_vars = uri_vars
             return uritemplate.expand(self.baseurl + self.uri_template, uri_vars)
 
@@ -497,12 +593,12 @@ class _BaseActions(_SelectorsManager):
         try:
             self.uri
         except AttributeError:
-            raise exceptions.NoUriAttributeError(
+            raise exceptions.UriResolutionError(
                 "Page object \"%s\" must have a \"uri\" attribute set." % pageobj_name)
 
         # Don't allow absolute uri attribute.
         if self._is_url_absolute(self.uri):
-            raise exceptions.AbsoluteUriAttributeError(
+            raise exceptions.UriResolutionError(
                 "Page object \"%s\" must not have an absolute \"uri\" attribute set. Use a relative URL "
                 "instead." % pageobj_name)
 
@@ -511,10 +607,10 @@ class _BaseActions(_SelectorsManager):
 
     @staticmethod
     def _is_url_absolute(url):
-        if url[:7] in ["http://", "https://", "file://"]:
-            return True
-        else:
-            return False
+        """
+        We're making the scheme mandatory, because webdriver can't handle just "//".
+        """
+        return re.match("^(\w+:(\d+)?)\/\/", url) is not None
 
     def log(self, msg, level="INFO", is_console=True):
         """ Logs either to Robot log file or to a file called po_log.txt
@@ -695,8 +791,8 @@ class _BaseActions(_SelectorsManager):
         """
         return self._is_visible(selector)
 
-class ComponentManager(_BaseActions):
 
+class ComponentManager(_BaseActions):
     @not_keyword
     def get_instance(self, component_class):
 
@@ -726,7 +822,8 @@ class ComponentManager(_BaseActions):
 
         :param component_class: The page component class
         """
-        return [component_class(reference_webelement) for reference_webelement in self.get_reference_elements(component_class)]
+        return [component_class(reference_webelement) for reference_webelement in
+                self.get_reference_elements(component_class)]
 
     @not_keyword
     def get_reference_elements(self, component_class):
@@ -769,8 +866,8 @@ class _ComponentElementFinder(ElementFinder):
         else:
             return super(_ComponentElementFinder, self).find(self._reference_webelement, locator, tag=tag)
 
-class Component(_BaseActions):
 
+class Component(_BaseActions):
     def __init__(self, reference_webelement, *args, **kwargs):
         super(Component, self).__init__(*args, **kwargs)
         self.reference_webelement = reference_webelement
@@ -969,7 +1066,7 @@ class Page(_BaseActions):
                 # If we find a match for the class name, set the pointer in Context.
                 if name.split(".")[-1:][0] == classname:
                     Context.set_current_page(name)
-                    
+
         # The case of raising an exception if a page object method returns None is handled
         # by Page's meta class, because we need to raise this exception for Robot and
         # outside Robot.

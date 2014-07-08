@@ -9,6 +9,7 @@ class Page(Page):
 
     selectors = {
         "search-button": "go",
+        "another-paragraph": "css=div.{klass} p#{id}",
         "delayed content button": "id=delayed-content",
         "delayed content holder": "id=delayed-content-holder",
         "delayed content": "css=#delayed-content-holder > p"
@@ -29,6 +30,10 @@ class Page(Page):
         text = self.get_text("delayed content")
         asserts.assert_equals(text, "I took about 2 seconds to be inserted")
         return self
+
+    def get_templated_selector_element_text(self):
+        loc = self.resolve_selector("another-paragraph", klass="ct", id="foo" )
+        return self.get_text(loc)
 
 
 class SearchResultPage(Page):
