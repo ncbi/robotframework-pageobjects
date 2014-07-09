@@ -1,18 +1,18 @@
+import inspect
 import os
 from nose.tools import raises
 from mock import patch
 from robot.libraries.BuiltIn import BuiltIn
 from unittest import skipUnless
-
 import selenium
 
 from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
-from robotpageobjects.page import Page, Override, not_keyword, SelectorsDict
+from robotpageobjects.page import Page, Override, not_keyword
 from robotpageobjects.optionhandler import OptionHandler
 
-class InheritFromSe2LibTestCase(BaseTestCase):
 
+class InheritFromSe2LibTestCase(BaseTestCase):
     def setUp(self):
         super(InheritFromSe2LibTestCase, self).setUp()
 
@@ -71,6 +71,7 @@ class OptionHandlerTestCase(BaseTestCase):
         handler = OptionHandler()
         self.assertEquals(handler.get("browser"), "foobar")
 
+
 class SauceTestCase(BaseTestCase):
     def setUp(self):
         super(SauceTestCase, self).setUp()
@@ -106,7 +107,8 @@ class SauceTestCase(BaseTestCase):
         p = self.PO()
         p.open()
 
-    @skipUnless(BaseTestCase.are_sauce_creds_set_for_testing(), "SAUCE_USERNAME and SAUCE_APIKEY env vars must be set to test")
+    @skipUnless(BaseTestCase.are_sauce_creds_set_for_testing(),
+                "SAUCE_USERNAME and SAUCE_APIKEY env vars must be set to test")
     @raises(selenium.common.exceptions.WebDriverException)
     def test_sauce_invalid_browser(self):
         self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
@@ -271,6 +273,7 @@ class ResolveUrlTestCase(BaseTestCase):
         self.assertEquals("123", pid)
         self.assertEquals("http://www.ncbi.nlm.nih.gov/pubmed/123", url)
 
+
 class SelectorsTestCase(BaseTestCase):
     @raises(exceptions.DuplicateKeyError)
     def test_selectors_dup(self):
@@ -282,6 +285,7 @@ class SelectorsTestCase(BaseTestCase):
 
         class FooBarPage(Page, BaseFoo, BaseBar):
             selectors = {"foo": "baz"}
+
         page = FooBarPage()
 
     def test_selectors_merge_override(self):
@@ -290,7 +294,7 @@ class SelectorsTestCase(BaseTestCase):
 
         class BaseBar(object):
             selectors = {"bar": "bar",
-                          "baz": "cat"}
+                         "baz": "cat"}
 
         class FooBarPage(Page, BaseFoo, BaseBar):
             selectors = {Override("baz"): "baz"}
@@ -299,13 +303,11 @@ class SelectorsTestCase(BaseTestCase):
         selectors = page.selectors
         self.assertEqual(selectors.get("foo"), "foo", "Selectors should contain 'foo' from BaseFoo.")
         self.assertEqual(selectors.get("bar"), "bar", "Selectors should contain 'bar' from BaseBar.")
-        self.assertEqual(selectors.get("baz"), "baz", "Selector 'baz' should be overridden in FooBarPage." )
+        self.assertEqual(selectors.get("baz"), "baz", "Selector 'baz' should be overridden in FooBarPage.")
 
 
 class KeywordBehaviorTestCase(BaseTestCase):
-
     def setUp(self):
-
         super(KeywordBehaviorTestCase, self).setUp()
         # No need for testing in Robot too, since we will have a general test
         # that exceptions get raised properly, and this is just another exception.
@@ -340,8 +342,13 @@ class KeywordBehaviorTestCase(BaseTestCase):
     def test_private_method_returning_none_should_not_raise_exception(self):
         self.assertIsNone(self.p._return_none())
 
-class LoggingLevelsTestCase(BaseTestCase):
+    def test_se2lib_keywords_fixed_to_mention_selectors(self):
+        m = getattr(self.p, "click_element")
+        docstring = inspect.getdoc(m)
+        self.assertTrue("Click element identified by `selector` or `locator`" in docstring)
 
+
+class LoggingLevelsTestCase(BaseTestCase):
     # Tests protected method Page._get_normalized_logging_levels, which given a
     # String logging level should return a tuple of the attempted string logging level
     # with the associated integer level from Python's logging module. This method
@@ -424,7 +431,6 @@ class LoggingLevelsTestCase(BaseTestCase):
 
 
 class SelectorTemplateTestCase(BaseTestCase):
-
     def setUp(self):
         super(SelectorTemplateTestCase, self).setUp()
         self.p = Page()

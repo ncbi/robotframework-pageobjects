@@ -263,8 +263,7 @@ class _PageMeta(type):
                         inspect.getargspec(member)[0][1]
                     except IndexError:
                         continue
-                    print ("fix docstring for %s" % member_name)
-                    print ("**")
+
                     orig_doc = inspect.getdoc(member)
                     if orig_doc is not None:
                         fixed_doc = orig_doc.replace("`locator`", "`selector` or `locator`")
