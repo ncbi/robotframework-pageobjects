@@ -8,7 +8,7 @@ import selenium
 
 from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
-from robotpageobjects.page import Page, Override, not_keyword
+from robotpageobjects.page import Page, _Keywords, Override, not_keyword
 from robotpageobjects.optionhandler import OptionHandler
 
 
@@ -306,9 +306,9 @@ class SelectorsTestCase(BaseTestCase):
         self.assertEqual(selectors.get("baz"), "baz", "Selector 'baz' should be overridden in FooBarPage.")
 
 
-class KeywordBehaviorTestCase(BaseTestCase):
+class KeywordTestCase(BaseTestCase):
     def setUp(self):
-        super(KeywordBehaviorTestCase, self).setUp()
+        super(KeywordTestCase, self).setUp()
         # No need for testing in Robot too, since we will have a general test
         # that exceptions get raised properly, and this is just another exception.
         class P(Page):
@@ -346,6 +346,25 @@ class KeywordBehaviorTestCase(BaseTestCase):
         m = getattr(self.p, "click_element")
         docstring = inspect.getdoc(m)
         self.assertTrue("Click element identified by `selector` or `locator`" in docstring)
+
+    def test_is_obj_keyword(self):
+        is_obj_keyword = _Keywords.is_obj_keyword
+        self.assertTrue(is_obj_keyword(Page.click_element))
+        self.assertFalse(is_obj_keyword(Page.selectors))
+        self.assertFalse(is_obj_keyword(Page._is_url_absolute))
+        self.assertFalse(is_obj_keyword(Page.get_current_browser))
+        self.assertFalse(is_obj_keyword(Page.driver))
+
+    def test_is_obj_keyword_by_name(self):
+        is_obj_keyword_by_name = _Keywords.is_obj_keyword_by_name
+        self.assertTrue(is_obj_keyword_by_name("click_element", Page))
+        self.assertFalse(is_obj_keyword_by_name("selectors", Page))
+        self.assertFalse(is_obj_keyword_by_name("_is_url_absolute", Page))
+        self.assertFalse(is_obj_keyword_by_name("get_current_browser", Page))
+        self.assertFalse(is_obj_keyword_by_name("driver", Page))
+        self.assertFalse(is_obj_keyword_by_name("foobarbatdaniel", Page))
+
+
 
 
 class LoggingLevelsTestCase(BaseTestCase):

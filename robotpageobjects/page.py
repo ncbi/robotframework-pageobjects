@@ -55,6 +55,29 @@ class _Keywords(object):
     _alias_delimiter = "__name__"
 
     @classmethod
+    def is_obj_keyword(cls, obj):
+        """ Determines whether the given object is a keyword.
+        """
+
+        if  inspect.isroutine(obj) and not obj.__name__.startswith("_") and not _Keywords.is_method_excluded(obj
+                .__name__):
+            return True
+        else:
+            return False
+
+    @classmethod
+    def is_obj_keyword_by_name(cls, name, klass):
+        """ Determines whether a given name from the given class is a keyword
+        """
+        obj = None
+        try:
+            obj = getattr(klass, name)
+        except AttributeError:
+            return False
+
+        return cls.is_obj_keyword(obj)
+
+    @classmethod
     def is_method_excluded(cls, name):
         """
         Checks whether a method is to be excluded from keyword names.
