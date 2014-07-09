@@ -58,10 +58,16 @@ class _Keywords(object):
     def is_obj_keyword(cls, obj):
         """ Determines whether the given object is a keyword.
         """
+        try:
+            # It's either not a method or not an instance method, so
+            # it can't be a keyword.
+            name = obj.__name__
+        except AttributeError:
+            return False
 
-        if  inspect.isroutine(obj) and not obj.__name__.startswith("_") and not _Keywords.is_method_excluded(obj
-                .__name__):
+        if  inspect.isroutine(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
             return True
+        
         else:
             return False
 
@@ -274,24 +280,17 @@ class _PageMeta(type):
             if not hasattr(base, "_fixed_docstring"):
 
                 for member_name, member in inspect.getmembers(base):
-                    try:
-                        obj = getattr(base, member_name)
-                    except:
-                        continue
+                    if  _Keywords.is_obj_keyword(member):
+                        try:
+                            inspect.getargspec(member)[0][1]
+                        except IndexError:
+                            continue
 
-                    if not inspect.isroutine(obj) or member_name.startswith("_") or _Keywords.is_method_excluded(member_name):
-                        continue
-
-                    try:
-                        inspect.getargspec(member)[0][1]
-                    except IndexError:
-                        continue
-
-                    orig_doc = inspect.getdoc(member)
-                    if orig_doc is not None:
-                        fixed_doc = orig_doc.replace("`locator`", "`selector` or `locator`")
-                        fixed_doc = fixed_doc.replace(" locator ", " selector or locator ")
-                    member.__func__.__doc__ = fixed_doc
+                        orig_doc = inspect.getdoc(member)
+                        if orig_doc is not None:
+                            fixed_doc = orig_doc.replace("`locator`", "`selector` or `locator`")
+                            fixed_doc = fixed_doc.replace(" locator ", " selector or locator ")
+                        member.__func__.__doc__ = fixed_doc
 
                 base._fixed_docstring = True
 
@@ -300,17 +299,9 @@ class _PageMeta(type):
 
         # Don't do inspect.getmembers since it will try to evaluate functions
         # that are decorated as properties.
-        for member_name in classdict:
-
-            try:
-                obj = classdict[member_name]
-            except:
-                continue
-
-            if not inspect.isroutine(obj) or member_name.startswith("_") or _Keywords.is_method_excluded(member_name):
-                continue
-
-            classdict[member_name] = _PageMeta.must_return(classdict[member_name])
+        for member_name, obj in classdict.iteritems():
+            if _Keywords.is_obj_keyword(obj):
+                classdict[member_name] = _PageMeta.must_return(classdict[member_name])
 
         cls._fix_docstrings(bases)
 

@@ -365,8 +365,6 @@ class KeywordTestCase(BaseTestCase):
         self.assertFalse(is_obj_keyword_by_name("foobarbatdaniel", Page))
 
 
-
-
 class LoggingLevelsTestCase(BaseTestCase):
     # Tests protected method Page._get_normalized_logging_levels, which given a
     # String logging level should return a tuple of the attempted string logging level
