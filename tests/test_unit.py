@@ -340,6 +340,7 @@ class KeywordBehaviorTestCase(BaseTestCase):
     def test_private_method_returning_none_should_not_raise_exception(self):
         self.assertIsNone(self.p._return_none())
 
+
 class LoggingLevelsTestCase(BaseTestCase):
 
     # Tests protected method Page._get_normalized_logging_levels, which given a
