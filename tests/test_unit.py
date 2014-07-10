@@ -307,6 +307,7 @@ class SelectorsTestCase(BaseTestCase):
 
 
 class KeywordTestCase(BaseTestCase):
+
     def setUp(self):
         super(KeywordTestCase, self).setUp()
         # No need for testing in Robot too, since we will have a general test
@@ -345,6 +346,8 @@ class KeywordTestCase(BaseTestCase):
     def test_se2lib_keywords_fixed_to_mention_selectors(self):
         m = getattr(self.p, "click_element")
         docstring = inspect.getdoc(m)
+        first_line_of_docstring = docstring.split("\n")[0]
+        self.assertEquals(first_line_of_docstring, "click_element(self, selector_or_locator)")
         self.assertTrue("Click element identified by `selector` or `locator`" in docstring)
 
     def test_is_obj_keyword(self):

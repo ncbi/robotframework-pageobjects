@@ -275,7 +275,9 @@ class _PageMeta(type):
 
     @classmethod
     def _fix_docstrings(cls, bases):
-        """ Fixes up docstring for keywords that take locators by
+        """ Called from _PageMeta's __new__ method.
+        For Sphinx auto-API docs, fixes up docstring for keywords that
+        take locators by
         redefining method signature, replacing "locator" parameter with
         "selector_or_locator". Does this by taking advantage of Sphinx's
         autodoc_signature feature, which allows you to override documented
@@ -283,28 +285,34 @@ class _PageMeta(type):
 
         Also replaces references to "locator" in rest of docstring with
         "selector or locator".
+
+        :param bases: A tuple of base classes a particular class
+        inherits from.
         """
         for base in bases:
+
+            # Don't fix up a class more than once.
             if not hasattr(base, "_fixed_docstring"):
 
                 for member_name, member in inspect.getmembers(base):
                     if _Keywords.is_obj_keyword(member):
                         try:
+                            # There's a second argument
                             second_arg = inspect.getargspec(member)[0][1]
                         except IndexError:
                             continue
 
-                        fixed_signature = None
-                        if second_arg == "locator":
+                        orig_doc = inspect.getdoc(member)
+                        if orig_doc is not None and second_arg == "locator":
                             orig_signature = get_method_sig(member)
                             fixed_signature = orig_signature.replace("(self, locator", "(self, selector_or_locator")
-
-                        orig_doc = inspect.getdoc(member)
-                        if orig_doc is not None and fixed_signature is not None:
-                            fixed_doc = fixed_signature + "\n\n" + orig_doc
-                            fixed_doc = fixed_doc.replace("`locator`", "`selector` or `locator`")
-                            fixed_doc = fixed_doc.replace(" locator ", " selector or locator ")
-                            member.__func__.__doc__ = fixed_doc
+                            if orig_doc is not None:
+                                # Prepend fixed signature to docstring
+                                # and fix references to "locator".
+                                fixed_doc = fixed_signature + "\n\n" + orig_doc
+                                fixed_doc = fixed_doc.replace("`locator`", "`selector` or `locator`")
+                                fixed_doc = fixed_doc.replace(" locator ", " selector or locator ")
+                                member.__func__.__doc__ = fixed_doc
 
                 base._fixed_docstring = True
 
