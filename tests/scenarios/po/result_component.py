@@ -83,7 +83,8 @@ class BaseSearchComponent(Component):
 class SearchComponent(BaseSearchComponent, AdvancedOptionTogglerComponentManager):
     @property
     def some_property(self):
-        self.log("foo")
+        self.log("foo", is_console=False)
+        return 1
 
 
 class SearchComponentManager(ComponentManager):
@@ -117,10 +118,7 @@ class HomePage(Page, SearchComponentManager):
     uri = "/site/index.html"
 
     def get_some_property(self):
-        print self.search_component.some_property
-
-        return True
-
+        return self.search_component.some_property
 
 class HomePageWithDOMAdvancedToggler(Page, SearchComponentWithDOMAdvancedTogglerManager):
     uri = "/site/index.html"
