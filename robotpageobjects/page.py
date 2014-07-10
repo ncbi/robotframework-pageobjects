@@ -32,6 +32,7 @@ from Selenium2Library import Selenium2Library
 from Selenium2Library.locators.elementfinder import ElementFinder
 from Selenium2Library.keywords.keywordgroup import KeywordGroupMetaClass
 
+from sig import get_method_sig
 import abstractedlogger
 from context import Context
 import exceptions
@@ -65,7 +66,7 @@ class _Keywords(object):
         except AttributeError:
             return False
 
-        if  inspect.isroutine(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
+        if inspect.isroutine(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
             return True
 
         else:
@@ -247,7 +248,6 @@ class SelectorsDict(dict):
             self[str(key)] = value
 
 
-
 class _PageMeta(type):
     """Meta class that allows decorating of all page object methods
     with must_return decorator. This ensures that all page object
@@ -275,22 +275,36 @@ class _PageMeta(type):
 
     @classmethod
     def _fix_docstrings(cls, bases):
+        """ Fixes up docstring for keywords that take locators by
+        redefining method signature, replacing "locator" parameter with
+        "selector_or_locator". Does this by taking advantage of Sphinx's
+        autodoc_signature feature, which allows you to override documented
+        function signature by putting override as first line in docstring.
 
+        Also replaces references to "locator" in rest of docstring with
+        "selector or locator".
+        """
         for base in bases:
             if not hasattr(base, "_fixed_docstring"):
 
                 for member_name, member in inspect.getmembers(base):
-                    if  _Keywords.is_obj_keyword(member):
+                    if _Keywords.is_obj_keyword(member):
                         try:
-                            inspect.getargspec(member)[0][1]
+                            second_arg = inspect.getargspec(member)[0][1]
                         except IndexError:
                             continue
 
+                        fixed_signature = None
+                        if second_arg == "locator":
+                            orig_signature = get_method_sig(member)
+                            fixed_signature = orig_signature.replace("(self, locator", "(self, selector_or_locator")
+
                         orig_doc = inspect.getdoc(member)
-                        if orig_doc is not None:
-                            fixed_doc = orig_doc.replace("`locator`", "`selector` or `locator`")
+                        if orig_doc is not None and fixed_signature is not None:
+                            fixed_doc = fixed_signature + "\n\n" + orig_doc
+                            fixed_doc = fixed_doc.replace("`locator`", "`selector` or `locator`")
                             fixed_doc = fixed_doc.replace(" locator ", " selector or locator ")
-                        member.__func__.__doc__ = fixed_doc
+                            member.__func__.__doc__ = fixed_doc
 
                 base._fixed_docstring = True
 
@@ -475,6 +489,7 @@ class _SelectorsManager(_S2LWrapper):
         except KeyError:
             raise exceptions.SelectorError("Variables {vars} don't match template {template}".format(vars=kwargs,
                                                                                                      template=template))
+
     @staticmethod
     def _vars_match_template(template, vars):
         """Validates that the provided variables match the template.
@@ -628,9 +643,9 @@ class _BaseActions(_SelectorsManager):
             # a page that follows some sort of URL pattern. Eg, /pubmed/SOME_ARTICLE_ID.
 
             raise exceptions.UriResolutionError("The URI Template \"%s\" in \"%s\" is an absolute URL. "
-                                                  "It should be relative and used with baseurl" % (self
-                                                                                                   .uri_template,
-                                                                                                   pageobj_name))
+                                                "It should be relative and used with baseurl" % (self
+                                                                                                 .uri_template,
+                                                                                                 pageobj_name))
 
         if len(args) > 0:
             uri_vars = {}
@@ -652,7 +667,7 @@ class _BaseActions(_SelectorsManager):
             if arg_type != "url" and hasattr(self, "uri") and self.uri is not None:
                 raise exceptions.UriResolutionError(
                     "URI %s is set for page object %s. It is not a template, so no arguments are allowed." %
-                        (self.uri, pageobj_name))
+                    (self.uri, pageobj_name))
 
             if arg_type == "url":
                 if self._is_url_absolute(first_arg):
@@ -661,7 +676,7 @@ class _BaseActions(_SelectorsManager):
                     return first_arg
                 elif first_arg.startswith("//"):
                     raise exceptions.UriResolutionError("%s is neither a URL with a scheme nor a relative path"
-                                                          % first_arg)
+                                                        % first_arg)
                 else:  # starts with "/"
                     # so it doesn't need resolution, except for appending to baseurl and stripping leading slash
                     # if it needed: i.e., if the base url ends with "/" and the url starts with "/".
@@ -1031,8 +1046,7 @@ class Page(_BaseActions):
         # (by checking it and its base classes).
 
         for name in dir(self):
-            if  _Keywords.is_obj_keyword_by_name(name, self):
-
+            if _Keywords.is_obj_keyword_by_name(name, self):
                 obj = getattr(self, name)
                 in_s2l_base = False
                 func = obj.__func__  # Get the unbound function for the method
