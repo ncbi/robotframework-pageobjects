@@ -1,5 +1,6 @@
 import re
 from Selenium2Library import Selenium2Library
+from Selenium2Library.locators.tableelementfinder import TableElementFinder
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 
@@ -56,3 +57,22 @@ def do_monkeypatches():
             raise WebDriverException("Couldn't connect to webdriver after several attempts")
 
     Selenium2Library._make_phantomjs = __make_phantomjs
+
+    __old_tef_init = TableElementFinder.__init__.__func__
+    def __new_tef_init(self, *args, **kwargs):
+        __old_tef_init(self, *args, **kwargs)
+        self._locator_suffixes[('css', 'last-row')] = [' tr:nth-last-child(%s)']
+    
+    TableElementFinder.__init__ = __new_tef_init
+    
+    def __find_by_row(self, browser, table_locator, row, content):
+        
+        location_method = "row"
+        if "-" == row[0]:
+            row = row[1:]
+            location_method = "last-row"
+        locators = self._parse_table_locator(table_locator, location_method)
+        locators = [locator % str(row) for locator in locators]
+        return self._search_in_locators(browser, locators, content)
+    
+    TableElementFinder.find_by_row = __find_by_row
