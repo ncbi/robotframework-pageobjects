@@ -332,6 +332,17 @@ class ComponentTestCase(BaseTestCase):
         toggler.open()
         self.assertEquals(toggler.advanced_text, "These are advanced options")
 
+    def test_calling_log_from_component(self):
+        self.homepage.open()
+
+        attr_err_raised = False
+        try:
+            self.homepage.get_some_property()
+        except AttributeError:
+            attr_err_raised = True
+
+        self.assertFalse(attr_err_raised, "AttributeError raised when trying to call log() from a component")
+
     def tearDown(self):
         super(ComponentTestCase, self).tearDown()
         self.result_page_with_str_locator.close()
