@@ -67,7 +67,7 @@ class _Keywords(object):
 
         if  inspect.isroutine(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
             return True
-        
+
         else:
             return False
 
@@ -1031,18 +1031,21 @@ class Page(_BaseActions):
         # (by checking it and its base classes).
 
         for name in dir(self):
-            try:
-                obj = getattr(self, name)
-            except:
-                # Retrieving the attribute raised an exception - for example,
-                # a property created with the @property decorator that
-                # interacts with the driver
+            if not _Keywords.is_obj_keyword_by_name(name, self):
                 continue
+            # try:
+            #     obj = getattr(self, name)
+            # except:
+            #     # Retrieving the attribute raised an exception - for example,
+            #     # a property created with the @property decorator that
+            #     # interacts with the driver
+            #     continue
+            #
+            # # Don't look for non-methods.
+            # if not inspect.ismethod(obj):
+            #     continue
 
-            # Don't look for non-methods.
-            if not inspect.ismethod(obj):
-                continue
-
+            obj = getattr(self, name)
             in_s2l_base = False
             func = obj.__func__  # Get the unbound function for the method
             # Check if that function is defined in Selenium2Library
