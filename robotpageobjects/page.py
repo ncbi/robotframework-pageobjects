@@ -1031,40 +1031,28 @@ class Page(_BaseActions):
         # (by checking it and its base classes).
 
         for name in dir(self):
-            if not _Keywords.is_obj_keyword_by_name(name, self):
-                continue
-            # try:
-            #     obj = getattr(self, name)
-            # except:
-            #     # Retrieving the attribute raised an exception - for example,
-            #     # a property created with the @property decorator that
-            #     # interacts with the driver
-            #     continue
-            #
-            # # Don't look for non-methods.
-            # if not inspect.ismethod(obj):
-            #     continue
+            if  _Keywords.is_obj_keyword_by_name(name, self):
 
-            obj = getattr(self, name)
-            in_s2l_base = False
-            func = obj.__func__  # Get the unbound function for the method
-            # Check if that function is defined in Selenium2Library
-            if func in Selenium2Library.__dict__.values():
-                in_s2l_base = True
-            else:
-                # Check if the function is defined in any of Selenium2Library's direct base classes.
-                # Note that this will not check those classes' ancestors.
-                # TODO: Check all S2L's ancestors. DCLT-
-                for base in Selenium2Library.__bases__:
-                    if func in base.__dict__.values():
-                        in_s2l_base = True
-            # Don't add methods belonging to S2L to the exposed keywords.
-            if in_s2l_base:
-                continue
-            elif inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
-                # Add all methods that don't start with an underscore and were not marked with the
-                # @not_keyword decorator.
-                keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
+                obj = getattr(self, name)
+                in_s2l_base = False
+                func = obj.__func__  # Get the unbound function for the method
+                # Check if that function is defined in Selenium2Library
+                if func in Selenium2Library.__dict__.values():
+                    in_s2l_base = True
+                else:
+                    # Check if the function is defined in any of Selenium2Library's direct base classes.
+                    # Note that this will not check those classes' ancestors.
+                    # TODO: Check all S2L's ancestors. DCLT-
+                    for base in Selenium2Library.__bases__:
+                        if func in base.__dict__.values():
+                            in_s2l_base = True
+                # Don't add methods belonging to S2L to the exposed keywords.
+                if in_s2l_base:
+                    continue
+                elif inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
+                    # Add all methods that don't start with an underscore and were not marked with the
+                    # @not_keyword decorator.
+                    keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
 
         return keywords
 
