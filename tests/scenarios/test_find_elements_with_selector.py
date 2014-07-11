@@ -28,7 +28,6 @@ class FindElementsTestCase(unittest.TestCase):
 
         self.assertTrue(failed, "find_element should throw an error if matches multiple elements")
 
-
     def tearDown(self):
         self.page.close()
 
