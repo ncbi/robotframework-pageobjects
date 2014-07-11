@@ -15,8 +15,6 @@ class ResultComponent(Component):
 
 class ResultComponentManager(ComponentManager):
 
-    locator = "css=ul#results li.result"
-
     # Normally you would define "results" property,
     # but here we define a "result" property too, just
     # to test that get_instance() returns only
@@ -27,15 +25,22 @@ class ResultComponentManager(ComponentManager):
 
     @property
     def result(self):
-        return self.get_instance(ResultComponent)
+        return self.get_instance(ResultComponent, "css=ul#results li.result")
 
     @property
     def results(self):
-        return self.get_instances(ResultComponent)
+        return self.get_instances(ResultComponent, "css=ul#results li.result")
 
 
 class ResultComponentManagerWithDOMStrategyLocator(ResultComponentManager):
-    locator = "dom=window.jQuery('#results li.result:lt(2)')"
+    @property
+    def result(self):
+        return self.get_instance(ResultComponent, "dom=window.jQuery('#results li.result:lt(2)')")
+    
+    @property
+    def results(self):
+        return self.get_instances(ResultComponent, "dom=window.jQuery('#results li.result:lt(2)')")
+
 
 
 class ResultPage(Page, ResultComponentManager):
@@ -63,11 +68,10 @@ class AdvancedOptionTogglerComponent(Component):
 
 
 class AdvancedOptionTogglerComponentManager(ComponentManager):
-    locator = "id=advanced-options"
 
     @property
     def advanced_option_toggler_component(self):
-        return self.get_instance(AdvancedOptionTogglerComponent)
+        return self.get_instance(AdvancedOptionTogglerComponent, "id=advanced-options")
 
 class BaseSearchComponent(Component):
 
@@ -89,11 +93,9 @@ class SearchComponent(BaseSearchComponent, AdvancedOptionTogglerComponentManager
 
 class SearchComponentManager(ComponentManager):
 
-    locator = "id=search-form"
-
     @property
     def search_component(self):
-        return self.get_instance(SearchComponent)
+        return self.get_instance(SearchComponent, "id=search-form")
 
 
 class AdvancedOptionTogglerComponentManagerWithDOMStrategy(AdvancedOptionTogglerComponentManager):
@@ -106,11 +108,9 @@ class SearchComponentWithDOMAdvancedToggler(BaseSearchComponent, AdvancedOptionT
 
 class SearchComponentWithDOMAdvancedTogglerManager(ComponentManager):
 
-    locator = "id=search-form"
-
     @property
     def search_component(self):
-        return self.get_instance(SearchComponentWithDOMAdvancedToggler)
+        return self.get_instance(SearchComponentWithDOMAdvancedToggler, "id=search-form")
 
 
 
@@ -141,11 +141,10 @@ class BodyComponentManager(ComponentManager):
 
 
 class ParaComponentManager(ComponentManager):
-    locator = "css=p"
 
     @property
     def paras(self):
-        return self.get_instances(ParaComponent)
+        return self.get_instances(ParaComponent, "css=p")
 
 
 class TwoComponentManagersPage(Page, BodyComponentManager, ParaComponentManager):
