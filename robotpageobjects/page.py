@@ -32,6 +32,7 @@ from Selenium2Library import Selenium2Library
 from Selenium2Library.locators.elementfinder import ElementFinder
 from Selenium2Library.keywords.keywordgroup import KeywordGroupMetaClass
 
+from sig import get_method_sig
 import abstractedlogger
 from context import Context
 import exceptions
@@ -53,6 +54,35 @@ class _Keywords(object):
     _exclusions = {}
     _aliases = {}
     _alias_delimiter = "__name__"
+
+    @classmethod
+    def is_obj_keyword(cls, obj):
+        """ Determines whether the given object is a keyword.
+        """
+        try:
+            # It's either not a method or not an instance method, so
+            # it can't be a keyword.
+            name = obj.__name__
+        except AttributeError:
+            return False
+
+        if inspect.isroutine(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
+            return True
+
+        else:
+            return False
+
+    @classmethod
+    def is_obj_keyword_by_name(cls, name, klass):
+        """ Determines whether a given name from the given class is a keyword
+        """
+        obj = None
+        try:
+            obj = getattr(klass, name)
+        except AttributeError:
+            return False
+
+        return cls.is_obj_keyword(obj)
 
     @classmethod
     def is_method_excluded(cls, name):
@@ -218,6 +248,96 @@ class SelectorsDict(dict):
             self[str(key)] = value
 
 
+class _PageMeta(type):
+    """Meta class that allows decorating of all page object methods
+    with must_return decorator. This ensures that all page object
+    methods return something, whether it's a page object or other
+    appropriate value. We must do this in a meta class since decorating
+    methods and returning a wrapping function then rebinding that to the
+    page object is tricky. Instead the binding of the decorated function in the
+    meta class happens before the class is instantiated.
+    """
+
+    @staticmethod
+    def _must_return(f, *args, **kwargs):
+        ret = f(*args, **kwargs)
+        if ret is None:
+            raise exceptions.KeywordReturnsNoneError(
+                "You must return either a page object or an appropriate value from the page object method, "
+                "'%s'" % f.__name__)
+        else:
+            return ret
+
+    @classmethod
+    def must_return(cls, f):
+        # Use decorator module to preserve docstings and signatures for Sphinx
+        return decorator.decorator(_PageMeta._must_return, f)
+
+    @classmethod
+    def _fix_docstrings(cls, bases):
+        """ Called from _PageMeta's __new__ method.
+        For Sphinx auto-API docs, fixes up docstring for keywords that
+        take locators by
+        redefining method signature, replacing "locator" parameter with
+        "selector_or_locator". Does this by taking advantage of Sphinx's
+        autodoc_signature feature, which allows you to override documented
+        function signature by putting override as first line in docstring.
+
+        Also replaces references to "locator" in rest of docstring with
+        "selector or locator".
+
+        :param bases: A tuple of base classes a particular class
+        inherits from.
+        """
+        for base in bases:
+
+            # Don't fix up a class more than once.
+            if not hasattr(base, "_fixed_docstring"):
+
+                for member_name, member in inspect.getmembers(base):
+                    if _Keywords.is_obj_keyword(member):
+                        try:
+                            # There's a second argument
+                            second_arg = inspect.getargspec(member)[0][1]
+                        except IndexError:
+                            continue
+
+                        orig_doc = inspect.getdoc(member)
+                        if orig_doc is not None and second_arg == "locator":
+                            orig_signature = get_method_sig(member)
+                            fixed_signature = orig_signature.replace("(self, locator", "(self, selector_or_locator")
+                            if orig_doc is not None:
+                                # Prepend fixed signature to docstring
+                                # and fix references to "locator".
+                                fixed_doc = fixed_signature + "\n\n" + orig_doc
+                                fixed_doc = fixed_doc.replace("`locator`", "`selector` or `locator`")
+                                fixed_doc = fixed_doc.replace(" locator ", " selector or locator ")
+                                member.__func__.__doc__ = fixed_doc
+
+                base._fixed_docstring = True
+
+
+    def __new__(cls, name, bases, classdict):
+
+        # Don't do inspect.getmembers since it will try to evaluate functions
+        # that are decorated as properties.
+        for member_name, obj in classdict.iteritems():
+            if _Keywords.is_obj_keyword(obj):
+                classdict[member_name] = _PageMeta.must_return(classdict[member_name])
+
+        cls._fix_docstrings(bases)
+
+        return type.__new__(cls, name, bases, classdict)
+
+
+class _SuperPageMeta(_PageMeta, KeywordGroupMetaClass):
+    """ We need to create a super meta class that inherits from all
+    the meta classes set in the inheritence chain of Page, or we'll get
+    the dreaded error about meta conflicts. Then Page can set this meta class.
+    """
+    pass
+
+
 class _S2LWrapper(Selenium2Library):
     """
     Helper class that wraps Selenium2Library and manages the browser cache.
@@ -377,6 +497,7 @@ class _SelectorsManager(_S2LWrapper):
         except KeyError:
             raise exceptions.SelectorError("Variables {vars} don't match template {template}".format(vars=kwargs,
                                                                                                      template=template))
+
     @staticmethod
     def _vars_match_template(template, vars):
         """Validates that the provided variables match the template.
@@ -530,9 +651,9 @@ class _BaseActions(_SelectorsManager):
             # a page that follows some sort of URL pattern. Eg, /pubmed/SOME_ARTICLE_ID.
 
             raise exceptions.UriResolutionError("The URI Template \"%s\" in \"%s\" is an absolute URL. "
-                                                  "It should be relative and used with baseurl" % (self
-                                                                                                   .uri_template,
-                                                                                                   pageobj_name))
+                                                "It should be relative and used with baseurl" % (self
+                                                                                                 .uri_template,
+                                                                                                 pageobj_name))
 
         if len(args) > 0:
             uri_vars = {}
@@ -554,7 +675,7 @@ class _BaseActions(_SelectorsManager):
             if arg_type != "url" and hasattr(self, "uri") and self.uri is not None:
                 raise exceptions.UriResolutionError(
                     "URI %s is set for page object %s. It is not a template, so no arguments are allowed." %
-                        (self.uri, pageobj_name))
+                    (self.uri, pageobj_name))
 
             if arg_type == "url":
                 if self._is_url_absolute(first_arg):
@@ -563,7 +684,7 @@ class _BaseActions(_SelectorsManager):
                     return first_arg
                 elif first_arg.startswith("//"):
                     raise exceptions.UriResolutionError("%s is neither a URL with a scheme nor a relative path"
-                                                          % first_arg)
+                                                        % first_arg)
                 else:  # starts with "/"
                     # so it doesn't need resolution, except for appending to baseurl and stripping leading slash
                     # if it needed: i.e., if the base url ends with "/" and the url starts with "/".
@@ -793,6 +914,11 @@ class _BaseActions(_SelectorsManager):
 
 
 class ComponentManager(_BaseActions):
+    
+    def __init__(self, *args, **kwargs):
+        super(ComponentManager, self).__init__(*args, **kwargs)
+        self.name = self.__class__.__name__
+
     @not_keyword
     def get_instance(self, component_class):
 
@@ -874,57 +1000,7 @@ class Component(_BaseActions):
 
         # Pass the root webelement to our overridden component finder class.
         self._element_finder = _ComponentElementFinder(self.reference_webelement)
-
-
-class _PageMeta(type):
-    """Meta class that allows decorating of all page object methods
-    with must_return decorator. This ensures that all page object
-    methods return something, whether it's a page object or other
-    appropriate value. We must do this in a meta class since decorating
-    methods and returning a wrapping function then rebinding that to the
-    page object is tricky. Instead the binding of the decorated function in the
-    meta class happens before the class is instantiated.
-    """
-
-    @staticmethod
-    def _must_return(f, *args, **kwargs):
-        ret = f(*args, **kwargs)
-        if ret is None:
-            raise exceptions.KeywordReturnsNoneError(
-                "You must return either a page object or an appropriate value from the page object method, "
-                "'%s'" % f.__name__)
-        else:
-            return ret
-
-    @classmethod
-    def must_return(cls, f):
-        # Use decorator module to preserve docstings and signatures for Sphinx
-        return decorator.decorator(_PageMeta._must_return, f)
-
-    def __new__(cls, name, bases, classdict):
-
-        # Don't do inspect.getmembers since it will try to evaluate functions
-        # that are decorated as properties.
-        for member_name in classdict:
-            try:
-                obj = classdict[member_name]
-            except:
-                continue
-
-            if not inspect.isroutine(obj) or member_name.startswith("_") or _Keywords.is_method_excluded(member_name):
-                continue
-
-            classdict[member_name] = _PageMeta.must_return(classdict[member_name])
-
-        return type.__new__(cls, name, bases, classdict)
-
-
-class _SuperPageMeta(_PageMeta, KeywordGroupMetaClass):
-    """ We need to create a super meta class that inherits from all
-    the meta classes set in the inheritence chain of Page, or we'll get
-    the dreaded error about meta conflicts. Then Page can set this meta class.
-    """
-    pass
+        self.name = self.__class__.__name__
 
 
 class Page(_BaseActions):
@@ -938,8 +1014,8 @@ class Page(_BaseActions):
     This class then provides the behavior used by the RF's dynamic API.
     Optional constructor arguments:
     """
-
     __metaclass__ = _SuperPageMeta
+
 
     def __init__(self, *args, **kwargs):
         """
@@ -984,37 +1060,27 @@ class Page(_BaseActions):
         # (by checking it and its base classes).
 
         for name in dir(self):
-            try:
+            if _Keywords.is_obj_keyword_by_name(name, self):
                 obj = getattr(self, name)
-            except:
-                # Retrieving the attribute raised an exception - for example,
-                # a property created with the @property decorator that
-                # interacts with the driver
-                continue
-
-            # Don't look for non-methods.
-            if not inspect.ismethod(obj):
-                continue
-
-            in_s2l_base = False
-            func = obj.__func__  # Get the unbound function for the method
-            # Check if that function is defined in Selenium2Library
-            if func in Selenium2Library.__dict__.values():
-                in_s2l_base = True
-            else:
-                # Check if the function is defined in any of Selenium2Library's direct base classes.
-                # Note that this will not check those classes' ancestors.
-                # TODO: Check all S2L's ancestors. DCLT-
-                for base in Selenium2Library.__bases__:
-                    if func in base.__dict__.values():
-                        in_s2l_base = True
-            # Don't add methods belonging to S2L to the exposed keywords.
-            if in_s2l_base:
-                continue
-            elif inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
-                # Add all methods that don't start with an underscore and were not marked with the
-                # @not_keyword decorator.
-                keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
+                in_s2l_base = False
+                func = obj.__func__  # Get the unbound function for the method
+                # Check if that function is defined in Selenium2Library
+                if func in Selenium2Library.__dict__.values():
+                    in_s2l_base = True
+                else:
+                    # Check if the function is defined in any of Selenium2Library's direct base classes.
+                    # Note that this will not check those classes' ancestors.
+                    # TODO: Check all S2L's ancestors. DCLT-
+                    for base in Selenium2Library.__bases__:
+                        if func in base.__dict__.values():
+                            in_s2l_base = True
+                # Don't add methods belonging to S2L to the exposed keywords.
+                if in_s2l_base:
+                    continue
+                elif inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
+                    # Add all methods that don't start with an underscore and were not marked with the
+                    # @not_keyword decorator.
+                    keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
 
         return keywords
 

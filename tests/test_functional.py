@@ -338,6 +338,16 @@ class ComponentTestCase(BaseTestCase):
         paras = self.two_comp_page.open().paras
         self.assertTrue(len(paras) > 1, "Locator for body component is being used, so not finding "
                                                           "more than one paragraph component on page")
+    def test_calling_log_from_component(self):
+        self.homepage.open()
+
+        attr_err_raised = False
+        try:
+            self.homepage.get_some_property()
+        except AttributeError:
+            attr_err_raised = True
+
+        self.assertFalse(attr_err_raised, "AttributeError raised when trying to call log() from a component")
 
     def tearDown(self):
         super(ComponentTestCase, self).tearDown()
