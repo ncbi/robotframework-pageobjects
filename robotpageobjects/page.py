@@ -548,7 +548,11 @@ class _SelectorsManager(_S2LWrapper):
         :type required: boolean
         :returns: WebElement instance
         """
-        return self._element_find(locator, True, required, **kwargs)
+        ret = self._element_find(locator, first_only=False, required=required, **kwargs)
+        if isinstance(ret, (list, tuple)):
+            raise exceptions.SelectorError(
+                "\"%s\" found more than one element. If this is expected, use \"find_elements\" instead" % locator)
+        return
 
     @not_keyword
     def find_elements(self, locator, required=True, **kwargs):
@@ -561,7 +565,7 @@ class _SelectorsManager(_S2LWrapper):
         :type required: boolean
         :returns: WebElement instance
         """
-        return self._element_find(locator, False, required, **kwargs)
+        return self._element_find(locator, first_only=False, required=required, **kwargs)
 
 
 class _BaseActions(_SelectorsManager):
