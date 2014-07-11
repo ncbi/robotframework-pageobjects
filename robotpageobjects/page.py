@@ -259,8 +259,36 @@ class ComponentsDict(KeyUniquenessDict):
     def add(self, key, value):
         self[key] = value
 
+class _ComponentsManagerMeta(KeywordGroupMetaClass):
+    @classmethod
+    def _set_components(cls, bases, classdict):
+        def __get_components(cdict, cbases):
+            """
+            Recursive function to merge ancestor classes' components into this one's.
+            We start with the class being created, so klass is None. The
+            """
+            all_components = ComponentsDict()
+            own_components = cdict.get("components", {})
 
-class _PageMeta(type):
+            # Get all the components dicts defined by the bases
+            base_dicts = [__get_components(base.__dict__, base.__bases__) for base in cbases if hasattr(base, "components")]
+
+            # Add the components for the bases to the return dict
+            [all_components.merge(base_dict) for base_dict in base_dicts]
+
+            # Update the return dict with this class's selectors, overriding the bases
+            all_components.merge(own_components, from_subclass=True)
+            return all_components
+
+        components = __get_components(classdict, bases)
+        classdict["components"] = components
+        for component_class in components:
+            name = re.sub("component$", "", component_class.__name__.lower())
+            classdict[name+"s"] = property(lambda self: self.get_instances(component_class))
+            classdict[name] = property(lambda self: self.get_instance(component_class))
+
+
+class _PageMeta(_ComponentsManagerMeta):
     """Meta class that allows decorating of all page object methods
     with must_return decorator. This ensures that all page object
     methods return something, whether it's a page object or other
@@ -328,7 +356,6 @@ class _PageMeta(type):
 
                 base._fixed_docstring = True
 
-
     def __new__(cls, name, bases, classdict):
 
         # Don't do inspect.getmembers since it will try to evaluate functions
@@ -339,15 +366,9 @@ class _PageMeta(type):
 
         cls._fix_docstrings(bases)
 
+        cls._set_components(bases, classdict)
+
         return type.__new__(cls, name, bases, classdict)
-
-
-class _SuperPageMeta(_PageMeta, KeywordGroupMetaClass):
-    """ We need to create a super meta class that inherits from all
-    the meta classes set in the inheritence chain of Page, or we'll get
-    the dreaded error about meta conflicts. Then Page can set this meta class.
-    """
-    pass
 
 
 class _S2LWrapper(Selenium2Library):
@@ -398,26 +419,9 @@ class _ComponentsManager(_S2LWrapper):
     """
 
     """
+    __metaclass__ = _ComponentsManagerMeta
     def __init__(self, *args, **kwargs):
         super(_ComponentsManager, self).__init__(*args, **kwargs)
-        self.components = self._get_class_components()
-
-    def _get_class_components(self):
-        def __get_class_components(klass):
-            all_components = ComponentsDict()
-            own_components = klass.__dict__.get("components", {})
-
-            # Get all the selectors dicts defined by the bases
-            base_dicts = [__get_class_components(base) for base in klass.__bases__ if hasattr(base, "components")]
-
-            # Add the selectors for the bases to the return dict
-            [all_components.merge(base_dict) for base_dict in base_dicts]
-
-            # Update the return dict with this class's selectors, overriding the bases
-            all_components.merge(own_components, from_subclass=True)
-            return all_components
-
-        return __get_class_components(self.__class__)
 
     @not_keyword
     def get_instance(self, component_class):
@@ -1010,7 +1014,7 @@ class Page(_BaseActions):
     This class then provides the behavior used by the RF's dynamic API.
     Optional constructor arguments:
     """
-    __metaclass__ = _SuperPageMeta
+    __metaclass__ = _PageMeta
 
 
     def __init__(self, *args, **kwargs):

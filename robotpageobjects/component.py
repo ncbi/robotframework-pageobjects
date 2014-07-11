@@ -30,11 +30,3 @@ class Component(_BaseActions):
         # Pass the root webelement to our overridden component finder class.
         self._element_finder = _ComponentElementFinder(self.reference_webelement)
         self.name = self.__class__.__name__
-
-
-class ComponentManager(_BaseActions):
-
-    def __init__(self, *args, **kwargs):
-        super(ComponentManager, self).__init__(*args, **kwargs)
-        self.name = self.__class__.__name__
-

@@ -8,7 +8,7 @@ import requests
 from robotpageobjects import Page
 
 from scenarios.po.result_component import ResultPage, ResultPageWithDOMStrategyLocator, HomePage, \
-    HomePageWithDOMAdvancedToggler, TwoComponentManagersPage
+    HomePageWithDOMAdvancedToggler, TwoComponentsPage
 from scenarios.po.loggingpage import LoggingPage
 from basetestcase import BaseTestCase
 
@@ -242,7 +242,7 @@ class ComponentTestCase(BaseTestCase):
         self.result_page_with_dom_strategy_locator = ResultPageWithDOMStrategyLocator()
         self.homepage = HomePage()
         self.homepage_with_dom_toggler = HomePageWithDOMAdvancedToggler()
-        self.two_comp_page = TwoComponentManagersPage()
+        self.two_comp_page = TwoComponentsPage()
 
 
     def test_selenium_implicit_wait_not_reset_within_component(self):
@@ -304,14 +304,14 @@ class ComponentTestCase(BaseTestCase):
         # because we already feel confident that page objects perform the same
         # in both contexts, as the other tests show.
         self.homepage.open()
-        search_component = self.homepage.search_component
+        search_component = self.homepage.search
 
         self.homepage.textfield_value_should_be("id=q", "", "The search component's input doesn't start blank")
         search_component.set_search_term("foo")
         self.homepage.textfield_value_should_be("id=q", "foo", "Search component can't set a search value")
 
         # Access a sub component
-        advanced_option_toggler_component = search_component.advanced_option_toggler_component
+        advanced_option_toggler_component = search_component.advancedoptiontoggler
 
         self.homepage.element_should_not_be_visible("id=advanced-search-content")
         advanced_option_toggler_component.open()
@@ -323,13 +323,13 @@ class ComponentTestCase(BaseTestCase):
         # should be interpreted with reference to the parent's reference_webelement.
 
         self.homepage_with_dom_toggler.open()
-        search_component = self.homepage_with_dom_toggler.search_component
+        search_component = self.homepage_with_dom_toggler.search
 
-        advanced_option_toggler_component = search_component.advanced_option_toggler_component
+        advanced_option_toggler_component = search_component.advancedoptiontoggler
 
     def test_use_selectors_to_get_non_child_element(self):
         self.homepage.open()
-        toggler = self.homepage.search_component.advanced_option_toggler_component
+        toggler = self.homepage.search.advancedoptiontoggler
         toggler.open()
         self.assertEquals(toggler.advanced_text, "These are advanced options")
 
@@ -348,6 +348,12 @@ class ComponentTestCase(BaseTestCase):
             attr_err_raised = True
 
         self.assertFalse(attr_err_raised, "AttributeError raised when trying to call log() from a component")
+
+    def test_page_inherits_super_pages_components(self):
+        pass
+
+    def test_page_overrides_super_pages_components(self):
+        pass
 
     def tearDown(self):
         super(ComponentTestCase, self).tearDown()
