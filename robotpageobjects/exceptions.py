@@ -50,3 +50,10 @@ class KeywordReturnsNoneError(ValueError):
     return anything, or returns None.
     """
     pass
+
+
+class ComponentError(KeyError):
+    """
+    Raised when there is an issue retrieving instances of a component.
+    """
+    pass

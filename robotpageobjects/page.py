@@ -213,22 +213,22 @@ def robot_alias(stub):
     return _Keywords.robot_alias(stub)
 
 
-class Override(str):
+class Override(object):
     pass
 
-
-class SelectorsDict(dict):
+class KeyUniquenessDict(dict):
     """
     Wrap dict to add the ability to enforce key uniqueness.
     """
 
     def merge(self, other_dict, from_subclass=False):
         """
-        Merge in selectors from another dictionary. Don't allow duplicate keys.
+        Merge in values (selectors or components) from another dictionary.
+        Don't allow duplicate keys.
         If from_subclass is True, allow subclasses to override parent classes.
         If they attempt to override without explicitly using the Override class,
         allow the override but raise a warning.
-        :param other_dict: The dictionary to merge into the SelectorsDict object.
+        :param other_dict: The dictionary to merge into the KeyUniquenessDict object.
         :type other_dict: dict
         :returns: None
         """
@@ -236,16 +236,28 @@ class SelectorsDict(dict):
             if key in self:
                 if from_subclass:
                     if not isinstance(key, Override):
-                        warnings.warn("Key \"%s\" is defined in an ancestor class. \
+                        warnings.warn("%s key \"%s\" is defined in an ancestor class. \
                                        Using the value \"%s\" defined in the subclass.\
                                        To prevent this warning, use robotpageobjects.Override(\"%s\")." % (
-                            key, value, key),
+                            self.dict_type, key, value, key),
                                       exceptions.KeyOverrideWarning)
 
                 else:
                     raise exceptions.DuplicateKeyError("Key \"%s\" is defined by two parent classes. \
-                                            Only subclasses can override selector keys." % key)
-            self[str(key)] = value
+                                            Only subclasses can override %s keys." % (key, self.dict_type))
+            self.add(key, value)
+
+
+class SelectorsDict(KeyUniquenessDict):
+    dict_type = "selector"
+    def add(self, key, value):
+        self[str(key)] = value
+
+
+class ComponentsDict(KeyUniquenessDict):
+    dict_type = "component"
+    def add(self, key, value):
+        self[key] = value
 
 
 class _PageMeta(type):
@@ -382,6 +394,80 @@ class _S2LWrapper(Selenium2Library):
         """
         return self.driver
 
+class _ComponentsManager(_S2LWrapper):
+    """
+
+    """
+    def __init__(self, *args, **kwargs):
+        super(_ComponentsManager, self).__init__(*args, **kwargs)
+        self.components = self._get_class_components()
+
+    def _get_class_components(self):
+        def __get_class_components(klass):
+            all_components = ComponentsDict()
+            own_components = klass.__dict__.get("components", {})
+
+            # Get all the selectors dicts defined by the bases
+            base_dicts = [__get_class_components(base) for base in klass.__bases__ if hasattr(base, "components")]
+
+            # Add the selectors for the bases to the return dict
+            [all_components.merge(base_dict) for base_dict in base_dicts]
+
+            # Update the return dict with this class's selectors, overriding the bases
+            all_components.merge(own_components, from_subclass=True)
+            return all_components
+
+        return __get_class_components(self.__class__)
+
+    @not_keyword
+    def get_instance(self, component_class):
+
+        """ Gets a page component's instance.
+        Use when you know you will be returning one
+        instance of a component. If there are none on the page,
+        returns None.
+
+        :param component_class: The page component class
+        """
+
+        els = self.get_instances(component_class)
+        try:
+            ret = els[0]
+        except KeyError:
+            ret = None
+
+        return ret
+
+    @not_keyword
+    def get_instances(self, component_class):
+        """ Gets a page component's instances as a list
+        Use when you know you will be returning at least two
+        instances of a component. If there are none on the page
+        returns an empty list.
+
+        :param component_class: The page component class
+        """
+        try:
+            return [component_class(reference_webelement) for reference_webelement in
+                self.get_reference_elements(self.components[component_class])]
+        except KeyError:
+            raise exceptions.ComponentError("You tried to retrieve instances of a component not defined for this class.")
+
+    @not_keyword
+    def get_reference_elements(self, locator):
+        """
+        Get a list of reference elements associated with the component class.
+        :param component_class: The page component class
+        """
+
+        # TODO: Yuch. If we call find_element, we get screenshot warnings relating to DCLT-659, DCLT-726,
+        # browser isn't open yet, and when get_keyword_names uses inspect.getmembers, that calls
+        # any methods defined as properties with @property, but the browser isn't open yet, so it
+        # tries to create a screenshot, which it can't do, and thus throws warnings. Instead we call
+        # the private _element_find, which is not a keyword.
+
+        component_elements = self._element_find(locator, False, True)
+        return component_elements
 
 class _SelectorsManager(_S2LWrapper):
     """
@@ -564,7 +650,7 @@ class _SelectorsManager(_S2LWrapper):
         return self._element_find(locator, False, required, **kwargs)
 
 
-class _BaseActions(_SelectorsManager):
+class _BaseActions(_SelectorsManager, _ComponentsManager):
     """
     Helper class that defines actions for PageObjectLibrary.
     """
@@ -575,8 +661,8 @@ class _BaseActions(_SelectorsManager):
         """
         Initializes the options used by the actions defined in this class.
         """
-
-        super(_BaseActions, self).__init__(*args, **kwargs)
+        _ComponentsManager.__init__(self, *args, **kwargs)
+        _SelectorsManager.__init__(self, *args, **kwargs)
 
         self._option_handler = OptionHandler()
         self._is_robot = Context.in_robot()
