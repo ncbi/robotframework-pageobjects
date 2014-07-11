@@ -1,6 +1,8 @@
 from po import selectors_page
 import unittest
+from nose.tools import raises
 from robotpageobjects.exceptions import SelectorError
+
 
 class FindElementsTestCase(unittest.TestCase):
     def setUp(self):
@@ -19,14 +21,9 @@ class FindElementsTestCase(unittest.TestCase):
 
         self.assertFalse(failed, "search-button should locate an element.")
 
+    @raises(SelectorError)
     def test_find_element_multiple(self):
-        failed = False
-        try:
-            self.page.find_element("inputs")
-        except SelectorError:
-            failed = True
-
-        self.assertTrue(failed, "find_element should throw an error if matches multiple elements")
+        self.page.find_element("inputs")
 
     def tearDown(self):
         self.page.close()
