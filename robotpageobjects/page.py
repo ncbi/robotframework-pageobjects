@@ -549,10 +549,10 @@ class _SelectorsManager(_S2LWrapper):
         :returns: WebElement instance
         """
         ret = self._element_find(locator, first_only=False, required=required, **kwargs)
-        if isinstance(ret, (list, tuple)):
+        if len(ret) > 1:
             raise exceptions.SelectorError(
                 "\"%s\" found more than one element. If this is expected, use \"find_elements\" instead" % locator)
-        return
+        return ret[0]
 
     @not_keyword
     def find_elements(self, locator, required=True, **kwargs):
