@@ -287,6 +287,11 @@ class _ComponentsManagerMeta(KeywordGroupMetaClass):
             classdict[name+"s"] = property(lambda self: self.get_instances(component_class))
             classdict[name] = property(lambda self: self.get_instance(component_class))
 
+    def __new__(cls, name, bases, classdict):
+        print(name)
+        cls._set_components(bases, classdict)
+        return KeywordGroupMetaClass.__new__(cls, name, bases, classdict)
+
 
 class _PageMeta(_ComponentsManagerMeta):
     """Meta class that allows decorating of all page object methods
@@ -365,10 +370,7 @@ class _PageMeta(_ComponentsManagerMeta):
                 classdict[member_name] = _PageMeta.must_return(classdict[member_name])
 
         cls._fix_docstrings(bases)
-
-        cls._set_components(bases, classdict)
-
-        return type.__new__(cls, name, bases, classdict)
+        return _ComponentsManagerMeta.__new__(cls, name, bases, classdict)
 
 
 class _S2LWrapper(Selenium2Library):
