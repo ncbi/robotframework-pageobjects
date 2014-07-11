@@ -796,7 +796,7 @@ class _BaseActions(_SelectorsManager):
         super(_BaseActions, self).go_to(resolved_url)
         return self
 
-    def open(self, enlarge=True, *args):
+    def open(self, *args):
         """
         Wrapper for Selenium2Library's open_browser() that calls resolve_url for url logic and self.browser.
         It also deletes cookies after opening the browser.
@@ -823,8 +823,6 @@ class _BaseActions(_SelectorsManager):
 
         If no `uri_var` is passed the page object tries to open the browser at its uri attribute.
 
-        :param enlarge: If set to True, sets the new browser dimensions to 1920x1080
-        :type enlarge: Boolean
         :param delete_cookies: If set to True, deletes browser's cookies when called.
         :type delete_cookies: Boolean
         :returns: _BaseActions instance
@@ -851,8 +849,7 @@ class _BaseActions(_SelectorsManager):
         else:
             self.open_browser(resolved_url, self.browser)
 
-        if enlarge:
-            self.get_current_browser().set_window_size(1920, 1080)
+        self.get_current_browser().set_window_size(1920, 1080)
 
         self.log("PO_BROWSER: %s" % (str(self.get_current_browser())), is_console=False)
 
