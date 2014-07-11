@@ -36,7 +36,7 @@ class ResultComponentManagerWithDOMStrategyLocator(ResultComponentManager):
     @property
     def result(self):
         return self.get_instance(ResultComponent, "dom=window.jQuery('#results li.result:lt(2)')")
-    
+
     @property
     def results(self):
         return self.get_instances(ResultComponent, "dom=window.jQuery('#results li.result:lt(2)')")
