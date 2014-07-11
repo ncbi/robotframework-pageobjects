@@ -117,3 +117,31 @@ class HomePage(Page, SearchComponentManager):
 class HomePageWithDOMAdvancedToggler(Page, SearchComponentWithDOMAdvancedTogglerManager):
     uri = "/site/index.html"
 
+
+class BodyComponent(Component):
+    pass
+
+
+class ParaComponent(Component):
+    pass
+
+
+class BodyComponentManager(ComponentManager):
+    locator = "css=body"
+
+    @property
+    def body(self):
+        return self.get_instance(BodyComponent)
+
+
+class ParaComponentManager(ComponentManager):
+    locator = "css=p"
+
+    @property
+    def paras(self):
+        return self.get_instances(ParaComponent)
+
+
+class TwoComponentManagersPage(Page, BodyComponentManager, ParaComponentManager):
+    uri = "/site/index.html"
+

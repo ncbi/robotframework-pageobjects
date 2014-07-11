@@ -8,7 +8,7 @@ import requests
 from robotpageobjects import Page
 
 from scenarios.po.result_component import ResultPage, ResultPageWithDOMStrategyLocator, HomePage, \
-    HomePageWithDOMAdvancedToggler
+    HomePageWithDOMAdvancedToggler, TwoComponentManagersPage
 from scenarios.po.loggingpage import LoggingPage
 from basetestcase import BaseTestCase
 
@@ -242,6 +242,7 @@ class ComponentTestCase(BaseTestCase):
         self.result_page_with_dom_strategy_locator = ResultPageWithDOMStrategyLocator()
         self.homepage = HomePage()
         self.homepage_with_dom_toggler = HomePageWithDOMAdvancedToggler()
+        self.two_comp_page = TwoComponentManagersPage()
 
 
     def test_selenium_implicit_wait_not_reset_within_component(self):
@@ -332,11 +333,18 @@ class ComponentTestCase(BaseTestCase):
         toggler.open()
         self.assertEquals(toggler.advanced_text, "These are advanced options")
 
+    def test_page_inherits_from_multiple_components(self):
+
+        paras = self.two_comp_page.open().paras
+        self.assertTrue(len(paras) > 1, "Locator for body component is being used, so not finding "
+                                                          "more than one paragraph component on page")
+
     def tearDown(self):
         super(ComponentTestCase, self).tearDown()
         self.result_page_with_str_locator.close()
         self.result_page_with_dom_strategy_locator.close()
         self.homepage.close()
+        self.two_comp_page.close()
 
 
 class KeywordsTestCase(BaseTestCase):
