@@ -17,6 +17,7 @@ class BaseTestCase(unittest.TestCase):
 
     test_dir = os.path.dirname(os.path.realpath(__file__))
     scenario_dir = os.path.join(test_dir, "scenarios")
+    po_dir = os.path.join(scenario_dir, "po")
 
     base_file_url = "file:///%s/scenarios" % test_dir.replace("\\", "/")
     site_under_test_file_url = "%s/site/index.html" % base_file_url
@@ -183,6 +184,8 @@ class BaseTestCase(unittest.TestCase):
         out = " ".join(com)
         # Splice out trailing new line
         out = out[:-1]
+
+        print out
 
         return Ret(cmd, code, out, xmldoc=dom)
 

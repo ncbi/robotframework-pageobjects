@@ -323,7 +323,7 @@ class ComponentTestCase(BaseTestCase):
         # should be interpreted with reference to the parent's reference_webelement.
 
         self.homepage_with_dom_toggler.open()
-        search_component = self.homepage_with_dom_toggler.search
+        search_component = self.homepage_with_dom_toggler.searchcomponentwithdomadvancedtoggler
         advanced_option_toggler_component = search_component.advancedoptiontoggler
 
     def test_use_selectors_to_get_non_child_element(self):
@@ -361,10 +361,13 @@ class ComponentTestCase(BaseTestCase):
         paras = self.two_comp_page.paras
         self.assertEqual(len(paras), 1, "Overridden locator for paras should return just the last one")
 
-    @raises(exceptions.KeyOverrideWarning)
     def test_page_override_without_override_class_raises_warning(self):
-        class TwoComponentsSubPageWithoutOverride(TwoComponentsPage):
-            components = {ParaComponent: "css=p:last-child"}
+        run = self.run_scenario("test_page_override_without_override_class.py")
+        orig_pythonpath = os.environ.get("PYTHONPATH", None)
+        os.environ["PYTHONPATH"] = self.po_dir
+        print os.environ["PYTHONPATH"]
+        self.assert_run(run, expected_returncode=0, search_output="KeyOverrideWarning")
+        os.environ["PYTHONPATH"] = orig_pythonpath
 
     @raises(exceptions.ComponentWarning)
     def test_component_with_singular_property_defined(self):
