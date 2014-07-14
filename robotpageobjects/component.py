@@ -1,4 +1,6 @@
-from page import ElementFinder, _BaseActions, not_keyword
+from .base import _BaseActions, not_keyword
+from Selenium2Library.locators.elementfinder import ElementFinder
+
 
 
 class _ComponentElementFinder(ElementFinder):
