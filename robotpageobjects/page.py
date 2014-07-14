@@ -169,7 +169,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         # (by checking it and its base classes).
 
         for name in dir(self):
-            if _Keywords.is_obj_keyword_by_name(name, self):
+            is_keyword = _Keywords.is_obj_keyword_by_name(name, self)
+            if is_keyword:
                 obj = getattr(self, name)
                 in_s2l_base = False
                 func = obj.__func__  # Get the unbound function for the method

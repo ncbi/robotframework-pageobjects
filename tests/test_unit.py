@@ -369,6 +369,24 @@ class KeywordTestCase(BaseTestCase):
         self.assertFalse(is_obj_keyword_by_name("foobarbatdaniel", Page))
 
 
+    def test_page_property_raises_exception(self):
+
+        class MyPage(Page):
+
+            @property
+            def some_property(self):
+                raise Exception()
+
+        exc_raised = False
+        try:
+            MyPage().get_keyword_names()
+        except:
+            exc_raised = True
+
+        self.assertFalse(exc_raised, "An exception was raised when trying to access a page object property that "
+                                     "raises an exception itself")
+
+
 class LoggingLevelsTestCase(BaseTestCase):
     # Tests protected method Page._get_normalized_logging_levels, which given a
     # String logging level should return a tuple of the attempted string logging level
