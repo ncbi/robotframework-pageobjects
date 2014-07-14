@@ -73,6 +73,10 @@ class SmokeTestCase(BaseTestCase):
         run = self.run_scenario("test_no_uri.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=1, search_output='must have a "uri" attribute set')
 
+    def test_enlarge_browser_on_open(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_enlarge_browser_on_open.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")
 
 class SauceTestCase(BaseTestCase):
     """

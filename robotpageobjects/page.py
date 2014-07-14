@@ -110,7 +110,6 @@ class _PageMeta(_ComponentsManagerMeta):
         return _ComponentsManagerMeta.__new__(cls, name, bases, classdict)
 
 
-
 class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     """
     Base RF page object.

@@ -35,7 +35,7 @@ class _Keywords(object):
             # It's either not a method or not an instance method, so
             # it can't be a keyword.
             name = obj.__name__
-        except AttributeError:
+        except Exception:
             return False
 
         if inspect.isroutine(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
@@ -795,6 +795,8 @@ class _BaseActions(_S2LWrapper):
         else:
             self.open_browser(resolved_url, self.browser)
 
+        self.set_window_size(1920, 1080)
+
         self.log("PO_BROWSER: %s" % (str(self.get_current_browser())), is_console=False)
 
         return self
@@ -893,7 +895,11 @@ class _BaseActions(_S2LWrapper):
         :type required: boolean
         :returns: WebElement instance
         """
-        return self._element_find(locator, True, required, **kwargs)
+        ret = self._element_find(locator, first_only=False, required=required, **kwargs)
+        if len(ret) > 1:
+            raise exceptions.SelectorError(
+                "\"%s\" found more than one element. If this is expected, use \"find_elements\" instead" % locator)
+        return ret[0]
 
     @not_keyword
     def find_elements(self, locator, required=True, **kwargs):
@@ -906,7 +912,7 @@ class _BaseActions(_S2LWrapper):
         :type required: boolean
         :returns: WebElement instance
         """
-        return self._element_find(locator, False, required, **kwargs)
+        return self._element_find(locator, first_only=False, required=required, **kwargs)
 
     def _is_locator_format(self, locator):
         """
