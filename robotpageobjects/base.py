@@ -35,7 +35,7 @@ class _Keywords(object):
             # It's either not a method or not an instance method, so
             # it can't be a keyword.
             name = obj.__name__
-        except Exception:
+        except AttributeError:
             return False
 
         if inspect.isroutine(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
@@ -51,7 +51,7 @@ class _Keywords(object):
         obj = None
         try:
             obj = getattr(klass, name)
-        except AttributeError:
+        except Exception:
             return False
 
         return cls.is_obj_keyword(obj)
