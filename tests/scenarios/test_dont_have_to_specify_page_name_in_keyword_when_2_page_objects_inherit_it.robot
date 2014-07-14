@@ -8,3 +8,4 @@ Should Not Have To Specify Page Name For A Keyword When Two Subclasses Inherit I
   Footer Text Should Be  I am the footer.
   Search For  dog
   Footer Text Should Be  I am the footer.
+  [Teardown]  Close Sub A
