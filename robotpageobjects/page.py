@@ -849,7 +849,7 @@ class _BaseActions(_SelectorsManager):
         else:
             self.open_browser(resolved_url, self.browser)
 
-        self.get_current_browser().set_window_size(1920, 1080)
+        self.set_window_size(1920, 1080)
 
         self.log("PO_BROWSER: %s" % (str(self.get_current_browser())), is_console=False)
 
