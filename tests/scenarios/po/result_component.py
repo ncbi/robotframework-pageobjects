@@ -91,4 +91,4 @@ class TwoComponentsPage(Page):
 
 
 class TwoComponentsSubPage(TwoComponentsPage):
-    components = {Override(ParaComponent): "css=p:last-child"}
+    components = {Override(ParaComponent): "css=p#advanced-search-content"}
