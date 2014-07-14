@@ -185,8 +185,6 @@ class BaseTestCase(unittest.TestCase):
         # Splice out trailing new line
         out = out[:-1]
 
-        print out
-
         return Ret(cmd, code, out, xmldoc=dom)
 
     def get_screen_shot_paths(self):

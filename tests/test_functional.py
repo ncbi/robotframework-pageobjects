@@ -365,7 +365,6 @@ class ComponentTestCase(BaseTestCase):
         run = self.run_scenario("test_page_override_without_override_class.py")
         orig_pythonpath = os.environ.get("PYTHONPATH", None)
         os.environ["PYTHONPATH"] = self.po_dir
-        print os.environ["PYTHONPATH"]
         self.assert_run(run, expected_returncode=0, search_output="KeyOverrideWarning")
         os.environ["PYTHONPATH"] = orig_pythonpath
 
