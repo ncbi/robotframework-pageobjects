@@ -827,7 +827,6 @@ class _BaseActions(_SelectorsManager):
 
         If no `uri_var` is passed the page object tries to open the browser at its uri attribute.
 
-
         :param delete_cookies: If set to True, deletes browser's cookies when called.
         :type delete_cookies: Boolean
         :returns: _BaseActions instance
@@ -853,6 +852,8 @@ class _BaseActions(_SelectorsManager):
 
         else:
             self.open_browser(resolved_url, self.browser)
+
+        self.set_window_size(1920, 1080)
 
         self.log("PO_BROWSER: %s" % (str(self.get_current_browser())), is_console=False)
 

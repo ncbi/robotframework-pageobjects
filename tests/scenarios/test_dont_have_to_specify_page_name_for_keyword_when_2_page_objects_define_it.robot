@@ -8,3 +8,4 @@ Should Not Have To Specify Page Name For A Keyword When Two Classes Define It
   Footer Text Should Be  I am the footer.
   Search For  dog
   Footer Text Should Be  I am the footer.
+  [Teardown]  Close A
