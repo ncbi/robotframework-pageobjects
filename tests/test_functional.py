@@ -5,10 +5,10 @@ import unittest
 from nose.tools import raises
 import requests
 
-from robotpageobjects import Page
+from robotpageobjects import Page, exceptions
 
 from scenarios.po.result_component import ResultPage, ResultPageWithDOMStrategyLocator, HomePage, \
-    HomePageWithDOMAdvancedToggler, TwoComponentsPage
+    HomePageWithDOMAdvancedToggler, TwoComponentsPage, ParaComponent, TwoComponentsSubPage
 from scenarios.po.loggingpage import LoggingPage
 from basetestcase import BaseTestCase
 
@@ -324,7 +324,6 @@ class ComponentTestCase(BaseTestCase):
 
         self.homepage_with_dom_toggler.open()
         search_component = self.homepage_with_dom_toggler.search
-
         advanced_option_toggler_component = search_component.advancedoptiontoggler
 
     def test_use_selectors_to_get_non_child_element(self):
@@ -334,10 +333,9 @@ class ComponentTestCase(BaseTestCase):
         self.assertEquals(toggler.advanced_text, "These are advanced options")
 
     def test_page_inherits_from_multiple_components(self):
-
         paras = self.two_comp_page.open().paras
         self.assertTrue(len(paras) > 1, "Locator for body component is being used, so not finding "
-                                                          "more than one paragraph component on page")
+                                        "more than one paragraph component on page")
     def test_calling_log_from_component(self):
         self.homepage.open()
 
@@ -350,10 +348,37 @@ class ComponentTestCase(BaseTestCase):
         self.assertFalse(attr_err_raised, "AttributeError raised when trying to call log() from a component")
 
     def test_page_inherits_super_pages_components(self):
-        pass
+        self.two_comp_page = TwoComponentsSubPage().open()
+        try:
+            body = self.two_comp_page.body
+            found = True
+        except AttributeError:
+            found = False
+        self.assertTrue(found, "body attribute should exist when inheriting from super class")
 
     def test_page_overrides_super_pages_components(self):
-        pass
+        self.two_comp_page = TwoComponentsSubPage().open()
+        paras = self.two_comp_page.paras
+        self.assertEqual(len(paras), 1, "Overridden locator for paras should return just the last one")
+
+    @raises(exceptions.KeyOverrideWarning)
+    def test_page_override_without_override_class_raises_warning(self):
+        class TwoComponentsSubPageWithoutOverride(TwoComponentsPage):
+            components = {ParaComponent: "css=p:last-child"}
+
+    @raises(exceptions.ComponentWarning)
+    def test_component_with_singular_property_defined(self):
+        class ResultPageWithSingularPropertyDefined(ResultPage):
+            @property
+            def result(self):
+                return None
+
+    @raises(exceptions.ComponentWarning)
+    def test_component_with_plural_property_defined(self):
+        class ResultPageWithPluralPropertyDefined(ResultPage):
+            @property
+            def results(self):
+                return []
 
     def tearDown(self):
         super(ComponentTestCase, self).tearDown()

@@ -1,4 +1,4 @@
-from robotpageobjects import Page, Component, robot_alias
+from robotpageobjects import Page, Component, robot_alias, Override
 from robot.utils import asserts
 
 class ResultComponent(Component):
@@ -89,3 +89,6 @@ class TwoComponentsPage(Page):
     components = {BodyComponent: "css=body", ParaComponent: "css=p"}
     uri = "/site/index.html"
 
+
+class TwoComponentsSubPage(TwoComponentsPage):
+    components = {Override(ParaComponent): "css=p:last-child"}

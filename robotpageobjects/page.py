@@ -27,7 +27,7 @@ from Selenium2Library import Selenium2Library
 from sig import get_method_sig
 from .context import Context
 from . import exceptions
-from .base import _ComponentsManagerMeta, not_keyword, _BaseActions, _Keywords, Override
+from .base import _ComponentsManagerMeta, not_keyword, robot_alias, _BaseActions, _Keywords, Override, _SelectorsManager, _ComponentsManager
 
 
 class _PageMeta(_ComponentsManagerMeta):
@@ -111,7 +111,7 @@ class _PageMeta(_ComponentsManagerMeta):
 
 
 
-class Page(_BaseActions):
+class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     """
     Base RF page object.
 
@@ -130,7 +130,9 @@ class Page(_BaseActions):
         Initializes the pageobject_name variable, which is used by the _Keywords class
         for determining aliases.
         """
-        super(Page, self).__init__(*args, **kwargs)
+        #super(Page, self).__init__(*args, **kwargs)
+        for base in Page.__bases__:
+            base.__init__(self, *args, **kwargs)
 
         # If a name is not explicitly set with the name attribute,
         # get it from the class name.

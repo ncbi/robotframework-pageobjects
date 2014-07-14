@@ -1,4 +1,4 @@
-from .base import _BaseActions, not_keyword
+from .base import _BaseActions, _SelectorsManager, _ComponentsManager, not_keyword
 from Selenium2Library.locators.elementfinder import ElementFinder
 
 
@@ -24,9 +24,10 @@ class _ComponentElementFinder(ElementFinder):
             return super(_ComponentElementFinder, self).find(self._reference_webelement, locator, tag=tag)
 
 
-class Component(_BaseActions):
+class Component(_BaseActions, _SelectorsManager, _ComponentsManager):
     def __init__(self, reference_webelement, *args, **kwargs):
-        super(Component, self).__init__(*args, **kwargs)
+        for base in Component.__bases__:
+            base.__init__(self, *args, **kwargs)
         self.reference_webelement = reference_webelement
 
         # Pass the root webelement to our overridden component finder class.

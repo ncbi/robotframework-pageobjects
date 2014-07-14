@@ -186,7 +186,9 @@ def robot_alias(stub):
 
 
 class Override(object):
-    pass
+    def __init__(self, obj):
+        self.obj = obj
+
 
 class KeyUniquenessDict(dict):
     """
@@ -205,9 +207,13 @@ class KeyUniquenessDict(dict):
         :returns: None
         """
         for key, value in other_dict.iteritems():
+            overridden = False
+            if isinstance(key, Override):
+                key = key.obj
+                overridden = True
             if key in self:
                 if from_subclass:
-                    if not isinstance(key, Override):
+                    if not overridden:
                         warnings.warn("%s key \"%s\" is defined in an ancestor class. \
                                        Using the value \"%s\" defined in the subclass.\
                                        To prevent this warning, use robotpageobjects.Override(\"%s\")." % (
@@ -278,8 +284,8 @@ class ComponentsDict(KeyUniquenessDict):
 
 class _ComponentsManagerMeta(KeywordGroupMetaClass):
     @classmethod
-    def _set_components(cls, bases, classdict):
-        def __get_components(cdict, cbases):
+    def _get_class_components(cls, bases, classdict):
+        def get_components(cdict, cbases):
             """
             Recursive function to merge ancestor classes' components into this one's.
             We start with the class being created, so klass is None. The
@@ -288,7 +294,7 @@ class _ComponentsManagerMeta(KeywordGroupMetaClass):
             own_components = cdict.get("components", {})
 
             # Get all the components dicts defined by the bases
-            base_dicts = [__get_components(base.__dict__, base.__bases__) for base in cbases if hasattr(base, "components")]
+            base_dicts = [get_components(base.__dict__, base.__bases__) for base in cbases if hasattr(base, "components")]
 
             # Add the components for the bases to the return dict
             [all_components.merge(base_dict) for base_dict in base_dicts]
@@ -296,27 +302,57 @@ class _ComponentsManagerMeta(KeywordGroupMetaClass):
             # Update the return dict with this class's selectors, overriding the bases
             all_components.merge(own_components, from_subclass=True)
             return all_components
+        return get_components(classdict, bases)
 
-        components = __get_components(classdict, bases)
+    @classmethod
+    def _set_components(cls, components, classdict):
+        """
+
+        """
+        def mkfnc_plural(klass):
+            """
+            Create closure to avoid changing value of component_class
+            """
+            return lambda self: self.get_instances(klass)
+
+        def mkfnc_singular(klass):
+            """
+            Singular version of mkfnc_plural
+            """
+            return lambda self: self.get_instance(klass)
+
         classdict["components"] = components
+
         for component_class in components:
+            # Loop through components for this class. Normalize each component name,
+            # and create plural and singular versions.
             name = re.sub("component$", "", component_class.__name__.lower())
-            classdict[name+"s"] = property(lambda self: self.get_instances(component_class))
-            classdict[name] = property(lambda self: self.get_instance(component_class))
+            plural_name = name+"s"
+            singular_name = name
+
+            # Then, if not already defined, assign each name as a property. If defined, raise a warning.
+            if plural_name in classdict:
+                raise exceptions.ComponentWarning("Not creating property %s, because there is already a class attribute with that name."
+                % plural_name)
+            else:
+                classdict[plural_name] = property(mkfnc_plural(component_class))
+            if singular_name in classdict:
+                raise exceptions.ComponentWarning("Not creating property %s, because there is already a class attribute with that name."
+                % plural_name)
+            else:
+                classdict[singular_name] = property(mkfnc_singular(component_class))
 
     def __new__(cls, name, bases, classdict):
-        print(name)
-        cls._set_components(bases, classdict)
+        components = cls._get_class_components(bases, classdict)
+        cls._set_components(components, classdict)
         return KeywordGroupMetaClass.__new__(cls, name, bases, classdict)
 
 
-class _ComponentsManager(_S2LWrapper):
+class _ComponentsManager(object):
     """
 
     """
     __metaclass__ = _ComponentsManagerMeta
-    def __init__(self, *args, **kwargs):
-        super(_ComponentsManager, self).__init__(*args, **kwargs)
 
     @not_keyword
     def get_instance(self, component_class):
@@ -369,7 +405,7 @@ class _ComponentsManager(_S2LWrapper):
         return component_elements
 
 
-class _SelectorsManager(_S2LWrapper):
+class _SelectorsManager(object):
     """
     Class to manage selectors, which map to S2L locators.
     This allows page object authors to define a class-level dict.
@@ -438,20 +474,8 @@ class _SelectorsManager(_S2LWrapper):
             # Update the return dict with this class's selectors, overriding the bases
             all_selectors.merge(own_selectors, from_subclass=True)
             return all_selectors
-
-        return __get_class_selectors(self.__class__)
-
-    def _is_locator_format(self, locator):
-        """
-        Ask Selenium2Library's ElementFinder if the locator uses
-        one of its supported prefixes.
-        :param locator: The locator to look up
-        :type locator: str
-
-        """
-        finder = self._element_finder
-        prefix = finder._parse_locator(locator)[0]
-        return prefix is not None or locator.startswith("//")
+        sels = __get_class_selectors(self.__class__)
+        return sels
 
     def resolve_selector(self, selector, **kwargs):
         """ Expands a selector template and returns a locator
@@ -484,73 +508,7 @@ class _SelectorsManager(_S2LWrapper):
             raise exceptions.SelectorError("Variables {vars} don't match template {template}".format(vars=kwargs,
                                                                                                      template=template))
 
-    @staticmethod
-    def _vars_match_template(template, vars):
-        """Validates that the provided variables match the template.
-        :param template: The template
-        :type template: str
-        :param vars: The variables to match against the template
-        :type vars: tuple or list
-        :returns: bool"""
-        keys = vars.keys()
-        keys.sort()
-        template_vars = list(uritemplate.variables(template))
-        template_vars.sort()
-        return template_vars == keys
-
-    def _element_find(self, locator, *args, **kwargs):
-        """
-        Override built-in _element_find() method and intelligently
-        determine the locator for a passed-in selector name.
-
-        Try to use _element_find with the
-        locator as is, then if a selector exists, try that.
-        :param locator: The Selenium2Library-style locator, or IFT selector.
-        :type locator: str
-        :returns: WebElement or list
-        """
-
-        if locator in self.selectors:
-            locator = self.resolve_selector(locator)
-
-        try:
-            return super(_SelectorsManager, self)._element_find(locator, *args, **kwargs)
-        except ValueError:
-            if not self._is_locator_format(locator):
-                # Not found, doesn't look like a locator, not in selectors dict
-                raise exceptions.SelectorError(
-                    "\"%s\" is not a valid locator. If this is a selector name, make sure it is spelled correctly." % locator)
-            else:
-                raise
-
-    @not_keyword
-    def find_element(self, locator, required=True, **kwargs):
-        """
-        Wraps Selenium2Library's protected _element_find() method to find single elements.
-        TODO: Incorporate selectors API into this.
-        :param locator: The Selenium2Library-style locator to use
-        :type locator: str
-        :param required: Optional parameter indicating whether an exception should be raised if no matches are found. Defaults to True.
-        :type required: boolean
-        :returns: WebElement instance
-        """
-        return self._element_find(locator, True, required, **kwargs)
-
-    @not_keyword
-    def find_elements(self, locator, required=True, **kwargs):
-        """
-        Wraps Selenium2Library's protected _element_find() method to find multiple elements.
-        TODO: Incorporate selectors API into this.
-        :param locator: The Selenium2Library-style locator to use
-        :type locator: str
-        :param required: Optional parameter indicating whether an exception should be raised if no matches are found. Defaults to True.
-        :type required: boolean
-        :returns: WebElement instance
-        """
-        return self._element_find(locator, False, required, **kwargs)
-
-
-class _BaseActions(_SelectorsManager, _ComponentsManager):
+class _BaseActions(_S2LWrapper):
     """
     Helper class that defines actions for PageObjectLibrary.
     """
@@ -561,8 +519,9 @@ class _BaseActions(_SelectorsManager, _ComponentsManager):
         """
         Initializes the options used by the actions defined in this class.
         """
-        _ComponentsManager.__init__(self, *args, **kwargs)
-        _SelectorsManager.__init__(self, *args, **kwargs)
+        #_ComponentsManager.__init__(self, *args, **kwargs)
+        #_SelectorsManager.__init__(self, *args, **kwargs)
+        super(_BaseActions, self).__init__(*args, **kwargs)
 
         self._option_handler = OptionHandler()
         self._is_robot = Context.in_robot()
@@ -897,3 +856,80 @@ class _BaseActions(_SelectorsManager, _ComponentsManager):
         :return: whether the element is visible
         """
         return self._is_visible(selector)
+
+    def _element_find(self, locator, *args, **kwargs):
+        """
+        Override built-in _element_find() method and intelligently
+        determine the locator for a passed-in selector name.
+
+        Try to use _element_find with the
+        locator as is, then if a selector exists, try that.
+        :param locator: The Selenium2Library-style locator, or IFT selector.
+        :type locator: str
+        :returns: WebElement or list
+        """
+
+        if locator in self.selectors:
+            locator = self.resolve_selector(locator)
+
+        try:
+            return super(_BaseActions, self)._element_find(locator, *args, **kwargs)
+        except ValueError:
+            if not self._is_locator_format(locator):
+                # Not found, doesn't look like a locator, not in selectors dict
+                raise exceptions.SelectorError(
+                    "\"%s\" is not a valid locator. If this is a selector name, make sure it is spelled correctly." % locator)
+            else:
+                raise
+
+    @not_keyword
+    def find_element(self, locator, required=True, **kwargs):
+        """
+        Wraps Selenium2Library's protected _element_find() method to find single elements.
+        TODO: Incorporate selectors API into this.
+        :param locator: The Selenium2Library-style locator to use
+        :type locator: str
+        :param required: Optional parameter indicating whether an exception should be raised if no matches are found. Defaults to True.
+        :type required: boolean
+        :returns: WebElement instance
+        """
+        return self._element_find(locator, True, required, **kwargs)
+
+    @not_keyword
+    def find_elements(self, locator, required=True, **kwargs):
+        """
+        Wraps Selenium2Library's protected _element_find() method to find multiple elements.
+        TODO: Incorporate selectors API into this.
+        :param locator: The Selenium2Library-style locator to use
+        :type locator: str
+        :param required: Optional parameter indicating whether an exception should be raised if no matches are found. Defaults to True.
+        :type required: boolean
+        :returns: WebElement instance
+        """
+        return self._element_find(locator, False, required, **kwargs)
+
+    def _is_locator_format(self, locator):
+        """
+        Ask Selenium2Library's ElementFinder if the locator uses
+        one of its supported prefixes.
+        :param locator: The locator to look up
+        :type locator: str
+
+        """
+        finder = self._element_finder
+        prefix = finder._parse_locator(locator)[0]
+        return prefix is not None or locator.startswith("//")
+
+    @staticmethod
+    def _vars_match_template(template, vars):
+        """Validates that the provided variables match the template.
+        :param template: The template
+        :type template: str
+        :param vars: The variables to match against the template
+        :type vars: tuple or list
+        :returns: bool"""
+        keys = vars.keys()
+        keys.sort()
+        template_vars = list(uritemplate.variables(template))
+        template_vars.sort()
+        return template_vars == keys
