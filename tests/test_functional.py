@@ -366,12 +366,15 @@ class ComponentTestCase(BaseTestCase):
         self.assertEqual(len(paras), 1, "Overridden locator for paras should return just the last one")
 
     def test_page_override_without_override_class_raises_warning(self):
-        run = self.run_scenario("test_page_override_without_override_class.py")
         orig_pythonpath = os.environ.get("PYTHONPATH", None)
         os.environ["PYTHONPATH"] = self.po_dir
-        print os.environ["PYTHONPATH"]
+        run = self.run_scenario("test_page_override_without_override_class.py")
+        if orig_pythonpath is not None:
+            os.environ["PYTHONPATH"] = orig_pythonpath
+        else:
+            del os.environ["PYTHONPATH"]
         self.assert_run(run, expected_returncode=0, search_output="KeyOverrideWarning")
-        os.environ["PYTHONPATH"] = orig_pythonpath
+
 
     @raises(exceptions.ComponentWarning)
     def test_component_with_singular_property_defined(self):
