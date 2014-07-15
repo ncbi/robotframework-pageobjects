@@ -301,6 +301,7 @@ class SelectorsTestCase(BaseTestCase):
 
         page = FooBarPage()
         selectors = page.selectors
+        print selectors
         self.assertEqual(selectors.get("foo"), "foo", "Selectors should contain 'foo' from BaseFoo.")
         self.assertEqual(selectors.get("bar"), "bar", "Selectors should contain 'bar' from BaseBar.")
         self.assertEqual(selectors.get("baz"), "baz", "Selector 'baz' should be overridden in FooBarPage.")
@@ -366,6 +367,24 @@ class KeywordTestCase(BaseTestCase):
         self.assertFalse(is_obj_keyword_by_name("get_current_browser", Page))
         self.assertFalse(is_obj_keyword_by_name("driver", Page))
         self.assertFalse(is_obj_keyword_by_name("foobarbatdaniel", Page))
+
+
+    def test_page_property_raises_exception(self):
+
+        class MyPage(Page):
+
+            @property
+            def some_property(self):
+                raise Exception()
+
+        exc_raised = False
+        try:
+            MyPage().get_keyword_names()
+        except:
+            exc_raised = True
+
+        self.assertFalse(exc_raised, "An exception was raised when trying to access a page object property that "
+                                     "raises an exception itself")
 
 
 class LoggingLevelsTestCase(BaseTestCase):

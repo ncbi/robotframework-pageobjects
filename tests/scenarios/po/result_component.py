@@ -1,4 +1,4 @@
-from robotpageobjects import Page, Component, robot_alias, ComponentManager
+from robotpageobjects import Page, Component, robot_alias, Override
 from robot.utils import asserts
 
 class ResultComponent(Component):
@@ -13,38 +13,16 @@ class ResultComponent(Component):
         return self.get_text("price el")
 
 
-class ResultComponentManager(ComponentManager):
-
-    locator = "css=ul#results li.result"
-
-    # Normally you would define "results" property,
-    # but here we define a "result" property too, just
-    # to test that get_instance() returns only
-    # one object. You would use
-    # get_instance() to return only one instance
-    # if you know you have only one component instance
-    # on the page.
-
-    @property
-    def result(self):
-        return self.get_instance(ResultComponent)
-
-    @property
-    def results(self):
-        return self.get_instances(ResultComponent)
-
-
-class ResultComponentManagerWithDOMStrategyLocator(ResultComponentManager):
-    locator = "dom=window.jQuery('#results li.result:lt(2)')"
-
-
-class ResultPage(Page, ResultComponentManager):
+class ResultPage(Page):
+    components = {ResultComponent: "css=ul#results li.result"}
 
     uri = "/site/result.html"
 
-class ResultPageWithDOMStrategyLocator(Page, ResultComponentManagerWithDOMStrategyLocator):
-    uri = "/site/result.html"
 
+class ResultPageWithDOMStrategyLocator(Page):
+    components = {ResultComponent: "dom=window.jQuery('#results li.result:lt(2)')"}
+
+    uri = "/site/result.html"
 
 
 class AdvancedOptionTogglerComponent(Component):
@@ -62,13 +40,6 @@ class AdvancedOptionTogglerComponent(Component):
         return self.get_text("advanced options")
 
 
-class AdvancedOptionTogglerComponentManager(ComponentManager):
-    locator = "id=advanced-options"
-
-    @property
-    def advanced_option_toggler_component(self):
-        return self.get_instance(AdvancedOptionTogglerComponent)
-
 class BaseSearchComponent(Component):
 
     selectors = {
@@ -80,46 +51,44 @@ class BaseSearchComponent(Component):
 
 
 
-class SearchComponent(BaseSearchComponent, AdvancedOptionTogglerComponentManager):
+class SearchComponent(BaseSearchComponent):
+    components = {AdvancedOptionTogglerComponent: "id=advanced-options"}
+
     @property
     def some_property(self):
         self.log("foo", is_console=False)
         return 1
 
 
-class SearchComponentManager(ComponentManager):
-
-    locator = "id=search-form"
-
-    @property
-    def search_component(self):
-        return self.get_instance(SearchComponent)
+class SearchComponentWithDOMAdvancedToggler(BaseSearchComponent):
+    components = {AdvancedOptionTogglerComponent: "dom=jQuery('#advanced-options')"}
 
 
-class AdvancedOptionTogglerComponentManagerWithDOMStrategy(AdvancedOptionTogglerComponentManager):
-
-    locator = "dom=jQuery('#advanced-options')"
-
-
-class SearchComponentWithDOMAdvancedToggler(BaseSearchComponent, AdvancedOptionTogglerComponentManagerWithDOMStrategy):
-    pass
-
-class SearchComponentWithDOMAdvancedTogglerManager(ComponentManager):
-
-    locator = "id=search-form"
-
-    @property
-    def search_component(self):
-        return self.get_instance(SearchComponentWithDOMAdvancedToggler)
-
-
-
-class HomePage(Page, SearchComponentManager):
+class HomePage(Page):
+    components = {SearchComponent: "id=search-form"}
     uri = "/site/index.html"
 
     def get_some_property(self):
-        return self.search_component.some_property
+        return self.search.some_property
 
-class HomePageWithDOMAdvancedToggler(Page, SearchComponentWithDOMAdvancedTogglerManager):
+
+class HomePageWithDOMAdvancedToggler(Page):
+    components = {SearchComponentWithDOMAdvancedToggler: "id=search-form"}
     uri = "/site/index.html"
 
+
+class BodyComponent(Component):
+    pass
+
+
+class ParaComponent(Component):
+    pass
+
+
+class TwoComponentsPage(Page):
+    components = {BodyComponent: "css=body", ParaComponent: "css=p"}
+    uri = "/site/index.html"
+
+
+class TwoComponentsSubPage(TwoComponentsPage):
+    components = {Override(ParaComponent): "css=p#advanced-search-content"}
