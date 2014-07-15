@@ -301,6 +301,7 @@ class SelectorsTestCase(BaseTestCase):
 
         page = FooBarPage()
         selectors = page.selectors
+        print selectors
         self.assertEqual(selectors.get("foo"), "foo", "Selectors should contain 'foo' from BaseFoo.")
         self.assertEqual(selectors.get("bar"), "bar", "Selectors should contain 'bar' from BaseBar.")
         self.assertEqual(selectors.get("baz"), "baz", "Selector 'baz' should be overridden in FooBarPage.")

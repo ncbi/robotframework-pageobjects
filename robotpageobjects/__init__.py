@@ -1,2 +1,4 @@
-from page import Page, Override, robot_alias, not_keyword, Component, ComponentManager
+from .base import Override, robot_alias, not_keyword
+from .page import Page
+from .component import Component
 
