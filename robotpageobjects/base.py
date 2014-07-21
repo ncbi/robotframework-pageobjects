@@ -870,6 +870,11 @@ class _BaseActions(_S2LWrapper):
         :type locator: str
         :returns: WebElement or list
         """
+        our_wait = kwargs.get("wait", self.selenium_implicit_wait)
+        if "wait" in kwargs:
+            del kwargs["wait"]
+
+        self.driver.implicitly_wait(our_wait)
 
         if locator in self.selectors:
             locator = self.resolve_selector(locator)
@@ -883,9 +888,11 @@ class _BaseActions(_S2LWrapper):
                     "\"%s\" is not a valid locator. If this is a selector name, make sure it is spelled correctly." % locator)
             else:
                 raise
+        finally:
+            self.driver.implicitly_wait(self.selenium_implicit_wait)
 
     @not_keyword
-    def find_element(self, locator, required=True, **kwargs):
+    def find_element(self, locator, required=True, wait=None, **kwargs):
         """
         Wraps Selenium2Library's protected _element_find() method to find single elements.
         TODO: Incorporate selectors API into this.
@@ -893,16 +900,18 @@ class _BaseActions(_S2LWrapper):
         :type locator: str
         :param required: Optional parameter indicating whether an exception should be raised if no matches are found. Defaults to True.
         :type required: boolean
+        :param implicit_wait: The implicit wait in seconds for the element to be visible. None means
+        it defaults to the implicit_wait set when the page object is instantiated (10 seconds).
         :returns: WebElement instance
         """
-        ret = self._element_find(locator, first_only=False, required=required, **kwargs)
+        ret = self._element_find(locator, first_only=False, required=required, wait=wait, **kwargs)
         if len(ret) > 1:
             raise exceptions.SelectorError(
                 "\"%s\" found more than one element. If this is expected, use \"find_elements\" instead" % locator)
         return ret[0]
 
     @not_keyword
-    def find_elements(self, locator, required=True, **kwargs):
+    def find_elements(self, locator, required=True, wait=None, **kwargs):
         """
         Wraps Selenium2Library's protected _element_find() method to find multiple elements.
         TODO: Incorporate selectors API into this.
@@ -912,7 +921,7 @@ class _BaseActions(_S2LWrapper):
         :type required: boolean
         :returns: WebElement instance
         """
-        return self._element_find(locator, first_only=False, required=required, **kwargs)
+        return self._element_find(locator, first_only=False, required=required, wait=wait, **kwargs)
 
     def _is_locator_format(self, locator):
         """
