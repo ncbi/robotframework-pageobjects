@@ -870,7 +870,11 @@ class _BaseActions(_S2LWrapper):
         :type locator: str
         :returns: WebElement or list
         """
-        our_wait = kwargs.get("wait", self.selenium_implicit_wait)
+
+
+        our_wait = self.selenium_implicit_wait if kwargs.get("wait") is None else kwargs["wait"]
+
+        # If wait is set, don't pass it along to the super classe's implementation, since it has none.
         if "wait" in kwargs:
             del kwargs["wait"]
 
@@ -904,6 +908,9 @@ class _BaseActions(_S2LWrapper):
         it defaults to the implicit_wait set when the page object is instantiated (10 seconds).
         :returns: WebElement instance
         """
+        print locator
+        print required
+        print wait
         ret = self._element_find(locator, first_only=False, required=required, wait=wait, **kwargs)
         if len(ret) > 1:
             raise exceptions.SelectorError(
