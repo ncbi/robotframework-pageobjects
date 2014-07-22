@@ -94,6 +94,7 @@ class BaseTestCase(unittest.TestCase):
     def set_baseurl_env(self, base_file=True, arbitrary_base=None):
         val = self.base_file_url if base_file else arbitrary_base
         os.environ["PO_BASEURL"] = val
+        return os.environ.get("PO_BASEURL")
 
     def run_scenario(self, scenario, *args, **kwargs):
         """
