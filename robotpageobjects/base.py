@@ -904,8 +904,9 @@ class _BaseActions(_S2LWrapper):
         :type locator: str
         :param required: Optional parameter indicating whether an exception should be raised if no matches are found. Defaults to True.
         :type required: boolean
-        :param implicit_wait: The implicit wait in seconds for the element to be visible. None means
-        it defaults to the implicit_wait set when the page object is instantiated (10 seconds).
+        :param wait: Maximum Time in seconds to wait until the element exists. By default the implicit wait is 10
+        seconds for any element finding method, including Se2lib methods. Passing a wait to find_element overrides
+        this.
         :returns: WebElement instance
         """
         ret = self._element_find(locator, first_only=False, required=required, wait=wait, **kwargs)
@@ -923,6 +924,9 @@ class _BaseActions(_S2LWrapper):
         :type locator: str
         :param required: Optional parameter indicating whether an exception should be raised if no matches are found. Defaults to True.
         :type required: boolean
+        :param wait: Maximum Time in seconds to wait until the element exists. By default the implicit wait is 10
+        seconds for any element finding method, including Se2lib methods. Passing a wait to find_element overrides
+        this.
         :returns: WebElement instance
         """
         return self._element_find(locator, first_only=False, required=required, wait=wait, **kwargs)
