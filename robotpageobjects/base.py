@@ -908,9 +908,6 @@ class _BaseActions(_S2LWrapper):
         it defaults to the implicit_wait set when the page object is instantiated (10 seconds).
         :returns: WebElement instance
         """
-        print locator
-        print required
-        print wait
         ret = self._element_find(locator, first_only=False, required=required, wait=wait, **kwargs)
         if len(ret) > 1:
             raise exceptions.SelectorError(

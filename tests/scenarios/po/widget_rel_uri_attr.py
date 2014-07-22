@@ -31,6 +31,12 @@ class Page(Page):
         asserts.assert_equals(text, "I took about 2 seconds to be inserted")
         return self
 
+    def delayed_content_should_exist_explicit(self):
+        # This should raise a ValueError, since we told find_element not to wait.
+        text = self.find_element("delayed content", wait=0).text
+        asserts.assert_equals(text, "I took about 2 seconds to be inserted")
+        return self
+
     def get_templated_selector_element_text(self):
         loc = self.resolve_selector("another-paragraph", klass="ct", id="foo" )
         return self.get_text(loc)
