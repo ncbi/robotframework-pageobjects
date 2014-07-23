@@ -42,7 +42,6 @@ class GoogleSearchResultPage(Page):
 
     @robot_alias("click_result_on__name__")
     def click_result(self, i):
-        self.wait_until_page_contains_element("result links")
         self.find_elements("result links")[int(i)-1].click()
         return DestinationPage()
 
@@ -58,7 +57,6 @@ class DestinationPage(Page):
     def title_should_contain(self, str, ignore_case=True):
         ref_str = str.lower() if ignore_case else str
         ref_str = ref_str.encode("utf-8")
-        self.wait_until_page_contains_element("title element")
         title = self.get_title().encode("utf-8").lower()
         asserts.assert_true(ref_str in title, "%s does not contain %s" %(title, ref_str))
         return self
