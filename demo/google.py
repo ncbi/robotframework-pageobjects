@@ -38,7 +38,6 @@ class GoogleSearchResultPage(Page):
 
     selectors = {
         "nth result link": "xpath=//li[@class='g'][{n}]//div//h3//a",
-        "result links": "css=li.g div h3 a",
     }
 
     @robot_alias("click_result_on__name__")
