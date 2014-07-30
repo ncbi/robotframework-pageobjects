@@ -125,8 +125,7 @@ def do_monkeypatches():
         the `introduction`.
         
         Monkey patch: added support for negative indexes (QAR-48165).  
-        Note that get_table_cell directly maps to the keyword 
-        'Table Cell Should Contain'.
+        get_table_cell is used by the built-in keyword 'Table Cell Should Contain'.
         """
         row = int(row)
         row_index = row
