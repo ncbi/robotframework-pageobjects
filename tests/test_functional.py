@@ -434,8 +434,8 @@ class KeywordsTestCase(BaseTestCase):
                                 variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
-    def test_negative_index_in_table_contains_row(self):
-        run = self.run_scenario("test_negative_index_in_table_contains_row.robot",
+    def test_negative_index_in_table_keywords(self):
+        run = self.run_scenario("test_negative_index_in_table_keywords.robot",
                                 variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
