@@ -176,6 +176,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                 try:
                     func = obj.__func__  # Get the unbound function for the method
                 except AttributeError:
+                    # ignore unbound methods included in libraries
                     continue
                 # Check if that function is defined in Selenium2Library
                 if func in Selenium2Library.__dict__.values():
