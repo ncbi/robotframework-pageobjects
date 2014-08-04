@@ -173,7 +173,10 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             if is_keyword:
                 obj = getattr(self, name)
                 in_s2l_base = False
-                func = obj.__func__  # Get the unbound function for the method
+                try:
+                    func = obj.__func__  # Get the unbound function for the method
+                except AttributeError:
+                    continue
                 # Check if that function is defined in Selenium2Library
                 if func in Selenium2Library.__dict__.values():
                     in_s2l_base = True
