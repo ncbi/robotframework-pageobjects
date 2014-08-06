@@ -32,11 +32,6 @@ class OptionHandler(object):
     def __init__(self):
         self._opts = {}
         self._in_robot = Context().in_robot()
-        # try:
-        #     BuiltIn().get_variables()
-        #     self._in_robot = True
-        # except AttributeError:
-        #     self._in_robot = False
         if self._new_called == 1:
             self._populate_opts(self._in_robot)
 
