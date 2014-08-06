@@ -38,23 +38,16 @@ class OptionHandler(object):
         # except AttributeError:
         #     self._in_robot = False
         if self._new_called == 1:
-            if self._in_robot:
-                # In Robot...
-                vars = BuiltIn().get_variables()
-                self._opts.update(self._get_opts_from_var_file())
-                self._opts.update(self._get_opts_from_env_vars())
-                self._opts.update(vars)
-
-            else:
-                # Not in Robot...
-                self._opts.update(self._get_opts_from_var_file())
-                self._opts.update(self._get_opts_from_env_vars())
+            self._populate_opts(self._in_robot)
 
     def __repr__(self):
         return "<robotpageobjects.optionhandler.OptionHandler object at %s: %s>" % (id(self), self._opts)
 
     def _populate_opts(self, robot=True):
-        pass
+        self._opts.update(self._get_opts_from_var_file())
+        self._opts.update(self._get_opts_from_env_vars())
+        if robot:
+            self._opts.update(BuiltIn().get_variables())
 
     def _get_vars_from_file(self):
         ret = {}
