@@ -32,6 +32,8 @@ class InheritFromSe2LibTestCase(BaseTestCase):
 
 
 class OptionHandlerTestCase(BaseTestCase):
+    path_to_var_file = os.path.join(BaseTestCase.test_dir, "vars.py")
+
     def test_is_singleton(self):
         ids = []
         for i in range(3):
@@ -60,7 +62,7 @@ class OptionHandlerTestCase(BaseTestCase):
         handler.get("PO_VAR_FILE")
 
     def test_no_robot_var_file(self):
-        os.environ["PO_VAR_FILE"] = "%s/vars.py" % self.test_dir
+        os.environ["PO_VAR_FILE"] = self.path_to_var_file
         handler = OptionHandler()
         self.assertEquals(handler.get("author"), "Dickens")
         self.assertEquals(handler.get("dynamic"), "Python")
@@ -70,6 +72,54 @@ class OptionHandlerTestCase(BaseTestCase):
         mock_get_variables.return_value = {"${browser}": "foobar"}
         handler = OptionHandler()
         self.assertEquals(handler.get("browser"), "foobar")
+
+    @patch.object(BuiltIn, "get_variables")
+    def test_robot_can_get_vars_from_env(self, mock_get_variables):
+        os.environ["PO_BROWSER"] = "opera"
+        try:
+            handler = OptionHandler()
+            self.assertEquals(handler.get("browser"), "opera")
+        except Exception, e:
+            raise e
+        finally:
+            del os.environ["PO_BROWSER"]
+
+    @patch.object(BuiltIn, "get_variables")
+    def test_robot_env_overrides_var_file(self, mock_get_variables):
+        os.environ["PO_AUTHOR"] = "Twain"
+        os.environ["PO_VAR_FILE"] = self.path_to_var_file
+        try:
+            handler = OptionHandler()
+            self.assertEquals(handler.get("author"), "Twain")
+        except Exception, e:
+            raise e
+        finally:
+            del os.environ["PO_AUTHOR"]
+            del os.environ["PO_VAR_FILE"]
+
+    @patch.object(BuiltIn, "get_variables")
+    def test_robot_cmd_line_var_overrides_env_var(self, mock_get_variables):
+        os.environ["PO_BROWSER"] = "firefox"
+        mock_get_variables.return_value = {"${browser}": "chrome"}
+        try:
+            handler = OptionHandler()
+            self.assertEquals(handler.get("browser"), "chrome")
+        except Exception, e:
+            raise e
+        finally:
+            del os.environ["PO_BROWSER"]
+
+    @patch.object(BuiltIn, "get_variables")
+    def test_robot_cmd_line_var_overrides_var_file(self, mock_get_variables):
+        mock_get_variables.return_value = {"${author}": "Twain"}
+        os.environ["PO_VAR_FILE"] = self.path_to_var_file
+        try:
+            handler = OptionHandler()
+            self.assertEquals(handler.get("author"), "Twain")
+        except Exception, e:
+            raise e
+        finally:
+            del os.environ["PO_VAR_FILE"]
 
 
 class SauceTestCase(BaseTestCase):
