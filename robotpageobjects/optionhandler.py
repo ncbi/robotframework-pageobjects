@@ -31,12 +31,12 @@ class OptionHandler(object):
 
     def __init__(self):
         self._opts = {}
-        try:
-            BuiltIn().get_variables()
-            self._in_robot = True
-        except AttributeError:
-            self._in_robot = False
-
+        self._in_robot = Context().in_robot()
+        # try:
+        #     BuiltIn().get_variables()
+        #     self._in_robot = True
+        # except AttributeError:
+        #     self._in_robot = False
         if self._new_called == 1:
             if self._in_robot:
                 # In Robot...
@@ -44,6 +44,7 @@ class OptionHandler(object):
                 self._opts.update(self._get_opts_from_var_file())
                 self._opts.update(self._get_opts_from_env_vars())
                 self._opts.update(vars)
+
             else:
                 # Not in Robot...
                 self._opts.update(self._get_opts_from_var_file())

@@ -38,9 +38,9 @@ class Context(object):
     def in_robot():
         #return EXECUTION_CONTEXTS.current is not None
         try:
-            BuiltIn().get_variables
+            BuiltIn().get_variables()
             return True
-        except AttributeError:
+        except:
             return False
 
     @classmethod
