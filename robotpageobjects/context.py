@@ -36,7 +36,6 @@ class Context(object):
 
     @staticmethod
     def in_robot():
-        #return EXECUTION_CONTEXTS.current is not None
         try:
             BuiltIn().get_variables()
             return True
