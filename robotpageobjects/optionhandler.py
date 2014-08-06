@@ -29,6 +29,31 @@ class OptionHandler(object):
 
         return cls._instance
 
+    def __init__(self):
+        self._opts = {}
+        try:
+            BuiltIn().get_variables()
+            self._in_robot = True
+        except AttributeError:
+            self._in_robot = False
+
+        if self._new_called == 1:
+            if self._in_robot:
+                # In Robot...
+                vars = BuiltIn().get_variables()
+                self._opts.update(self._get_opts_from_var_file())
+                self._opts.update(self._get_opts_from_env_vars())
+                self._opts.update(vars)
+            else:
+                # Not in Robot...
+                self._opts.update(self._get_opts_from_var_file())
+                self._opts.update(self._get_opts_from_env_vars())
+
+    def __repr__(self):
+        return "<robotpageobjects.optionhandler.OptionHandler object at %s: %s>" % (id(self), self._opts)
+
+    def _populate_opts(self, robot=True):
+        pass
 
     def _get_vars_from_file(self):
         ret = {}
@@ -49,28 +74,6 @@ class OptionHandler(object):
                     vars_file_var_value = var_file_attrs[vars_mod_attr_name]
                     ret[self._normalize(vars_mod_attr_name)] = vars_file_var_value
         return ret
-
-    def __init__(self):
-        self._opts = {}
-
-        if self._new_called == 1:
-            try:
-                # In Robot...
-                vars = BuiltIn().get_variables()
-                self._opts.update(self._get_opts_from_var_file())
-                self._opts.update(self._get_opts_from_env_vars())
-                self._opts.update(vars)
-
-            except AttributeError:
-                # Not in Robot...
-                self._opts.update(self._get_opts_from_var_file())
-                self._opts.update(self._get_opts_from_env_vars())
-
-    def __repr__(self):
-        return "<robotpageobjects.optionhandler.OptionHandler object at %s: %s>" % (id(self), self._opts)
-
-    def _populate_opts(self, robot=True):
-        pass
 
     def _get_opts_from_var_file(self):
         ret = {}
@@ -119,7 +122,7 @@ class OptionHandler(object):
 
         ret = default
         try:
-            if Context().in_robot():
+            if self._in_robot:
                 ret = self._opts[self._normalize(name)]
             else:
                 ret = self._opts[self._normalize(name.replace(" ", "_"))]
