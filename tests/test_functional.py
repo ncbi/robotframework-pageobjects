@@ -78,6 +78,7 @@ class SmokeTestCase(BaseTestCase):
         run = self.run_scenario("test_enlarge_browser_on_open.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
+
 class SauceTestCase(BaseTestCase):
     """
     Sauce exception tests are in the unit tests, not the
