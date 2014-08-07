@@ -5,5 +5,7 @@ class Page(RobotPage):
     uri = "/site/index.html"
     selectors = {
         "search-button": "css=#go",
-        "inputs": "css=input"
+        "inputs": "css=input",
+        "remove-button": "css=button#remove-content",
+        "para-to-be-removed": "css=p#disappear"
     }

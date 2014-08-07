@@ -461,6 +461,10 @@ class WaitingTestCase(BaseTestCase):
         run = self.run_scenario("test_pass_explicit_wait_to_find_element.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
+    def test_wait_till_element_disappears(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_wait_until_not_visible.py")
+        self.assert_run(run, expected_returncode=0)
 
 class LoggingTestCase(BaseTestCase):
     """
@@ -561,7 +565,7 @@ class LoggingTestCase(BaseTestCase):
             Page().log([1,2,3], is_console=False)
         except TypeError:
             self.fail("Logging a non string causes a TypeError")
-            
+
     @raises(ValueError)
     def test_log_at_invalid_level_python(self):
         LoggingPage().log_invalid()
