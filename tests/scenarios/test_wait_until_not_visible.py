@@ -10,7 +10,8 @@ class WaitUntilNotVisibleTestCase(unittest.TestCase):
         self.p.open()
         self.p.click_element("remove-button")
         self.p.wait_until_element_is_not_visible("para-to-be-removed")
-        self.p.page_should_not_contain("I am another paragraph added to test remove button")
+        self.p.page_should_not_contain_element("para-to-be-removed")
+        self.p.close()
 
 if __name__ == '__main__':
     unittest.main()
