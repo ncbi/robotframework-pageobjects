@@ -222,7 +222,6 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
             try:
                 self.capture_page_screenshot()
-                self.wait_for()
             except Exception, e:
                 if e.message.find("No browser is open") != -1:
                     pass
