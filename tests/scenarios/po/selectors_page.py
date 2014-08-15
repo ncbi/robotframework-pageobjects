@@ -7,5 +7,6 @@ class Page(RobotPage):
         "search-button": "css=#go",
         "inputs": "css=input",
         "remove-button": "css=button#remove-content",
-        "para-to-be-removed": "css=p#disappear"
+        "para-to-be-removed": "css=p#disappear",
+        "delayed-content-button":"css=button#delayed-content"
     }
