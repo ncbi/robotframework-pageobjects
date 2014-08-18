@@ -70,21 +70,23 @@ class BaseTestCase(unittest.TestCase):
         except OSError:
             pass
 
-        # Unset all PO_ env variables, but save them so we can restore them in teardown
-        self.original_po_vars = {}
+        # Save all env vars (including PO_ vars), so that if they are modified,
+        # we can restore them in tearDown. Unset all PO_ env variables, so that
+        # we don't get interference from the user's environment.
+
+        self.original_env_vars = {}
         for key in os.environ.keys():
+            self.original_env_vars[key] = os.environ[key]
             if key.lower().startswith("po_"):
-                self.original_po_vars[key] = os.environ[key]
                 del os.environ[key]
 
     def tearDown(self):
         # Restore envs
-        for key in self.original_po_vars:
-            os.environ[key] = self.original_po_vars[key]
+        for key in self.original_env_vars:
+            os.environ[key] = self.original_env_vars[key]
 
-        keys = os.environ.keys()
-        for key in keys:
-            if key not in self.original_po_vars:
+        for key in os.environ.keys():
+            if key not in self.original_env_vars:
                 del os.environ[key]
 
         try:

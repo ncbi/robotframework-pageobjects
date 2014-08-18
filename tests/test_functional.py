@@ -367,24 +367,11 @@ class ComponentTestCase(BaseTestCase):
         self.assertEqual(len(paras), 1, "Overridden locator for paras should return just the last one")
 
     def test_page_override_without_override_class_raises_warning(self):
-        orig_pythonpath = os.environ.get("PYTHONPATH", None)
-        os.environ["PYTHONPATH"] = self.po_dir
-        run = self.run_scenario("test_page_override_without_override_class.py")
-        if orig_pythonpath is not None:
-            os.environ["PYTHONPATH"] = orig_pythonpath
-        else:
-            del os.environ["PYTHONPATH"]
+        run = self.run_scenario("test_page_override_without_override_class.py", env={"PYTHONPATH": self.po_dir})
         self.assert_run(run, expected_returncode=0, search_output="KeyOverrideWarning")
 
     def test_component_with_singular_property_defined(self):
-        orig_pythonpath = os.environ.get("PYTHONPATH", None)
-        os.environ["PYTHONPATH"] = self.po_dir
-        print os.environ["PYTHONPATH"]
-        run = self.run_scenario("test_component_with_singular_property_defined.py")
-        if orig_pythonpath is not None:
-            os.environ["PYTHONPATH"] = orig_pythonpath
-        else:
-            del os.environ["PYTHONPATH"]
+        run = self.run_scenario("test_component_with_singular_property_defined.py", env={"PYTHONPATH": self.po_dir})
         self.assert_run(run, expected_returncode=0, search_output="ComponentWarning")
 
     def test_component_with_plural_property_defined(self):
@@ -449,13 +436,7 @@ class WaitingTestCase(BaseTestCase):
 
     def test_implicit_wait_fails_with_option_set_to_1(self):
         self.set_baseurl_env()
-        oldval = os.environ.get("PO_SELENIUM_IMPLICIT_WAIT")
-        os.environ["PO_SELENIUM_IMPLICIT_WAIT"] = "1"
-        run = self.run_scenario("test_implicit_se_wait.py")
-        if oldval is not None:
-            os.environ["PO_SELENIUM_IMPLICIT_WAIT"] = oldval
-        else:
-            del os.environ["PO_SELENIUM_IMPLICIT_WAIT"]
+        run = self.run_scenario("test_implicit_se_wait.py", env={"PO_SELENIUM_IMPLICIT_WAIT": "1"})
         self.assert_run(run, expected_returncode=1, search_output="FAIL")
 
     def test_can_set_wait_on_call_to_find_element_and_find_elements(self):
