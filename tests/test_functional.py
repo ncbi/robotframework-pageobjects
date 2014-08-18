@@ -388,14 +388,7 @@ class ComponentTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=0, search_output="ComponentWarning")
 
     def test_component_with_plural_property_defined(self):
-        orig_pythonpath = os.environ.get("PYTHONPATH", None)
-        os.environ["PYTHONPATH"] = self.po_dir
-        print os.environ["PYTHONPATH"]
-        run = self.run_scenario("test_component_with_plural_property_defined.py")
-        if orig_pythonpath is not None:
-            os.environ["PYTHONPATH"] = orig_pythonpath
-        else:
-            del os.environ["PYTHONPATH"]
+        run = self.run_scenario("test_component_with_plural_property_defined.py", env={"PYTHONPATH": self.po_dir})
         self.assert_run(run, expected_returncode=0, search_output="ComponentWarning")
 
 

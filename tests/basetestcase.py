@@ -82,6 +82,11 @@ class BaseTestCase(unittest.TestCase):
         for key in self.original_po_vars:
             os.environ[key] = self.original_po_vars[key]
 
+        keys = os.environ.keys()
+        for key in keys:
+            if key not in self.original_po_vars:
+                del os.environ[key]
+
         try:
             os.unlink(self.get_log_path())
         except OSError:
@@ -93,8 +98,11 @@ class BaseTestCase(unittest.TestCase):
 
     def set_baseurl_env(self, base_file=True, arbitrary_base=None):
         val = self.base_file_url if base_file else arbitrary_base
-        os.environ["PO_BASEURL"] = val
-        return os.environ.get("PO_BASEURL")
+        return self.set_env("PO_BASEURL", val)
+
+    def set_env(self, var, val):
+        os.environ[var] = val
+        return os.environ.get(var)
 
     def run_scenario(self, scenario, *args, **kwargs):
         """
@@ -103,6 +111,15 @@ class BaseTestCase(unittest.TestCase):
         a .py ending. The robot test must also live under tests/scenarios and have a .robot
         ending.
         """
+
+        env_vars = {}
+        if "env" in kwargs:
+            env_vars = kwargs["env"]
+            del kwargs["env"]
+            for var, val in env_vars.iteritems():
+                self.set_env(var, val)
+
+
         if scenario.endswith(".py"):
             arg = "cd %s; python %s" % (self.scenario_dir, scenario)
 
@@ -110,7 +127,6 @@ class BaseTestCase(unittest.TestCase):
         else:
             arg = "cd %s; pybot -P po %s" %(self.scenario_dir, scenario)
             return self.run_program(arg, **kwargs)
-
 
     def run_program(self, base_cmd, *args, **opts):
 
