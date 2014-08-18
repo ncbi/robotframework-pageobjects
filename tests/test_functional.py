@@ -376,20 +376,28 @@ class ComponentTestCase(BaseTestCase):
             del os.environ["PYTHONPATH"]
         self.assert_run(run, expected_returncode=0, search_output="KeyOverrideWarning")
 
-
-    @raises(exceptions.ComponentWarning)
     def test_component_with_singular_property_defined(self):
-        class ResultPageWithSingularPropertyDefined(ResultPage):
-            @property
-            def result(self):
-                return None
+        orig_pythonpath = os.environ.get("PYTHONPATH", None)
+        os.environ["PYTHONPATH"] = self.po_dir
+        print os.environ["PYTHONPATH"]
+        run = self.run_scenario("test_component_with_singular_property_defined.py")
+        if orig_pythonpath is not None:
+            os.environ["PYTHONPATH"] = orig_pythonpath
+        else:
+            del os.environ["PYTHONPATH"]
+        self.assert_run(run, expected_returncode=0, search_output="ComponentWarning")
 
-    @raises(exceptions.ComponentWarning)
     def test_component_with_plural_property_defined(self):
-        class ResultPageWithPluralPropertyDefined(ResultPage):
-            @property
-            def results(self):
-                return []
+        orig_pythonpath = os.environ.get("PYTHONPATH", None)
+        os.environ["PYTHONPATH"] = self.po_dir
+        print os.environ["PYTHONPATH"]
+        run = self.run_scenario("test_component_with_plural_property_defined.py")
+        if orig_pythonpath is not None:
+            os.environ["PYTHONPATH"] = orig_pythonpath
+        else:
+            del os.environ["PYTHONPATH"]
+        self.assert_run(run, expected_returncode=0, search_output="ComponentWarning")
+
 
     def tearDown(self):
         super(ComponentTestCase, self).tearDown()

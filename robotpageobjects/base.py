@@ -332,12 +332,12 @@ class _ComponentsManagerMeta(KeywordGroupMetaClass):
 
             # Then, if not already defined, assign each name as a property. If defined, raise a warning.
             if plural_name in classdict:
-                raise warnings.warn("Not creating property %s, because there is already a class attribute with that name."
+                warnings.warn("Not creating property %s, because there is already a class attribute with that name."
                 % plural_name, exceptions.ComponentWarning)
             else:
                 classdict[plural_name] = property(mkfnc_plural(component_class))
             if singular_name in classdict:
-                raise warnings.warn("Not creating property %s, because there is already a class attribute with that name."
+                warnings.warn("Not creating property %s, because there is already a class attribute with that name."
                 % plural_name, exceptions.ComponentWarning)
             else:
                 classdict[singular_name] = property(mkfnc_singular(component_class))
