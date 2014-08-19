@@ -809,6 +809,26 @@ class _BaseActions(_S2LWrapper):
         self.close_browser()
         return self
 
+    def wait_until_element_is_not_visible(self, locator, timeout=None, error=None):
+        """Waits until element specified with `locator` is not visible.
+
+        Fails if `timeout` expires before the element is not visible. See
+        `introduction` for more information about `timeout` and its
+        default value.
+
+        `error` can be used to override the default error message.
+
+        """
+        def check_visibility():
+            visible = self._is_visible(locator)
+            if not visible:
+                return
+            elif visible is None:
+                return
+            else:
+                return error or "Element locator '%s' was still matched after %s" % (locator, self._format_timeout(timeout))
+        self._wait_until_no_error(timeout, check_visibility)
+
     def wait_for(self, condition):
         """
         Waits for a condition defined by the passed function to become True.

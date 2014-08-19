@@ -21,6 +21,13 @@
             <p id="foo">I am another paragraph</p>
         </div>
 
+        <br><hr>
+        <div class="ct-to-be-removed">
+            <p id="disappear">I am another paragraph added to test remove button</p>
+        </div>
+        <button id="remove-content">Click to remove content</button>
+
+
     </form>
     <script type="text/javascript">
         // Fake out a get.
@@ -49,7 +56,14 @@
             setTimeout( function() {
                 jQuery("#delayed-content-holder").html("<p>I took about 2 seconds to be inserted</p>");
             }, 2000);
+        });
 
+        // clicking on remove me button removes the delayed content
+        jQuery("#remove-content").click( function(e) {
+            e.preventDefault();
+            setTimeout( function() {
+                jQuery(".ct-to-be-removed").remove();
+            }, 5000);
         });
 
     </script>
