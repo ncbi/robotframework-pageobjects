@@ -78,6 +78,12 @@ class SmokeTestCase(BaseTestCase):
         run = self.run_scenario("test_enlarge_browser_on_open.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
+    def stack_trace_in_robot_log(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_stack_trace.robot", v="baseurl:%s" % self.base_file_url, L="TRACE")
+        self.assert_run(run, expected_returncode=1, search_output_xml="in raise_division_by_zero")
+
+
 
 class SauceTestCase(BaseTestCase):
     """
