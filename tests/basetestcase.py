@@ -35,12 +35,26 @@ class BaseTestCase(unittest.TestCase):
         return "SAUCE_USERNAME" in os.environ and "SAUCE_APIKEY" in os.environ
 
 
-    def get_log_path(self, is_robot=False):
-        filename = "log.html" if is_robot else "po_log.txt"
+    def get_log_path(self, is_robot=False, output_xml=False):
+        if is_robot:
+            if output_xml:
+                filename = "output.xml"
+            else:
+                filename = "log.html"
+        else:
+            filename = "po_log.txt"
+
         return os.path.join(self.scenario_dir, filename)
 
-    def read_log(self, robot=False):
-        f = open(self.get_log_path(robot), "r")
+    def read_log(self, is_robot=False, output_xml=False):
+        """ Read the Robot or python log file.
+
+         :param is_robot: Whether Robot or not.
+         :type is_robot: Boolean
+         :param output_xml: Whether to read Robot's output.xml instead of report.html.
+         :type output_xml: Boolean
+        """
+        f = open(self.get_log_path(is_robot, output_xml), "r")
         try:
             ret = f.read()
         finally:
@@ -108,6 +122,7 @@ class BaseTestCase(unittest.TestCase):
 
             return self.run_program(arg)
         else:
+
             arg = "cd %s; pybot -P po %s" %(self.scenario_dir, scenario)
             return self.run_program(arg, **kwargs)
 
@@ -147,22 +162,19 @@ class BaseTestCase(unittest.TestCase):
                                                                                             self.output[0:25]
                                                                                             .replace("\n", ""))
 
-
-        cmd = base_cmd + " " + " ".join(args) + " "
-        cmd  = base_cmd + " "
-
+        cmd = base_cmd + " "
         opt_str = ""
         for name in opts:
             val = opts[name]
             if isinstance(val, bool):
                 opt_str += "--" + name.replace("_", "-") + " "
             else:
-                opt_str += "--" + name.replace("_", "-") + "=" + val + " "
+                dash = "-" if len(name) == 1 else "--"
+                opt_str += dash + name.replace("_", "-") + " " + val + " "
 
 
         cmd = cmd.replace("pybot ", "pybot " + opt_str + " ")
         cmd += " " + " ".join(args)
-
         p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         com = p.communicate()
         code = p.wait()
@@ -204,7 +216,8 @@ class BaseTestCase(unittest.TestCase):
     def assert_run(self, run,
                    expected_returncode=0, expected_tests_ran=None,
                    expected_tests_failed=None,
-                   search_output=None, search_log=None, not_in_output=None, not_in_log=None, expected_browser=None
+                   search_output=None, search_log=None, search_output_xml=None, not_in_output=None, not_in_log=None,
+                   expected_browser=None
     ):
         """
         Makes general assertions about a program run based on return code
@@ -218,6 +231,7 @@ class BaseTestCase(unittest.TestCase):
         :param search_output: Text to assert is present in stdout of run. Provide  regular expression
         :param search_log: Regular expression to use to search log
         :param not_in_log: String to assert that's NOT in log. Not a regular expression.
+        :param search_output_xml: Search the output XML for a string. In Robot this is output.xml.
 
         """
         returncode = run.returncode
@@ -241,9 +255,15 @@ class BaseTestCase(unittest.TestCase):
                                      search_output, run.cmd))
         if search_log:
             log_contents = self.read_log(is_robot)
-            self.assertIsNotNone(re.search(search_log, log_contents),
+
+
+            self.assertTrue(search_log in log_contents,
                                  "string: '%s' not found in log file when running %s" % (
-                                     search_output, run.cmd))
+                                     search_log, run.cmd))
+
+        if search_output_xml:
+            xml = self.read_log(is_robot, output_xml=True)
+            self.assertTrue(search_output_xml in xml, "'%s' not found in output.xml" % search_output_xml)
 
         if not_in_log:
             self.assertFalse(not_in_log in self.read_log(is_robot), '"%s" was found in the log file, '
