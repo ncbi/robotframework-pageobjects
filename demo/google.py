@@ -37,11 +37,15 @@ class GoogleSearchResultPage(Page):
     uri_template = "/#q={term}"
 
     selectors = {
-        "nth result link": "xpath=//li[@class='g'][{n}]//div//h3//a",
+        "nth result link": "xpath=(//li[@class='g'])[{n}]//div//h3//a | (//li[@class='g'])[{n}]/h3/a",
     }
 
     @robot_alias("click_result_on__name__")
     def click_result(self, i):
+        f = open("s.html", "w")
+        f.write(self.get_source().encode("utf-8"))
+        f.close()
+
         locator = self.resolve_selector("nth result link", n=int(i))
         self.click_link(locator)
         return DestinationPage()
