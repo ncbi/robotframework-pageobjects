@@ -741,6 +741,37 @@ class _BaseActions(_S2LWrapper):
         super(_BaseActions, self).go_to(resolved_url)
         return self
 
+    def _get_init_kwargs_defaults(self, webdriver_type):
+        defaults = {}
+        if webdriver_type == webdriver.PhantomJS:
+            defaults["service_args"] = ["--ignore-ssl-errors=yes", "--ssl-protocol=TLSv1"]
+        return defaults
+
+    def _generic_make_browser(self, webdriver_type, desired_cap_type, remote_url, desired_caps):
+        """Override Selenium2Library's _generic_make_browser to allow for extra params
+        to driver constructor."""
+        if not remote_url:
+            init_kwargs = self._get_init_kwargs_defaults(webdriver_type)
+            for var, val in self._option_handler.get_all().iteritems():
+                if var.startswith("browser_args_"):
+                    init_kwargs[var.replace("browser_args_", "")] = val
+            browser = webdriver_type(**init_kwargs)
+        else:
+            browser = self._create_remote_web_driver(desired_cap_type,remote_url , desired_caps)
+        return browser
+
+    def _make_browser(self, browser_name, desired_capabilities=None, profile_dir=None, remote=None):
+        creation_func = self._get_browser_creation_function(browser_name)
+
+        if not creation_func:
+            raise ValueError(browser_name + " is not a supported browser.")
+
+        browser = creation_func(remote, desired_capabilities, profile_dir)
+        browser.set_speed(self._speed_in_secs)
+        browser.set_script_timeout(self._timeout_in_secs)
+        browser.implicitly_wait(self._implicit_wait_in_secs)
+        return browser
+
     def open(self, *args):
         """
         Wrapper for Selenium2Library's open_browser() that calls resolve_url for url logic and self.browser.

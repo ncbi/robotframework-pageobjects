@@ -104,6 +104,10 @@ class OptionHandler(object):
             # We're dealing with a dict
             return {self._normalize(key): val for (key, val) in opts.iteritems()}
 
+    def get_all(self):
+        """Gets all option names and values"""
+        return self._opts
+
     def get(self, name, default=None):
         """
         Gets an option value given an option name
