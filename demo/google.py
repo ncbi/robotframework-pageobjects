@@ -42,10 +42,6 @@ class GoogleSearchResultPage(Page):
 
     @robot_alias("click_result_on__name__")
     def click_result(self, i):
-        f = open("s.html", "w")
-        f.write(self.get_source().encode("utf-8"))
-        f.close()
-
         locator = self.resolve_selector("nth result link", n=int(i))
         self.click_link(locator)
         return DestinationPage()
