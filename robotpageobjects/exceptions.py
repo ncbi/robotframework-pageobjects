@@ -57,9 +57,3 @@ class ComponentError(KeyError):
     Raised when there is an issue retrieving instances of a component.
     """
     pass
-
-class ComponentWarning(Warning):
-    """
-    Raised when there is an issue with components that is not an error.
-    """
-    pass
