@@ -440,6 +440,33 @@ class WaitingTestCase(BaseTestCase):
         run = self.run_scenario("test_wait_until_not_visible.py")
         self.assert_run(run, expected_returncode=0)
 
+class ServiceArgsTestCase(BaseTestCase):
+    def _remove_file_if_exists(self, file_path):
+        try:
+            os.remove(file_path)
+        except OSError:
+            pass
+
+    def test_can_set_service_args(self):
+        self.set_baseurl_env()
+
+        # Use the cookies-file argument to PhantomJS as a test for PO_SERVICE_ARGS.
+        cookies_file_name = "service-args-cookies.txt"
+        cookies_file_path = os.path.join(self.scenario_dir, cookies_file_name)
+
+        # Make sure it doesn't exist before we run the test.
+        self._remove_file_if_exists(cookies_file_path)
+
+        run = self.run_scenario("test_service_args_cookie_file.py", env={"PO_SERVICE_ARGS": "--cookies-file=%s" % cookies_file_path})
+        file_exists = os.path.isfile(cookies_file_path)
+
+        # Remove the file again to clean up.
+        self._remove_file_if_exists(cookies_file_path)
+
+        # Assert that the test passed and that the file exists.
+        self.assert_run(run, expected_returncode=0)
+        self.assertTrue(file_exists, "File %s specified as cookies-file in service_args does not exist." % cookies_file_name)
+
 class LoggingTestCase(BaseTestCase):
     """
     # Tests that assert whether or not messages are logged depending on the log level
