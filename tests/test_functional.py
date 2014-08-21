@@ -457,12 +457,11 @@ class ServiceArgsTestCase(BaseTestCase):
 
     def setUp(self):
         self.cookies_file_path = os.path.join(self.scenario_dir, self.cookies_file_name)
+        self._remove_file_if_exists(self.cookies_file_path)
+
 
     def test_can_set_service_args(self):
         self.set_baseurl_env()
-
-        # Make sure it doesn't exist before we run the test.
-        self._remove_file_if_exists(self.cookies_file_path)
 
         # Use the cookies-file argument to PhantomJS as a test for PO_SERVICE_ARGS.
         run = self.run_scenario("test_service_args_cookie_file.py", env={"PO_SERVICE_ARGS": "--cookies-file=%s" % self.cookies_file_path})
