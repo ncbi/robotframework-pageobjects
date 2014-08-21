@@ -447,31 +447,34 @@ class WaitingTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=0)
 
 class ServiceArgsTestCase(BaseTestCase):
+    cookies_file_name = "service-args-cookies.txt"
+
     def _remove_file_if_exists(self, file_path):
         try:
             os.remove(file_path)
         except OSError:
             pass
 
+    def setUp(self):
+        self.cookies_file_path = os.path.join(self.scenario_dir, self.cookies_file_name)
+
     def test_can_set_service_args(self):
         self.set_baseurl_env()
 
-        # Use the cookies-file argument to PhantomJS as a test for PO_SERVICE_ARGS.
-        cookies_file_name = "service-args-cookies.txt"
-        cookies_file_path = os.path.join(self.scenario_dir, cookies_file_name)
-
         # Make sure it doesn't exist before we run the test.
-        self._remove_file_if_exists(cookies_file_path)
+        self._remove_file_if_exists(self.cookies_file_path)
 
-        run = self.run_scenario("test_service_args_cookie_file.py", env={"PO_SERVICE_ARGS": "--cookies-file=%s" % cookies_file_path})
-        file_exists = os.path.isfile(cookies_file_path)
-
-        # Remove the file again to clean up.
-        self._remove_file_if_exists(cookies_file_path)
+        # Use the cookies-file argument to PhantomJS as a test for PO_SERVICE_ARGS.
+        run = self.run_scenario("test_service_args_cookie_file.py", env={"PO_SERVICE_ARGS": "--cookies-file=%s" % self.cookies_file_path})
 
         # Assert that the test passed and that the file exists.
         self.assert_run(run, expected_returncode=0)
-        self.assertTrue(file_exists, "File %s specified as cookies-file in service_args does not exist." % cookies_file_name)
+        self.assertTrue(os.path.isfile(self.cookies_file_path), "File %s specified as cookies-file in service_args does not exist." % self.cookies_file_name)
+
+    def tearDown(self):
+        self._remove_file_if_exists(self.cookies_file_path)
+
+
 
 class LoggingTestCase(BaseTestCase):
     """
