@@ -37,7 +37,7 @@ class GoogleSearchResultPage(Page):
     uri_template = "/#q={term}"
 
     selectors = {
-        "nth result link": "xpath=//li[@class='g'][{n}]//div//h3//a",
+        "nth result link": "xpath=(//li[@class='g'])[{n}]//div//h3//a | (//li[@class='g'])[{n}]/h3/a",
     }
 
     @robot_alias("click_result_on__name__")
