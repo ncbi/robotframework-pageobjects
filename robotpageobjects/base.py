@@ -331,15 +331,9 @@ class _ComponentsManagerMeta(KeywordGroupMetaClass):
             singular_name = name
 
             # Then, if not already defined, assign each name as a property. If defined, raise a warning.
-            if plural_name in classdict:
-                warnings.warn("Not creating property %s, because there is already a class attribute with that name."
-                % plural_name, exceptions.ComponentWarning)
-            else:
+            if plural_name not in classdict:
                 classdict[plural_name] = property(mkfnc_plural(component_class))
-            if singular_name in classdict:
-                warnings.warn("Not creating property %s, because there is already a class attribute with that name."
-                % plural_name, exceptions.ComponentWarning)
-            else:
+            if singular_name not in classdict:
                 classdict[singular_name] = property(mkfnc_singular(component_class))
 
     def __new__(cls, name, bases, classdict):
@@ -532,6 +526,7 @@ class _BaseActions(_S2LWrapper):
 
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
+        self.service_args = self._parse_service_args(self._option_handler.get("service_args", ""))
 
         self._sauce_options = [
             "sauce_username",
@@ -551,6 +546,10 @@ class _BaseActions(_S2LWrapper):
 
         # There's only a session ID when using a remote webdriver (Sauce, for example)
         self.session_id = None
+
+    def _parse_service_args(self, service_args):
+        return [arg.strip() for arg in service_args.split(" ") if arg.strip() != ""]
+
 
     def _validate_sauce_options(self):
 
@@ -741,21 +740,11 @@ class _BaseActions(_S2LWrapper):
         super(_BaseActions, self).go_to(resolved_url)
         return self
 
-    def _get_init_kwargs_defaults(self, webdriver_type):
-        defaults = {}
-        if webdriver_type == webdriver.PhantomJS:
-            defaults["service_args"] = ["--ignore-ssl-errors=yes", "--ssl-protocol=TLSv1"]
-        return defaults
-
     def _generic_make_browser(self, webdriver_type, desired_cap_type, remote_url, desired_caps):
         """Override Selenium2Library's _generic_make_browser to allow for extra params
         to driver constructor."""
         if not remote_url:
-            init_kwargs = self._get_init_kwargs_defaults(webdriver_type)
-            for var, val in self._option_handler.get_all().iteritems():
-                if var.startswith("browser_args_"):
-                    init_kwargs[var.replace("browser_args_", "")] = val
-            browser = webdriver_type(**init_kwargs)
+            browser = webdriver_type(service_args=self.service_args)
         else:
             browser = self._create_remote_web_driver(desired_cap_type,remote_url , desired_caps)
         return browser

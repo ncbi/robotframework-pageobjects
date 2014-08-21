@@ -370,15 +370,6 @@ class ComponentTestCase(BaseTestCase):
         run = self.run_scenario("test_page_override_without_override_class.py", env={"PYTHONPATH": self.po_dir})
         self.assert_run(run, expected_returncode=0, search_output="KeyOverrideWarning")
 
-    def test_component_with_singular_property_defined(self):
-        run = self.run_scenario("test_component_with_singular_property_defined.py", env={"PYTHONPATH": self.po_dir})
-        self.assert_run(run, expected_returncode=0, search_output="ComponentWarning")
-
-    def test_component_with_plural_property_defined(self):
-        run = self.run_scenario("test_component_with_plural_property_defined.py", env={"PYTHONPATH": self.po_dir})
-        self.assert_run(run, expected_returncode=0, search_output="ComponentWarning")
-
-
     def tearDown(self):
         super(ComponentTestCase, self).tearDown()
         self.result_page_with_str_locator.close()
