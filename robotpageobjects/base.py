@@ -331,15 +331,9 @@ class _ComponentsManagerMeta(KeywordGroupMetaClass):
             singular_name = name
 
             # Then, if not already defined, assign each name as a property. If defined, raise a warning.
-            if plural_name in classdict:
-                warnings.warn("Not creating property %s, because there is already a class attribute with that name."
-                % plural_name, exceptions.ComponentWarning)
-            else:
+            if plural_name not in classdict:
                 classdict[plural_name] = property(mkfnc_plural(component_class))
-            if singular_name in classdict:
-                warnings.warn("Not creating property %s, because there is already a class attribute with that name."
-                % plural_name, exceptions.ComponentWarning)
-            else:
+            if singular_name not in classdict:
                 classdict[singular_name] = property(mkfnc_singular(component_class))
 
     def __new__(cls, name, bases, classdict):
@@ -532,6 +526,7 @@ class _BaseActions(_S2LWrapper):
 
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
+        self.service_args = self._parse_service_args(self._option_handler.get("service_args", ""))
 
         self._sauce_options = [
             "sauce_username",
@@ -551,6 +546,10 @@ class _BaseActions(_S2LWrapper):
 
         # There's only a session ID when using a remote webdriver (Sauce, for example)
         self.session_id = None
+
+    def _parse_service_args(self, service_args):
+        return [arg.strip() for arg in service_args.split(" ") if arg.strip() != ""]
+
 
     def _validate_sauce_options(self):
 
@@ -740,6 +739,27 @@ class _BaseActions(_S2LWrapper):
         resolved_url = self._resolve_url(*args)
         super(_BaseActions, self).go_to(resolved_url)
         return self
+
+    def _generic_make_browser(self, webdriver_type, desired_cap_type, remote_url, desired_caps):
+        """Override Selenium2Library's _generic_make_browser to allow for extra params
+        to driver constructor."""
+        if not remote_url:
+            browser = webdriver_type(service_args=self.service_args)
+        else:
+            browser = self._create_remote_web_driver(desired_cap_type,remote_url , desired_caps)
+        return browser
+
+    def _make_browser(self, browser_name, desired_capabilities=None, profile_dir=None, remote=None):
+        creation_func = self._get_browser_creation_function(browser_name)
+
+        if not creation_func:
+            raise ValueError(browser_name + " is not a supported browser.")
+
+        browser = creation_func(remote, desired_capabilities, profile_dir)
+        browser.set_speed(self._speed_in_secs)
+        browser.set_script_timeout(self._timeout_in_secs)
+        browser.implicitly_wait(self._implicit_wait_in_secs)
+        return browser
 
     def open(self, *args):
         """
