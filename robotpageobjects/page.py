@@ -140,6 +140,10 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         except AttributeError:
             self.name = self._titleize(self.__class__.__name__)
 
+        # Allow setting of uri_template or uri, but make them the same internally
+        if hasattr(self, 'uri_template'):
+            self.uri = self.uri_template
+
     @staticmethod
     @not_keyword
     def _titleize(str):
