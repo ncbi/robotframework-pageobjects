@@ -583,7 +583,7 @@ class _BaseActions(_S2LWrapper):
         pageobj_name = self.__class__.__name__
 
         # determine type of uri attribute
-        if hasattr(self, 'uri', None):
+        if hasattr(self, 'uri'):
             uri_type = 'template' if re.search('{.+}', self.uri) else 'plain'
         else:
             raise exceptions.UriResolutionError("Page object \"%s\" must have a \"uri\" attribute set." % pageobj_name)
