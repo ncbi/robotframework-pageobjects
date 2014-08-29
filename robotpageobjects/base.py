@@ -524,6 +524,7 @@ class _BaseActions(_S2LWrapper):
         siw_opt = self._option_handler.get("selenium_implicit_wait")
         self.selenium_implicit_wait = siw_opt if siw_opt is not None else 10
         self.set_selenium_implicit_wait(self.selenium_implicit_wait)
+        self.set_selenium_timeout(self.selenium_implicit_wait)
 
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
