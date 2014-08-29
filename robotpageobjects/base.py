@@ -521,7 +521,8 @@ class _BaseActions(_S2LWrapper):
         self._is_robot = Context.in_robot()
         self.selenium_speed = self._option_handler.get("selenium_speed") or 0
         self.set_selenium_speed(self.selenium_speed)
-        self.selenium_implicit_wait = self._option_handler.get("selenium_implicit_wait") or 10
+        siw_opt = self._option_handler.get("selenium_implicit_wait")
+        self.selenium_implicit_wait = siw_opt if siw_opt is not None else 10
         self.set_selenium_implicit_wait(self.selenium_implicit_wait)
 
         self.baseurl = self._option_handler.get("baseurl")
