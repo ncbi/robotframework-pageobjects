@@ -1,5 +1,6 @@
 import inspect
 import os
+import sys
 from nose.tools import raises
 from mock import patch
 from robot.libraries.BuiltIn import BuiltIn
@@ -10,6 +11,13 @@ from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
 from robotpageobjects.page import Page, _Keywords, Override, not_keyword
 from robotpageobjects.optionhandler import OptionHandler
+
+test_dir = os.path.dirname(os.path.realpath(__file__))
+scenario_dir = os.path.join(test_dir, "scenarios")
+po_dir = os.path.join(scenario_dir, "po")
+sys.path.append(po_dir)
+
+from basepageobjects import BaseHomePage, BaseResultsPage
 
 
 class InheritFromSe2LibTestCase(BaseTestCase):
@@ -537,3 +545,26 @@ class SelectorTemplateTestCase(BaseTestCase):
     @raises
     def test_wrong_args(self):
         self.p.resolve_selector("foo", n=3, ep="p")
+
+
+class GetSubclassFromPOModuleTestCase(BaseTestCase):
+    def setUp(self):
+        super(GetSubclassFromPOModuleTestCase, self).setUp()
+        self.p = BaseHomePage()
+
+    @raises(exceptions.PageSelectionError)
+    def test_no_fallback_raises_exception_with_nonexistent_package(self):
+        klass = self.p.get_subclass_from_po_module("nonexistentpageobjects", BaseResultsPage, fallback_to_super=False)
+
+    def test_with_fallback_with_nonexistent_package(self):
+        klass = self.p.get_subclass_from_po_module("nonexistentpageobjects", BaseResultsPage, fallback_to_super=True)
+        self.assertEqual(klass, BaseResultsPage, "Fallback with nonexistent package should fall back to class"
+                                                      "BaseSearchResultPage.")
+
+    def test_package_on_path_with_fallback_succeeds(self):
+        klass = self.p.get_subclass_from_po_module("mydbpageobjects", BaseResultsPage, fallback_to_super=True)
+        self.assertEqual(klass.__name__, "MyDBResultsPage", "MyDBResultsPage class should be selected.")
+
+    def test_package_on_path_without_fallback_succeeds(self):
+        klass = self.p.get_subclass_from_po_module("mydbpageobjects", BaseResultsPage, fallback_to_super=False)
+        self.assertEqual(klass.__name__, "MyDBResultsPage", "MyDBResultsPage class should be selected.")
