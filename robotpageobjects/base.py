@@ -998,7 +998,6 @@ class _BaseActions(_S2LWrapper):
                                             "and the package needs to have a subclass of %s."
                                             % (module_name, module_name, super_class))
 
-
     def _is_locator_format(self, locator):
         """
         Ask Selenium2Library's ElementFinder if the locator uses
