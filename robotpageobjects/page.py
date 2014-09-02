@@ -229,7 +229,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
             # Walling off nested try/except in separate method to simplify scope issues with nested
             # try/excepts. Mess with at your own risk.
-            self._attempt_screenshot()
+            #self._attempt_screenshot()
 
             # Pass up the stack, so we see complete stack trace in Robot trace logs
             raise
