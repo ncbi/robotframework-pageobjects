@@ -1,4 +1,5 @@
 import re
+import importlib
 import inspect
 import uritemplate
 import urllib2
@@ -970,6 +971,33 @@ class _BaseActions(_S2LWrapper):
         :returns: WebElement instance
         """
         return self._element_find(locator, first_only=False, required=required, wait=wait, **kwargs)
+
+    @not_keyword
+    def get_subclass_from_po_module(self, module_name, super_class, fallback_to_super=True):
+        """Given `module_name`, try to import it and find in it a subclass of
+        `super_class`. This is for dynamically resolving what page object to use
+        for, say, a search that can bring up multiple types of search result page.
+        :param module_name: The name of the module to look for.
+        :type module_name: str
+        :param super_class: The class to look for subclasses of.
+        :type super_class: type
+        :param fallback_to_super: Whether to default to returning `super_class` if module `module_name`
+         cannot be imported.
+        :returns: type
+        """
+        try:
+            po_mod = importlib.import_module(module_name)
+        except ImportError:
+            if fallback_to_super:
+                return super_class
+        else:
+            for name, obj in inspect.getmembers(po_mod):
+                if inspect.isclass(obj) and issubclass(obj, super_class) and obj != super_class:
+                    return obj
+        raise exceptions.PageSelectionError("You need to have the %s package installed to go to a %s page,"
+                                            "and the package needs to have a subclass of %s."
+                                            % (module_name, module_name, super_class))
+
 
     def _is_locator_format(self, locator):
         """
