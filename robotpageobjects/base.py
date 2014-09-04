@@ -522,8 +522,10 @@ class _BaseActions(_S2LWrapper):
         self._is_robot = Context.in_robot()
         self.selenium_speed = self._option_handler.get("selenium_speed") or 0
         self.set_selenium_speed(self.selenium_speed)
-        self.selenium_implicit_wait = self._option_handler.get("selenium_implicit_wait") or 10
+        siw_opt = self._option_handler.get("selenium_implicit_wait")
+        self.selenium_implicit_wait = siw_opt if siw_opt is not None else 10
         self.set_selenium_implicit_wait(self.selenium_implicit_wait)
+        self.set_selenium_timeout(self.selenium_implicit_wait)
 
         self.baseurl = self._option_handler.get("baseurl")
         self.browser = self._option_handler.get("browser") or "phantomjs"
@@ -583,24 +585,34 @@ class _BaseActions(_S2LWrapper):
         """
         pageobj_name = self.__class__.__name__
 
+        # determine type of uri attribute
+        if hasattr(self, 'uri'):
+            uri_type = 'template' if re.search('{.+}', self.uri) else 'plain'
+        else:
+            raise exceptions.UriResolutionError("Page object \"%s\" must have a \"uri\" attribute set." % pageobj_name)
+
+        # Don't allow absolute uri attribute.
+        if self._is_url_absolute(self.uri):
+            raise exceptions.UriResolutionError(
+                "Page object \"%s\" must not have an absolute \"uri\" attribute set. Use a relative URL "
+                "instead." % pageobj_name)
+
         # We always need a baseurl set. This enforces parameterization of the
         # domain under test.
 
         if self.baseurl is None:
             raise exceptions.UriResolutionError("To open page object, \"%s\" you must set a baseurl." % pageobj_name)
 
-        #if len(args) > 0 and hasattr(self, "uri") and self.uri is not None:
-
-        elif len(args) > 0 and hasattr(self, "uri_template") and self._is_url_absolute(self.uri_template):
+        elif len(args) > 0 and hasattr(self, "uri") and self._is_url_absolute(self.uri):
             # URI template variables are being passed in, so the page object encapsulates
             # a page that follows some sort of URL pattern. Eg, /pubmed/SOME_ARTICLE_ID.
 
             raise exceptions.UriResolutionError("The URI Template \"%s\" in \"%s\" is an absolute URL. "
-                                                "It should be relative and used with baseurl" % (self
-                                                                                                 .uri_template,
-                                                                                                 pageobj_name))
+                                                "It should be relative and used with baseurl" %
+                                                (self.uri, pageobj_name))
 
         if len(args) > 0:
+            # the user wants to open a non-default uri
             uri_vars = {}
 
             first_arg = args[0]
@@ -617,7 +629,7 @@ class _BaseActions(_S2LWrapper):
                 else:
                     arg_type = "robot"
 
-            if arg_type != "url" and hasattr(self, "uri") and self.uri is not None:
+            if arg_type != "url" and hasattr(self, "uri") and uri_type == 'plain':
                 raise exceptions.UriResolutionError(
                     "URI %s is set for page object %s. It is not a template, so no arguments are allowed." %
                     (self.uri, pageobj_name))
@@ -645,31 +657,16 @@ class _BaseActions(_S2LWrapper):
                 uri_vars = args[0]
 
             # Check that variables are correct and match template.
-            if not self._vars_match_template(self.uri_template, uri_vars):
+            if not self._vars_match_template(self.uri, uri_vars):
                 raise exceptions.UriResolutionError(
                     "The variables %s do not match template %s for page object %s"
-                    % (uri_vars, self.uri_template, pageobj_name)
+                    % (uri_vars, self.uri, pageobj_name)
                 )
             self.uri_vars = uri_vars
-            return uritemplate.expand(self.baseurl + self.uri_template, uri_vars)
-
-        # URI template not being passed in, so the page object might have a "uri" attribute
-        # set which means the page object has a unique URL. Eg, Pubmed Home Page would have a
-        # "url" attribute set to "/pubmed" given a baseurl of "http://domain".
-        try:
-            self.uri
-        except AttributeError:
-            raise exceptions.UriResolutionError(
-                "Page object \"%s\" must have a \"uri\" attribute set." % pageobj_name)
-
-        # Don't allow absolute uri attribute.
-        if self._is_url_absolute(self.uri):
-            raise exceptions.UriResolutionError(
-                "Page object \"%s\" must not have an absolute \"uri\" attribute set. Use a relative URL "
-                "instead." % pageobj_name)
-
-        # urlparse.joinurl could be used, but it mucks with the url too much, esp file URLs
-        return self.baseurl + self.uri
+            return uritemplate.expand(self.baseurl + self.uri, uri_vars)
+        else:
+            # the user wants to open the default uri
+            return self.baseurl + self.uri
 
     @staticmethod
     def _is_url_absolute(url):
@@ -767,11 +764,11 @@ class _BaseActions(_S2LWrapper):
         Wrapper for Selenium2Library's open_browser() that calls resolve_url for url logic and self.browser.
         It also deletes cookies after opening the browser.
 
-        :param *args: A list or dictionary of variables mapping to a page object's uri_template. For example given a
+        :param *args: A list or dictionary of variables mapping to a page object's uri template. For example given a
         template like this::
 
                 class MyPageObject(PageObject):
-                    uri_template = "category/{category}"
+                    uri = "category/{category}"
 
                     ...
 
