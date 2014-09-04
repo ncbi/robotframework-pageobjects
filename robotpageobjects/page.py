@@ -53,7 +53,19 @@ class _PageMeta(_ComponentsManagerMeta):
     @classmethod
     def must_return(cls, f):
         # Use decorator module to preserve docstings and signatures for Sphinx
-        return decorator.decorator(_PageMeta._must_return, f)
+        return decorator.decorator(cls._must_return, f)
+
+    @staticmethod
+    def _mark_depth(f, *args, **kwargs):
+        self = args[0]
+        self._keyword_depth += 1
+        ret = f(*args, **kwargs)
+        self._keyword_depth -= 1
+        return ret
+
+    @classmethod
+    def mark_depth(cls, f):
+        return decorator.decorator(cls._mark_depth, f)
 
     @classmethod
     def _fix_docstrings(cls, bases):
@@ -98,14 +110,20 @@ class _PageMeta(_ComponentsManagerMeta):
 
                 base._fixed_docstring = True
 
+    @classmethod
+    def _decorate_s2l_methods(self, bases):
+        print(bases)
+
     def __new__(cls, name, bases, classdict):
 
         # Don't do inspect.getmembers since it will try to evaluate functions
         # that are decorated as properties.
         for member_name, obj in classdict.iteritems():
             if _Keywords.is_obj_keyword(obj):
-                classdict[member_name] = _PageMeta.must_return(classdict[member_name])
+                classdict[member_name] = cls.must_return(classdict[member_name])
+                classdict[member_name] = cls.mark_depth(classdict[member_name])
 
+        cls._decorate_s2l_methods(bases)
         cls._fix_docstrings(bases)
         return _ComponentsManagerMeta.__new__(cls, name, bases, classdict)
 
@@ -122,6 +140,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     Optional constructor arguments:
     """
     __metaclass__ = _PageMeta
+
+    _keyword_depth = 0
 
 
     def __init__(self, *args, **kwargs):
@@ -189,12 +209,13 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                         if func in base.__dict__.values():
                             in_s2l_base = True
                 # Don't add methods belonging to S2L to the exposed keywords.
-                if in_s2l_base:
+                if in_s2l_base and _Keywords.has_registered_s2l_keywords:
                     continue
                 elif inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
                     # Add all methods that don't start with an underscore and were not marked with the
                     # @not_keyword decorator.
                     keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
+        _Keywords.has_registered_s2l_keywords = True
 
         return keywords
 
@@ -258,4 +279,23 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         # by Page's meta class, because we need to raise this exception for Robot and
         # outside Robot.
 
+        # If nothing was returned and the method was defined in Selenium2Library,
+        # just return self. That way, we exempt Selenium2Library from the "must_return"
+        # requirement, but still know what page we're on. (For Selenium2Library keywords
+        # that go to another page, we'll just assume we're using the same PO.)
+        if ret is None:
+            func = meth.__func__
+            if meth in Selenium2Library.__dict__.values():
+                ret = self
+            else:
+                for base in Selenium2Library.__bases__:
+                    if meth.__func__ in base.__dict__.values():
+                        ret = self
+                        break
         return ret
+
+    def _run_on_failure(self):
+        if self._keyword_depth == 0:
+            # We're actually in a non-keyword that was decorated by Se2Lib.
+            #  Don't run the run-on-failure keyword.
+            return

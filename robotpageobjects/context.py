@@ -72,11 +72,11 @@ class Context(object):
         
     @classmethod
     def get_cache(cls):
-        if cls._cache is None:
-            try:
-                cls._cache = cls.get_s2l_instance()._cache
-            except:
-                pass
+        # if cls._cache is None:
+        #     try:
+        #         cls._cache = cls.get_s2l_instance()._cache
+        #     except:
+        #         pass
         return cls._cache
 
     @classmethod

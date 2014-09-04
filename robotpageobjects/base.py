@@ -27,6 +27,8 @@ class _Keywords(object):
     _aliases = {}
     _alias_delimiter = "__name__"
 
+    has_registered_s2l_keywords = False
+
     @classmethod
     def is_obj_keyword(cls, obj):
         """ Determines whether the given object is a keyword.
@@ -241,7 +243,7 @@ class _S2LWrapper(Selenium2Library):
             # and so we can share its cache. When outside Robot, we won't share the cache with any import
             # of Selenium2Library. This could be done with a monkey-patch,
             # but we are punting until and unless this becomes an issue. See DCLT-708.
-            Context.import_s2l()
+            #Context.import_s2l()
             Context.monkeypatch_namespace()
 
         # Use Selenium2Library's cache for our page objects. That way you can run a keyword from any page object,
@@ -250,6 +252,7 @@ class _S2LWrapper(Selenium2Library):
         super(_S2LWrapper, self).__init__(*args, **kwargs)
         if self._shared_cache is not None:
             self._cache = self._shared_cache
+        #self.log("setting cache", is_console=True)
         Context.set_cache(self._cache)
 
     @property
