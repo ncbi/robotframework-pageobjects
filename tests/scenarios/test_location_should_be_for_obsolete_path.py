@@ -14,7 +14,7 @@ class BaseMethodLocationShouldBeTestCase2(unittest.TestCase):
 
         # This should fail, so we test that we get
         # assertions failures when running remotely.
-        # self.p.location_should_be("med")
+        self.p.location_should_be("med")
 
     def tearDown(self):
         self.p.close()
