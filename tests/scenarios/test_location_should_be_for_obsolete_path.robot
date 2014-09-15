@@ -6,6 +6,6 @@ Library           po.ncbi.NCBIPage
 *** Test Cases ***
 Test Widget Site
     Open NCBI Page    path=pubmed
-    Location Should Be    /pubmed
-    Location Should Be    /med
+    Location Should Be    http://qa.ncbi.nlm.nih.gov/pubmed
+    Location Should Be    http://qa.ncbi.nlm.nih.gov/pub
     [Teardown]    Close NCBI Page
