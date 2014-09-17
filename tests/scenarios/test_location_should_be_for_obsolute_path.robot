@@ -7,5 +7,4 @@ Library           po.ncbi.NCBIPage
 Test Widget Site
     Open NCBI Page    path=pubmed
     Location Should Be    http://qa.ncbi.nlm.nih.gov/pubmed
-    Location Should Be    http://qa.ncbi.nlm.nih.gov/pub
     [Teardown]    Close NCBI Page
