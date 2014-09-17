@@ -11,10 +11,6 @@ class BaseMethodLocationShouldBeTestCase2(unittest.TestCase):
         self.p.open({"path": "pubmed"})
         self.p.location_should_be("http://www.ncbi.nlm.nih.gov/pubmed")
 
-        # This should fail, so we test that we get
-        # assertions failures when running remotely.
-        # self.p.location_should_be("http://www.ncbi.nlm.nih.gov/pub")
-
     def tearDown(self):
         self.p.close()
 

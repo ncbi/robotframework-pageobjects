@@ -1009,6 +1009,6 @@ class _BaseActions(_S2LWrapper):
             return super(_BaseActions, self).location_should_be(expected_url), self
         else:
             # This condition is for partial url,
-            # as the passed parameter doesn't start with http it is considered as partial url
+            # as the regular expression fails it is considered as partial url
             # and hence it is appended to the baseurl
             return super(_BaseActions, self).location_should_be(self.baseurl+ expected_url), self
