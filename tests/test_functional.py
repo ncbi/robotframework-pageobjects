@@ -203,8 +203,8 @@ class ActionsTestCase(BaseTestCase):
         run = self.run_scenario("test_location_should_be_for_relative_path.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
-    def test_location_should_be_for_obsolete_path(self):
-        run = self.run_scenario("test_location_should_be_for_obsolete_path.py")
+    def test_location_should_be_for_obsolute_path(self):
+        run = self.run_scenario("test_location_should_be_for_obsolute_path.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
 class SelectorsTestCase(BaseTestCase):
