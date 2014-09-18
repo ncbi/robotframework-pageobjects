@@ -57,3 +57,9 @@ class ComponentError(KeyError):
     Raised when there is an issue retrieving instances of a component.
     """
     pass
+
+
+class PageSelectionError(Exception):
+    """Raised when a page object cannot be automatically selected
+    as the return value of a method"""
+    pass

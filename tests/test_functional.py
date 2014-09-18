@@ -436,6 +436,11 @@ class WaitingTestCase(BaseTestCase):
         run = self.run_scenario("test_implicit_se_wait.py", env={"PO_SELENIUM_IMPLICIT_WAIT": "1"})
         self.assert_run(run, expected_returncode=1, search_output="FAIL")
 
+    def test_implicit_wait_can_be_set_to_0(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_implicit_se_wait_0.py", env={"PO_SELENIUM_IMPLICIT_WAIT": "0"})
+        self.assert_run(run, expected_returncode=0, search_output="OK")
+
     def test_can_set_wait_on_call_to_find_element_and_find_elements(self):
         self.set_baseurl_env()
         run = self.run_scenario("test_pass_explicit_wait_to_find_element.py")
