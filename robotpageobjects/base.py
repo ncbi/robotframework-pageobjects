@@ -193,8 +193,20 @@ class Override(object):
 
 class KeyUniquenessDict(dict):
     """
-    Wrap dict to add the ability to enforce key uniqueness.
+    Wrap dict to add the ability to enforce key uniqueness and to allow values which can
+    reference other values by key using the old python string formatting syntax
+
+    dictionary = KeyUniquenessDict({
+        'some_element' : 'xpath://html/body/div[1]/div',
+        'another_element' : '%(some_element)s/span[3]',
+    })
+
+    print dictionary["some_element"]
+    print dictionary["another_element"]
     """
+
+    def __getitem__(self, item):
+        return dict.__getitem__(self, item) % self
 
     def merge(self, other_dict, from_subclass=False):
         """
