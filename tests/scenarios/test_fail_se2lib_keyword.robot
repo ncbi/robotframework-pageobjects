@@ -8,8 +8,8 @@ Library    widget_rel_uri_attr.SearchResultPage
 *** Test Cases ***
 
 Test Widget Site
-    Open Widget Page
-    Search Widget Page For  cool thing
+    Open Browser  ${BASEURL}/site/index.html
+    #Search Widget Page For  cool thing
 
     # This will fail the assertion
     Title Should Be  foo

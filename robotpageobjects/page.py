@@ -23,6 +23,7 @@ import inspect
 import re
 import decorator
 from Selenium2Library import Selenium2Library
+from Selenium2Library.keywords.keywordgroup import KeywordGroupMetaClass
 
 from sig import get_method_sig
 from .context import Context
@@ -58,14 +59,23 @@ class _PageMeta(_ComponentsManagerMeta):
     @staticmethod
     def _mark_depth(f, *args, **kwargs):
         self = args[0]
+        import sys
+        sys.__stdout__.write("\n%s\n" % str(f))
+        sys.__stdout__.write("\nINCREMENTING\n")
         self._keyword_depth += 1
         ret = f(*args, **kwargs)
         self._keyword_depth -= 1
         return ret
 
     @classmethod
-    def mark_depth(cls, f):
-        return decorator.decorator(cls._mark_depth, f)
+    def mark_depth(cls, bases):
+        for base in bases:
+            if not hasattr(base, "_marked_depth"):
+                for member_name, member in inspect.getmembers(base):
+                    if _Keywords.is_obj_keyword(member):
+                        setattr(base, member_name, decorator.decorator(cls._mark_depth, member.im_func))
+                        #member.__func__ = decorator.decorator(cls._mark_depth, member.__func__)
+                base._marked_depth = True
 
     @classmethod
     def _fix_docstrings(cls, bases):
@@ -110,21 +120,22 @@ class _PageMeta(_ComponentsManagerMeta):
 
                 base._fixed_docstring = True
 
+
     @classmethod
     def _decorate_s2l_methods(self, bases):
         print(bases)
 
     def __new__(cls, name, bases, classdict):
-
         # Don't do inspect.getmembers since it will try to evaluate functions
         # that are decorated as properties.
         for member_name, obj in classdict.iteritems():
             if _Keywords.is_obj_keyword(obj):
                 classdict[member_name] = cls.must_return(classdict[member_name])
-                classdict[member_name] = cls.mark_depth(classdict[member_name])
+                #classdict[member_name] = cls.mark_depth(classdict[member_name])
 
         cls._decorate_s2l_methods(bases)
         cls._fix_docstrings(bases)
+        cls.mark_depth(bases)
         return _ComponentsManagerMeta.__new__(cls, name, bases, classdict)
 
 
@@ -240,6 +251,9 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         :returns: callable
         """
         # Translate back from Robot Framework alias to actual method
+        import sys
+
+        sys.__stdout__.write("\nrunning\n")
         meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, self._underscore(self.name)))
         try:
             ret = meth(*args)
@@ -298,8 +312,12 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                         break
         return ret
 
-    def _run_on_failure(self):
+    def _run_on_failure(self, *args, **kwargs):
+        import sys
+        sys.__stdout__.write("\nrun on failure: %s\n" % self._keyword_depth)
         if self._keyword_depth == 0:
             # We're actually in a non-keyword that was decorated by Se2Lib.
             #  Don't run the run-on-failure keyword.
             return
+        elif self._keyword_depth == 1:
+            super(Page, self)._run_on_failure(*args, **kwargs)

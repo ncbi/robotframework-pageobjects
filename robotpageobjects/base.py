@@ -41,7 +41,7 @@ class _Keywords(object):
         except AttributeError:
             return False
 
-        if inspect.isroutine(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
+        if inspect.isroutine(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name) and name not in ("get_keyword_names", "run_keyword"):
             return True
 
         else:

@@ -193,6 +193,9 @@ class BaseTestCase(unittest.TestCase):
 
         cmd = cmd.replace("pybot ", "pybot " + opt_str + " ")
         cmd += " " + " ".join(args)
+        import sys
+
+        sys.__stdout__.write("\n"+cmd+"\n")
         p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         com = p.communicate()
         code = p.wait()
