@@ -117,20 +117,13 @@ class _PageMeta(_ComponentsManagerMeta):
 
                 base._fixed_docstring = True
 
-
-    @classmethod
-    def _decorate_s2l_methods(self, bases):
-        print(bases)
-
     def __new__(cls, name, bases, classdict):
         # Don't do inspect.getmembers since it will try to evaluate functions
         # that are decorated as properties.
         for member_name, obj in classdict.iteritems():
             if _Keywords.is_obj_keyword(obj):
                 classdict[member_name] = cls.must_return(classdict[member_name])
-                #classdict[member_name] = cls.mark_depth(classdict[member_name])
 
-        cls._decorate_s2l_methods(bases)
         cls._fix_docstrings(bases)
         cls.mark_depth(bases)
         return _ComponentsManagerMeta.__new__(cls, name, bases, classdict)
