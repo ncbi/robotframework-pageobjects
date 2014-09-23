@@ -253,7 +253,6 @@ class _S2LWrapper(Selenium2Library):
         super(_S2LWrapper, self).__init__(*args, **kwargs)
         if self._shared_cache is not None:
             self._cache = self._shared_cache
-        #self.log("setting cache", is_console=True)
         Context.set_cache(self._cache)
 
     @property
