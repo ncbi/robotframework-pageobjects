@@ -153,7 +153,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     __metaclass__ = _PageMeta
 
     _keyword_depth = 0
-
+    _has_run_on_failure = False
 
     def __init__(self, *args, **kwargs):
         """
@@ -319,6 +319,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         if self._keyword_depth == 0:
             # We're actually in a non-keyword that was decorated by Se2Lib.
             #  Don't run the run-on-failure keyword.
+            self._has_run_on_failure = False
             return
-        elif self._keyword_depth == 1:
+        elif not self._has_run_on_failure:
             super(Page, self)._run_on_failure(*args, **kwargs)
+            self._has_run_on_failure = True
