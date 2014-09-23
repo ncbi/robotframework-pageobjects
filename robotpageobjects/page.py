@@ -217,27 +217,13 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                 if func not in self.__class__.__dict__.values():
                     if name in Selenium2Library.__dict__.keys():
                         in_s2l_base = True
-                        #print("%s is in s2l base" % name)
                     else:
                         # Check if the function is defined in any of Selenium2Library's direct base classes.
                         # Note that this will not check those classes' ancestors.
                         # TODO: Check all S2L's ancestors. DCLT-
                         for base in Selenium2Library.__bases__:
-                            keys = [key for key in base.__dict__.keys() if key == "open_browser"]
-                            if name == "open_browser" and len(keys) > 0:
-                                #print("%s dict: %s" % (base, keys))
-                                ##print(obj.im_func)
-                                ##print(obj.im_class)
-                                ##print(base.__dict__[name])
-                                ##print(base)
-                                #print(func)
-                                #print([base.__dict__[key] for key in keys])
-                                #print(func in base.__dict__.values())
-                                ##print(base.__dict__[name] == obj.__func__)
-                                ##print(obj.im_class == base)
                             if name in base.__dict__.keys():
                                 in_s2l_base = True
-                                #print("%s is in s2lbase's bases" % name)
                 # Don't add methods belonging to S2L to the exposed keywords.
                 if in_s2l_base and _Keywords.has_registered_s2l_keywords:
                     continue
@@ -247,7 +233,6 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                     keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
         _Keywords.has_registered_s2l_keywords = True
 
-        #print(keywords)
         return keywords
 
     def _attempt_screenshot(self):
