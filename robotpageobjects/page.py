@@ -59,9 +59,6 @@ class _PageMeta(_ComponentsManagerMeta):
     @staticmethod
     def _mark_depth(f, *args, **kwargs):
         self = args[0]
-        import sys
-        #sys.__stdout__.write("\n%s\n" % str(f))
-        #sys.__stdout__.write("\nINCREMENTING\n")
         self._keyword_depth += 1
         ret = f(*args, **kwargs)
         self._keyword_depth -= 1
@@ -314,8 +311,6 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         return ret
 
     def _run_on_failure(self, *args, **kwargs):
-        import sys
-        sys.__stdout__.write("\nrun on failure: %s\n" % self._keyword_depth)
         if self._keyword_depth == 0:
             # We're actually in a non-keyword that was decorated by Se2Lib.
             #  Don't run the run-on-failure keyword.
