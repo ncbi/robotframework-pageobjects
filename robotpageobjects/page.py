@@ -249,9 +249,6 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         :returns: callable
         """
         # Translate back from Robot Framework alias to actual method
-        import sys
-
-        sys.__stdout__.write("\nrunning\n")
         meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, self._underscore(self.name)))
         try:
             ret = meth(*args)
