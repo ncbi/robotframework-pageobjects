@@ -1,3 +1,4 @@
+from Selenium2Library.keywords import _browsermanagement
 import re
 import importlib
 import inspect
@@ -1032,3 +1033,21 @@ class _BaseActions(_S2LWrapper):
         template_vars = list(uritemplate.variables(template))
         template_vars.sort()
         return template_vars == keys
+
+    def location_should_be(self, expected_url):
+        """
+        Override Selenium2Library's location_should_be() method and intelligently
+        determine if the current browser url matches with the ending url or full url passed in the method.
+
+        :param url: Either complete url or partial url to be validated against
+        :type url: str
+        :returns: True or False
+        """
+        if re.match("^(\w+:)?//", expected_url):
+            # Simply compares with the expected url as it starts with http
+            return super(_BaseActions, self).location_should_be(expected_url), self
+        else:
+            # This condition is for partial url,
+            # as the regular expression fails it is considered as partial url
+            # and hence it is appended to the baseurl
+            return super(_BaseActions, self).location_should_be(self.baseurl+ expected_url), self
