@@ -1,4 +1,6 @@
 import re
+import pdb
+import sys
 from Selenium2Library import Selenium2Library
 from Selenium2Library.locators.tableelementfinder import TableElementFinder
 from Selenium2Library.keywords._tableelement import _TableElementKeywords
@@ -151,5 +153,11 @@ def do_monkeypatches():
             % (table_locator, str(row), str(column)))
 
     _TableElementKeywords.get_table_cell = get_table_cell
-    ### END QAR-48165 monkey patch 
-    
+    ### END QAR-48165 monkey patch
+
+    old_set_trace = pdb.set_trace
+    def _set_trace():
+        for attr in ('stdin', 'stdout', 'stderr'):
+            setattr(sys, attr, getattr(sys, '__%s__' % attr))
+        old_set_trace()
+    pdb.set_trace = _set_trace
