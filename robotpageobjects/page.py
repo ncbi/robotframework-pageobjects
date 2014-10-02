@@ -23,7 +23,6 @@ import inspect
 import re
 import decorator
 from Selenium2Library import Selenium2Library
-from Selenium2Library.keywords.keywordgroup import KeywordGroupMetaClass
 
 from sig import get_method_sig
 from .context import Context
