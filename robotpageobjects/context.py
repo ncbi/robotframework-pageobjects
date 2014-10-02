@@ -98,7 +98,8 @@ class Context(object):
     @classmethod
     def monkeypatch_namespace(cls):
         """
-        This is called by the base Page class when a page object is instantiated.
+        This is called by the base Page class when a page object is instantiated,
+        so that we can disambiguate keywords.
         _get_handler_from_library_keywords looks for a keyword in the currently-
         imported libraries. If it finds more than one, it raises a DataError.
         Catch that error, use the get_current_page() method to disambiguate,
