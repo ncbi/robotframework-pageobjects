@@ -125,7 +125,7 @@ class _PageMeta(_ComponentsManagerMeta):
         for member_name, obj in classdict.iteritems():
             if _Keywords.is_obj_keyword(obj):
                 classdict[member_name] = cls.must_return(classdict[member_name])
-                classdict[member_name] = decorator.decorator(cls._mark_depth, obj)
+                classdict[member_name] = decorator.decorator(cls._mark_depth, classdict[member_name])
 
         cls._fix_docstrings(bases)
         cls.mark_depth(bases)
@@ -195,7 +195,6 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
         # Look through our methods and identify which ones are Selenium2Library's
         # (by checking it and its base classes).
-        print(Selenium2Library.__dict__.keys())
         for name in dir(self):
             is_keyword = _Keywords.is_obj_keyword_by_name(name, self)
             if is_keyword:
