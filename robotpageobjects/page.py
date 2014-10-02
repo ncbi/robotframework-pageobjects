@@ -125,6 +125,7 @@ class _PageMeta(_ComponentsManagerMeta):
         for member_name, obj in classdict.iteritems():
             if _Keywords.is_obj_keyword(obj):
                 classdict[member_name] = cls.must_return(classdict[member_name])
+                classdict[member_name] = decorator.decorator(cls._mark_depth, obj)
 
         cls._fix_docstrings(bases)
         cls.mark_depth(bases)
@@ -305,9 +306,9 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     def _run_on_failure(self, *args, **kwargs):
         if not hasattr(self, "_keyword_depth") or self._keyword_depth == 0:
             # We're actually in a non-keyword that was decorated by Se2Lib.
+            #  We know this because all keywords have the count incremented.
             #  Don't run the run-on-failure keyword.
-            self._has_run_on_failure = False
             return
-        elif not self._has_run_on_failure:
+        elif self._keyword_depth == 1:
             super(Page, self)._run_on_failure(*args, **kwargs)
-            self._has_run_on_failure = True
+            self._keyword_depth = 0
