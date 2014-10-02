@@ -43,26 +43,6 @@ class Context(object):
             return False
 
     @classmethod
-    def get_s2l_instance(cls):
-        if cls._s2l_instance is not None:
-            return cls._s2l_instance
-        else:
-            cls.import_s2l()
-            return cls._s2l_instance
-
-    @classmethod
-    def import_s2l(cls):
-        """
-        Make sure that Selenium2Library has been imported by Robot.
-        First try to get the existing instance. If that fails,
-        tell Robot to import the library.
-        """
-        try:
-            cls._s2l_instance = BuiltIn().get_library_instance("Selenium2Library")
-        except:
-            cls._s2l_instance = BuiltIn().import_library("Selenium2Library")
-
-    @classmethod
     def set_keywords_exposed(cls):
         cls._keywords_exposed = True
         
@@ -72,11 +52,6 @@ class Context(object):
         
     @classmethod
     def get_cache(cls):
-        # if cls._cache is None:
-        #     try:
-        #         cls._cache = cls.get_s2l_instance()._cache
-        #     except:
-        #         pass
         return cls._cache
 
     @classmethod
