@@ -58,7 +58,10 @@ class _PageMeta(_ComponentsManagerMeta):
     @staticmethod
     def _mark_depth(f, *args, **kwargs):
         self = args[0]
-        self._keyword_depth += 1
+        try:
+            self._keyword_depth += 1
+        except AttributeError:
+            self._keyword_depth = 1
         ret = f(*args, **kwargs)
         self._keyword_depth -= 1
         return ret
@@ -300,7 +303,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         return ret
 
     def _run_on_failure(self, *args, **kwargs):
-        if self._keyword_depth == 0:
+        if not hasattr(self, "_keyword_depth") or self._keyword_depth == 0:
             # We're actually in a non-keyword that was decorated by Se2Lib.
             #  Don't run the run-on-failure keyword.
             self._has_run_on_failure = False
