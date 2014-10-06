@@ -58,12 +58,12 @@ class SearchResultPage(Page):
         len_results = len(self.find_elements("results"))
         asserts.assert_equals(len_results, int(expected), "Unexpected number of results found on %s, got %s, "
                                                           "expected %s" %(self.name, len_results, expected))
-        return self
-        #return self.should_have_results_inner(expected)
+        #return self
+        return self.should_have_results_inner(expected)
 
-    #
-    # def should_have_results_inner(self, expected):
-    #     len_results = len(self.find_elements("results"))
-    #     asserts.assert_equals(len_results, int(expected), "Unexpected number of results found on %s, got %s, "
-    #                                                       "expected %s" %(self.name, len_results, expected))
-    #     return self
+
+    def should_have_results_inner(self, expected):
+         len_results = len(self.find_elements("results"))
+         asserts.assert_equals(len_results, int(expected), "Unexpected number of results found on %s, got %s, "
+                                                           "expected %s" %(self.name, len_results, expected))
+         return self
