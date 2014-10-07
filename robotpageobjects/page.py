@@ -232,13 +232,6 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
         return keywords
 
-    def _attempt_screenshot(self):
-            try:
-                self.capture_page_screenshot()
-            except Exception, e:
-                if e.message.find("No browser is open") != -1:
-                    pass
-
     def run_keyword(self, alias, args):
         """
         RF Dynamic API hook implementation that maps method aliases to their actual functions.
@@ -253,18 +246,6 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         try:
             ret = meth(*args)
         except:
-            # Try to take a screenshot. If it fails due to no browser being open,
-            # just raise the original exception. A failed screenshot is just noise here.
-            # QAR-47920
-
-            # Hardcode capture_page_screenshot. This is because run_on_failure
-            # is being set to "Nothing" (DCLT-659 and DCLT-726).
-            # TODO: After DCLT-827 is addressed, we can use run_on_failure again.
-
-            # Walling off nested try/except in separate method to simplify scope issues with nested
-            # try/excepts. Mess with at your own risk.
-            #self._attempt_screenshot()
-
             # Pass up the stack, so we see complete stack trace in Robot trace logs
             raise
 
