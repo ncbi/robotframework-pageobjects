@@ -424,6 +424,11 @@ class KeywordsTestCase(BaseTestCase):
                                 variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
+    def test_overridden_keywords_still_exist_for_se2lib(self):
+        run = self.run_scenario("test_overridden_keyword.robot",
+                                variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
+
 class WaitingTestCase(BaseTestCase):
     def test_implicit_wait_default_works(self):
         self.set_baseurl_env()

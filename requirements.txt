@@ -1,5 +1,6 @@
 decorator
 mock==1.0.1
 requests==2.1.0
+robotframework==2.8.5
 robotframework-selenium2library==1.5.0
 uritemplate==0.6
