@@ -6,13 +6,7 @@ from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 
 def do_monkeypatches():
-    """
-    DCLT-659 and DCLT-726, DCLT-827 (Solve Issue of Screenshot...):
-    Add get_keyword_names and run_keyword to Se2Lib, so that we
-    can use run_keyword to capture a page screenshot on failure,
-    instead of a decorator and metaclass (which were causing
-    duplicate screenshots).
-    """
+    """"""
 
     def _make_phantomjs(self , remote , desired_capabilities , profile_dir):
         browser = None
