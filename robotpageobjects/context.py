@@ -6,6 +6,7 @@ from robot import api as robot_api
 from robot.conf import RobotSettings
 from robot.variables import init_global_variables
 from robot.errors import DataError
+from Selenium2Library import Selenium2Library
 from monkeypatches import do_monkeypatches
 
 do_monkeypatches()

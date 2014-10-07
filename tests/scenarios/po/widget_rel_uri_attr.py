@@ -48,6 +48,9 @@ class Page(Page):
         loc = self.resolve_selector("another-paragraph", klass="ct", id="foo" )
         return self.get_text(loc)
 
+    def title_should_be(self, title):
+        return super(Page, self).title_should_be(title)
+
 
 class SearchResultPage(Page):
     name = "Widget Search Result Page"

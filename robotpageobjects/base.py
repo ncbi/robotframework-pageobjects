@@ -242,6 +242,7 @@ class _S2LWrapper(Selenium2Library):
         else:
             # This is for disambiguating keywords that are defined in multiple libraries.
             Context.monkeypatch_namespace()
+            Context.set_current_page("Selenium2Library")
 
         # Use Selenium2Library's cache for our page objects. That way you can run a keyword from any page object,
         # or from Selenium2Library, and not have to open a separate browser.

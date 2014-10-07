@@ -424,8 +424,8 @@ class KeywordsTestCase(BaseTestCase):
                                 variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
-    def test_overridden_keywords_still_exist_for_se2lib(self):
-        run = self.run_scenario("test_overridden_keyword.robot",
+    def test_se2lib_keywords_are_still_available_if_both_se2lib_and_po_are_imported(self):
+        run = self.run_scenario("test_se2lib_called_before_po.robot",
                                 variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
