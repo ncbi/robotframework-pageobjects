@@ -73,7 +73,6 @@ class _PageMeta(_ComponentsManagerMeta):
                 for member_name, member in inspect.getmembers(base):
                     if _Keywords.is_obj_keyword(member):
                         setattr(base, member_name, decorator.decorator(cls._mark_depth, member.im_func))
-                        #member.__func__ = decorator.decorator(cls._mark_depth, member.__func__)
                 base._marked_depth = True
 
     @classmethod
