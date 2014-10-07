@@ -57,6 +57,12 @@ class _PageMeta(_ComponentsManagerMeta):
 
     @staticmethod
     def _mark_depth(f, *args, **kwargs):
+        """Decorator that increments a counter on the decorated method's class every time the method is called.
+        This is for keyword methods that call other keyword methods. `Selenium2Library`'s `_run_on_failure_decorator`
+        causes the "run-on-failure" keyword (by default, "Capture Page Screenshot") to be run whenever a decorated
+        method fails, and if the inner and outer method are both decorated, that will result in a duplicate screenshot.
+        To prevent this, we set this counter, and we override _run_on_failure, so that screenshots are only taken on failure
+        if the counter value is 1."""
         self = args[0]
         try:
             self._keyword_depth += 1
@@ -302,6 +308,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         return ret
 
     def _run_on_failure(self, *args, **kwargs):
+        """Check the "_keyword_depth" counter, which is incremented by the "mark_depth"
+        decorator, and only call super if it is set to 1."""
         if not hasattr(self, "_keyword_depth") or self._keyword_depth == 0:
             # We're actually in a non-keyword that was decorated by Se2Lib.
             #  We know this because all keywords have the count incremented.
