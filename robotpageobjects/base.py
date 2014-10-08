@@ -1,3 +1,4 @@
+from Selenium2Library.keywords import _browsermanagement
 import re
 import importlib
 import inspect
@@ -195,8 +196,20 @@ class Override(object):
 
 class KeyUniquenessDict(dict):
     """
-    Wrap dict to add the ability to enforce key uniqueness.
+    Wrap dict to add the ability to enforce key uniqueness and to allow values which can
+    reference other values by key using the old python string formatting syntax
+
+    dictionary = KeyUniquenessDict({
+        'some_element' : 'xpath://html/body/div[1]/div',
+        'another_element' : '%(some_element)s/span[3]',
+    })
+
+    print dictionary["some_element"]
+    print dictionary["another_element"]
     """
+
+    def __getitem__(self, item):
+        return dict.__getitem__(self, item) % self
 
     def merge(self, other_dict, from_subclass=False):
         """
@@ -1019,3 +1032,21 @@ class _BaseActions(_S2LWrapper):
         template_vars = list(uritemplate.variables(template))
         template_vars.sort()
         return template_vars == keys
+
+    def location_should_be(self, expected_url):
+        """
+        Override Selenium2Library's location_should_be() method and intelligently
+        determine if the current browser url matches with the ending url or full url passed in the method.
+
+        :param url: Either complete url or partial url to be validated against
+        :type url: str
+        :returns: True or False
+        """
+        if re.match("^(\w+:)?//", expected_url):
+            # Simply compares with the expected url as it starts with http
+            return super(_BaseActions, self).location_should_be(expected_url), self
+        else:
+            # This condition is for partial url,
+            # as the regular expression fails it is considered as partial url
+            # and hence it is appended to the baseurl
+            return super(_BaseActions, self).location_should_be(self.baseurl+ expected_url), self

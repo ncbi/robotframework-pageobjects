@@ -12,8 +12,9 @@ class Page(Page):
         "another-paragraph": "css=div.{klass} p#{id}",
         "delayed content button": "id=delayed-content",
         "delayed content holder": "id=delayed-content-holder",
-        "delayed content": "css=#delayed-content-holder > p"
-
+        "delayed content": "css=#delayed-content-holder > p",
+        "search form": "xpath=//form",
+        "form label": "%(search form)s/label",
     }
 
     @robot_alias("search__name__for")

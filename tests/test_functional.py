@@ -198,6 +198,13 @@ class ActionsTestCase(BaseTestCase):
         run = self.run_scenario("test_is_visible.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
+    def test_location_should_be_for_relative_path(self):
+        run = self.run_scenario("test_location_should_be_for_relative_path.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")
+
+    def test_location_should_be_for_absolute_path(self):
+        run = self.run_scenario("test_location_should_be_for_absolute_path.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")
 
 class SelectorsTestCase(BaseTestCase):
     """
@@ -225,6 +232,11 @@ class SelectorsTestCase(BaseTestCase):
     def test_selector_template(self):
         self.set_baseurl_env()
         run = self.run_scenario("test_templated_selector.py")
+        self.assert_run(run, expected_returncode=0, search_output="OK")
+
+    def test_selector_self_ref(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_selector_self_ref.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_no_robot_action_failing_should_not_warn_about_screenshot(self):
