@@ -55,37 +55,6 @@ class _PageMeta(_ComponentsManagerMeta):
         # Use decorator module to preserve docstings and signatures for Sphinx
         return decorator.decorator(cls._must_return, f)
 
-    @staticmethod
-    def _mark_depth(f, *args, **kwargs):
-        """Decorator that increments a counter on the decorated method's class every time the method is called.
-        This is for keyword methods that call other keyword methods. `Selenium2Library`'s `_run_on_failure_decorator`
-        causes the "run-on-failure" keyword (by default, "Capture Page Screenshot") to be run whenever a decorated
-        method fails, and if the inner and outer method are both decorated, that will result in a duplicate screenshot.
-        To prevent this, we set this counter, and we override _run_on_failure, so that screenshots are only taken on failure
-        if the counter value is 1."""
-        self = args[0]
-        try:
-            self._keyword_depth += 1
-        except AttributeError:
-            self._keyword_depth = 1
-        ret = f(*args, **kwargs)
-
-        self._keyword_depth -= 1
-        # We only get to this if there's no exception in the previous line.
-        # If there is an exception, we decrement in _run_on_failure.
-        # We don't do this in a "finally" clause here, because run-on-failure
-        # needs to know how far in we are.
-        return ret
-
-    @classmethod
-    def mark_depth(cls, bases):
-        for base in bases:
-            if not hasattr(base, "_marked_depth"):
-                for member_name, member in inspect.getmembers(base):
-                    if _Keywords.is_obj_keyword(member):
-                        setattr(base, member_name, decorator.decorator(cls._mark_depth, member.im_func))
-                base._marked_depth = True
-
     @classmethod
     def _fix_docstrings(cls, bases):
         """ Called from _PageMeta's __new__ method.
@@ -135,10 +104,8 @@ class _PageMeta(_ComponentsManagerMeta):
         for member_name, obj in classdict.iteritems():
             if _Keywords.is_obj_keyword(obj):
                 classdict[member_name] = cls.must_return(classdict[member_name])
-                #classdict[member_name] = decorator.decorator(cls._mark_depth, classdict[member_name])
 
         cls._fix_docstrings(bases)
-        #cls.mark_depth(bases)
         return _ComponentsManagerMeta.__new__(cls, name, bases, classdict)
 
 
@@ -292,25 +259,3 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                         ret = self
                         break
         return ret
-
-    # def _run_on_failure(self, *args, **kwargs):
-    #     """Check the "_keyword_depth" counter, which is incremented by the "mark_depth"
-    #     decorator, and only call super if it is set to 1."""
-    #     import sys
-    #     sys.__stdout__.write("\n%s\n" % getattr(self, "_keyword_depth"))
-    #     if hasattr(self, "_keyword_depth") and self._keyword_depth != 0 and self._keyword_depth == 1:
-    #         # We only run the run-on-failure keyword if _keyword_depth is 1.
-    #         #  If _keyword_depth is not set, or _keyword_depth is 0, then
-    #         #  we're actually in a non-keyword that was decorated by Se2Lib.
-    #         #  We know this because all keywords have the count incremented.
-    #         #  If _keyword_depth > 1, then we don't need to run it because we
-    #         #  will handle it when we get back up the stack to 1.
-    #         super(Page, self)._run_on_failure(*args, **kwargs)
-    #     if self._keyword_depth != 0:
-    #         self._keyword_depth -= 1
-    #         # Decrement for when we pass back up the chain.
-    #         #  We do this here and not in the decorator,
-    #         #  because we need to know the actual value here
-    #         #  before we decrement.
-    #         #  We don't decrement when it's 0, because that only
-    #         #  happens if we're in a non-keyword (run_keyword or get_keyword_names).
