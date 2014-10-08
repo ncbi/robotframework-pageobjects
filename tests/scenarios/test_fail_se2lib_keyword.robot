@@ -8,7 +8,7 @@ Library    widget_rel_uri_attr.SearchResultPage
 *** Test Cases ***
 
 Test Widget Site
-    Open Browser  ${BASEURL}/site/index.html
+    Open Browser  ${BASEURL}/site/index.html  phantomjs
 
     # This will fail the assertion
     Title Should Be  foo
