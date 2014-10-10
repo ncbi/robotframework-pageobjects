@@ -84,14 +84,6 @@ class Context(object):
         BuiltIn().on(name)
 
     @classmethod
-    def get_current_page(cls):
-        """
-        Return the current page, as indicated by the most recently
-        returned page object from a keyword.
-        """
-        return BuiltIn().get_preferred_library()
-
-    @classmethod
     def get_libraries(cls):
         return [lib.name for lib in EXECUTION_CONTEXTS.current.namespace.libraries]
 
