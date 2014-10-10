@@ -81,7 +81,7 @@ class Context(object):
 
     @classmethod
     def set_current_page(cls, name):
-        cls._current_page = name
+        BuiltIn().on(name)
 
     @classmethod
     def get_current_page(cls):
@@ -89,11 +89,11 @@ class Context(object):
         Return the current page, as indicated by the most recently
         returned page object from a keyword.
         """
-        return cls._current_page
+        return BuiltIn().get_preferred_library()
 
     @classmethod
     def get_libraries(cls):
-        return EXECUTION_CONTEXTS.current.namespace._testlibs
+        return [lib.name for lib in EXECUTION_CONTEXTS.current.namespace.libraries]
 
 
 # Set up Robot's global variables so we get all the built-in default settings when we're outside Robot.
