@@ -81,7 +81,7 @@ class Context(object):
 
     @classmethod
     def set_current_page(cls, name):
-        BuiltIn().on(name)
+        BuiltIn().set_library_search_order(name)
 
     @classmethod
     def get_libraries(cls):
