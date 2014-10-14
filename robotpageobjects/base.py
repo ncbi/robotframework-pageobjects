@@ -256,7 +256,6 @@ class _S2LWrapper(Selenium2Library):
             # of Selenium2Library. This could be done with a monkey-patch,
             # but we are punting until and unless this becomes an issue. See DCLT-708.
             Context.import_s2l()
-            Context.monkeypatch_namespace()
 
         # Use Selenium2Library's cache for our page objects. That way you can run a keyword from any page object,
         # or from Selenium2Library, and not have to open a separate browser.
