@@ -255,6 +255,10 @@ class SelectorsTestCase(BaseTestCase):
         run = self.run_scenario("test_se2lib_imported_before_po.robot")
         self.assert_run(run, expected_returncode=0, search_output="PASSED")
 
+    def test_selector_in_se2lib_method(self):
+        run = self.run_scenario("test_se2lib_using_selector.robot")
+        self.assert_run(run, expected_returncode=0, search_output="PASSED")
+
 
 class ComponentTestCase(BaseTestCase):
     def setUp(self):
