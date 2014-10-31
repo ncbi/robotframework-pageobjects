@@ -254,7 +254,6 @@ class _S2LWrapper(Selenium2Library):
             # We need this to prevent S2L from attempting to take a screenshot outside Robot.
         else:
             # This is for disambiguating keywords that are defined in multiple libraries.
-            Context.monkeypatch_namespace()
             Context.set_current_page("Selenium2Library")
 
         # Use Selenium2Library's cache for our page objects. That way you can run a keyword from any page object,

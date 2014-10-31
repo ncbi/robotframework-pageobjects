@@ -233,7 +233,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             # which page object to set Context's pointer to.
 
             # Get the names of all currently imported libraries
-            libnames = Context.get_libraries().keys()
+            libnames = Context.get_libraries()
             classname = ret.__class__.__name__
 
             for name in libnames:
