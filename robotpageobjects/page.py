@@ -122,8 +122,6 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     """
     __metaclass__ = _PageMeta
 
-    _keyword_depth = 0
-    _has_run_on_failure = False
 
     def __init__(self, *args, **kwargs):
         """
