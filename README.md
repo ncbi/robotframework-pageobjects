@@ -192,17 +192,18 @@ By default, a page object method is mapped to two Robot keywords: one without th
 	from robotpageobjects import Page
 
 	class MyPage(Page):
-    	uri = "/"
+    		uri = "/"
 
-    	def search(self, term):
+    		def search(self, term):
         	...
 
-The search method maps to both "Search" or "Search My Page" keywords. This lets you be either implicit or explicit about what page you are on in your Robot test.
-Customizing Robot Keywords
+The search method maps to both `Search` or `Search My Page` keywords. This lets you be either implicit or explicit about what page you are on in your Robot test.
+
+### Customizing Robot Keywords
 
 IFT gives Page object authors some control over how Page object method names are mapped to Robot keywords:
 
-- You can allow the test writer to insert the page object name at a specific place in the keyword (not just at the end) by using the robot_alias decorator with a __name__ token. For example:
+- You can allow the test writer to insert the page object name at a specific place in the keyword (not just at the end) by using the robot_alias decorator with a `__name__` token. For example:
 
     from robotpageobjects import Page, robot_alias
 
@@ -213,7 +214,7 @@ IFT gives Page object authors some control over how Page object method names are
         def search_for(self, term):
             ...
 
-This code would map to both "Search For" or "Search My Page For" keywords.
+This code would map to both `Search For` or `Search My Page For` keywords.
 
 - If you want to name your page object class something other than the name used in the keywords, use the name attribute on the page object class. For example:
 
@@ -228,7 +229,7 @@ This code would map to both "Search For" or "Search My Page For" keywords.
         def search(self, term):
             ...
 
-Your Robot keywords would then be Search or Search mypage, regardless of the class name.
+Your Robot keywords would then be `Search` or `Search mypage`, regardless of the class name, `MyPage`.
 
 Being implicit or explicit about page object names in your Robot tests is a matter of taste, and depends on how you want your tests to read. In general, you should be explicit about what page you're on when you navigate to a new page. For example:
 
