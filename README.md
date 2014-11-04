@@ -7,28 +7,22 @@ Framework allowing you to encapsulate page logic in Robot Framework testcases or
 Python [unittest](https://docs.python.org/2/library/unittest.html) test cases).
 
 
-## Background
-
-Take a look at:
-
-- [Robot Framework's Quick Start Guide](http://robotframework.googlecode.com/hg/doc/quickstart/quickstart.html) to get an idea of what Robot Framework is
-- [Selenium2Library](http://rtomac.github.io/robotframework-selenium2library/doc/Selenium2Library.html)
-to learn how Robot Framework can drive Selenium2.
-- [Page Object Pattern](http://martinfowler.com/bliki/PageObject.html)
+## Installing
+TODO
 
 ## How it Works
 
-Here's a Robot test case using some page objects. We need to import any page objects libraries we need in our test
-case. **Note**: If we want to use standard Selenium2Library keywords, we need to also include Selenium2Library. This
-code is in demos/test_google_search_to_apple.robot:
+Here's a Robot test case using some page objects written using the `Page` base class. We need to import any page objects libraries we need in our test
+case. **Note**: The `Page` class inherits from Selenium2Library, so all methods (keywords) on Selenium2Library are available in your page objects on the `self` object. 
+
+*test_google.robot*:
 
     *** Settings ***
 
     Documentation  Tests searching Google and ending up on Apple.
     ...
-    Library    Selenium2Library
-    Library    pageobjects.google.Page
-    Library    pageobjects.google.ResultPage
+    Library    google.Page
+    Library    google.ResultPage
 
     *** Test Cases ***
 
