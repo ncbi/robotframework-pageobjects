@@ -234,9 +234,9 @@ Your Robot keywords would then be `Search` or `Search mypage`, regardless of the
 Being implicit or explicit about page object names in your Robot tests is a matter of taste, and depends on how you want your tests to read. In general, you should be explicit about what page you're on when you navigate to a new page. For example:
 
 	Test Search
-   	Open My Page
-   	Search For  cat
-   	My Result Page Should Have Results  20
+	Open My Page
+	Search For  cat
+	My Result Page Should Have Results  20
    	
         
 
