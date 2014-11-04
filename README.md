@@ -59,7 +59,7 @@ Here's a regular, unittest test case using the same page object:
 
 Now we need an actual Google Robot library to make these tests work:
 
-```
+```python
 foo = bar
 ```
 
