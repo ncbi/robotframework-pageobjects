@@ -241,7 +241,7 @@ Being implicit or explicit about page object names in your Robot tests is a matt
 
 ## Opening Page Objects, Page Object URLs & Navigation
 
-All NCBI page objects have an open method (inherited from the base `Page` object) that opens the browser to the appropriate URL for that object. Page Objects always take the hostname as a required parameter to the test run via the `baseurl` option to avoid coupling environments to the tests. 
+Page objects have an open method (inherited from the base `Page` object) that opens the browser to the appropriate URL for that object. Page Objects always take the hostname as a required parameter to the test run via the `baseurl` option to avoid coupling environments to the tests. 
 
 There are two types of page objects: singular and templated.
 
