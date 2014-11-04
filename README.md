@@ -174,62 +174,10 @@ Then set the `PO_VAR_FILE` environment variable to the path of the variable file
 
 Remember, to make the setting persistent you must add this export statement to your ~/.bash_profile file and source it.
 
-### Setting options/data in Robot via pybot
-
-#### Setting IFT options
+### Setting options/data in Robot via pybot and the command-line
 
 In Robot tests, you can also pass in options, like browser, baseurl etc. from the command-line via pybot using the `—variable` or `-v` options. For example, you can set the browser and baseurl like this:
 
 	$ pybot -v browser:firefox -v baseurl:http://mydomain.com mytests/
 
 This is the same as setting `PO_BROWSER` and `PO_BASEURL` as environment variables. You can also set options *en masse* from pybot using the `—variablefile` or `-V` options. Note that setting options/data via pybot overrides the values set as environment variables.
-
-#### In Robot
-
-For page objects being used in Robot Framework, follow the Robot standard,
-which is to use [variables](http://robotframework.googlecode.com/hg/doc/userguide/RobotFrameworkUserGuide.html?r=2.8.4#creating-variables)
-either on the command line or using a variable file:
-
-    $ pybot --variable=browser:firefox --variable=baseurl:http://www.example.com mytest.robot
-
-The `--variable` option must come right after pybot.
-
-or
-
-    $ pybot --variablefile=/path/to/vars.py mytest.robot
-
-The `--variablefile` option is a path to a python module which defines variables in the module's namespace.
-Variables can set as complexly as you want, as long as they are in the module's namespace. Keep in
-mind that variables set on the command-line override those in the variable file.
-
-#### Outside Robot
-
-Outside of Robot, use environment variables to set options (unittest frameworks like unittest are not really designed
-with changable configuration in mind, so it's hard to pass options on the command-line without coupling it to a
-particular runner). All environment variables must be uppercase and prefixed with "PO_":
-
-You can set individual options:
-
-    $ export PO_BROWSER=firefox
-
-or you can set options in a variable file, like in Robot:
-
-    $ export PO_VAR_FILE=path/to/vars.py
-
-Individual "PO_" environment variables override any set in a variable file.
-
-### Options Defined by Page Objects
-
-- `baseurl` (PO_BASEURL): which URL to base open calls with. For example if you set your page object's homepage with
-self
-.homepage
-to a relative URL, like "/search", you can set your baseurl to "http://www.example.com". A call to your page object's
- open method will open at "http://www.example.com/search".
-- `browser` (PO_BROWSER): which browser to use. Defaults to "phantomjs".
-- `loglevel` (PO_LOGLEVEL): decides what level to log. Default is `INFO`. Other levels are, `DEBUG`,
-`CRITICAL` etc. Robot logs to its log file, which you can view at log.html.  When using page objects outside of the
-Robot context, a log file will be written to the current working directory named po_log.txt. To do your own logging,
-from your page object class, do self._log("foo", "bar"). Each parameter sent to `_log()` will get written to the log
-as a tab delimited line.
-- `selenium_speed` (PO_SELENIIM_SPEED): The speed between Selenium commands. Use this to slow down the page actions,
- which is useful when, for example, it takes a few moments for something to load via AJAX.
