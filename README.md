@@ -4,9 +4,11 @@ This Python package adds support of the [Page Object](http://martinfowler.com/bl
 
 The main point of using page objects is to factor out page implementation details (locators, UI details etc.) from the actual test suites. This makes the tests more about what functionaly is being tested, and thus more readable. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
 
-Page objects inheriting from this package's base `Page` class can work independently of Robot
-Framework allowing you to encapsulate page logic in Robot Framework testcases or outsides of Robot Framework (eg.
-Python [unittest](https://docs.python.org/2/library/unittest.html) test cases).
+Each page object is simply a Robot library which inherit from the 
+
+Each page object is simply a Robot library that inherits from this package's base `Page` class. These library classes can work independently of Robot
+Framework, even though they ultimately inherit from Robot Framework's Selenium2Library. This  allows you to encapsulate page logic Robot libraries, but use those libraries in any testing framework, including 
+Python [unittest](https://docs.python.org/2/library/unittest.html) test cases.
 
 
 ## Installing
