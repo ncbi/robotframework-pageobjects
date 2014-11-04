@@ -1,6 +1,8 @@
 # Robot Framework Page Objects
 
-This Python package adds support of the [Page Object](http://martinfowler.com/bliki/PageObject.html) pattern to [Robot Framework](http://robotframework.org/) & Robot Framework's [Selenium2Library](https://github.com/rtomac/robotframework-selenium2library). 
+This Python package adds support of the [Page Object](http://martinfowler.com/bliki/PageObject.html) pattern to [Robot Framework](http://robotframework.org/) & Robot Framework's [Selenium2Library](https://github.com/rtomac/robotframework-selenium2library).  
+
+The main point of using page objects is to factor out page implementation details (locators, UI details etc.) from the actual test suites. This makes the tests more about what functionaly is being tested, and thus more readable. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
 
 Page objects inheriting from this package's base `Page` class can work independently of Robot
 Framework allowing you to encapsulate page logic in Robot Framework testcases or outsides of Robot Framework (eg.
@@ -13,7 +15,7 @@ TODO
 ## How it Works
 
 Here's a Robot test case using some page objects written using the `Page` base class. We need to import any page objects libraries we need in our test
-case. **Note**: The `Page` class inherits from Selenium2Library, so all methods (keywords) on Selenium2Library are available in your page objects on the `self` object. 
+case. **Note**: The `Page` class inherits from Selenium2Library, so all methods (keywords) on Selenium2Library are available in your tests, and from `self` from within one of your page objects.
 
 *test_google.robot*:
 
