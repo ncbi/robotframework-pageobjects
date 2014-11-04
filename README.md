@@ -69,14 +69,13 @@ Now we need an actual Google Robot library to make the test work:
         """
         Base Google Page
 
-        For example, search() works on any google page.
         """
         uri = "/"
 
         # name attribute tells Robot Keywords what name to put
         # after the defined method. So, def foo.. aliases to "Foo Google".
         # If no name is defined, the name will be the name of the page object
-        # class.
+        # class, in this case `Page`.
         name = "Google"
 
         def search(self, term):
