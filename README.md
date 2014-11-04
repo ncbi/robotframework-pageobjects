@@ -1,8 +1,10 @@
 # Robot Framework Page Objects
 
-This Python package adds support of the [Page Object](http://martinfowler.com/bliki/PageObject.html) pattern to Robot Framework & Robot Framework's Selenium2Library. Page objects can work independently of Robot
+This Python package adds support of the [Page Object](http://martinfowler.com/bliki/PageObject.html) pattern to [Robot Framework](http://robotframework.org/) & Robot Framework's [Selenium2Library](https://github.com/rtomac/robotframework-selenium2library). 
+
+Page objects inheriting from this package's base `Page` class can work independently of Robot
 Framework allowing you to encapsulate page logic in Robot Framework testcases or outsides of Robot Framework (eg.
-Python unittest test cases).
+Python [unittest](https://docs.python.org/2/library/unittest.html) test cases).
 
 
 ## Background
