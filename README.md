@@ -388,93 +388,86 @@ like `click_button`. This is possible because `Page` has overridden Se2Lib's und
 This means you can pass selectors instead of locators to all Se2Lib methods that accept locators
 
 - for maintainability and readability, you should pass selectors to Se2Lib methods, not locators.
-- if you write your own helper methods for finding or interacting with elements:
-    - allow them to be passed selectors
-    - if they are applicable to any web page, issue a pull request for the base Page object: https://stash.ncbi
-        .nlm.nih.gov/projects/IFT/repos/robotframework-pageobjects/browse/robotpageobjects/page.py
+- if you write your own helper methods for finding or interacting with elements allow them to be passed 
+locators *and* selectors.
 
-Looking up elements from the end of a list
+#### Looking up elements from the end of a list
 
-It can be helpful to look up elements from the end of a list.  It especially helps when the number of elements is large or variable.
+It can be helpful to look up elements from the end of a list. It especially helps when the number of elements is 
+large or variable. You can verify the content of the last row with a negative index, i.e. -1, as you would in a Python list:
 
-For example, say you have a table with many rows, ending with these three rows:
-AL672294.10	HYcos-53	HSCHR1_CTG32_1	SC	fin	Excellent	2,000	0	100	
-AL845371.2	HYcos-64	HSCHR1_CTG32_1	SC	fin	Excellent	2,000	0	100	
-AL672183.3	HYcos-35	HSCHR1_CTG32_1	SC	fin	Minor problem	908	0	99.339	identity < 99.6%; alignment length < 2000
-
-You can verify the content of the last row with a negative index, i.e. -1, as you would in a Python list:
-
-...
-
-class MyPage(Page):
-
-	selectors = {
-		"long-table": "#long_table_id"
-		...
-	}
-
-	@robot_alias("my_long_table_should_should_contain_last_row")
-	long_table_should_contain_last_row(self, expected_row):
-        # Verifies the content in the last row (i.e. row -1) of "long table"
-        locator = self.resolve_selector("long-table")
-        self.table_row_should_contain(locator, "-1", expected_row)
-		return self
+    ...
+    
+    class MyPage(Page):
+    
+        selectors = {
+            "long-table": "#long_table_id"
+            ...
+        }
+    
+        long_table_should_contain_last_row(self, expected_row):
+            # Verifies the content in the last row (i.e. row -1) of "long table"
+            locator = self.resolve_selector("long-table")
+            self.table_row_should_contain(locator, "-1", expected_row)
+            return self
 
 The second-to-last element in a list has index -2, and so on.
 
 Support for negative indexes has been added for the following built-in Robot keywords:
 
-    Table Row Should Contain
-    Table Column Should Contain
-    Table Cell Should Contain
+    - Table Row Should Contain
+    - Table Column Should Contain
+    - Table Cell Should Contain
 
 At the time of this writing, these table-related keywords are the only ones that support negative indexes.
-Selector templates
 
-Sometimes you want to find elements, but part of the locator is variable. In this case we use selector templates.
+#### Selector templates
 
-    Define a selector, surrounding the variable part of the locator with brackets ("{ }")
-    In your page object method that uses the selector template, call resolve_selector, passing in the selector name followed by keyword arguments matching the variable names in your selector template. This method returns the expanded locator, which you can then pass to any methods that accept locators/selectors to find or interact with page elements.
+Sometimes you want to find elements, but part of the locator is variable. In this case we use selector templates. To 
+do so, define a selector, surrounding the variable part of the locator with brackets `{`,  `}`.
+
+In your page object method that uses the selector template, call `resolve_selector`, 
+passing in the selector name followed by keyword arguments matching the variable names in your selector template. This method returns the expanded locator, which you can then pass to any methods that accept locators/selectors to find or interact with page elements.
 
 For instance, let's say you want to select the nth item in some list on a particular page. Here's how we'd do it:
 
-...
+    ...
+    
+    class MyPage(Page):
+    
+        selectors = {
+            "nth result link": "xpath=id('product-list')/li/a[{n}]",
+            ...
+        }
+    
+        def click_result_link(self, index=0):
+            """ Click the nth product result link """
+            # Robot passes in parameters as strings, so we need to cast it to an int.
+            xpath_index = int(index) + 1
+             
+            # "n" keyword maps to the variable name in the selector template.
+            locator = self.resolve_selector("nth result link", n=xpath_index)
+            self.click_link(locator)
+            return ProductPage()
 
-class MyPage(Page):
-
-    selectors = {
-        "nth result link": "xpath=id('product-list')/li/a[{n}]",
-        ...
-    }
-
-    @robot_alias("click_result_link_on__name__")
-    def click_result_link(self, index=0):
-        """ Click the nth product result link """
-        xpath_index = index + 1
-         
-        # "n" keyword maps to the variable name in the selector template.
-        locator = self.resolve_selector("nth result link", n=xpath_index)
-        self.click_link(locator)
-        return ProductPage()
-
-Self-Referential Selectors
+#### Self-Referential Selectors
 
 You can also keep your selectors DRY (Don't Repeat Yourself) by referencing other selectors using python string formatting syntax:
 
-...
-
-class MyPage(Page):
-
-    selectors = {
-        "search form": "xpath=//form",
-        "form label": "%(search form)s/label",
-        ...
-    }
-
-    def check_form_label(self):
-        """ Make sure the form label is visible """
-        self.element_should_be_visible("form label")
-        return self()
+    ...
+    
+    class MyPage(Page):
+    
+        selectors = {
+            "search form": "xpath=//form",
+            "form label": "%(search form)s/label",
+            ...
+        }
+    
+        def check_form_label(self):
+            """ Make sure the form label is visible """
+            self.element_should_be_visible("form label")
+            return self()
 
 Using WebElements
 
