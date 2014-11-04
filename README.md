@@ -59,9 +59,13 @@ Here's a regular, unittest test case using the same page object:
 
 Now we need an actual Google Robot library to make these tests work:
 
+```
+foo = bar
+```
+
 *google.py*:
 
-    from pageobjects.base.PageObjectLibrary import PageObjectLibrary, robot_alias
+    from robotpageobjects import Page, robot_alias
 
 
     class Page(PageObjectLibrary):
