@@ -139,24 +139,22 @@ IFT test-runs always require at least the setting of one option external to the 
 Once set, these option values are available as attributes on the page object. For example, self.baseurl.
 
 The rest of this page explains the various ways you can set these options, and even ways to pass in arbitrary data.
-Setting options with the ift script
 
-Probably the easiest way to set IFT options for Robot and non-Robot IFT tests is to use the ift script. For instructions on how to install the script and use it see: Installing IFT.
-Setting options/data with environment variables
-Setting individual options/data
+### Setting options/data with environment variables
+
+#### Setting individual options/data
 
 Both Robot and Python IFT tests support setting options/data via environment variables. For example, you can change the local browser from phantomjs (default) to Firefox by setting the browser option via the PO_BROWSER environment variable:
 
-(myapp) $ export PO_BROWSER=firefox
+	$ export PO_BROWSER=firefox
 
-Now when you run IFT tests, they will be launched in Firefox. Note that the environment variable is the name of the option, prepended with PO_, in all upper case. For example, you'd pass the baseurl option by setting PO_BASEURL.
+Now when you run your tests, they will be launched in Firefox. Note that the environment variable is the name of the option, prepended with `PO_`, in all upper case. For example, you'd pass the `baseurl` option by setting `PO_BASEURL`.
 
-These options are only set until the next time you log out of the server. To make them persist across sessions, put the same export statement in your ~/.bash_profile file, then source it:
+These options are only set until the next time you log out of your Unix terminal. To make them persist across sessions, put the same export statement in your `~/.bash_profile file`, then source it:
 
-(myapp) $ source ~/.bash_profile
+	(myapp) $ source ~/.bash_profile
 
-To make working with IFT environment variables more convenient see the Additional configuration section.
-Setting options/data en masse
+#### Setting options/data en masse
 
 For both Robot and non-Robot tests, you can set multiple options by using a variable file. Create a Python module and set variables to the values you want. The values can be resolved however you like, with arbitrary complexity, as long as the variables are accessible at the module level. For example:
 
