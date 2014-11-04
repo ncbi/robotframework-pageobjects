@@ -122,7 +122,7 @@ Now we want to code a Google search result page. Here's the Google Result page o
 
 IFT test-runs always require at least the setting of one option external to the test case: `baseurl`. Setting `baseurl` allows the page object to define its `uri` independent of the host. This allows you to easily run your tests on a dev/qa/production host without having to change your page object. You can set a default `baseurl` by setting a `baseurl` property on your page object class. The base `Page` class defines several other built-in options relevant whether using your page objects in Robot or plain, Python tests. These are:
 
-- baseurl: Default is "http://www.ncbi.nlm.nih.gov". The host for any tests you run. This facilitates test portability between different environments instead of hardcoding the test environment into the test.
+- baseurl: The host for any tests you run. This facilitates test portability between different environments instead of hardcoding the test environment into the test.
 
 - browser : Default is phantomjs. Sets the type of browser used. Values can be: firefox, phantomjs (default). Eg: (ift-env) $ pybot -v browser:firefox mytest.robot, or any browser that Sauce Labs supports.
 
@@ -469,110 +469,124 @@ You can also keep your selectors DRY (Don't Repeat Yourself) by referencing othe
             self.element_should_be_visible("form label")
             return self()
 
-Using WebElements
+### Using WebElements
 
-IFT is based on Selenium/Selenium2Library which uses the WebElement class to model DOM nodes. Most often, we don't actually need a reference to the WebElement because all page objects give us many convenience methods like click_element, click_button, input_text etc. All these methods are on the base Page object, so from within your page object you can call them on self. See each page object's API docs or Selenium2Library's keyword documentation for more.
+`Page` is based on Selenium/Selenium2Library which uses the `WebElement` class to model DOM nodes. Most often, 
+we don't actually need a reference to the WebElement because all page objects give us many convenience methods like 
+`click_element`, `click_button`, input_text etc. All these methods are on the base `Page` object, 
+so from within your page object you can call them on `self`.
 
-If, for some reason, you need a direct reference to a WebElement you can get it by passing a locator/selector to IFT's find_element(s), which is also on every page object. When at all possible, however, work at the IFT level, not at the WebElement level. For example:
+If, for some reason, you need a direct reference to a WebElement you can get it by passing a locator/selector to 
+`find_element` or `find_element`,  which is also on every page object. When at all possible, however, 
+work at the Selenium2Library level, not at the WebElement level. For example:
 
-...
-class MyPage(NCBIPage):
     ...
-	selectors = {
-        "search button": "id=srcb",
-    }
+    class MyPage(Page):
+        ...
+        selectors = {
+            "search button": "id=srcb",
+        }
+    
+        def click_search_button(self):
+            # Don't do:
+            # search_btn = self.find_element("search button")
+            # search_btn.click()
+            # Instead, simply:
+            self.click_button("search button")
 
-    def click_search_button(self):
-        # Don't do:
-        # search_btn = self.find_element("search button")
-        # search_btn.click()
-        # Instead, simply:
-        self.click_button("search button")
+### Waiting
 
-Waiting
-Sleeping
+#### Sleeping
 
 Just don't. Sometimes page content, including text or elements are inserted into the DOM after page-load. Or sometimes IFT will drive the browser so fast that we can't be sure when the page has loaded. If you try to find or operate on these page elements you'll get either get a ValueError or Selenium's NoSuchElementException. Don't fall into the trap of calling time.sleep(). Why?
 
-    your tests will be brittle: the content could be available after the time you slept for. Sometimes your tests will pass and sometimes they will fail with errors. Inconsistent tests are almost as bad as no tests.
-    your tests will be slow. For example, your content could be available in 1/8 of a second. If you sleep for one second you are stalling your tests for 7/8 of a second for no reason. This can start to add up over the course of several tests.
+- your tests will be brittle: the content could be available after the time you slept for. Sometimes your tests 
+will pass and sometimes they will fail with errors. Inconsistent tests are almost as bad as no tests.
+- your tests will be slow. For example, your content could be available in 1/8 of a second. If you sleep for one 
+second you are stalling your tests for 7/8 of a second for no reason. This can start to add up over the course of several tests.
 
-Implicitly waiting
+#### Implicitly waiting
 
-The solution is waiting, not sleeping. The idea is to repeatedly poll the page for the element's existance and then sleep at much smaller increments–up to some maximum (IFT sets this maximum timeout to 10 seconds). By default page object methods that take selectors or locators as parameters to find or operate on elements will poll the page until they find the element they are supposed to find or operate on. These methods include:
+The solution is waiting, not sleeping. The idea is to repeatedly poll the page for the element's existance and then sleep 
+at much smaller increments–up to some maximum (`Page` sets this maximum timeout to 10 seconds). By default page object 
+methods that take selectors or locators as parameters to find or operate on elements will poll the page until they find the element they are supposed to find or operate on. These methods include:
 
-    find_element
-    find_elements
-    click_element
-    click_button
-    get_text
-    input_text
-    etc.
+- `find_element`
+- `find_elements`
+- `click_element`
+- `click_button`
+- `get_text`
+- `input_text`
+- etc.
 
-This means that when calling these types of methods, you generally don't have to worry about whether the element exists at the time of the method call. IFT will wait approximately as long as it takes for the element to show up in the DOM before raising a ValueError. One issue with this is that method calls that fail to find elements will take 10 seconds to raise a ValueError. See the Explicitly waiting section on how to deal with this situation.
+This means that when calling these types of methods, you generally don't have to worry about whether the element exists at the time of the 
+method call. `Page` will wait approximately as long as it takes for the element to show up in the DOM before raising a 
+`ValueError`. One issue with this is that method calls that fail to find elements will take 10 seconds to raise a 
+ValueError. See the Explicitly waiting section on how to deal with this situation.
 
-To globally change the implicit wait timeout (default is 10 seconds), set IFT's selenium_implicit_wait option. See Setting IFT options & data.
+To globally change the implicit wait timeout (default is 10 seconds), set the `selenium_implicit_wait` option. See 
+Setting IFT options & data.
 
 IFT's implicit wait does not apply to an element's visibility. It only applies to existance in the DOM. It's possible for an element to exist in the DOM, but not be visible, and Selenium will not allow you to interact with an element that's not visible. For this you may need wait_until_element_is_visible .
 Explicitly waiting
 
-There are cases where you'd like to specify exactly how long you want to wait for an element's existance without setting the global selenium_implicit_wait option. There are several ways to do this:
+There are cases where you'd like to specify exactly how long you want to wait for an element's existence without 
+setting the global selenium_implicit_wait option. There are several ways to do this:
 
-    Call find_element with the optional wait keyword parameter. This overrides the default 10 second implicit wait timeout, but only for the one call to find_element. Currently you cannot pass a wait parameter to any of the other element finding/manipulating Se2Library methods, such as click_element, input_text etc. See . After finding the element, you'll then have to drop down to the Selenium layer. For example:
+    - Call find_element with the optional wait keyword parameter. This overrides the default 10 second implicit wait 
+    timeout, but only for the one call to find_element. Currently you cannot pass a wait parameter to any of the other element finding/manipulating Se2Library methods, such as click_element, input_text etc. See . After finding the element, you'll then have to drop down to the Selenium layer. For example:
 
-    class MyPage(NCBIPage):
+    class MyPage(Page):
         ...
         def do_something(self):
             el = self.find_element("some selector", wait=2)
             el.click()
     ...
 
-    Call Se2Lib methods like wait_until_page_contains_element , passing an explicit wait parameter
+    - Call Se2Lib methods like wait_until_page_contains_element , passing an explicit wait parameter
 
-Waiting for arbitrary conditions
+#### Waiting for arbitrary conditions
 
-Sometimes you need to wait for something more complex than just an element. In this case use wait_for or  wait_for_condition. You'll have to pass these functions callbacks that check some condition and return a Boolean. IFT will poll the page every 500 milliseconds for the condition to become True, then it will continue to the next line of code. Here's an example:
+Sometimes you need to wait for something more complex than just an element. In this case use 
+Selenium2Library's `wait_for` or  
+`wait_for_condition`. You'll have to pass these functions callbacks that check some condition and return a Boolean. 
+`Page` will poll the page every 500 milliseconds for the condition to become `True`, then it will continue to the next 
+line of code. Here's an example:
 
-class MyPage(NCBIPage):
-    ...
-    def do_something(self):
-
-		def all_columns_contain_human():
-            # some logic that checks that a specific table column
-            # contains the text "human"
-            ...
-
-        self.wait_for(all_columns_contain_human)
-        # Once the condition is True, continue to do something here
+    class MyPage(Page):
         ...
-...
-
-If you need to pass a callback a parameter, you'll have to pass a  lambda to wait_for.
-
-Overriding parent selectors
-
-If you want to redefine a selector defined in a parent class, use the Override class:
-
-...
-from robotpageobjects.page import Override
-
-
-class MyPage(NCBIPage):
-   ...
-    selectors = {
-        "search": "id=search-btn",
-        "term input": "id=search-input"
-    }
-
-class MySpecialPage(MyPage):
+        def do_something(self):
+    
+            def all_columns_contain_human():
+                # some logic that checks that a specific table column
+                # contains the text "human"
+                ...
+    
+            self.wait_for(all_columns_contain_human)
+            # Once the condition is True, continue to do something here
+            ...
     ...
 
-    selectors = {
-        Override("search"): "id=my-search-btn"
-    }
+If you need to pass a callback a parameter, you'll have to pass a lambda to `wait_for`.
 
+#### Overriding parent selectors
 
+If you want to redefine a selector defined in a parent class, use the `Override` class:
 
-
-
-
+    ...
+    from robotpageobjects.page import Override
+    
+    
+    class MyPage(Page):
+       ...
+        selectors = {
+            "search": "id=search-btn",
+            "term input": "id=search-input"
+        }
+    
+    class MySpecialPage(MyPage):
+        ...
+    
+        selectors = {
+            Override("search"): "id=my-search-btn"
+        }
