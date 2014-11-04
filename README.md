@@ -238,5 +238,82 @@ Being implicit or explicit about page object names in your Robot tests is a matt
 	Search For  cat
 	My Result Page Should Have Results  20
    	
-        
+
+## Opening Page Objects, Page Object URLs & Navigation
+
+All NCBI page objects have an open method (inherited from the base `Page` object) that opens the browser to the appropriate URL for that object. Page Objects always take the hostname as a required parameter to the test run via the `baseurl` option to avoid coupling environments to the tests. 
+
+There are two types of page objects: singular and templated.
+
+### Singular Page Objects
+
+A singular page object models a page with only one URL. For example, `GoogleHomePage` is singular, because there's only one URI: “/“. Singular page objects should have a `uri` attribute in their class definitions:
+
+	...
+	class MyAppHomePage(EntrezPage):
+    		uri = "/myapp"
+		…
+
+A tester using your page object instance will open it with no parameters:
+
+Robot:
+
+	...
+	Open Google Home Page
+	...
+
+Python:
+
+	>>> from google import GoogleHomePage
+	>>> hp = GoogleHomePage()
+	>>> hp.open()
+
+### Templated Page Objects
+
+A templated page object models a page with many (perhaps infinite) possible URIs. Templated page objects use curly braces in their `uri` attribute to denote where parts of the URI may vary. For example:
+
+	...
+	class PubmedArticlePage(object):
+    		“”” Models a page like http://www.ncbi.nlm.nih.gov/pubmed/25362170
+		where the number is an article ID:
+		uri = "/{article_id}"
+    		....
+
+You then open a templated page object like this:
+
+Robot:
+
+	...
+	Open Pubmed Article Page article_id=24587471
+	...
+
+Python:
+
+	>>> from pubmed import PubmedArticlePage
+	>>> article_page = PubmedArticlePage()
+	>>> article_page.open({"article_id": "24587471"})
+
+The values of the template variables are saved in a dictionary in the Page Object after the page is opened if you need to reference them later.  For example:
+
+	>>> item_page.uri_vars['article_id']
+	"24587471"
+
+### Opening a page directly to a URL
+
+Let's say you want to go to a particular URL that your page object models, but the URL doesn't conform to your page object's `uri` attribute, such as a hash or query string. You might just have one test that does this, and you do not want to modify the page object to add the hash or query string. In this case, you can simply pass in a string instead of template arguments.
+
+In Robot:
+
+	...
+	Open My App Item Page  /myapp/1234?report=full
+	...
+
+In Python:
+
+	>>> item_page = MyAppItemPage()
+	>>> item_page.open("/myapp/1234?report=full")
+
+This is good for one-off cases. In general, for query strings, you should model different views of the same page as separate page object classes inheriting from a base class.
+
+
 
