@@ -59,9 +59,6 @@ Here's a regular, unittest test case using the same page object:
 
 Now we need an actual Google Robot library to make these tests work:
 
-```python
-foo = bar
-```
 
 *google.py*:
 
@@ -75,7 +72,7 @@ foo = bar
 
         For example, search() works on any google page.
         """
-        homepage = "http://www.google.com"
+        uri = "/"
 
         # name attribute tells Robot Keywords what name to put
         # after the defined method. So, def foo.. aliases to "Foo Google".
@@ -83,19 +80,12 @@ foo = bar
         # class.
         name = "Google"
 
-        # By default, page object methods
-        # map in Robot Framework to method name + class name.
-        # Eg. Search Google  term. But we can use robot_alias decorator
-        # with the __name__ token to map the page object name to
-        # wherever you want in the method. So this would become
-        # Search Google For  term.
-        @robot_alias("search__name__for")
         def search(self, term):
             self.input_text("xpath=//input[@name='q']", term)
             self.click_element("gs_htif0")
             return ResultPage()
 
-Here's the Google Result page object. It's also in `pageobjects/google.py`:
+Now we want to code a Google search result page. Here's the Google Result page object:
 
     ...
     class ResultPage(Page):
@@ -105,15 +95,14 @@ Here's the Google Result page object. It's also in `pageobjects/google.py`:
         """
         name = "Google Result Page"
 
-        # This will become "On Google Result Page Click Result"
-        @robot_alias("on__name__click_result")
         def click_result(self, i):
             els = self.find_elements("xpath=//h3[@class='r']/a[not(ancestor::table)]", required=False, tag="a")
             try:
+                # Parameters coming in from Robot are always
+                # strings, so cast to int.
                 els[int(i)].click()
             except IndexError:
                 raise Exception("No result found")
-
 
 ### Setting Options
 
