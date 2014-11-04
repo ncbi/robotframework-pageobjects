@@ -35,7 +35,7 @@ case. **Note**: The `Page` class inherits from Selenium2Library, so all methods 
         Title Should Be  Apple
         [Teardown]  Close Google
 
-Here's a regular, unittest test case using the same page object:
+This shows you can write the same test, using the same page object libraries outside of Robot, using, for example, Python's unittest module:
 
     import unittest
     import google
@@ -57,8 +57,7 @@ Here's a regular, unittest test case using the same page object:
     unittest.main()
 
 
-Now we need an actual Google Robot library to make these tests work:
-
+Now we need an actual Google Robot library to make the test work:
 
 *google.py*:
 
