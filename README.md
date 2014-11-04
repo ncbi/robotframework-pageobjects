@@ -120,21 +120,21 @@ Now we want to code a Google search result page. Here's the Google Result page o
 
 ### Built-in IFT options
 
-Most IFT test-runs require the setting of some kind of external data--for example, a base URL. IFT defines several built-in options relevant whether using your page objects in Robot or plain, Python tests. These are:
+IFT test-runs always require at least the setting of one option external to the test case: `baseurl`. Setting `baseurl` allows the page object to define its `uri` independent of the host. This allows you to easily run your tests on a dev/qa/production host without having to change your page object. You can set a default `baseurl` by setting a `baseurl` property on your page object class. The base `Page` class defines several other built-in options relevant whether using your page objects in Robot or plain, Python tests. These are:
 
-    baseurl: Default is "http://www.ncbi.nlm.nih.gov". The host for any tests you run. This facilitates test portability between different environments instead of hardcoding the test environment into the test.
+- baseurl: Default is "http://www.ncbi.nlm.nih.gov". The host for any tests you run. This facilitates test portability between different environments instead of hardcoding the test environment into the test.
 
-    browser : Default is phantomjs. Sets the type of browser used. Values can be: firefox, phantomjs (default). Eg: (ift-env) $ pybot -v browser:firefox mytest.robot, or any browser that Sauce Labs supports.
+- browser : Default is phantomjs. Sets the type of browser used. Values can be: firefox, phantomjs (default). Eg: (ift-env) $ pybot -v browser:firefox mytest.robot, or any browser that Sauce Labs supports.
 
-    log_level : Default is "INFO". Sets the logging threshold for what's logged from the log method. Currently you have to set -L or --loglevel in Robot, not -vloglevel:LEVEL. See  and Logging, Reporting & Debugging.
-    sauce_apikey : The API key (password) for your Sauce account. Never hard-code this in anything, and never commit the repository. If you need to store it somewhere, store it as an environment variable.
-    sauce_browserversion : The version of the sauce browser. Defaults to the latest available version for the given browser.
-    sauce_device_orientation : Defaults to "portrait". For mobile devices, tells the page object what orientation to run the test in.
-    sauce_platform : A platform Sauce Labs supports.
-    sauce_username: The user name of your Sauce account. Never hard-code this in anything, and never commit the repository. If you need to store it somewhere, store it as an environment variable.
-    selenium_implicit_wait : A global setting that sets the maximum time to wait before raising an ValueError. Default is 10 seconds. For example, for a call to click_element, Selenium will poll the page for the existence of the passed element at an interval of 200 ms until 10 seconds before raising an ElementNotFoundException.
-    selenium_speed : The time in seconds between each Selenium API call issued. This should only be used for debugging to slow down your tests so you can see what the browser is doing. Default is 0 seconds. eg. $ pybot -v selenium_speed:1 mytest.robot
-    service_args : Additional command-line arguments (such as "--ignore-ssl-errors=yes") to pass to the browser (any browser) when it is run. Arguments are space-separated. Example: PO_SERVICE_ARGS="--ignore-ssl-errors=yes --ssl-protocol=TLSv1" python mytest.py
+- log_level : Default is "INFO". Sets the logging threshold for what's logged from the log method. Currently you have to set -L or --loglevel in Robot, not -vloglevel:LEVEL. See  and Logging, Reporting & Debugging.
+- sauce_apikey : The API key (password) for your [Sauce](http://www.saucelabs.com) account. Never hard-code this in anything, and never commit the repository. If you need to store it somewhere, store it as an environment variable.
+- sauce_browserversion : The version of the sauce browser. Defaults to the latest available version for the given browser.
+- sauce_device_orientation : Defaults to "portrait". For mobile devices, tells the page object what orientation to run the test in.
+- sauce_platform : A platform Sauce Labs supports.
+- sauce_username: The user name of your Sauce account. Never hard-code this in anything, and never commit the repository. If you need to store it somewhere, store it as an environment variable.
+- selenium_implicit_wait : A global setting that sets the maximum time to wait before raising an ValueError. Default is 10 seconds. For example, for a call to click_element, Selenium will poll the page for the existence of the passed element at an interval of 200 ms until 10 seconds before raising an ElementNotFoundException.
+- selenium_speed : The time in seconds between each Selenium API call issued. This should only be used for debugging to slow down your tests so you can see what the browser is doing. Default is 0 seconds. eg. $ pybot -v selenium_speed:1 mytest.robot
+- service_args : Additional command-line arguments (such as "--ignore-ssl-errors=yes") to pass to the browser (any browser) when it is run. Arguments are space-separated. Example: PO_SERVICE_ARGS="--ignore-ssl-errors=yes --ssl-protocol=TLSv1" python mytest.py
 
 Once set, these option values are available as attributes on the page object. For example, self.baseurl.
 
