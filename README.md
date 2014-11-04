@@ -590,3 +590,105 @@ If you want to redefine a selector defined in a parent class, use the `Override`
         selectors = {
             Override("search"): "id=my-search-btn"
         }
+        
+    
+ ## Making Assertions
+ 
+Asserting conditions is the basis of automated testing. Here's a very simple example from a basic Python unit test Test Case:
+
+    from unittest import TestCase
+    
+    class AdditionTestCase(TestCase):
+        def test_add(self):
+            self.assertEquals(1 + 1, 2)
+
+...and here's a simple assertion in Robot Framework (OK, Robot's not great for math..):
+
+    *** Settings ***
+     
+    Documentation  Simple assertion.
+     
+    ...
+    Library    Builtin
+    
+    *** Test Cases ***
+    
+    Test One Plus One
+        Should Be Equals As Numbers  Evaluate  ${1] + ${1}  2
+
+When you write automated tests using page objects, you assert more complex things, such as the number of results in a
+ search result page, for example.
+
+Although we stress separating page behavior in page objects from test code,  we think it's better to write thin 
+wrappers for assertions as methods on your page objects, instead of writing assertions in your tests. 
+The advantage to writing assertions as page object methods is that they are reusable and tend to make the tests more readable. 
+
+For example, compare these two Robot tests:
+
+    *** Settings ***
+     
+    Documentation  Tests for Pubmed Docsum pages
+     
+    ...
+    Library    pubmedpageobjects.PubmedHomepage
+    Library    pubmedpageobjects.PubmedDocsumPage
+    Library    Builtin
+     
+    *** Test Cases ***
+     
+    Test Pubmed Search Returns 20 Results
+        Open Pubmed Homepage
+        Search Pubmed Homepage for  breast cancer
+        Pubmed Docsum Page Results Should Be  20
+        ${NUM_RESULTS}  Get Results From Pubmed Docsum Page
+        Should Be Equal As Numbers  ${NUM_RESULTS}  20
+        [Teardown]  Close Pubmed Docsum Page
+
+...see how that assertion looks like code? Once we start assigning variables and making assertions using Robot's built in "Should" assertion keywords, we lose the flow and readability of the test. Remember our goal is to make the test look like a simple list of instructions that a tester could easily run manually. Compare that to this:
+
+    *** Settings ***
+     
+    Documentation  Tests for Pubmed Docsum pages
+     
+    ...
+    Library    pubmedpageobjects.PubmedHomepage
+    Library    pubmedpageobjects.PubmedDocsumPage
+     
+    *** Test Cases ***
+     
+    Test Pubmed Search Returns 20 Results
+        Open Pubmed Homepage
+        Search Pubmed Homepage for  breast cancer
+        Pubmed Docsum Page Results Should Be  20
+        [Teardown]  Close Pubmed Docsum Page
+
+...now that the Pubmed Docsum page has its own results_should_be assertion method, the test is more English-like, and that assertion can be reused by another tester.
+
+The method, `results_should_be()`, would look like this:
+
+    ...
+    from robot.utils import asserts
+    
+    class PubmedDocsumPage(EntrezDocsumPage):
+        """
+        Example page object, the real
+        PubmedDocsumPage may not have these methods
+        """
+       
+        @robot_alias("__name__results_should_be")
+        def results_should_be(self, expected_num=20):
+            
+            # This method does the work of getting the actual docsums
+            # and doesn't change the state of the page. It simply queries 
+            # the page for existing state.
+            docsums = self._get_docsums()
+    
+            # Here's the actual assertion, using Robot's assertions.
+            asserts.assert_equals(len(docsums), expected_num)
+            
+
+Make sure your assertion methods are thin wrappers for assertions. Their signatures should include the word "should", 
+which follows the example of Robot assertions and makes it obvious that the method is asserting a condition.
+
+Page object assertion methods shouldn't change the state of the page (eg. clicking links, navigating back etc.) and minimal computation, looping etc. State change and computation should be done in page object action/helper methods. In your test, 
+you should get the page to the state where you want it to be using other page object methods, and call the assert method.
