@@ -389,8 +389,8 @@ This means you can pass selectors instead of locators to all Se2Lib methods that
 
 - for maintainability and readability, you should pass selectors to Se2Lib methods, not locators.
 - if you write your own helper methods for finding or interacting with elements:
-        - allow them to be passed selectors
-        - if they are applicable to any web page, issue a pull request for the base Page object: https://stash.ncbi
+    - allow them to be passed selectors
+    - if they are applicable to any web page, issue a pull request for the base Page object: https://stash.ncbi
         .nlm.nih.gov/projects/IFT/repos/robotframework-pageobjects/browse/robotpageobjects/page.py
 
 Looking up elements from the end of a list
