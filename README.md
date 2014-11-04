@@ -1,18 +1,6 @@
 # Robot Framework Page Objects
 
-
-## Contents
-
-(Apparently README.md cannot have internal anchor links...ughh)
-
-1. Background
-2. How it Works
-    * Setting Options
-        * In Robot
-        * Outside Robot
-    * Options Defined by Page Objects
-
-Adds the concept of Page Objects to Robot Framework & Selenium2Library. Page objects can work independently of Robot
+This Python package adds support of the [Page Object](http://martinfowler.com/bliki/PageObject.html) pattern to Robot Framework & Robot Framework's Selenium2Library. Page objects can work independently of Robot
 Framework allowing you to encapsulate page logic in Robot Framework testcases or outsides of Robot Framework (eg.
 Python unittest test cases).
 
