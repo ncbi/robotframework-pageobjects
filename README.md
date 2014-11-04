@@ -93,6 +93,9 @@ Now we want to code a Google search result page. Here's the Google Result page o
         """
         A Google Result page. Inherits from Google Page.
         """
+        # Google uses ajax requests for their searches.
+        uri = "/#q=cat"
+
         name = "Google Result Page"
 
         def click_result(self, i):
