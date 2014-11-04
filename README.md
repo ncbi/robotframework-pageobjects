@@ -181,3 +181,61 @@ In Robot tests, you can also pass in options, like browser, baseurl etc. from th
 	$ pybot -v browser:firefox -v baseurl:http://mydomain.com mytests/
 
 This is the same as setting `PO_BROWSER` and `PO_BASEURL` as environment variables. You can also set options *en masse* from pybot using the `—variablefile` or `-V` options. Note that setting options/data via pybot overrides the values set as environment variables.
+
+## Robot Keyword Mapping
+
+
+IFT Page object classes are also Robot libraries, meaning that Page object method names are directly usable as Robot keywords.
+
+By default, a page object method is mapped to two Robot keywords: one without the page object name and one with the page object name appended to the end. Take this page object, for example:
+
+	from robotpageobjects import Page
+
+	class MyPage(Page):
+    	uri = "/"
+
+    	def search(self, term):
+        	...
+
+The search method maps to both "Search" or "Search My Page" keywords. This lets you be either implicit or explicit about what page you are on in your Robot test.
+Customizing Robot Keywords
+
+IFT gives Page object authors some control over how Page object method names are mapped to Robot keywords:
+
+- You can allow the test writer to insert the page object name at a specific place in the keyword (not just at the end) by using the robot_alias decorator with a __name__ token. For example:
+
+    from robotpageobjects import Page, robot_alias
+
+    class MyPage(Page):
+        uri = "/"
+
+        @robot_alias("search__name__for")
+        def search_for(self, term):
+            ...
+
+This code would map to both "Search For" or "Search My Page For" keywords.
+
+- If you want to name your page object class something other than the name used in the keywords, use the name attribute on the page object class. For example:
+
+    from robotpageobjects import Page, robot_alias
+
+    class MyPage(Page):
+        
+        uri = "/"
+
+        name = "mypage"
+
+        def search(self, term):
+            ...
+
+Your Robot keywords would then be Search or Search mypage, regardless of the class name.
+
+Being implicit or explicit about page object names in your Robot tests is a matter of taste, and depends on how you want your tests to read. In general, you should be explicit about what page you're on when you navigate to a new page. For example:
+
+	...
+	Test Search
+   	Open My Page
+   	Search For  cat
+   	My Result Page Should Have Results  20
+   	...
+
