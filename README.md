@@ -152,53 +152,37 @@ Now when you run your tests, they will be launched in Firefox. Note that the env
 
 These options are only set until the next time you log out of your Unix terminal. To make them persist across sessions, put the same export statement in your `~/.bash_profile file`, then source it:
 
-	(myapp) $ source ~/.bash_profile
+	$ source ~/.bash_profile
 
 #### Setting options/data en masse
 
 For both Robot and non-Robot tests, you can set multiple options by using a variable file. Create a Python module and set variables to the values you want. The values can be resolved however you like, with arbitrary complexity, as long as the variables are accessible at the module level. For example:
 
-# myvars.py
+in `myvars.py`:
 
-import getpass
+	import getpass
 
-baseurl = "http://qa.ncbi.nlm.nih.gov"
+	# Silly example, but shows you can set options intelligently
+	if getpass.getuser() == “me”:
+    		browser = "firefox"
 
-# Silly example, but shows you can set options intelligently
-if getpass.getuser() == "cohenaa":
-    browser = "firefox"
+This would set the browser to Firefox only if the current user is “me”.
 
-Then set the PO_VAR_FILE environment variable to the path of the variable file:
+Then set the `PO_VAR_FILE` environment variable to the path of the variable file you just created:
 
-(myapp) $ export PO_VAR_FILE=/home/cohenaa/projects/ift/myvars.py
+	$ export PO_VAR_FILE=/home/cohenaa/projects/ift/myvars.py
 
 Remember, to make the setting persistent you must add this export statement to your ~/.bash_profile file and source it.
-Setting options/data in Robot via pybot
-Setting IFT options
 
-In Robot tests, you can also pass in IFT options, like browser, baseurl etc. from the command-line via pybot using the --variable or -v options. For example, you can set the browser and baseurl like this:
+### Setting options/data in Robot via pybot
 
-(myapp) $ pybot -v browser:firefox -v baseurl:http://qa.ncbi.nlm.nih.gov mytests/
+#### Setting IFT options
 
-This is the same as setting PO_BROWSER and PO_BASEURL as environment variables. You can also set options en masse from pybot using the --variablefile or -V options. Note that setting IFT options/data via pybot overrides the values set as environment variables.
-Setting arbitrary data
+In Robot tests, you can also pass in options, like browser, baseurl etc. from the command-line via pybot using the `—variable` or `-v` options. For example, you can set the browser and baseurl like this:
 
-In Robot tests, you can also pass arbitrary data to Robot tests using the --variable, -v, --variablefile, or -V options with pybot on the command-line:
+	$ pybot -v browser:firefox -v baseurl:http://mydomain.com mytests/
 
-(myapp) $ pybot -v name:value -v name2:value2
-
-You can then access that data from your page objects using Robot's BuiltIn library's get_variable_value method:
-
-..
-from robot.libraries.BuiltIn import BuiltIn
-..
-class MyPage(Page):
-    ...
-    my_data = BuiltIn().get_variable_value("${NAME}")
-	my_other_data = BuiltIn().get_variable_value("${NAME2}")
-
-
-
+This is the same as setting `PO_BROWSER` and `PO_BASEURL` as environment variables. You can also set options *en masse* from pybot using the `—variablefile` or `-V` options. Note that setting options/data via pybot overrides the values set as environment variables.
 
 #### In Robot
 
