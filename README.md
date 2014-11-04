@@ -78,9 +78,16 @@ Now we need an actual Google Robot library to make the test work:
         # class, in this case `Page`.
         name = "Google"
 
+        # selectors dictionary is an inheritable dictionary
+        # mapping names to Selenium2Library locators.
+        selectors = {
+            "search input": "xpath=//input[@name='q']", 
+            "search button:: "id=gbqfba",
+        }
+
         def search(self, term):
-            self.input_text("xpath=//input[@name='q']", term)
-            self.click_element("gs_htif0")
+            self.input_text("search input", term)
+            self.click_element("search button")
             return ResultPage()
 
 Now we want to code a Google search result page. Here's the Google Result page object:
@@ -99,13 +106,15 @@ Now we want to code a Google search result page. Here's the Google Result page o
         name = "Google Result Page"
 
         def click_result(self, i):
-            els = self.find_elements("xpath=//h3[@class='r']/a[not(ancestor::table)]", required=False, tag="a")
-            try:
-                # Parameters coming in from Robot are always
-                # strings, so cast to int.
-                els[int(i)].click()
-            except IndexError:
-                raise Exception("No result found")
+            # Calling resolve_selector fills in the "n" variable in 
+            # the selector template at-run-time for the "nth selector link".
+            # We need to cast the 'i' method parameter to an 'int' because Robot passes
+            # in all keyword parameters as strings.
+            locator = self.resolve_selector("nth result link", n=int(i))
+     
+            # Now, we pass the resolved locator to the inherited click_link method.
+            self.click_link(locator)
+            return Page()
 
 ### Setting Options
 
