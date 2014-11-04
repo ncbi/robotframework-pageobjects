@@ -313,7 +313,268 @@ In Python:
 	>>> item_page = MyAppItemPage()
 	>>> item_page.open("/myapp/1234?report=full")
 
-This is good for one-off cases. In general, for query strings, you should model different views of the same page as separate page object classes inheriting from a base class.
+This is good for one-off cases. In general, for query strings, you should model different views of the same page as separate page object classes inheriting from a base class
+
+
+## Finding & Interacting with page elements
+
+### Understanding Selenium2Library keywords/methods
+
+To understand how to find and interact with elements using page objects, it's important to understand `Selenium2Library` (Se2Lib)--a third-party library allowing Robot Framework tests to drive Selenium2. Se2Lib exposes a lot of useful keywords that are essentially Selenium helper methods. Many of these keywords, such as  `Click Element` (`click_element`) , `Double Click Element` ( `double_click_element` ) etc. deal with interacting with web page elements. They hide some of the complexity of dealing with the underlying Selenium2 Python bindings.
+
+At the functional test layer, we try to avoid these kinds of lower-level calls (both to Se2Lib and to Selenium2) because tests should focus on what a page can or can't do, not on its implementation details. It so happens that Se2Lib is flexible enough to be used outside the context of Robot Framework, so its methods can be safely used within page objects, whether those page objects are used in Robot tests or regular Python `unittest` test cases.
+
+This package’s `Page` object inherits from Selenium2Library, so your page objects get to use all these methods out-of-the-box. 
+
+Remember, before you code your own "helper" method for a page object, check to see that an appropriate Se2Lib method doesn't already exist. When you inherit from `Page` you can find these methods on `self`.
+
+### Locators vs. selectors
+
+A locator is an Se2Lib concept. Locators are strings that tell Selenium how to find an element. It's of the form `strategy=value` where strategy can be:
+
+    - id
+    - xpath
+    - css
+    - link (link text)
+    - jquery/sizzle
+    - dom (arbitrary JavaScript)
+
+For example:
+
+    - `id=foo`
+    - `xpath=id('foo')//a[@class='bar’]`
+    - `css=#foo a.bar`
+    - `dom=getElementsByTagName(“a”)[1]`
+
+A selector, on the other hand, is a Robot Page Object concept. It's a named locator. You define selectors on your page object class and/or component class as a Python dictionary. Your page object class will inherit any super classes' selectors, and any subclass of your page object will inherit your selectors. So, make sure your selector isn't already defined in a super class. If it isn't, make sure it's specific to type of page you're modeling. If it's more generic, it may belong in a super class.
+
+
+### Selectors in action
+
+Here's an example of using selectors in your page object:
+
+...
+class MyPage(NCBIPage):
+
+    ...
+    selectors = {
+        "search button": "id=srcbtn",
+        "search textfield": "css=".s",
+    }
+
+    def enter_search_term(self, term):
+        self.input_text("search textfield", term)
+
+    def click_search_button(self):
+        self.click_button("search button")
+        return SearchResultPage()
+
+	def search(self, term):
+        self.enter_search_term(term)
+        return self.click_search_button()
+
+Using selectors is less brittle than locators. Selctors give you:
+
+    Maintainability/inheritablility. Locators are defined once in the selector dictionary, instead of embedded throughout your test-code. When a developer changes the page structure, you know where to go to make your tests pass again. Selectors are inherited from parent page object classes. The dictionaries are merged, so common elements need only be defined in the parent class.
+    Readability. Instead of referring to a hard-to-read locator, you can name the locator something meaningful and then refer to it by name throughout your code.
+
+Passing selectors to Se2Lib methods
+
+Note in the above example the page object methods pass selectors to Se2Lib methods, like click_button, instead of locators. This is possible because IFT has overridden Se2Lib's underlying method for finding elements. This means:
+
+    you can pass selectors instead of locators to all Se2Lib methods that accept locators
+    for maintainability and readability, you should pass selectors to Se2Lib methods, not locators.
+    if you write your own helper methods for finding or interacting with elements:
+        allow them to be passed selectors
+        if they are applicable to any web page, issue a pull request for the base Page object: https://stash.ncbi.nlm.nih.gov/projects/IFT/repos/robotframework-pageobjects/browse/robotpageobjects/page.py
+
+Looking up elements from the end of a list
+
+It can be helpful to look up elements from the end of a list.  It especially helps when the number of elements is large or variable.
+
+For example, say you have a table with many rows, ending with these three rows:
+AL672294.10	HYcos-53	HSCHR1_CTG32_1	SC	fin	Excellent	2,000	0	100	
+AL845371.2	HYcos-64	HSCHR1_CTG32_1	SC	fin	Excellent	2,000	0	100	
+AL672183.3	HYcos-35	HSCHR1_CTG32_1	SC	fin	Minor problem	908	0	99.339	identity < 99.6%; alignment length < 2000
+
+You can verify the content of the last row with a negative index, i.e. -1, as you would in a Python list:
+
+...
+
+class MyPage(Page):
+
+	selectors = {
+		"long-table": "#long_table_id"
+		...
+	}
+
+	@robot_alias("my_long_table_should_should_contain_last_row")
+	long_table_should_contain_last_row(self, expected_row):
+        # Verifies the content in the last row (i.e. row -1) of "long table"
+        locator = self.resolve_selector("long-table")
+        self.table_row_should_contain(locator, "-1", expected_row)
+		return self
+
+The second-to-last element in a list has index -2, and so on.
+
+Support for negative indexes has been added for the following built-in Robot keywords:
+
+    Table Row Should Contain
+    Table Column Should Contain
+    Table Cell Should Contain
+
+At the time of this writing, these table-related keywords are the only ones that support negative indexes.
+Selector templates
+
+Sometimes you want to find elements, but part of the locator is variable. In this case we use selector templates.
+
+    Define a selector, surrounding the variable part of the locator with brackets ("{ }")
+    In your page object method that uses the selector template, call resolve_selector, passing in the selector name followed by keyword arguments matching the variable names in your selector template. This method returns the expanded locator, which you can then pass to any methods that accept locators/selectors to find or interact with page elements.
+
+For instance, let's say you want to select the nth item in some list on a particular page. Here's how we'd do it:
+
+...
+
+class MyPage(Page):
+
+    selectors = {
+        "nth result link": "xpath=id('product-list')/li/a[{n}]",
+        ...
+    }
+
+    @robot_alias("click_result_link_on__name__")
+    def click_result_link(self, index=0):
+        """ Click the nth product result link """
+        xpath_index = index + 1
+         
+        # "n" keyword maps to the variable name in the selector template.
+        locator = self.resolve_selector("nth result link", n=xpath_index)
+        self.click_link(locator)
+        return ProductPage()
+
+Self-Referential Selectors
+
+You can also keep your selectors DRY (Don't Repeat Yourself) by referencing other selectors using python string formatting syntax:
+
+...
+
+class MyPage(Page):
+
+    selectors = {
+        "search form": "xpath=//form",
+        "form label": "%(search form)s/label",
+        ...
+    }
+
+    def check_form_label(self):
+        """ Make sure the form label is visible """
+        self.element_should_be_visible("form label")
+        return self()
+
+Using WebElements
+
+IFT is based on Selenium/Selenium2Library which uses the WebElement class to model DOM nodes. Most often, we don't actually need a reference to the WebElement because all page objects give us many convenience methods like click_element, click_button, input_text etc. All these methods are on the base Page object, so from within your page object you can call them on self. See each page object's API docs or Selenium2Library's keyword documentation for more.
+
+If, for some reason, you need a direct reference to a WebElement you can get it by passing a locator/selector to IFT's find_element(s), which is also on every page object. When at all possible, however, work at the IFT level, not at the WebElement level. For example:
+
+...
+class MyPage(NCBIPage):
+    ...
+	selectors = {
+        "search button": "id=srcb",
+    }
+
+    def click_search_button(self):
+        # Don't do:
+        # search_btn = self.find_element("search button")
+        # search_btn.click()
+        # Instead, simply:
+        self.click_button("search button")
+
+Waiting
+Sleeping
+
+Just don't. Sometimes page content, including text or elements are inserted into the DOM after page-load. Or sometimes IFT will drive the browser so fast that we can't be sure when the page has loaded. If you try to find or operate on these page elements you'll get either get a ValueError or Selenium's NoSuchElementException. Don't fall into the trap of calling time.sleep(). Why?
+
+    your tests will be brittle: the content could be available after the time you slept for. Sometimes your tests will pass and sometimes they will fail with errors. Inconsistent tests are almost as bad as no tests.
+    your tests will be slow. For example, your content could be available in 1/8 of a second. If you sleep for one second you are stalling your tests for 7/8 of a second for no reason. This can start to add up over the course of several tests.
+
+Implicitly waiting
+
+The solution is waiting, not sleeping. The idea is to repeatedly poll the page for the element's existance and then sleep at much smaller increments–up to some maximum (IFT sets this maximum timeout to 10 seconds). By default page object methods that take selectors or locators as parameters to find or operate on elements will poll the page until they find the element they are supposed to find or operate on. These methods include:
+
+    find_element
+    find_elements
+    click_element
+    click_button
+    get_text
+    input_text
+    etc.
+
+This means that when calling these types of methods, you generally don't have to worry about whether the element exists at the time of the method call. IFT will wait approximately as long as it takes for the element to show up in the DOM before raising a ValueError. One issue with this is that method calls that fail to find elements will take 10 seconds to raise a ValueError. See the Explicitly waiting section on how to deal with this situation.
+
+To globally change the implicit wait timeout (default is 10 seconds), set IFT's selenium_implicit_wait option. See Setting IFT options & data.
+
+IFT's implicit wait does not apply to an element's visibility. It only applies to existance in the DOM. It's possible for an element to exist in the DOM, but not be visible, and Selenium will not allow you to interact with an element that's not visible. For this you may need wait_until_element_is_visible .
+Explicitly waiting
+
+There are cases where you'd like to specify exactly how long you want to wait for an element's existance without setting the global selenium_implicit_wait option. There are several ways to do this:
+
+    Call find_element with the optional wait keyword parameter. This overrides the default 10 second implicit wait timeout, but only for the one call to find_element. Currently you cannot pass a wait parameter to any of the other element finding/manipulating Se2Library methods, such as click_element, input_text etc. See . After finding the element, you'll then have to drop down to the Selenium layer. For example:
+
+    class MyPage(NCBIPage):
+        ...
+        def do_something(self):
+            el = self.find_element("some selector", wait=2)
+            el.click()
+    ...
+
+    Call Se2Lib methods like wait_until_page_contains_element , passing an explicit wait parameter
+
+Waiting for arbitrary conditions
+
+Sometimes you need to wait for something more complex than just an element. In this case use wait_for or  wait_for_condition. You'll have to pass these functions callbacks that check some condition and return a Boolean. IFT will poll the page every 500 milliseconds for the condition to become True, then it will continue to the next line of code. Here's an example:
+
+class MyPage(NCBIPage):
+    ...
+    def do_something(self):
+
+		def all_columns_contain_human():
+            # some logic that checks that a specific table column
+            # contains the text "human"
+            ...
+
+        self.wait_for(all_columns_contain_human)
+        # Once the condition is True, continue to do something here
+        ...
+...
+
+If you need to pass a callback a parameter, you'll have to pass a  lambda to wait_for.
+
+Overriding parent selectors
+
+If you want to redefine a selector defined in a parent class, use the Override class:
+
+...
+from robotpageobjects.page import Override
+
+
+class MyPage(NCBIPage):
+   ...
+    selectors = {
+        "search": "id=search-btn",
+        "term input": "id=search-input"
+    }
+
+class MySpecialPage(MyPage):
+    ...
+
+    selectors = {
+        Override("search"): "id=my-search-btn"
+    }
+
+
+
 
 
 
