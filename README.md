@@ -274,7 +274,7 @@ A templated page object models a page with many (perhaps infinite) possible URIs
 
 	...
 	class PubmedArticlePage(object):
-    		“”” Models a page like http://www.ncbi.nlm.nih.gov/pubmed/25362170
+		“”” Models a page like http://www.ncbi.nlm.nih.gov/pubmed/25362170
 		where the number is an article ID:
 		uri = "/{article_id}"
     		....
