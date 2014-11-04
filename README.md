@@ -116,11 +116,90 @@ Now we want to code a Google search result page. Here's the Google Result page o
             self.click_link(locator)
             return Page()
 
-### Setting Options
+## Setting Options
 
-We need to be able to set options for page objects in both the Robot Framework context and outside that context,
-such as which browser to use to open the page, and the baseurl to use (in order to easily switch executation between
-environments).
+### Built-in IFT options
+
+Most IFT test-runs require the setting of some kind of external data--for example, a base URL. IFT defines several built-in options relevant whether using your page objects in Robot or plain, Python tests. These are:
+
+    baseurl: Default is "http://www.ncbi.nlm.nih.gov". The host for any tests you run. This facilitates test portability between different environments instead of hardcoding the test environment into the test.
+
+    browser : Default is phantomjs. Sets the type of browser used. Values can be: firefox, phantomjs (default). Eg: (ift-env) $ pybot -v browser:firefox mytest.robot, or any browser that Sauce Labs supports.
+
+    log_level : Default is "INFO". Sets the logging threshold for what's logged from the log method. Currently you have to set -L or --loglevel in Robot, not -vloglevel:LEVEL. See  and Logging, Reporting & Debugging.
+    sauce_apikey : The API key (password) for your Sauce account. Never hard-code this in anything, and never commit the repository. If you need to store it somewhere, store it as an environment variable.
+    sauce_browserversion : The version of the sauce browser. Defaults to the latest available version for the given browser.
+    sauce_device_orientation : Defaults to "portrait". For mobile devices, tells the page object what orientation to run the test in.
+    sauce_platform : A platform Sauce Labs supports.
+    sauce_username: The user name of your Sauce account. Never hard-code this in anything, and never commit the repository. If you need to store it somewhere, store it as an environment variable.
+    selenium_implicit_wait : A global setting that sets the maximum time to wait before raising an ValueError. Default is 10 seconds. For example, for a call to click_element, Selenium will poll the page for the existence of the passed element at an interval of 200 ms until 10 seconds before raising an ElementNotFoundException.
+    selenium_speed : The time in seconds between each Selenium API call issued. This should only be used for debugging to slow down your tests so you can see what the browser is doing. Default is 0 seconds. eg. $ pybot -v selenium_speed:1 mytest.robot
+    service_args : Additional command-line arguments (such as "--ignore-ssl-errors=yes") to pass to the browser (any browser) when it is run. Arguments are space-separated. Example: PO_SERVICE_ARGS="--ignore-ssl-errors=yes --ssl-protocol=TLSv1" python mytest.py
+
+Once set, these option values are available as attributes on the page object. For example, self.baseurl.
+
+The rest of this page explains the various ways you can set these options, and even ways to pass in arbitrary data.
+Setting options with the ift script
+
+Probably the easiest way to set IFT options for Robot and non-Robot IFT tests is to use the ift script. For instructions on how to install the script and use it see: Installing IFT.
+Setting options/data with environment variables
+Setting individual options/data
+
+Both Robot and Python IFT tests support setting options/data via environment variables. For example, you can change the local browser from phantomjs (default) to Firefox by setting the browser option via the PO_BROWSER environment variable:
+
+(myapp) $ export PO_BROWSER=firefox
+
+Now when you run IFT tests, they will be launched in Firefox. Note that the environment variable is the name of the option, prepended with PO_, in all upper case. For example, you'd pass the baseurl option by setting PO_BASEURL.
+
+These options are only set until the next time you log out of the server. To make them persist across sessions, put the same export statement in your ~/.bash_profile file, then source it:
+
+(myapp) $ source ~/.bash_profile
+
+To make working with IFT environment variables more convenient see the Additional configuration section.
+Setting options/data en masse
+
+For both Robot and non-Robot tests, you can set multiple options by using a variable file. Create a Python module and set variables to the values you want. The values can be resolved however you like, with arbitrary complexity, as long as the variables are accessible at the module level. For example:
+
+# myvars.py
+
+import getpass
+
+baseurl = "http://qa.ncbi.nlm.nih.gov"
+
+# Silly example, but shows you can set options intelligently
+if getpass.getuser() == "cohenaa":
+    browser = "firefox"
+
+Then set the PO_VAR_FILE environment variable to the path of the variable file:
+
+(myapp) $ export PO_VAR_FILE=/home/cohenaa/projects/ift/myvars.py
+
+Remember, to make the setting persistent you must add this export statement to your ~/.bash_profile file and source it.
+Setting options/data in Robot via pybot
+Setting IFT options
+
+In Robot tests, you can also pass in IFT options, like browser, baseurl etc. from the command-line via pybot using the --variable or -v options. For example, you can set the browser and baseurl like this:
+
+(myapp) $ pybot -v browser:firefox -v baseurl:http://qa.ncbi.nlm.nih.gov mytests/
+
+This is the same as setting PO_BROWSER and PO_BASEURL as environment variables. You can also set options en masse from pybot using the --variablefile or -V options. Note that setting IFT options/data via pybot overrides the values set as environment variables.
+Setting arbitrary data
+
+In Robot tests, you can also pass arbitrary data to Robot tests using the --variable, -v, --variablefile, or -V options with pybot on the command-line:
+
+(myapp) $ pybot -v name:value -v name2:value2
+
+You can then access that data from your page objects using Robot's BuiltIn library's get_variable_value method:
+
+..
+from robot.libraries.BuiltIn import BuiltIn
+..
+class MyPage(Page):
+    ...
+    my_data = BuiltIn().get_variable_value("${NAME}")
+	my_other_data = BuiltIn().get_variable_value("${NAME2}")
+
+
 
 
 #### In Robot
