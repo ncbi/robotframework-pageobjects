@@ -592,7 +592,7 @@ If you want to redefine a selector defined in a parent class, use the `Override`
         }
         
     
- ## Making Assertions
+## Making Assertions
  
 Asserting conditions is the basis of automated testing. Here's a very simple example from a basic Python unit test Test Case:
 
