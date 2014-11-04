@@ -771,21 +771,24 @@ application by importing pdb and then using pdb.set_trace():
             
 ### How Components Work
 
-Components encapsulate discrete parts of a page and make them reusable across multiple page objects and page object packages. Components also help to keep base page classes uncluttered with functionality not necessarily needed by every derived class.
+Components encapsulate discrete parts of a page and make them reusable across multiple page objects and page object packages. 
+Components also help to keep base page classes uncluttered with functionality not necessarily needed by every derived class.
 
-For example, the NCBI Global Header would make a good component because it's on many NCBI pages, but not all. It has its own particular DOM structure and functionality, independent from the page it's on. We could code the global header functionality in the base  NCBIPage object. That would give every page object access to its properties and methods, but that would also bloat the NCBIPage class with code that might not be needed.
+For example, a site's Global Header would make a good component because it may be on many of a site's pages, 
+but not all. It has its own particular DOM structure and functionality, independent from the page it's on. 
+We could code the global header functionality in the site's base page object. That would give every page object 
+access to its properties and methods, but that would also bloat every page object class with code that might not be 
+needed.
 
-Instead, we could write a GlobalHeaderComponent. The GlobalHeaderComponent is a class encapsulating  everything the NCBI Global Header has and can do.
+Instead, we could write a `GlobalHeaderComponent`. The `GlobalHeaderComponent` is a class encapsulating  everything the  Global Header has and can do.
 
 Let's take a look at how this all works. 
-
-    Here's the GlobalHeaderComponent class in global_header_component.py:
 
     from robotpageobjects import Component
 
 
     class GlobalHeaderComponent(Component):
-        """ Encapsulates the common, NCBI 
+        """ Encapsulates the common, 
         GlobalHeader found on most NCBI pages.
         """
 
@@ -823,11 +826,20 @@ Let's take a look at how this all works.
             # after calling this method on the GlobalHeader instance.
             # we won't actually code that here...
 
-    Next, the page object defines a dictionary indicating what components it uses. Each key of the dictionary is a component's class, and the corresponding value is the locator used by the page to find instances of the component. IFT then automatically creates properties on the page object corresponding to the name of the component class. This allows the page object author to access the component's properties and methods from within page object methods. The test author shouldn't directly access the component, rather page object methods should wrap component properties and methods. Here's the page class in my_app_homepage.py.
+Next, the page object defines a dictionary indicating what components it uses. Each key of the dictionary is a component's class, 
+and the corresponding value is the locator used by the page to find instances of the component. The page object then 
+automatically creates properties on itself corresponding to the name of the component class. This allows 
+the page object author to access the component's properties and methods from within page object methods. 
 
-    Note here that the properties globalheader and globalheaders are automatically created and attached to the page object. These properties are determined from the class name GlobalHeaderComponent. globalheader is a reference to a single GlobalHeaderComponent instance (for use on pages like this, where there is only one global header), and globalheaders is a list of all GlobalHeaderComponent instances on the page (in this case there is only one).
+The test author shouldn't directly access the component, rather page object methods should wrap component properties and methods. 
+Here's the page class using the component. Note here that the properties `globalheader` and `globalheaders` are 
+automatically created and attached to the page object. These properties are determined from the class name 
+`GlobalHeaderComponent`. `globalheader` is a reference to a single `GlobalHeaderComponent` instance (for use on pages 
+like this, where there is only one global header), and `globalheaders` is a list of all GlobalHeaderComponent 
+instances on the page (in this case there is only one).
 
-    Note also that, as with selectors, any components you define in a super class of your page (such as NCBIPage) are inherited by your page and merged with any components you define in your components dictionary.
+Note also that, as with selectors, any components you define in a super class of your page are inherited by your page and merged with any 
+components you define in your components dictionary.
 
     from ncbipageobjects import NCBIPage
     from robotpageobjects import robot_alias
@@ -847,7 +859,9 @@ Let's take a look at how this all works.
             # Here we'd have to figure out what page object to return…
             # but we won't bother with that logic here…
 
-    Now your tests can use the component, but indirectly via page object methods. test_my_page.robot:
+Now your Robot (or other kinds of) tests can use the component, but only indirectly via page object methods. 
+
+*test_my_page.robot*:
 
     *** Settings ***
     Documentation  Tests for My Page.
@@ -862,48 +876,46 @@ Let's take a look at how this all works.
         etc.
         [Teardown]  Close My App Home Page
 
-Return Values from Component Methods
+### Return Values from Component Methods
 
-Methods on component classes should not return page objects. They can, of course, return anything else. Let the page object method that accesses the component decide whether it needs to return either itself or another page object instance.
-Sub Components
+Methods on component classes should not return page objects. They can, of course, return anything else. 
+Let the page object method that accesses the component decide whether it needs to return: either itself or another 
+page object instance.
 
-Components can use other components. The parent component should define its components in a dictionary, just as page objects do. This way the parent component can access instances of the sub component using self. Let's say, for example, that a header component has an advanced search section that's implemented using a show/hide toggler JavaScript widget:
+### Sub Components
 
-from robotpageobjects import Component
-from ncbipageobjects.jig import TogglerComponent
+Components can use other components. The parent component should define its components in a dictionary, just as page objects do. 
+This way the parent component can access instances of the sub component using `self`. Let's say, for example, 
+that a header component has an advanced search section that's implemented using a show/hide toggler JavaScript widget:
 
+    from robotpageobjects import Component
+    from ncbipageobjects.jig import TogglerComponent
+    
+    
+    class  HeaderComponent(Component):
+    
+        components = {TogglerComponent: "css=.jig-ncbitoggler"}
+    
+        ...
+        def open_advanced_search_section(self):
+            try:
+                advanced_toggler = self.togglers[0]
+            except KeyError:
+                raise Exception("No advanced search section found in the header")
+    
+            advanced_toggler.open()
 
-class  HeaderComponent(Component):
+### Finding Component Instances with No DOM Hook
 
-    components = {TogglerComponent: "css=.jig-ncbitoggler"}
+Sometimes there's no way to find instances of a component on a page because there's no ID or classes on the reference element. 
+Ideally, you should have the developer put an ID or classes in the HTML source or on the DOM. If that's not feasible, use the 
+Selenium2Library's DOM strategy instead of xpath or css as your locator strategy. This way you can execute arbitrary 
+JavaScript to find the components on the page. Here's an example:
 
-    ...
-    def open_advanced_search_section(self):
-        try:
-            advanced_toggler = self.togglers[0]
-        except KeyError:
-            raise Exception("No advanced search section found in the header")
-
-        advanced_toggler.open()
-
-Finding Component Instances with No DOM Hook
-
-Sometimes there's no way to find instances of a component on a page because there's no ID or classes on the reference element. Ideally, you should have the developer put an ID or classes in the HTML source or on the DOM. If that's not feasible, use the DOM strategy instead of xpath or css as your locator strategy. This way you can execute arbitrary JavaScript to find the components on the page. Here's an example for locating jig's inpagenav widget.
-
-Unfortunately the jig widget author neglected to programmatically put a class on the containing div element. Rather than filing a bug report and waiting for a new jig release, you could file a ticket with jig and meanwhile write a locator using the dom strategy. Here, the locator filters out all divs on the page with the proper data attribute:
-
-from robotpageobjects import Page, Component, ComponentManager
- 
-class InPageNavComponent(Component):
-    …
- 
-class Mypage(Page):
-    components = {InPageNavComponent: "dom=Query('body > div').filter(function(){return typeof jQuery(this).data('ncbiinpagenav') !== 'undefined';})"}
-
-Testing Components
-
-You write tests for all the methods and/or properties of the page objects you write, right? Components should also be tested. Here are some guidelines:
-
-    If you are packaging the component with an ACTST page object package you don't need separate tests for each component method/property as long as each method/property is wrapped by a page object method or property AND you have associated model tests for those page object methods and properties.
-    If your component is not packaged with an ACTST page object package (eg. jig components), you'll need tests for every public component method and property.
-            
+    from robotpageobjects import Page, Component, ComponentManager
+     
+    class InPageNavComponent(Component):
+        …
+     
+    class Mypage(Page):
+        components = {InPageNavComponent: "dom=Query('body > div').filter(function(){return typeof jQuery(this).data('ncbiinpagenav') !== 'undefined';})"}
