@@ -353,40 +353,45 @@ A selector, on the other hand, is a Robot Page Object concept. It's a named loca
 
 Here's an example of using selectors in your page object:
 
-...
-class MyPage(NCBIPage):
-
     ...
-    selectors = {
-        "search button": "id=srcbtn",
-        "search textfield": "css=".s",
-    }
-
-    def enter_search_term(self, term):
-        self.input_text("search textfield", term)
-
-    def click_search_button(self):
-        self.click_button("search button")
-        return SearchResultPage()
-
-	def search(self, term):
-        self.enter_search_term(term)
-        return self.click_search_button()
+    class MyPage(Page):
+    
+        ...
+        selectors = {
+            "search button": "id=srcbtn",
+            "search textfield": "css=".s",
+        }
+        
+        def enter_search_term(self, term):
+            self.input_text("search textfield", term)
+        
+        def click_search_button(self):
+            self.click_button("search button")
+            return SearchResultPage()
+        
+        def search(self, term):
+            self.enter_search_term(term)
+            return self.click_search_button()
 
 Using selectors is less brittle than locators. Selctors give you:
 
-    Maintainability/inheritablility. Locators are defined once in the selector dictionary, instead of embedded throughout your test-code. When a developer changes the page structure, you know where to go to make your tests pass again. Selectors are inherited from parent page object classes. The dictionaries are merged, so common elements need only be defined in the parent class.
-    Readability. Instead of referring to a hard-to-read locator, you can name the locator something meaningful and then refer to it by name throughout your code.
+- Maintainability/inheritablility. Locators are defined once in the selector dictionary, 
+instead of embedded throughout your test-code. When a developer changes the page structure, you know where to go to make your tests pass again. Selectors are inherited from parent page object classes. The dictionaries are merged, so common elements need only be defined in the parent class.
+- Readability. Instead of referring to a hard-to-read locator, you can name the locator something meaningful and then 
+refer to it by name throughout your code.
 
-Passing selectors to Se2Lib methods
+#### Passing selectors to Se2Lib methods
 
-Note in the above example the page object methods pass selectors to Se2Lib methods, like click_button, instead of locators. This is possible because IFT has overridden Se2Lib's underlying method for finding elements. This means:
+Note in the above example the page object methods pass selectors instead of locators to Se2Lib methods, 
+like `click_button`. This is possible because `Page` has overridden Se2Lib's underlying method for finding elements. 
 
-    you can pass selectors instead of locators to all Se2Lib methods that accept locators
-    for maintainability and readability, you should pass selectors to Se2Lib methods, not locators.
-    if you write your own helper methods for finding or interacting with elements:
-        allow them to be passed selectors
-        if they are applicable to any web page, issue a pull request for the base Page object: https://stash.ncbi.nlm.nih.gov/projects/IFT/repos/robotframework-pageobjects/browse/robotpageobjects/page.py
+This means you can pass selectors instead of locators to all Se2Lib methods that accept locators
+
+- for maintainability and readability, you should pass selectors to Se2Lib methods, not locators.
+- if you write your own helper methods for finding or interacting with elements:
+        - allow them to be passed selectors
+        - if they are applicable to any web page, issue a pull request for the base Page object: https://stash.ncbi
+        .nlm.nih.gov/projects/IFT/repos/robotframework-pageobjects/browse/robotpageobjects/page.py
 
 Looking up elements from the end of a list
 
