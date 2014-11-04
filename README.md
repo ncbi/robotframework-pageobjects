@@ -2,7 +2,7 @@
 
 This Python package adds support of the [Page Object](http://martinfowler.com/bliki/PageObject.html) pattern to [Robot Framework](http://robotframework.org/) & Robot Framework's [Selenium2Library](https://github.com/rtomac/robotframework-selenium2library).  
 
-The main point of using page objects is to factor out page implementation details (locators, UI details etc.) from the actual test suites. This makes the tests more about what functionaly is being tested, and thus more readable. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
+The main point of using page objects is to factor out page implementation details (locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
 
 Each page object is simply a Robot library that inherits from this package's base `Page` class. These library classes can work independently of Robot
 Framework, even though they ultimately inherit from Robot Framework's Selenium2Library. This  allows you to encapsulate page logic Robot libraries, but use those libraries in any testing framework, including 
@@ -35,10 +35,10 @@ case. **Note**: The `Page` class inherits from Selenium2Library, so all methods 
         Title Should Be  Apple
         [Teardown]  Close Google
 
-Here's a regular, unittest test case using the same page object. This code is in demos/test_google_search_to_apple.py:
+Here's a regular, unittest test case using the same page object:
 
     import unittest
-    from pageobjects import google
+    import google
 
 
     class TestGoogleSearch(unittest.TestCase):
@@ -49,10 +49,7 @@ Here's a regular, unittest test case using the same page object. This code is in
         def test_google_search_to_apple(self):
             result_page = self.google_page.search("apple computers")
             result_page.click_result(1)
-
-            # This call to .se will go away when we import
-            # se methods into the page object.
-            result_page.se.title_should_be("Apple")
+            result_page.title_should_be("Apple")
 
         def tearDown(self):
             self.google_page.close()
@@ -60,8 +57,9 @@ Here's a regular, unittest test case using the same page object. This code is in
     unittest.main()
 
 
-Here is the Google page object. It is designed to be the base class of all Google page objects and is in pageobjects
-/google.py:
+Now we need an actual Google Robot library to make these tests work:
+
+*google.py*:
 
     from pageobjects.base.PageObjectLibrary import PageObjectLibrary, robot_alias
 
