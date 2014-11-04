@@ -87,6 +87,8 @@ Now we need an actual Google Robot library to make these tests work:
 
 Now we want to code a Google search result page. Here's the Google Result page object:
 
+*google.py*:
+
     ...
     class ResultPage(Page):
 
