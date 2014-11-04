@@ -332,19 +332,19 @@ Remember, before you code your own "helper" method for a page object, check to s
 
 A locator is an Se2Lib concept. Locators are strings that tell Selenium how to find an element. It's of the form `strategy=value` where strategy can be:
 
-    - id
-    - xpath
-    - css
-    - link (link text)
-    - jquery/sizzle
-    - dom (arbitrary JavaScript)
+- id
+- xpath
+- css
+- link (link text)
+- jquery/sizzle
+- dom (arbitrary JavaScript)
 
 For example:
 
-    - `id=foo`
-    - `xpath=id('foo')//a[@class='bar’]`
-    - `css=#foo a.bar`
-    - `dom=getElementsByTagName(“a”)[1]`
+- `id=foo`
+- `xpath=id('foo')//a[@class='bar’]`
+- `css=#foo a.bar`
+- `dom=getElementsByTagName(“a”)[1]`
 
 A selector, on the other hand, is a Robot Page Object concept. It's a named locator. You define selectors on your page object class and/or component class as a Python dictionary. Your page object class will inherit any super classes' selectors, and any subclass of your page object will inherit your selectors. So, make sure your selector isn't already defined in a super class. If it isn't, make sure it's specific to type of page you're modeling. If it's more generic, it may belong in a super class.
 
