@@ -174,7 +174,7 @@ This would set the browser to Firefox only if the current user is “me”.
 
 Then set the `PO_VAR_FILE` environment variable to the path of the variable file you just created:
 
-	$ export PO_VAR_FILE=/home/cohenaa/projects/ift/myvars.py
+	$ export PO_VAR_FILE=/path/to/myvars.py
 
 Remember, to make the setting persistent you must add this export statement to your ~/.bash_profile file and source it.
 
