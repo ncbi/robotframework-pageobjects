@@ -16,7 +16,7 @@ ver = version.get_git_version()
 # reason. So install it using pip install.
 
 setup(
-    name="Robot-Framework-Page-Objects",
+    name="robotframework-pageobjects",
     version=ver,
     description="Lets you use the page object pattern with Robot Framework and plain python", 
     author="National Center for Biotechnology Information",
