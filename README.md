@@ -11,7 +11,7 @@ Python [unittest](https://docs.python.org/2/library/unittest.html) test cases.
 
 ## Installing
 
-We are trying to get this up on pip, but for now simply clone this repo and do:
+We are trying to get this up on PyPi, but for now simply clone this repo and do:
 
     $ cd robotframework-pageobjects
     $ pip install .
@@ -19,7 +19,7 @@ We are trying to get this up on pip, but for now simply clone this repo and do:
 ## How it Works
 
 Here's a Robot test case using some page objects written using the `Page` base class. We need to import any page objects libraries we need in our test
-case. **Note**: The `Page` class inherits from Selenium2Library, so all methods (keywords) on Selenium2Library are available in your tests, and from `self` from within one of your page objects.
+case. **Note**: The `Page` class inherits from Selenium2Library, so all methods (keywords) in Selenium2Library are available in your tests, and from `self` from within one of your page objects.
 
 *test_google.robot*:
 
@@ -68,7 +68,7 @@ Now we need an actual Google Robot library to make the test work:
     from robotpageobjects import Page, robot_alias
 
 
-    class Page(PageObjectLibrary):
+    class Page(Page):
 
         """
         Base Google Page
@@ -86,7 +86,7 @@ Now we need an actual Google Robot library to make the test work:
         # mapping names to Selenium2Library locators.
         selectors = {
             "search input": "xpath=//input[@name='q']", 
-            "search button:: "id=gbqfba",
+            "search button: "id=gbqfba",
         }
 
         def search(self, term):
@@ -324,7 +324,7 @@ This is good for one-off cases. In general, for query strings, you should model 
 
 ### Understanding Selenium2Library keywords/methods
 
-To understand how to find and interact with elements using page objects, it's important to understand `Selenium2Library` (Se2Lib)--a third-party library allowing Robot Framework tests to drive Selenium2. Se2Lib exposes a lot of useful keywords that are essentially Selenium helper methods. Many of these keywords, such as  `Click Element` (`click_element`) , `Double Click Element` ( `double_click_element` ) etc. deal with interacting with web page elements. They hide some of the complexity of dealing with the underlying Selenium2 Python bindings.
+To understand how to find and interact with elements using page objects, it's important to understand `Selenium2Library` (Se2Lib)--a third-party library allowing Robot Framework tests to drive Selenium2. Se2Lib exposes a lot of [useful keywords](http://robotframework-seleniumlibrary.googlecode.com/hg/doc/SeleniumLibrary.html?r=2.5) that are essentially Selenium helper methods. Many of these keywords, such as  `Click Element` (`click_element`) , `Double Click Element` ( `double_click_element` ) etc. deal with interacting with web page elements. They hide some of the complexity of dealing with the underlying Selenium2 Python bindings.
 
 At the functional test layer, we try to avoid these kinds of lower-level calls (both to Se2Lib and to Selenium2) because tests should focus on what a page can or can't do, not on its implementation details. It so happens that Se2Lib is flexible enough to be used outside the context of Robot Framework, so its methods can be safely used within page objects, whether those page objects are used in Robot tests or regular Python `unittest` test cases.
 
