@@ -94,6 +94,8 @@ Now we need an actual Google Robot library to make the test work:
             self.click_element("search button")
             return ResultPage()
 
+**Note**: You must return *something* from public (non-underscored) page object methods: either a value from a getter method or a page object instance from non-getter methods. Remember, when you navigate to a new page by clicking a link, submitting a form etc. you should return the appropriate page object. 
+
 Now we want to code a Google search result page. Here's the Google Result page object:
 
 *google.py*:
