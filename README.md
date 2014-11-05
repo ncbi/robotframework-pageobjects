@@ -10,7 +10,11 @@ Python [unittest](https://docs.python.org/2/library/unittest.html) test cases.
 
 
 ## Installing
-TODO
+
+We are trying to get this up on pip, but for now simply clone this repo and do:
+
+    $ cd robotframework-pageobjects
+    $ pip install .
 
 ## How it Works
 
