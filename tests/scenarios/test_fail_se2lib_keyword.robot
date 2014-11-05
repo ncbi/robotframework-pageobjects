@@ -8,8 +8,9 @@ Library    widget_rel_uri_attr.SearchResultPage
 *** Test Cases ***
 
 Test Widget Site
-    Open Browser  ${BASEURL}/site/index.html  phantomjs
+    Open Widget Page
+    Search Widget Page For  cool thing
 
     # This will fail the assertion
     Title Should Be  foo
-    [Teardown]  Close Browser
+    [Teardown]  Close Widget Page
