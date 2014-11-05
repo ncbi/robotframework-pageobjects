@@ -68,7 +68,7 @@ Now we need an actual Google Robot library to make the test work:
     from robotpageobjects import Page, robot_alias
 
 
-    class Page(Page):
+    class GooglePage(Page):
 
         """
         Base Google Page
