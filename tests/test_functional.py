@@ -214,33 +214,38 @@ class SelectorsTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=0, search_output="PASS")
     """
 
-    def test_find_elements_with_selector(self):
+
+    def setUp(self):
+        super(SelectorsTestCase, self).setUp()
         self.set_baseurl_env()
+
+    def test_find_elements_with_selector(self):
+        #self.set_baseurl_env()
         run = self.run_scenario("test_find_elements_with_selector.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_bad_selector_raises_exception(self):
-        self.set_baseurl_env()
+        #self.set_baseurl_env()
         run = self.run_scenario("test_bad_selector.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_no_selector_raises_exception(self):
-        self.set_baseurl_env()
+        #self.set_baseurl_env()
         run = self.run_scenario("test_no_selector.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_selector_template(self):
-        self.set_baseurl_env()
+        #self.set_baseurl_env()
         run = self.run_scenario("test_templated_selector.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_selector_self_ref(self):
-        self.set_baseurl_env()
+        #self.set_baseurl_env()
         run = self.run_scenario("test_selector_self_ref.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_no_robot_action_failing_should_not_warn_about_screenshot(self):
-        self.set_baseurl_env()
+        #self.set_baseurl_env()
         run = self.run_scenario("test_fail.py")
         self.assertFalse("warn" in run.output.lower(), "No warning should be issued when a method fails outside "
                                                        "robot")
@@ -249,15 +254,15 @@ class SelectorsTestCase(BaseTestCase):
         # This run is duplicated, but it shows that SE2Lib library imported
         # with page objects works.
         run = self.run_scenario("test_template_passed.robot")
-        self.assert_run(run, expected_returncode=0, search_output="PASSED")
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
 
     def robot_importing_se2lib_before_page_object_should_work(self):
         run = self.run_scenario("test_se2lib_imported_before_po.robot")
-        self.assert_run(run, expected_returncode=0, search_output="PASSED")
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
 
     def test_selector_in_se2lib_method(self):
         run = self.run_scenario("test_se2lib_using_selector.robot", variable="baseurl:%s" % self.base_file_url)
-        self.assert_run(run, expected_returncode=0, search_output="PASSED")
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
 
 
 class ComponentTestCase(BaseTestCase):
