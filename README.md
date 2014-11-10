@@ -124,9 +124,9 @@ Now we want to code a Google search result page. Here's the Google Result page o
 
 ## Setting Options
 
-### Built-in IFT options
+### Built-in options for `Page`
 
-IFT test-runs always require at least the setting of one option external to the test case: `baseurl`. Setting `baseurl` allows the page object to define its `uri` independent of the host. This allows you to easily run your tests on a dev/qa/production host without having to change your page object. You can set a default `baseurl` by setting a `baseurl` property on your page object class. The base `Page` class defines several other built-in options relevant whether using your page objects in Robot or plain, Python tests. These are:
+Test-runs always require at least the setting of one option external to the test case: `baseurl`. Setting `baseurl` allows the page object to define its `uri` independent of the host. This allows you to easily run your tests on a dev/qa/production host without having to change your page object. You can set a default `baseurl` by setting a `baseurl` property on your page object class. The base `Page` class defines several other built-in options relevant whether using your page objects in Robot or plain, Python tests. These are:
 
 - baseurl: The host for any tests you run. This facilitates test portability between different environments instead of hardcoding the test environment into the test.
 
@@ -150,7 +150,7 @@ The rest of this page explains the various ways you can set these options, and e
 
 #### Setting individual options/data
 
-Both Robot and Python IFT tests support setting options/data via environment variables. For example, you can change the local browser from phantomjs (default) to Firefox by setting the browser option via the PO_BROWSER environment variable:
+Both Robot and Python tests using page objects support setting options/data via environment variables. For example, you can change the local browser from phantomjs (default) to Firefox by setting the browser option via the PO_BROWSER environment variable:
 
 	$ export PO_BROWSER=firefox
 
@@ -191,7 +191,7 @@ This is the same as setting `PO_BROWSER` and `PO_BASEURL` as environment variabl
 ## Robot Keyword Mapping
 
 
-IFT Page object classes are also Robot libraries, meaning that Page object method names are directly usable as Robot keywords.
+Page object classes are also Robot libraries, meaning that Page object method names are directly usable as Robot keywords.
 
 By default, a page object method is mapped to two Robot keywords: one without the page object name and one with the page object name appended to the end. Take this page object, for example:
 
@@ -207,7 +207,7 @@ The search method maps to both `Search` or `Search My Page` keywords. This lets 
 
 ### Customizing Robot Keywords
 
-IFT gives Page object authors some control over how Page object method names are mapped to Robot keywords:
+`robotframework-pageobjects` gives Page object authors some control over how Page object method names are mapped to Robot keywords:
 
 - You can allow the test writer to insert the page object name at a specific place in the keyword (not just at the end) by using the robot_alias decorator with a `__name__` token. For example:
 
@@ -504,7 +504,7 @@ work at the Selenium2Library level, not at the WebElement level. For example:
 
 #### Sleeping
 
-Just don't. Sometimes page content, including text or elements are inserted into the DOM after page-load. Or sometimes IFT will drive the browser so fast that we can't be sure when the page has loaded. If you try to find or operate on these page elements you'll get either get a ValueError or Selenium's NoSuchElementException. Don't fall into the trap of calling time.sleep(). Why?
+Just don't. Sometimes page content, including text or elements are inserted into the DOM after page-load. Or sometimes Selenium2 will drive the browser so fast that we can't be sure when the page has loaded. If you try to find or operate on these page elements you'll get either get a ValueError or Selenium's NoSuchElementException. Don't fall into the trap of calling time.sleep(). Why?
 
 - your tests will be brittle: the content could be available after the time you slept for. Sometimes your tests 
 will pass and sometimes they will fail with errors. Inconsistent tests are almost as bad as no tests.
@@ -530,10 +530,9 @@ method call. `Page` will wait approximately as long as it takes for the element 
 `ValueError`. One issue with this is that method calls that fail to find elements will take 10 seconds to raise a 
 ValueError. See the Explicitly waiting section on how to deal with this situation.
 
-To globally change the implicit wait timeout (default is 10 seconds), set the `selenium_implicit_wait` option. See 
-Setting IFT options & data.
+To globally change the implicit wait timeout (default is 10 seconds), set the `selenium_implicit_wait` option. 
 
-IFT's implicit wait does not apply to an element's visibility. It only applies to existance in the DOM. It's possible for an element to exist in the DOM, but not be visible, and Selenium will not allow you to interact with an element that's not visible. For this you may need wait_until_element_is_visible .
+The implicit wait does not apply to an element's visibility. It only applies to existance in the DOM. It's possible for an element to exist in the DOM, but not be visible, and Selenium will not allow you to interact with an element that's not visible. For this you may need wait_until_element_is_visible .
 Explicitly waiting
 
 There are cases where you'd like to specify exactly how long you want to wait for an element's existence without 
@@ -735,7 +734,7 @@ your `INFO` log messages to log.html will be filtered out.
 
 In Robot, the default report, written to report.html should be sufficient for human-readable results of a test-run. You can always use XSLT to transform output.xml or xunit output to generate  a custom report. If this still doesn't suffice, you can use Robot's listener interface. This provides hooks into Robot's test life-cycle which allows you to do any kind of custom reporting or actions you want.
 
-Remember that TeamCity can parse xunit output within a run-configuration, so there's no need to do anything apart from generating xunit output and adjusting your build configuration to get TeamCity working with IFT output.  In TeamCity, add the "XML report processing" build feature under your run configuration and choose "Ant Junit" as the report type.
+Remember that TeamCity can parse xunit output within a run-configuration, so there's no need to do anything apart from generating xunit output and adjusting your build configuration to get TeamCity working with  output.  In TeamCity, add the "XML report processing" build feature under your run configuration and choose "Ant Junit" as the report type.
 Debugging Robot runs
 
 You can use the log method to log debug messages to console or to output.xml or log.html. If you are getting an error and want to see the 
@@ -754,7 +753,7 @@ using Robot. unittest offers default test runner and result classes. In fact, th
 
 ##### Logging
 
-Just like in Robot, you can log from IFT page objects by calling the page object's `log` method, 
+Just like in Robot, you can log from page objects by calling the page object's `log` method, 
 which is defined in the base `Page` object. By default log writes at the "INFO" log level to `stdout` and to a file 
 called `po_log.txt`. You can set the global logging threshold by setting the `PO_LOG_LEVEL` environment variable or the 
 log_level variable in a variable file. The available logging levels can be found here.
