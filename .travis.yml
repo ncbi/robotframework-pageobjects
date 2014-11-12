@@ -5,3 +5,11 @@ install:
   - pip install .
 script:
   - nosetests -vs --with-xunit tests/test_unit.py tests/test_functional.py
+deploy:
+  provider: pypi
+  user: hellmanj
+  password: 
+    secure: D5T3Wo8DGHxxU5+7kE+y6uVVrxoOhLfiCZl9q3BEE9OrbnGmzFngRfP1o37ulk78v7PQGNqtn+95nWOWthJcp4897eB6YhKsa1Q8+HSlNynsf/7WW2cgTEgSWppZNaMoUF+my1NW2baKbmcgwRt3Hsxz9HkOvoFfQAR0ZovUy1U=
+  on:
+    tags: true
+
