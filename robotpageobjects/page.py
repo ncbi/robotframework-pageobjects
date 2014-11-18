@@ -112,26 +112,23 @@ class _PageMeta(_ComponentsManagerMeta):
 
 class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     """
-    Base RF page object.
-
-    This class inherits from _BaseActions (which inherits from _S2LWrapper).
-    These helper classes define the base actions and browser-wrapping behavior
+    This is the base Page Object from which all other Page Objects should inherit.
+    It contains all base Selenium actions and browser-wrapping behavior
     used by this class and its descendents.
-    
-    This class then provides the behavior used by the RF's dynamic API.
-    Optional constructor arguments:
+
+    It is a robotframework library which implements the dynamic API.
     """
     __metaclass__ = _PageMeta
 
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         """
         Initializes the pageobject_name variable, which is used by the _Keywords class
         for determining aliases.
         """
         #super(Page, self).__init__(*args, **kwargs)
         for base in Page.__bases__:
-            base.__init__(self, *args, **kwargs)
+            base.__init__(self)
 
         # If a name is not explicitly set with the name attribute,
         # get it from the class name.
@@ -154,6 +151,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     def _underscore(str):
         return re.sub(r"\s+", "_", str)
 
+    @not_keyword
     def get_keyword_names(self):
         """
         RF Dynamic API hook implementation that provides a list of all keywords defined by
@@ -199,7 +197,6 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                     # Add all methods that don't start with an underscore and were not marked with the
                     # @not_keyword decorator.
                     keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
-
         return keywords
 
     def _attempt_screenshot(self):
@@ -209,7 +206,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                 if e.message.find("No browser is open") != -1:
                     pass
 
-    def run_keyword(self, alias, args):
+    @not_keyword
+    def run_keyword(self, alias, args, kwargs):
         """
         RF Dynamic API hook implementation that maps method aliases to their actual functions.
         :param alias: The alias to look up
@@ -221,7 +219,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         # Translate back from Robot Framework alias to actual method
         meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, self._underscore(self.name)))
         try:
-            ret = meth(*args)
+            ret = meth(*args, **kwargs)
         except:
             # Try to take a screenshot. If it fails due to no browser being open,
             # just raise the original exception. A failed screenshot is just noise here.
@@ -263,3 +261,55 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         # outside Robot.
 
         return ret
+
+    @not_keyword
+    def get_keyword_documentation(self, kwname):
+        """
+        RF Dynamic API hook implementation that exposes keyword documentation to the libdoc tool
+
+        :param kwname: a keyword name
+        :return: a documentation string for kwname
+        """
+        if kwname == '__intro__':
+            doc = """\n
+            All keywords listed in the Selenium2Library documentation are also available in this Page Object.
+            See http://rtomac.github.io/robotframework-selenium2library/doc/Selenium2Library.html
+            """
+            return self.__doc__ + doc
+        kw = getattr(self, kwname, None)
+        if not kw:
+            # Raising an error here seemed the simplest way to avoid having entries in libdocs for
+            # the automatically generated "my_keyword__name__" aliases.  The error is shown at the command line
+            # but does not affect generating the rest of the docs.  There could be a better way.
+            raise AttributeError('Derived keyword alias, ignore this error')
+        doc = kw.__doc__ if kw.__doc__ else ''
+        if kwname in _Keywords._aliases:
+            doc = '*Alias: %s*\n\n' % _Keywords.get_robot_aliases(kwname, self._underscore(self.name))[0].replace('_', ' ').title() + doc
+        return doc
+
+    @not_keyword
+    def get_keyword_arguments(self, kwname):
+        """
+        RF Dynamic API hook implementation that exposes keyword argspecs to the libdoc tool
+
+        :param kwname: a keyword name
+        :return: a list of strings describing the argspec
+        """
+        kw = getattr(self, kwname, None)
+        if kw:
+            args, varargs, keywords, defaults = inspect.getargspec(kw)
+            defaults = dict(zip(args[-len(defaults):], defaults)) if defaults else {}
+            arglist = []
+            for arg in args:
+                if arg != 'self':
+                    argstring = arg
+                    if arg in defaults:
+                        argstring += '=%s' % defaults[arg]
+                    arglist.append(argstring)
+            if varargs:
+                arglist.append('*args')
+            if keywords:
+                arglist.append('**keywords')
+            return arglist
+        else:
+            return ['*varargs']
