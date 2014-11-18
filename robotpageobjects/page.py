@@ -277,11 +277,6 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             """
             return self.__doc__ + doc
         kw = getattr(self, kwname, None)
-        if not kw:
-            # Raising an error here seemed the simplest way to avoid having entries in libdocs for
-            # the automatically generated "my_keyword__name__" aliases.  The error is shown at the command line
-            # but does not affect generating the rest of the docs.  There could be a better way.
-            raise AttributeError('Derived keyword alias, ignore this error')
         doc = kw.__doc__ if kw.__doc__ else ''
         if kwname in _Keywords._aliases:
             doc = '*Alias: %s*\n\n' % _Keywords.get_robot_aliases(kwname, self._underscore(self.name))[0].replace('_', ' ').title() + doc
