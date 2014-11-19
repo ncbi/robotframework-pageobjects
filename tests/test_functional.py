@@ -2,11 +2,11 @@ import json
 import os
 import re
 import unittest
-from nose.tools import raises
 import requests
+import xml.etree.ElementTree as ET
 
+from nose.tools import raises
 from robotpageobjects import Page, exceptions
-
 from scenarios.po.result_component import ResultPage, ResultPageWithDOMStrategyLocator, HomePage, \
     HomePageWithDOMAdvancedToggler, TwoComponentsPage, ParaComponent, TwoComponentsSubPage
 from scenarios.po.loggingpage import LoggingPage
@@ -595,3 +595,23 @@ class LoggingTestCase(BaseTestCase):
     @raises(ValueError)
     def test_log_at_invalid_level_python(self):
         LoggingPage().log_invalid()
+
+class LibdocTestCase(BaseTestCase):
+
+    def test_gen_doc(self):
+        # generate libdoc xml
+        outxml = 'libdoc.xml'
+        run = self.run_program("python", ".", "robotpageobjects.page.Page %s" % outxml, **{"m": "robot.libdoc"})
+        self.assert_run(run, expected_returncode=0, search_output=outxml)
+
+        root = ET.parse(outxml).getroot()
+        kwentry = root.findall(".//kw[@name='Log']")
+        if len(kwentry) == 0:
+            raise AssertionError('Expected to find entry for "Log" in %s' % outxml)
+        kwentry = kwentry[0]
+        kwargs = kwentry.findall('./arguments/arg')
+        if len(kwargs) != 3:
+            raise AssertionError('Expected to find 3 arguments for "Log" in %s' % outxml)
+        doc = kwentry.findall('./doc')[0]
+        if 'DEBUG' not in doc.text:
+            raise AssertionError('Expected to find "DEBUG" in docmentation for "Log" in %s' % outxml)

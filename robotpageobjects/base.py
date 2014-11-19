@@ -15,6 +15,9 @@ from . import exceptions
 from .context import Context
 from .optionhandler import OptionHandler
 
+# determine if libdoc is running to avoid generating docs for automatically generated aliases
+ld = 'libdoc'
+in_ld = any([ld in str(x) for x in inspect.stack()])
 
 class _Keywords(object):
     """
@@ -80,12 +83,13 @@ class _Keywords(object):
         """
         ret = []
 
-        # Look through the alias dict. If there is an alias, add the aliased version to what is returned.
-        if name in cls._aliases:
-            ret.append(cls._aliases[name].replace(cls._alias_delimiter, "_" + pageobject_name + "_"))
-        else:
-            # If not aliased, add the keyword name with the page object name at the end.
-            ret.append("%s_%s" % (name, pageobject_name))
+        # Look through the alias dict if not in libdoc. If there is an alias, add the aliased version to what is returned.
+        if not in_ld:
+            if name in cls._aliases:
+                ret.append(cls._aliases[name].replace(cls._alias_delimiter, "_" + pageobject_name + "_"))
+            else:
+                # If not aliased, add the keyword name with the page object name at the end.
+                ret.append("%s_%s" % (name, pageobject_name))
 
         # Add the plain name of the keyword.
         ret.append(name)
