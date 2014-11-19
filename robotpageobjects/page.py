@@ -307,4 +307,4 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                 arglist.append('**keywords')
             return arglist
         else:
-            return ['*varargs']
+            return ['*args']

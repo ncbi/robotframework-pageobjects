@@ -70,10 +70,13 @@ class BaseTestCase(unittest.TestCase):
 
     def setUp(self):
 
-        # Remove png files
+        # Remove png and xml files
         screenshot_locator = os.path.join(self.scenario_dir, "selenium-screenshot*.png")
         for screenshot in glob.glob(screenshot_locator):
             os.unlink(screenshot)
+        xml_locator = os.path.join(self.scenario_dir, "*.xml")
+        for xml in glob.glob(xml_locator):
+            os.unlink(xml)
 
         try:
             os.unlink(self.get_log_path())
@@ -135,52 +138,40 @@ class BaseTestCase(unittest.TestCase):
             for var, val in env_vars.iteritems():
                 self.set_env(var, val)
 
-
         if scenario.endswith(".py"):
-            arg = "cd %s; python %s" % (self.scenario_dir, scenario)
-
-            return self.run_program(arg)
+            return self.run_program("python", self.scenario_dir, scenario)
         else:
+            kwargs['P'] = "po"
+            return self.run_program("pybot", self.scenario_dir, scenario, **kwargs)
 
-            arg = "cd %s; pybot -P po %s" %(self.scenario_dir, scenario)
-            return self.run_program(arg, **kwargs)
-
-    def run_program(self, base_cmd, *args, **opts):
-
+    def run_program(self, base_cmd, working_dir, target, **opts):
         """
-        Runs a program using a subprocess, returning an object with the following properties:
+        Runs a program using a subprocess
 
-        - cmd: The command run after splitting with shlex.
+        :param base_cmd: the command to run in subprocess
+        :param working_dir: directory from which to run the command
+        :param target: target of command
+        :param opts:  keyword arguments to pass to the program
+        :return: an object with the following properties:
+        - cmd: The command which was run
         - returncode: The return code
-        - output: the ouput to stdout or stderr
-
-        In the case where a simple flag needs to be passed, psss the option as a boolean, eg::
-            self.runsanity("http://www.example.com", no_page_check=True)
-
-        :url args: The arguments to pass to sanity. Either a single URL,
-            multiple URLS, or a URL/path to the URLs XML file
-
-        :url: opts: Keywords of options to sanity. Use underscores in place of dashes.
+        - output: the output from stdout or stderr
         """
         class Ret(object):
             """
             The object to return from running the program
             """
 
-            def __init__(self, cmd, returncode, output, xmldoc=None):
+            def __init__(self, cmd, returncode, output):
                 self.cmd = cmd
                 self.returncode = returncode
                 self.output = output
-                self.xmldoc = xmldoc
 
             def __repr__(self):
-                return "<run object: cmd: '%s', returncode: %s, xmldoc: %s, output: %s>" % (self.cmd, self.returncode,
+                return "<run object: cmd: '%s', returncode: %s, output: %s>" % \
+                       (self.cmd, self.returncode, self.output[0:25] .replace("\n", ""))
 
-                                                                                            self.xmldoc,
-                                                                                            self.output[0:25]
-                                                                                            .replace("\n", ""))
-
-        cmd = base_cmd + " "
+        # prepare command
         opt_str = ""
         for name in opts:
             val = opts[name]
@@ -189,34 +180,17 @@ class BaseTestCase(unittest.TestCase):
             else:
                 dash = "-" if len(name) == 1 else "--"
                 opt_str += dash + name.replace("_", "-") + " " + val + " "
+        cmd = ' '.join([base_cmd, opt_str, target])
 
-
-        cmd = cmd.replace("pybot ", "pybot " + opt_str + " ")
-        cmd += " " + " ".join(args)
-        p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        # execute command
+        p = subprocess.Popen(cmd, cwd=working_dir, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         com = p.communicate()
         code = p.wait()
-
-        # Check the xml file path. If it's passed, use it, otherwise it's
-        # the sanity directory + /sanity.xml
-        xml_file_path_opt = None
-        if code == 0 and "xml" in opts:
-            for name in opts:
-                if name == "xml_file":
-                    xml_file_path_opt = opts[name]
-
-            xml_file_path = xml_file_path_opt if xml_file_path_opt else self.sanity_dir + "/sanity.xml"
-            f = open(xml_file_path, "r")
-            dom = parse(f)
-        else:
-            dom = None
-
         # Out is either stdout, or stderr
         out = " ".join(com)
         # Splice out trailing new line
         out = out[:-1]
-
-        return Ret(cmd, code, out, xmldoc=dom)
+        return Ret(cmd, code, out)
 
     def get_screen_shot_paths(self):
         return glob.glob("%s/*.png" % self.scenario_dir)
