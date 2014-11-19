@@ -113,7 +113,7 @@ class _PageMeta(_ComponentsManagerMeta):
 class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     """
     This is the base Page Object from which all other Page Objects should inherit.
-    It contains all base Selenium actions and browser-wrapping behavior
+    It contains all base Selenium2Library actions and browser-wrapping behavior
     used by this class and its descendents.
 
     It is a robotframework library which implements the dynamic API.
