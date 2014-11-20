@@ -6,6 +6,9 @@ from os import getenv
 from re import sub
 from subprocess import check_output, check_call
 
+if getenv('TRAVIS_BRANCH') != 'master':
+    print "Branch is not master, not building docs"
+
 if getenv('TRAVIS_PULL_REQUEST'):
     print "Pull request detected, not building docs"
 
