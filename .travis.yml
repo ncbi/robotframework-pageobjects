@@ -1,3 +1,6 @@
+env: 
+  global: 
+    secure: aStjr7/mZJDdPqJ210HPRZygxXA36SzXyBraK9x6eqaDR+yqZpGJBIYMlRzqV1Fwlh1BUFbOYNczmLEQs+Sf3uPxyEWhFc5L0qKlvUE98fsf6IJuFJdwfwBG1/vrJTNm0JviBI/6lPlB2/EYtJJBWmYQGsrXXoP5Cc38T+z/a0s=
 language: python
 python:
   - "2.7"
@@ -13,3 +16,5 @@ deploy:
   on:
     tags: true
     all_branches: true
+after_success:
+  - python deploy-ghpages.py
