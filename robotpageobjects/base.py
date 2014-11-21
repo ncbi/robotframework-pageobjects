@@ -83,12 +83,12 @@ class _Keywords(object):
         """
         ret = []
 
-        # Look through the alias dict if not in libdoc. If there is an alias, add the aliased version to what is returned.
-        if not in_ld:
-            if name in cls._aliases:
-                ret.append(cls._aliases[name].replace(cls._alias_delimiter, "_" + pageobject_name + "_"))
-            else:
-                # If not aliased, add the keyword name with the page object name at the end.
+        # Look through the alias dict. If there is an alias, add the aliased version to what is returned.
+        if name in cls._aliases:
+            ret.append(cls._aliases[name].replace(cls._alias_delimiter, "_" + pageobject_name + "_"))
+        else:
+            # If not aliased, add the keyword name with the page object name at the end.
+            if not in_ld:
                 ret.append("%s_%s" % (name, pageobject_name))
 
         # Add the plain name of the keyword.
