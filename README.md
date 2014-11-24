@@ -13,6 +13,11 @@ Python [unittest](https://docs.python.org/2/library/unittest.html) test cases.
 
     $ pip install robotframework-pageobjects
 
+
+## Demo
+
+Check out and run the [demo](https://github.com/ncbi/robotframework-pageobjects/tree/master/demo). 
+
 ## How it Works
 
 Here's a Robot test case using some page objects written using the `Page` base class. We need to import any page objects libraries we need in our test
