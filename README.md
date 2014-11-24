@@ -40,7 +40,7 @@ case. **Note**: The `Page` class inherits from Selenium2Library, so all methods 
         Pubmed Article Page Body Should Contain  cat
         [Teardown]  Close Pubmed Article Page 
 
-This shows you can write the same test, using the same page object libraries outside of Robot, using, for example, Python's unittest module:
+This shows you can write the same test, using the same page object libraries outside of Robot, using, for example, Python's unittest module. *test_google.py*:
 
     from pubmed import PubmedHomePage
     import unittest
@@ -63,66 +63,73 @@ This shows you can write the same test, using the same page object libraries out
     if __name__ == "__main__":
         unittest.main()
 
-Now we need an actual Google Robot library to make the test work:
+Now we need an actual pubmed page objects to make the test work:
 
-*google.py*:
+*pubmed.py*:
 
     from robotpageobjects import Page, robot_alias
+    from robot.utils import asserts
 
 
-    class GooglePage(Page):
+    class PubmedHomePage(Page):
+        """ Models the Pubmed home page at:
+            HOST://ncbi.nlm.nih.gov/pubmed"""
 
-        """
-        Base Google Page
+        name = "Pubmed"
+        uri = "/pubmed"
 
-        """
-        uri = "/"
-
-        # name attribute tells Robot Keywords what name to put
-        # after the defined method. So, def foo.. aliases to "Foo Google".
-        # If no name is defined, the name will be the name of the page object
-        # class, in this case `Page`.
-        name = "Google"
-
-        # selectors dictionary is an inheritable dictionary
-        # mapping names to Selenium2Library locators.
         selectors = {
-            "search input": "xpath=//input[@name='q']", 
-            "search button: "id=gbqfba",
+            "search input": "id=term",
+            "search button": "id=search",
         }
 
-        def search(self, term):
-            self.input_text("search input", term)
-            self.click_element("search button")
-            return ResultPage()
+
+        @robot_alias("type_in__name__search_box")
+        def type_in_search_box(self, txt):
+            self.input_text("search input", txt)
+            return self
+
+        @robot_alias("click__name__search_button")
+        def click_search_button(self):
+            self.click_button("search button")
+            return PubmedDocsumPage()
+
+        @robot_alias("search__name__for")
+        def search_for(self, term):
+            self.type_in_search_box(term)
+            return self.click_search_button()
+
+
+    class PubmedDocsumPage(Page):
+        """Models a Pubmed search result page. For example:
+        http://www.ncbi.nlm.nih.gov/pubmed?term=cat """
+
+        uri = "/pubmed/?term={term}"
+
+        selectors = {
+            "nth result link": "xpath=(//div[@class='rslt'])[{n}]/p/a",
+        }
+
+        @robot_alias("click_result_on__name__")
+        def click_result(self, i):
+            locator = self.resolve_selector("nth result link", n=int(i))
+            self.click_link(locator)
+            return PubmedArticlePage()
+
+    class PubmedArticlePage(Page):
+
+        uri = "/pubmed/{article_id}"
+
+        @robot_alias("__name__body_should_contain")
+        def body_should_contain(self, str, ignore_case=True):
+            ref_str = str.lower() if ignore_case else str
+            ref_str = ref_str.encode("utf-8")
+            body_txt = self.get_text("css=body").encode("utf-8").lower()
+            asserts.assert_true(ref_str in body_txt, "body text does not contain %s" %ref_str)
+            return self
+
 
 **Note**: You must return *something* from public (non-underscored) page object methods: either a value from a getter method or a page object instance from non-getter methods. Remember, when you navigate to a new page by clicking a link, submitting a form etc. you should return the appropriate page object. 
-
-Now we want to code a Google search result page. Here's the Google Result page object:
-
-*google.py*:
-
-    ...
-    class ResultPage(Page):
-
-        """
-        A Google Result page. Inherits from Google Page.
-        """
-        # Google uses ajax requests for their searches.
-        uri = "/#q=cat"
-
-        name = "Google Result Page"
-
-        def click_result(self, i):
-            # Calling resolve_selector fills in the "n" variable in 
-            # the selector template at-run-time for the "nth selector link".
-            # We need to cast the 'i' method parameter to an 'int' because Robot passes
-            # in all keyword parameters as strings.
-            locator = self.resolve_selector("nth result link", n=int(i))
-     
-            # Now, we pass the resolved locator to the inherited click_link method.
-            self.click_link(locator)
-            return Page()
 
 ## Setting Options
 
