@@ -8,6 +8,7 @@ in Robot and outside of Robot.
 How to run the demo
 --------------------
 
+1. Create a virtual environment, then
 1. pip install robotframeworkpageobjects
 2. $ pybot -vbrowser:firefox -vbaseurl:http://www.ncbi.nlm.nih.gov test_pubmed.robot
 
@@ -16,7 +17,4 @@ $ export PO_BASURL=http://www.ncbi.nlm.nih.gov
 $ export PO_BROWSER=firefox
 $ python test_pubmed.py
 
-To run the unittest example in Firefox, set the browser environment variable:
-$ export PO_BASURL=http://www.google.com
-$ export PO_BROWSERL=firefox
-$ python test_pubmed.py
+By default tests will run in PhantomJS unless you specify otherwise.
