@@ -7,7 +7,7 @@ class PubmedHomePage(Page):
         HOST://ncbi.nlm.nih.gov/pubmed"""
 
     name = "Pubmed"
-    uri = "/"
+    uri = "/pubmed"
 
     selectors = {
         "search input": "id=term",
@@ -35,7 +35,7 @@ class PubmedDocsumPage(Page):
     """Models a Pubmed search result page. For example:
     http://www.ncbi.nlm.nih.gov/pubmed?term=cat """
 
-    uri_template = "/?term={term}"
+    uri_template = "/pubmed/?term={term}"
 
     selectors = {
         "nth result link": "xpath=(//div[@class='rslt'])[{n}]/p/a",
@@ -49,16 +49,12 @@ class PubmedDocsumPage(Page):
 
 class PubmedArticlePage(Page):
 
-    uri_template = "pubmed/{article_id}"
+    uri_template = "/pubmed/{article_id}"
 
-    selectors = {
-        "title element": "xpath=//head//title",
-    }
-
-    @robot_alias("__name__title_should_contain")
-    def title_should_contain(self, str, ignore_case=True):
+    @robot_alias("__name__body_should_contain")
+    def body_should_contain(self, str, ignore_case=True):
         ref_str = str.lower() if ignore_case else str
         ref_str = ref_str.encode("utf-8")
-        title = self.get_title().encode("utf-8").lower()
-        asserts.assert_true(ref_str in title, "%s does not contain %s" %(title, ref_str))
+        body_txt = self.get_text("css=body").encode("utf-8").lower()
+        asserts.assert_true(ref_str in body_txt, "body text does not contain %s" %ref_str)
         return self
