@@ -33,7 +33,7 @@ case. **Note**: The `Page` class inherits from Selenium2Library, so all methods 
     Library  pubmed.PubmedArticlePage
         
     *** Test Cases ***
-    When a user searches Google for a term, the first result page's body should contain the search term
+    When a user searches Pubmed for a term, the first result page's body should contain the search term
         Open Pubmed
         Search For  cat
         Click Result On Pubmed Docsum Page  1
