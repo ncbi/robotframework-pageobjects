@@ -18,28 +18,27 @@ Python [unittest](https://docs.python.org/2/library/unittest.html) test cases.
 
 Check out and run the [demo](https://github.com/ncbi/robotframework-pageobjects/tree/master/demo). 
 
-## How it Works
+## How the demo works
 
 Here's a Robot test case using some page objects written using the `Page` base class. We need to import any page objects libraries we need in our test
 case. **Note**: The `Page` class inherits from Selenium2Library, so all methods (keywords) in Selenium2Library are available in your tests, and from `self` from within one of your page objects.
 
-*test_google.robot*:
+*test_pubmed.txt*:
 
     *** Settings ***
-
-    Documentation  Tests searching Google and ending up on Apple.
+    Documentation  My first IFT tests
     ...
-    Library    google.Page
-    Library    google.ResultPage
-
+    Library  pubmed.PubmedHomePage 
+    Library  pubmed.PubmedDocsumPage 
+    Library  pubmed.PubmedArticlePage
+        
     *** Test Cases ***
-
-    Test Google To Apple
-        Open Google
-        Search Google For  Apple Computers
-        On Google Result Page Click Result  1
-        Title Should Be  Apple
-        [Teardown]  Close Google
+    When a user searches Google for a term, the first result page's body should contain the search term
+        Open Pubmed
+        Search For  cat
+        Click Result On Pubmed Docsum Page  1
+        Pubmed Article Page Body Should Contain  cat
+        [Teardown]  Close Pubmed Article Page 
 
 This shows you can write the same test, using the same page object libraries outside of Robot, using, for example, Python's unittest module:
 
