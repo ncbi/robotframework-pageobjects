@@ -42,25 +42,26 @@ case. **Note**: The `Page` class inherits from Selenium2Library, so all methods 
 
 This shows you can write the same test, using the same page object libraries outside of Robot, using, for example, Python's unittest module:
 
+    from pubmed import PubmedHomePage
     import unittest
-    import google
 
 
-    class TestGoogleSearch(unittest.TestCase):
+    class PubmedTestCase(unittest.TestCase):
 
         def setUp(self):
-            self.google_page = google.Page().open()
+            self.pubmed_homepage = PubmedHomePage()
+            self.pubmed_homepage.open()
 
-        def test_google_search_to_apple(self):
-            result_page = self.google_page.search("apple computers")
-            result_page.click_result(1)
-            result_page.title_should_be("Apple")
+        def test_first_result_page_body_should_contain_search_term(self):
+            pubmed_docsum_page = self.pubmed_homepage.search_for("cat")
+            self.article_page = pubmed_docsum_page.click_result(1)
+            self.article_page.body_should_contain("cat")
 
         def tearDown(self):
-            self.google_page.close()
+            self.article_page.close()
 
-    unittest.main()
-
+    if __name__ == "__main__":
+        unittest.main()
 
 Now we need an actual Google Robot library to make the test work:
 
