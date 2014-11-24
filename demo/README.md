@@ -13,7 +13,7 @@ How to run the demo
 2. $ pybot -vbrowser:firefox -vbaseurl:http://www.ncbi.nlm.nih.gov test_pubmed.robot
 
 To run the Python unittest example:
-$ export PO_BASURL=http://www.ncbi.nlm.nih.gov
+$ export PO_BASEURL=http://www.ncbi.nlm.nih.gov
 $ export PO_BROWSER=firefox
 $ python test_pubmed.py
 

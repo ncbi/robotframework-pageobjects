@@ -35,7 +35,7 @@ class PubmedDocsumPage(Page):
     """Models a Pubmed search result page. For example:
     http://www.ncbi.nlm.nih.gov/pubmed?term=cat """
 
-    uri_template = "/pubmed/?term={term}"
+    uri = "/pubmed/?term={term}"
 
     selectors = {
         "nth result link": "xpath=(//div[@class='rslt'])[{n}]/p/a",
@@ -49,7 +49,7 @@ class PubmedDocsumPage(Page):
 
 class PubmedArticlePage(Page):
 
-    uri_template = "/pubmed/{article_id}"
+    uri = "/pubmed/{article_id}"
 
     @robot_alias("__name__body_should_contain")
     def body_should_contain(self, str, ignore_case=True):
