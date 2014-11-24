@@ -131,6 +131,8 @@ Now we need an actual pubmed page objects to make the test work:
 
 **Note**: You must return *something* from public (non-underscored) page object methods: either a value from a getter method or a page object instance from non-getter methods. Remember, when you navigate to a new page by clicking a link, submitting a form etc. you should return the appropriate page object. 
 
+The rest of this README explains many more details around writing page objects and putting them to work in tests.
+
 ## Setting Options
 
 ### Built-in options for `Page`
