@@ -29,7 +29,7 @@ rev = check_output("git rev-parse HEAD", shell=True).strip()
 dir = mkdtemp()
 check_call("git clone --branch %s %s %s" % (deploy_branch, repo, dir), shell=True)
 chdir(dir)
-check_call("python -m robot.libdoc robotpageobjects.page.Page index.html", shell=True)
+check_call("python -m robot.libdoc robotpageobjects.Page index.html", shell=True)
 print "Docs built successfully"
 check_call("git config user.name '%s'" % getenv('GIT_NAME'), shell=True)
 check_call("git config user.email '%s'" % getenv('GIT_EMAIL'), shell=True)

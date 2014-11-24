@@ -120,7 +120,6 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     """
     __metaclass__ = _PageMeta
 
-
     def __init__(self):
         """
         Initializes the pageobject_name variable, which is used by the _Keywords class
@@ -144,7 +143,12 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     @staticmethod
     @not_keyword
     def _titleize(str):
-        return re.sub(r"(\w)([A-Z])", r"\1 \2", str)
+        """
+        Converts camel case to title case
+        :param str: camel case string
+        :return: title case string
+        """
+        return  re.sub('([a-z0-9])([A-Z])', r'\1 \2', re.sub(r"(.)([A-Z][a-z]+)", r'\1 \2', str))
 
     @staticmethod
     @not_keyword
@@ -271,16 +275,18 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         :return: a documentation string for kwname
         """
         if kwname == '__intro__':
-            doc = """\n
+            docstring = self.__doc__ if self.__doc__ else ''
+            s2l_link = """\n
             All keywords listed in the Selenium2Library documentation are also available in this Page Object.
             See http://rtomac.github.io/robotframework-selenium2library/doc/Selenium2Library.html
             """
-            return self.__doc__ + doc
+            return docstring + s2l_link
         kw = getattr(self, kwname, None)
-        doc = kw.__doc__ if kw.__doc__ else ''
+        alias = ''
         if kwname in _Keywords._aliases:
-            doc = '*Alias: %s*\n\n' % _Keywords.get_robot_aliases(kwname, self._underscore(self.name))[0].replace('_', ' ').title() + doc
-        return doc
+            alias = '*Alias: %s*\n\n' % _Keywords.get_robot_aliases(kwname, self._underscore(self.name))[0].replace('_', ' ').title()
+        docstring = kw.__doc__ if kw.__doc__ else ''
+        return alias + docstring
 
     @not_keyword
     def get_keyword_arguments(self, kwname):
