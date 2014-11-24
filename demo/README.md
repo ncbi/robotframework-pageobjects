@@ -10,7 +10,7 @@ How to run the demo
 
 1. Create a virtual environment, then
 1. pip install robotframeworkpageobjects
-2. $ pybot -vbrowser:firefox -vbaseurl:http://www.ncbi.nlm.nih.gov test_pubmed.robot
+2. $ pybot -vbrowser:firefox -vbaseurl:http://www.ncbi.nlm.nih.gov test_pubmed.txt
 
 To run the Python unittest example:
 $ export PO_BASEURL=http://www.ncbi.nlm.nih.gov
