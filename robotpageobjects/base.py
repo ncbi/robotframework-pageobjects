@@ -757,10 +757,13 @@ class _BaseActions(_S2LWrapper):
     def _generic_make_browser(self, webdriver_type, desired_cap_type, remote_url, desired_caps):
         """Override Selenium2Library's _generic_make_browser to allow for extra params
         to driver constructor."""
+        kwargs = {}
         if not remote_url:
-            browser = webdriver_type(service_args=self.service_args)
+            if 'service_args' in inspect.getargspec(webdriver_type.__init__).args:
+                kwargs['service_args'] = self.service_args
+            browser = webdriver_type(**kwargs)
         else:
-            browser = self._create_remote_web_driver(desired_cap_type,remote_url , desired_caps)
+            browser = self._create_remote_web_driver(desired_cap_type, remote_url, desired_caps)
         return browser
 
     def _make_browser(self, browser_name, desired_capabilities=None, profile_dir=None, remote=None):
