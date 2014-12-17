@@ -119,6 +119,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     It is a robotframework library which implements the dynamic API.
     """
     __metaclass__ = _PageMeta
+    ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
 
     def __init__(self):
         """
