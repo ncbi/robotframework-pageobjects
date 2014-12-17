@@ -615,3 +615,10 @@ class LibdocTestCase(BaseTestCase):
         doc = kwentry.findall('./doc')[0]
         if 'DEBUG' not in doc.text:
             raise AssertionError('Expected to find "DEBUG" in docmentation for "Log" in %s' % outxml)
+
+class MultipleSuiteLibraryImport(BaseTestCase):
+
+    def test_libraries_stay_imported(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_s2l_imported_multiple_a.robot test_s2l_imported_multiple_b.robot")
+        self.assert_run(run, expected_returncode=0)
