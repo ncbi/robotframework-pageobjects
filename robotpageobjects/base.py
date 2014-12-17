@@ -8,6 +8,7 @@ import warnings
 from robot.utils import asserts
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import WebDriverException
 from Selenium2Library import Selenium2Library
 from Selenium2Library.keywords.keywordgroup import KeywordGroupMetaClass
 from . import abstractedlogger
@@ -822,7 +823,7 @@ class _BaseActions(_S2LWrapper):
 
             try:
                 self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
-            except urllib2.HTTPError:
+            except (urllib2.HTTPError, WebDriverException):
                 raise exceptions.SauceConnectionError("Unable to connect to sauce labs. Check your username and "
                                                       "apikey")
 
