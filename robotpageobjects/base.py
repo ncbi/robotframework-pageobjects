@@ -1039,8 +1039,8 @@ class _BaseActions(_S2LWrapper):
 
     def location_should_be(self, expected_url):
         """
-        Override Selenium2Library's location_should_be() method and intelligently
-        determine if the current browser url matches with the ending url or full url passed in the method.
+        Wrapper for Selenium2Library's location_should_be() method.  Allows matching against the
+        baseurl if a partial url is given.
 
         :param url: Either complete url or partial url to be validated against
         :type url: str
