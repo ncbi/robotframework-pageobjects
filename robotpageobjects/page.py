@@ -30,6 +30,10 @@ from . import exceptions
 from .base import _ComponentsManagerMeta, not_keyword, robot_alias, _BaseActions, _Keywords, Override, _SelectorsManager, _ComponentsManager
 
 
+# determine if libdoc is running to avoid generating docs for automatically generated aliases
+ld = 'libdoc'
+in_ld = any([ld in str(x) for x in inspect.stack()])
+
 class _PageMeta(_ComponentsManagerMeta):
     """Meta class that allows decorating of all page object methods
     with must_return decorator. This ensures that all page object
@@ -201,7 +205,10 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                 elif inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
                     # Add all methods that don't start with an underscore and were not marked with the
                     # @not_keyword decorator.
-                    keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
+                    if not in_ld:
+                        keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
+                    else:
+                        keywords.append(name)
         return keywords
 
     def _attempt_screenshot(self):
@@ -287,6 +294,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         if kwname in _Keywords._aliases:
             alias = '*Alias: %s*\n\n' % _Keywords.get_robot_aliases(kwname, self._underscore(self.name))[0].replace('_', ' ').title()
         docstring = kw.__doc__ if kw.__doc__ else ''
+        docstring = re.sub(r'(wrapper)', r'*\1*', docstring, flags=re.I)
         return alias + docstring
 
     @not_keyword

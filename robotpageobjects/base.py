@@ -16,9 +16,6 @@ from . import exceptions
 from .context import Context
 from .optionhandler import OptionHandler
 
-# determine if libdoc is running to avoid generating docs for automatically generated aliases
-ld = 'libdoc'
-in_ld = any([ld in str(x) for x in inspect.stack()])
 
 class _Keywords(object):
     """
@@ -89,8 +86,7 @@ class _Keywords(object):
             ret.append(cls._aliases[name].replace(cls._alias_delimiter, "_" + pageobject_name + "_"))
         else:
             # If not aliased, add the keyword name with the page object name at the end.
-            if not in_ld:
-                ret.append("%s_%s" % (name, pageobject_name))
+            ret.append("%s_%s" % (name, pageobject_name))
 
         # Add the plain name of the keyword.
         ret.append(name)
@@ -1043,8 +1039,8 @@ class _BaseActions(_S2LWrapper):
 
     def location_should_be(self, expected_url):
         """
-        Override Selenium2Library's location_should_be() method and intelligently
-        determine if the current browser url matches with the ending url or full url passed in the method.
+        Wrapper for Selenium2Library's location_should_be() method.  Allows matching against the
+        baseurl if a partial url is given.
 
         :param url: Either complete url or partial url to be validated against
         :type url: str
