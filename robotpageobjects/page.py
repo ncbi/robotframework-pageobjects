@@ -197,8 +197,12 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                     # Note that this will not check those classes' ancestors.
                     # TODO: Check all S2L's ancestors. DCLT-
                     for base in Selenium2Library.__bases__:
-                        if name in [getattr(y, '__name__', None) for y in base.__dict__.values()]:
-                            in_s2l_base = True
+                        if in_ld:
+                            if name in [getattr(y, '__name__', None) for y in base.__dict__.values()]:
+                                in_s2l_base = True
+                        else:
+                            if func in base.__dict__.values():
+                                in_s2l_base = True
                 # Don't add methods belonging to S2L to the exposed keywords.
                 if in_s2l_base:
                     continue
