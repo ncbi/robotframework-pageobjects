@@ -30,6 +30,10 @@ from . import exceptions
 from .base import _ComponentsManagerMeta, not_keyword, robot_alias, _BaseActions, _Keywords, Override, _SelectorsManager, _ComponentsManager
 
 
+# determine if libdoc is running to avoid generating docs for automatically generated aliases
+ld = 'libdoc'
+in_ld = any([ld in str(x) for x in inspect.stack()])
+
 class _PageMeta(_ComponentsManagerMeta):
     """Meta class that allows decorating of all page object methods
     with must_return decorator. This ensures that all page object
@@ -193,7 +197,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                     # Note that this will not check those classes' ancestors.
                     # TODO: Check all S2L's ancestors. DCLT-
                     for base in Selenium2Library.__bases__:
-                        if func in base.__dict__.values():
+                        if name in [getattr(y, '__name__', None) for y in base.__dict__.values()]:
                             in_s2l_base = True
                 # Don't add methods belonging to S2L to the exposed keywords.
                 if in_s2l_base:
@@ -201,7 +205,10 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                 elif inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
                     # Add all methods that don't start with an underscore and were not marked with the
                     # @not_keyword decorator.
-                    keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
+                    if not in_ld:
+                        keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
+                    else:
+                        keywords.append(name)
         return keywords
 
     def _attempt_screenshot(self):
