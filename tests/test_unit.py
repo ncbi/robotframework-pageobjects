@@ -251,6 +251,14 @@ class ResolveUrlTestCase(BaseTestCase):
         po._resolve_url("pid=foo", "bar=baz")
 
     @raises(exceptions.UriResolutionError)
+    def test_no_vars_passed_to_uri_template(self):
+        """There is a template but no variables are possed in."""
+
+        self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
+        self.PO.uri_template = "/pubmed/{pid}"
+        self.PO()._resolve_url()
+
+    @raises(exceptions.UriResolutionError)
     def test_wrong_var_name_in_robot(self):
         self.set_baseurl_env()
         self.PO.uri_template = "/pubmed/{pid}"
