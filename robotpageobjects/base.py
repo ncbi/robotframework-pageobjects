@@ -9,6 +9,7 @@ from robot.utils import asserts
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.remote.webelement import WebElement
 from Selenium2Library import Selenium2Library
 from Selenium2Library.keywords.keywordgroup import KeywordGroupMetaClass
 from . import abstractedlogger
@@ -920,11 +921,18 @@ class _BaseActions(_S2LWrapper):
 
         Try to use _element_find with the
         locator as is, then if a selector exists, try that.
-        :param locator: The Selenium2Library-style locator, or IFT selector.
-        :type locator: str
+
+        ``locator`` can also be a WebElement if an element has been identified already
+        and it is desired to perform actions on that element
+
+        :param locator: The Selenium2Library-style locator, or IFT selector
+                        or WebElement (if the element has already been identified).
+        :type locator: str or WebElement
         :returns: WebElement or list
         """
 
+        if isinstance(locator, WebElement):
+            return locator
 
         our_wait = self.selenium_implicit_wait if kwargs.get("wait") is None else kwargs["wait"]
 
