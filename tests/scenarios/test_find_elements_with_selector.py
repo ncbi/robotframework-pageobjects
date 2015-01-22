@@ -1,4 +1,4 @@
-from po import selectors_page, widget_template
+from po import selectors_page
 import unittest
 from nose.tools import raises
 from robotpageobjects.exceptions import SelectorError
