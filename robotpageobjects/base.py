@@ -679,6 +679,9 @@ class _BaseActions(_S2LWrapper):
             self.uri_vars = uri_vars
             return uritemplate.expand(self.baseurl + self.uri, uri_vars)
         else:
+            if uri_type == 'template':
+                raise exceptions.UriResolutionError('%s has uri template %s , but no arguments were given to resolve it' %
+                                                    (pageobj_name, self.uri))
             # the user wants to open the default uri
             return self.baseurl + self.uri
 
