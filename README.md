@@ -407,6 +407,7 @@ This means you can pass selectors instead of locators to all Se2Lib methods that
 - for maintainability and readability, you should pass selectors to Se2Lib methods, not locators.
 - if you write your own helper methods for finding or interacting with elements allow them to be passed 
 locators *and* selectors.
+- You can also pass an instance of a selenium WebElement to Se2Lib methods instead of a selector or locator
 
 #### Looking up elements from the end of a list
 
@@ -494,7 +495,8 @@ we don't actually need a reference to the WebElement because all page objects gi
 so from within your page object you can call them on `self`.
 
 If, for some reason, you need a direct reference to a WebElement you can get it by passing a locator/selector to 
-`find_element` or `find_element`,  which is also on every page object. When at all possible, however, 
+`find_element` or `find_element`,  which is also on every page object.  You can then use this reference when 
+invoking Se2Lib keywords instead of a locator/selector.  When at all possible, however, 
 work at the Selenium2Library level, not at the WebElement level. For example:
 
     ...

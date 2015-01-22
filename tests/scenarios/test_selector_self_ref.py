@@ -10,7 +10,8 @@ class SelectorSelfRefTestCase(unittest.TestCase):
 
     def test_selector_self_ref(self):
         print self.p.selectors['form label']
-        self.p.element_should_be_visible("form label")
+        webel = self.p.find_element("form label")
+        self.p.element_should_be_visible(webel)
 
     def tearDown(self):
         self.p.close()
