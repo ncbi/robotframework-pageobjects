@@ -14,7 +14,7 @@ on the *application under test* (AUT) instead of Selenium2 implementation detail
 - Easy parameterization and normalization of testing variables, like the AUT's host,
 the browser type to test with, [Sauce Labs](https://saucelabs.com/) integration, timeouts 
 for locating injected content after page-load etc. 
-- Convenient helper functions like `find_element`, `find_elements` that take [locators](http://rtomac.github.io/robotframework-selenium2library/doc/Selenium2Library.html#Locating%20elements
+- Convenient helper functions like `find_element`, `find_elements` that take [locators](http://rtomac.github.io/robotframework-selenium2library/doc/Selenium2Library.html#Locating%20elements)
 *or* [WebElements](http://selenium-python.readthedocs.org/en/latest/api.html#module-selenium.webdriver.remote.webelement) as parameters.
 - Much more...
 
