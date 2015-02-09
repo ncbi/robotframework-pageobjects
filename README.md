@@ -18,8 +18,11 @@ for locating injected content after page-load etc.
 *or* [WebElements](http://selenium-python.readthedocs.org/en/latest/api.html#module-selenium.webdriver.remote.webelement) as parameters.
 - Much more...
 
-The package doesn't force you to factor everything into page objects. Your test suites
-can still benefit from the above features. Here's an example of a very minimally
+Like we said, the package is very flexible: it doesn't force you to use Robot, nor forces you
+to heavy page object modeling. This is great for convicing your organization to move toward
+BDD and page object development because you can approach those ideals iteratively. Even
+with light modeling, and use of non-BDD framework, your test suites
+can still benefit from the above listed features. Here's an example of a very minimally
 abstracted page object, where we're using a page object assertion (`title_should_be`) 
 outside of the Robot framework.  
 
