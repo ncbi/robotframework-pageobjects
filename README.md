@@ -4,7 +4,7 @@ This Python package adds support for the [Page Object](http://martinfowler.com/b
 package is a [Robot library](http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#extending-robot-framework), it's usable outside the Robot context and facilitates use of the page object pattern independently of any Python testing framework. This means you can use it to create
 page objects and run tests in other testing frameworks like  
 <a href="http://docs.python.org/2/library/unittest.html"><code>unittest</code></a>, 
-[lettuce](http://lettuce.it/tutorial/simple.html) etc.
+[lettuce](http://lettuce.it/tutorial/simple.html) etc. 
 
 In addition to providing a base `Page` class to build upon, this package provides 
 many other conveniences somewhat independent of page object modeling including:
@@ -18,6 +18,31 @@ for locating injected content after page-load etc.
 *or* [WebElements](http://selenium-python.readthedocs.org/en/latest/api.html#module-selenium.webdriver.remote.webelement) as parameters.
 - Much more...
 
+The package doesn't force you to factor everything into page objects. Your test suites
+can still benefit from the above features. Here's an example of a very minimally
+abstracted page object, where we're using a page object assertion (`title_should_be`) 
+outside of the Robot framework.  
+
+    from robotpageobjects import Page
+    from unittest import TestCase
+
+
+    class MyPage(Page):
+        uri = "/some/path"
+
+    class MyTestCase(TestCase):
+        def setUp(self):
+            self.page = Page()
+            self.page.open()
+
+        def tearDown(self):
+            self.page.close()
+
+        def test_title(self):
+            self.page.title_should_be("My Page")
+
+Of course this package really shines when you more robustly model your AUT. 
+We'll learn more about that later.
 ## More on page objects
 The main point of using page objects is to factor out page implementation details (element locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
 
