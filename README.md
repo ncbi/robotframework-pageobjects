@@ -25,7 +25,7 @@ BDD and page object development because you can approach those ideals iterativel
 with light modeling, and use of a non-BDD framework, your test suites
 can still benefit from the above listed features. Here's an example of a very minimally
 abstracted page object, where we're using a page object assertion (`title_should_be`) 
-outside of the Robot framework.  
+outside of the Robot framework. `mytest.py`  
 
     from robotpageobjects import Page
     from unittest import TestCase
@@ -44,6 +44,12 @@ outside of the Robot framework.
 
         def test_title(self):
             self.page.title_should_be("My Page")
+
+We could run this test on the default browser ([PhantomJs](http://phantomjs.org/)) like this:
+
+    $ export PO_BASEURL=http://qa.mydomain.com 
+    $ export PO_SELENIUM_SPEED=1 # Slow the whole test down for debugging
+    $ python mytest.py
 
 Of course this package really shines when you more robustly model your AUT. 
 We'll learn more about that later.
