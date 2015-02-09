@@ -33,6 +33,9 @@ outside of the Robot framework. `mytest.py`
 
     class MyPage(Page):
         uri = "/some/path"
+        selectors = {
+            "the portlet": "xpath://some/complicated/xpath"
+        }
 
     class MyTestCase(TestCase):
         def setUp(self):
@@ -45,14 +48,21 @@ outside of the Robot framework. `mytest.py`
         def test_title(self):
             self.page.title_should_be("My Page")
 
+        def test_portlet_renders(self):
+            self.page.element_should_be_visible("the portlet")
+
+
 We could run this test on the default browser ([PhantomJs](http://phantomjs.org/)) like this:
 
     $ export PO_BASEURL=http://qa.mydomain.com 
     $ export PO_SELENIUM_SPEED=1 # Slow the whole test down for debugging
     $ python mytest.py
 
-Of course this package really shines when you more robustly model your AUT. 
-We'll learn more about that later.
+Notice, we did not factor out all page implementation details from the test itself. But
+we still can leverage many of the package's features in our tests. If need to model the page
+further nothing stops us from doing so later. 
+We'll learn more about that  in a bit.
+
 ## More on page objects
 The main point of using page objects is to factor out page implementation details (element locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
 
