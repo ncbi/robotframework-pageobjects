@@ -2,8 +2,10 @@
 
 ## What it is
 This Python package adds support for the [Page Object](http://martinfowler.com/bliki/PageObject.html) pattern with [Robot Framework](http://robotframework.org/) and Robot Framework's [Selenium2Library](https://github.com/rtomac/robotframework-selenium2library). Though this is a [Robot library](http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#extending-robot-framework), it's usable outside the Robot context and facilitates use of the page object
-pattern independently of any testing framework (including Python's 
-<a href="http://docs.python.org/2/library/unittest.html"><code>unittest</code></a> etc.). 
+pattern independently of any Python testing framework. This means you can use it to create
+page objects and run tests in other testing frameworks like  
+<a href="http://docs.python.org/2/library/unittest.html"><code>unittest</code></a>, 
+[lettuce](http://lettuce.it/tutorial/simple.html) etc.
 
 The main point of using page objects is to factor out page implementation details (locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
 
