@@ -19,7 +19,7 @@ for locating injected content after page-load etc.
 - Much more...
 
 Like we said, the package is very flexible: it doesn't force you to use Robot, nor forces you
-to heavy page object modeling. This is great for convicing your organization to move toward
+to do heavy page object modeling. This is great for convicing your organization to move toward
 BDD and page object development because you can approach those ideals iteratively. Even
 with light modeling, and use of non-BDD framework, your test suites
 can still benefit from the above listed features. Here's an example of a very minimally
