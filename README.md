@@ -203,7 +203,8 @@ The rest of this README explains many more details around writing page objects a
 
 ### Built-in options for `Page`
 
-Test-runs always require at least the setting of one option external to the test case: `baseurl`. Setting `baseurl` allows the page object to define its `uri` independent of the host. This allows you to easily run your tests on a dev/qa/production host without having to change your page object. You can set a default `baseurl` by setting a `baseurl` property on your page object class. The base `Page` class defines several other built-in options relevant whether using your page objects in Robot or plain, Python tests. These are:
+Test-runs always require at least the setting of one option external to the test case: `baseurl`. Setting `baseurl` allows the page object to define its `uri` independent of the host. This allows you to easily run your tests on a dev/qa/production host without having to change your page object. You can set a default `baseurl` by setting a `baseurl` property on your page object class. The base `Page` class defines several other built-in options relevant whether using your page objects in Robot or plain, Python tests. **Note**: Sauce option values
+like `sauce_platform` etc. can be gotten from Sauce's [configuration app](https://docs.saucelabs.com/reference/platforms-configurator/?_ga=1.167969697.126382613.1414715829#/). These are:
 
 - `baseurl`: The host for any tests you run. This facilitates test portability between different environments instead of hardcoding the test environment into the test.
 
