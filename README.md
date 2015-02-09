@@ -12,7 +12,8 @@ many other conveniences somewhat independent of page object modeling including:
 - A hidden, yet accessible Selenium2 `driver` instance, which allows you to focus
 on the *application under test* (AUT) instead of Selenium2 implementation details.
 - Easy parameterization and normalization of testing variables, like the AUT's host,
-the browser type to test with, [Sauce Labs](https://saucelabs.com/) integration, timeouts etc. 
+the browser type to test with, [Sauce Labs](https://saucelabs.com/) integration, timeouts 
+for locating injected content after page-load etc. 
 - Convenient helper functions like `find_element`, `find_elements` that take [locators](http://rtomac.github.io/robotframework-selenium2library/doc/Selenium2Library.html#Locating%20elements
 *or* [WebElements](http://selenium-python.readthedocs.org/en/latest/api.html#module-selenium.webdriver.remote.webelement) as parameters.
 - Much more...
