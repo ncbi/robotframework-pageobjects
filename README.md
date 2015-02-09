@@ -16,6 +16,7 @@ the browser type to test with, [Sauce Labs](https://saucelabs.com/) integration,
 for locating injected content after page-load etc. 
 - Convenient helper functions like `find_element`, `find_elements` that take [locators](http://rtomac.github.io/robotframework-selenium2library/doc/Selenium2Library.html#Locating%20elements)
 *or* [WebElements](http://selenium-python.readthedocs.org/en/latest/api.html#module-selenium.webdriver.remote.webelement) as parameters.
+- Built-in and readable *assertion methods* on the page object. For example `location_should_be`, `title_should_be` etc.
 - Much more...
 
 Like we said, the package is very flexible: it doesn't force you to use Robot, nor forces you
