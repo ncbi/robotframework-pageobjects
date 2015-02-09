@@ -1,18 +1,84 @@
-# Robot Framework Page Objects
-
-This Python package adds support of the [Page Object](http://martinfowler.com/bliki/PageObject.html) pattern to [Robot Framework](http://robotframework.org/) & Robot Framework's [Selenium2Library](https://github.com/rtomac/robotframework-selenium2library).  
-
-The main point of using page objects is to factor out page implementation details (locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
-
-Each page object is simply a Robot library that inherits from this package's base `Page` class. These library classes can work independently of Robot
-Framework, even though they ultimately inherit from Robot Framework's Selenium2Library. This  allows you to encapsulate page logic Robot libraries, but use those libraries in any testing framework, including 
-Python [unittest](https://docs.python.org/2/library/unittest.html) test cases.
-
-
+# Robot Framework Page Objects 
 ## Installing
 
     $ pip install robotframework-pageobjects
+## Compatibility
+Currently `Robot Framework Page Objects` is developed and tested on Linux systems only. 
+Windows compatibility is unknown and probably broken. Pull requests are welcome.
 
+## What it is 
+This Python package adds support for the [Page Object](http://martinfowler.com/bliki/PageObject.html) pattern with [Robot Framework](http://robotframework.org/) and Robot Framework's [Selenium2Library](https://github.com/rtomac/robotframework-selenium2library). Though this
+package is a [Robot library](http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#extending-robot-framework), it's usable outside the Robot context and facilitates use of the page object pattern independently of any Python testing framework. This means you can use it to create
+page objects and run tests in other testing frameworks like  
+[`unittest`](http://docs.python.org/2/library/unittest.html), 
+[lettuce](http://lettuce.it/tutorial/simple.html) etc. 
+
+In addition to providing a base `Page` class to build upon, this package provides 
+many other conveniences apart from page object modeling including:
+
+- A hidden, yet accessible Selenium2 `driver` instance, which allows you to focus
+on the *application under test* (AUT) instead of Selenium2 implementation details.
+- Easy parameterization, normalization, and setting of testing variables, like the AUT's host,
+the browser type to test with, [Sauce Labs](https://saucelabs.com/) integration, timeouts 
+for locating injected content after page-load etc. 
+- Convenient helper functions like `find_element`, `find_elements` that take [locators](http://rtomac.github.io/robotframework-selenium2library/doc/Selenium2Library.html#Locating%20elements)
+*or* [WebElements](http://selenium-python.readthedocs.org/en/latest/api.html#module-selenium.webdriver.remote.webelement) as parameters.
+- Built-in and readable *assertion methods* on the page object. For example `location_should_be`, `title_should_be` etc.
+- Much more...
+
+Like we said, the package is very flexible: it doesn't force you to use Robot, nor forces you
+to do heavy page object modeling up front. This is great for convicing your organization to move toward
+BDD and page object development because you can approach those ideals iteratively. Even
+with light modeling, and use of a non-BDD framework, your test suites
+can still benefit from the above listed features. Here's an example of a very minimally
+abstracted page object, where we're using a few page object assertions (`title_should_be`, `element_should_be_visible`).
+
+    # mytest.py
+    from robotpageobjects import Page
+    import unittest
+
+    class MyPage(Page):
+        uri = "/some/path"
+        selectors = {
+            "the portlet": "xpath://some/complicated/xpath"
+        }
+
+    class MyTestCase(unittest.TestCase):
+        def setUp(self):
+            self.page = Page()
+            self.page.open()
+
+        def tearDown(self):
+            self.page.close()
+
+        def test_title(self):
+            self.page.title_should_be("My Page")
+
+        def test_portlet_renders(self):
+            self.page.element_should_be_visible("the portlet")
+
+    unittest.main()
+
+
+We could run this test on a local Firefox installation like so (you could, of course,
+persist these settings using your `.bash_profile` file:
+
+    $ export PO_BASEURL=http://qa.mydomain.com 
+    $ export PO_BROWSER=firefox
+    $ export PO_SELENIUM_SPEED=1 # Slow the whole test down for debugging
+    $ python mytest.py
+
+Notice, we did not factor out all page implementation details from the test itself. But
+we still can leverage many of the package's features in our tests. If we need to model the page
+further, nothing stops us from doing so in the future. 
+We'll learn how to do this in a bit.
+
+## More on page objects
+The main point of using page objects is to factor out page implementation details (element locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
+
+## How it works
+Each page object you create is simply an object that inherits from this package's base `Page` class. In the context of a Robot test, the object is a Robot library. Since these classes are *plain old Python classes* they can work independently of Robot
+Framework, even though they ultimately inherit their base methods from Robot Framework's Selenium2Library. This  allows you to encapsulate page logic in Robot libraries, but still leverage those classes in any testing framework. 
 
 ## Demo
 
@@ -137,21 +203,22 @@ The rest of this README explains many more details around writing page objects a
 
 ### Built-in options for `Page`
 
-Test-runs always require at least the setting of one option external to the test case: `baseurl`. Setting `baseurl` allows the page object to define its `uri` independent of the host. This allows you to easily run your tests on a dev/qa/production host without having to change your page object. You can set a default `baseurl` by setting a `baseurl` property on your page object class. The base `Page` class defines several other built-in options relevant whether using your page objects in Robot or plain, Python tests. These are:
+Test-runs always require at least the setting of one option external to the test case: `baseurl`. Setting `baseurl` allows the page object to define its `uri` independent of the host. This allows you to easily run your tests on a dev/qa/production host without having to change your page object. You can set a default `baseurl` by setting a `baseurl` property on your page object class. The base `Page` class defines several other built-in options relevant whether using your page objects in Robot or plain, Python tests. **Note**: Sauce option values
+like `sauce_platform` etc. can be gotten from Sauce's [configuration app](https://docs.saucelabs.com/reference/platforms-configurator/?_ga=1.167969697.126382613.1414715829#/). The bult-in options are:
 
-- baseurl: The host for any tests you run. This facilitates test portability between different environments instead of hardcoding the test environment into the test.
+- `baseurl`: The host for any tests you run. This facilitates test portability between different environments instead of hardcoding the test environment into the test.
 
-- browser : Default is phantomjs. Sets the type of browser used. Values can be: firefox, phantomjs (default). Eg: (ift-env) $ pybot -v browser:firefox mytest.robot, or any browser that Sauce Labs supports.
+- `browser` : Default is phantomjs. Sets the type of browser used. Values can be: firefox, phantomjs (default). Eg: (ift-env) $ pybot -v browser:firefox mytest.robot, or any browser that Sauce Labs supports.
 
-- log_level : Default is "INFO". Sets the logging threshold for what's logged from the log method. Currently you have to set -L or --loglevel in Robot, not -vloglevel:LEVEL. See  and Logging, Reporting & Debugging.
-- sauce_apikey : The API key (password) for your [Sauce](http://www.saucelabs.com) account. Never hard-code this in anything, and never commit the repository. If you need to store it somewhere, store it as an environment variable.
-- sauce_browserversion : The version of the sauce browser. Defaults to the latest available version for the given browser.
-- sauce_device_orientation : Defaults to "portrait". For mobile devices, tells the page object what orientation to run the test in.
-- sauce_platform : A platform Sauce Labs supports.
-- sauce_username: The user name of your Sauce account. Never hard-code this in anything, and never commit the repository. If you need to store it somewhere, store it as an environment variable.
-- selenium_implicit_wait : A global setting that sets the maximum time to wait before raising an ValueError. Default is 10 seconds. For example, for a call to click_element, Selenium will poll the page for the existence of the passed element at an interval of 200 ms until 10 seconds before raising an ElementNotFoundException.
-- selenium_speed : The time in seconds between each Selenium API call issued. This should only be used for debugging to slow down your tests so you can see what the browser is doing. Default is 0 seconds. eg. $ pybot -v selenium_speed:1 mytest.robot
-- service_args : Additional command-line arguments (such as "--ignore-ssl-errors=yes") to pass to the browser (any browser) when it is run. Arguments are space-separated. Example: PO_SERVICE_ARGS="--ignore-ssl-errors=yes --ssl-protocol=TLSv1" python mytest.py
+- `log_level` : Default is "INFO". Sets the logging threshold for what's logged from the log method. Currently you have to set -L or --loglevel in Robot, not -vloglevel:LEVEL. See  and Logging, Reporting & Debugging.
+- `sauce_apikey` : The API key (password) for your [Sauce](http://www.saucelabs.com) account. Never hard-code this in anything, and never commit the repository. If you need to store it somewhere, store it as an environment variable.
+- `sauce_browserversion` : The version of the sauce browser. Defaults to the latest available version for the given browser.
+- `sauce_device_orientation` : Defaults to "portrait". For mobile devices, tells the page object what orientation to run the test in.
+- `sauce_platform` : A platform Sauce Labs supports.
+- `sauce_username`: The user name of your Sauce account. Never hard-code this in anything, and never commit the repository. If you need to store it somewhere, store it as an environment variable.
+- `selenium_implicit_wait` : A global setting that sets the maximum time to wait before raising an ValueError. Default is 10 seconds. For example, for a call to click_element, Selenium will poll the page for the existence of the passed element at an interval of 200 ms until 10 seconds before raising an ElementNotFoundException.
+- `selenium_speed` : The time in seconds between each Selenium API call issued. This should only be used for debugging to slow down your tests so you can see what the browser is doing. Default is 0 seconds. eg. $ pybot -v selenium_speed:1 mytest.robot
+- `service_args` : Additional command-line arguments (such as "--ignore-ssl-errors=yes") to pass to the browser (any browser) when it is run. Arguments are space-separated. Example: PO_SERVICE_ARGS="--ignore-ssl-errors=yes --ssl-protocol=TLSv1" python mytest.py
 
 Once set, these option values are available as attributes on the page object. For example, self.baseurl.
 
