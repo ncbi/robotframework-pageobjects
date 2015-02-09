@@ -1,4 +1,7 @@
 # Robot Framework Page Objects 
+## Installing
+
+    $ pip install robotframework-pageobjects
 ## What it is 
 This Python package adds support for the [Page Object](http://martinfowler.com/bliki/PageObject.html) pattern with [Robot Framework](http://robotframework.org/) and Robot Framework's [Selenium2Library](https://github.com/rtomac/robotframework-selenium2library). Though this
 package is a [Robot library](http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#extending-robot-framework), it's usable outside the Robot context and facilitates use of the page object pattern independently of any Python testing framework. This means you can use it to create
@@ -70,10 +73,6 @@ The main point of using page objects is to factor out page implementation detail
 Each page object you create is simply a Robot library that inherits from this package's base `Page` class. Since these classes are *plain old Python classes* they can work independently of Robot
 Framework, even though they ultimately inherit from Robot Framework's Selenium2Library. This  allows you to encapsulate page logic in Robot libraries, but still leverage those classes  
 in any testing framework.
-
-## Installing
-
-    $ pip install robotframework-pageobjects
 
 
 ## Demo
