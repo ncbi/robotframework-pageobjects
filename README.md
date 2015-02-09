@@ -2,6 +2,10 @@
 ## Installing
 
     $ pip install robotframework-pageobjects
+## Compatibility
+Currently `Robot Framework Page Objects` is developed and tested on Linux systems only. 
+Windows compatibility is unknown and probably broken. Pull requests are welcome.
+
 ## What it is 
 This Python package adds support for the [Page Object](http://martinfowler.com/bliki/PageObject.html) pattern with [Robot Framework](http://robotframework.org/) and Robot Framework's [Selenium2Library](https://github.com/rtomac/robotframework-selenium2library). Though this
 package is a [Robot library](http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#extending-robot-framework), it's usable outside the Robot context and facilitates use of the page object pattern independently of any Python testing framework. This means you can use it to create
