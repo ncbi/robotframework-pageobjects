@@ -10,8 +10,8 @@ page objects and run tests in other testing frameworks like
 In addition to providing a base `Page` class to build upon, this package provides convenient
 test-running capabilities, like:
 
-    - A hidden, yet accessible Selenium2 `driver` instance, which allows you to focus
-    your tests on the AUT instead of the implementation details of Selenium2.
+- A hidden, yet accessible Selenium2 `driver` instance, which allows you to focus
+your tests on the AUT instead of the implementation details of Selenium2.
 
 The main point of using page objects is to factor out page implementation details (locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
 
