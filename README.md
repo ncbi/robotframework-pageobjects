@@ -1,19 +1,18 @@
-# Robot Framework Page Objects
-
-## What it is
-This Python package adds support for the [Page Object](http://martinfowler.com/bliki/PageObject.html) pattern with [Robot Framework](http://robotframework.org/) and Robot Framework's [Selenium2Library](https://github.com/rtomac/robotframework-selenium2library). Though this is a [Robot library](http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#extending-robot-framework), it's usable outside the Robot context and facilitates use of the page object
-pattern independently of any Python testing framework. This means you can use it to create
+# Robot Framework Page Objects ## What it is This Python package adds support for the [Page Object](http://martinfowler.com/bliki/PageObject.html) pattern with [Robot Framework](http://robotframework.org/) and Robot Framework's [Selenium2Library](https://github.com/rtomac/robotframework-selenium2library). Though this is a [Robot library](http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#extending-robot-framework), it's usable outside the Robot context and facilitates use of the page object pattern independently of any Python testing framework. This means you can use it to create
 page objects and run tests in other testing frameworks like  
 <a href="http://docs.python.org/2/library/unittest.html"><code>unittest</code></a>, 
 [lettuce](http://lettuce.it/tutorial/simple.html) etc.
 
-In addition to providing a base `Page` class to build upon, this package provides convenient
-test-running capabilities, like:
+In addition to providing a base `Page` class to build upon, this package provides 
+many other conveniences somewhat independent of page object modeling including:
 
 - A hidden, yet accessible Selenium2 `driver` instance, which allows you to focus
-your tests on the *application under test* AUT instead of the implementation details of Selenium2.
-- Parameterization and normalization of testing variables, like the AUT's host,
-browser type 
+on the *application under test* AUT instead of Selenium2 implementation details..
+- Easy parameterization and normalization of testing variables, like the AUT's host,
+browser type, [Sauce Labs](https://saucelabs.com/) integration, timeouts etc. 
+- Convenient helper functions like `find_element`, `find_elements` that take [locators](http://rtomac.github.io/robotframework-selenium2library/doc/Selenium2Library.html#Locating%20elements
+*or* [WebElements](http://selenium-python.readthedocs.org/en/latest/api.html#module-selenium.webdriver.remote.webelement) as parameters.
+- Much more...
 
 The main point of using page objects is to factor out page implementation details (locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
 
