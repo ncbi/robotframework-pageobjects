@@ -71,8 +71,8 @@ We'll learn how to do this in a bit.
 The main point of using page objects is to factor out page implementation details (element locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
 
 ## How it works
-Each page object you create is simply an object that inherits from this package's base `Page` class. Since these classes are *plain old Python classes* they can work independently of Robot
-Framework, even though they ultimately inherit from Robot Framework's Selenium2Library. This  allows you to encapsulate page logic in Robot libraries, but still leverage those classes  
+Each page object you create is simply an object that inherits from this package's base `Page` class. In the context of a Robot test, the object is a Robot library. Since these classes are *plain old Python classes* they can work independently of Robot
+Framework, even though they ultimately inherit their base methods from Robot Framework's Selenium2Library. This  allows you to encapsulate page logic in Robot libraries, but still leverage those classes  
 in any testing framework.
 
 
