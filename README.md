@@ -31,8 +31,7 @@ abstracted page object, where we're using a few page object assertions (`title_s
 outside of the Robot framework. `mytest.py`  
 
     from robotpageobjects import Page
-    from unittest import TestCase
-
+    import unittest
 
     class MyPage(Page):
         uri = "/some/path"
@@ -40,7 +39,7 @@ outside of the Robot framework. `mytest.py`
             "the portlet": "xpath://some/complicated/xpath"
         }
 
-    class MyTestCase(TestCase):
+    class MyTestCase(unittest.TestCase):
         def setUp(self):
             self.page = Page()
             self.page.open()
@@ -53,6 +52,8 @@ outside of the Robot framework. `mytest.py`
 
         def test_portlet_renders(self):
             self.page.element_should_be_visible("the portlet")
+
+    unittest.main()
 
 
 We could run this test on the default browser ([PhantomJs](http://phantomjs.org/)) like this:
