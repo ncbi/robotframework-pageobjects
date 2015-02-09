@@ -18,6 +18,7 @@ for locating injected content after page-load etc.
 *or* [WebElements](http://selenium-python.readthedocs.org/en/latest/api.html#module-selenium.webdriver.remote.webelement) as parameters.
 - Much more...
 
+## More on page objects
 The main point of using page objects is to factor out page implementation details (locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
 
 Each page object is simply a Robot library that inherits from this package's base `Page` class. These library classes can work independently of Robot
