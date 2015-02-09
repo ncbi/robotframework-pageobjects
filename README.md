@@ -56,9 +56,11 @@ abstracted page object, where we're using a few page object assertions (`title_s
     unittest.main()
 
 
-We could run this test on the default browser ([PhantomJs](http://phantomjs.org/)) like this:
+We could run this test on a local Firefox installation like so (you could, of course,
+persist these settings using your `.bash_profile` file:
 
     $ export PO_BASEURL=http://qa.mydomain.com 
+    $ export PO_BROWSER=firefox
     $ export PO_SELENIUM_SPEED=1 # Slow the whole test down for debugging
     $ python mytest.py
 
