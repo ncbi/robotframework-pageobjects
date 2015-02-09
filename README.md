@@ -27,7 +27,7 @@ to do heavy page object modeling up front. This is great for convicing your orga
 BDD and page object development because you can approach those ideals iteratively. Even
 with light modeling, and use of a non-BDD framework, your test suites
 can still benefit from the above listed features. Here's an example of a very minimally
-abstracted page object, where we're using a few page object assertions (`title_should_be`, `element_should_be_visible`) 
+abstracted page object, where we're using a few page object assertions (`title_should_be`, `element_should_be_visible`).
 
     # mytest.py
     from robotpageobjects import Page
