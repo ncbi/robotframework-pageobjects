@@ -59,9 +59,9 @@ We could run this test on the default browser ([PhantomJs](http://phantomjs.org/
     $ python mytest.py
 
 Notice, we did not factor out all page implementation details from the test itself. But
-we still can leverage many of the package's features in our tests. If need to model the page
-further nothing stops us from doing so later. 
-We'll learn more about that  in a bit.
+we still can leverage many of the package's features in our tests. If we need to model the page
+further, nothing stops us from doing so in the future. 
+We'll learn how to do this in a bit.
 
 ## More on page objects
 The main point of using page objects is to factor out page implementation details (element locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
