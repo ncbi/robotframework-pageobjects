@@ -7,7 +7,7 @@ page objects and run tests in other testing frameworks like
 [lettuce](http://lettuce.it/tutorial/simple.html) etc. 
 
 In addition to providing a base `Page` class to build upon, this package provides 
-many other conveniences somewhat independent of page object modeling including:
+many other conveniences apart from page object modeling including:
 
 - A hidden, yet accessible Selenium2 `driver` instance, which allows you to focus
 on the *application under test* (AUT) instead of Selenium2 implementation details.
