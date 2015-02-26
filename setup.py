@@ -20,6 +20,8 @@ setup(
     version=ver,
     description="Lets you use the page object pattern with Robot Framework and plain python", 
     author="National Center for Biotechnology Information",
+    url="https://github.com/ncbi/robotframework-pageobjects",
+    keywords="robotframework testing testautomation selenium selenium2 webdriver web",
     install_requires=REQUIRES,
     packages=find_packages(exclude=("tests",)),
     zip_safe=False
