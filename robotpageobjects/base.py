@@ -523,6 +523,7 @@ class _BaseActions(_S2LWrapper):
     """
 
     _abstracted_logger = abstractedlogger.Logger()
+    ROBOT_LISTENER_API_VERSION = 2
 
     def __init__(self, *args, **kwargs):
         """
@@ -532,6 +533,7 @@ class _BaseActions(_S2LWrapper):
         #_SelectorsManager.__init__(self, *args, **kwargs)
         super(_BaseActions, self).__init__(*args, **kwargs)
 
+        self.ROBOT_LIBRARY_LISTENER = self
         self._option_handler = OptionHandler()
         self._is_robot = Context.in_robot()
         self.selenium_speed = self._option_handler.get("selenium_speed") or 0
