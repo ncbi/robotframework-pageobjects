@@ -4,6 +4,8 @@ env:
 language: python
 python:
   - "2.7"
+before_install:
+  - ./bin/install_phantomjs19.sh
 install:
   - pip install .
 script:
