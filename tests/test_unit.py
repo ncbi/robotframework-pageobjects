@@ -6,6 +6,7 @@ from mock import patch
 from robot.libraries.BuiltIn import BuiltIn
 from unittest import skipUnless
 import selenium
+from selenium import webdriver
 
 from basetestcase import BaseTestCase
 from robotpageobjects import exceptions
@@ -576,3 +577,19 @@ class GetSubclassFromPOModuleTestCase(BaseTestCase):
     def test_package_on_path_without_fallback_succeeds(self):
         klass = self.p.get_subclass_from_po_module("mydbpageobjects", BaseResultsPage, fallback_to_super=False)
         self.assertEqual(klass.__name__, "MyDBResultsPage", "MyDBResultsPage class should be selected.")
+
+
+class ServiceArgsTestCase(BaseTestCase):
+
+    def test_set_service_args(self):
+        class P(Page):pass
+
+        os.environ["PO_SERVICE_ARGS"] = "--cookies-file=foo.txt"
+        service_args = P().service_args
+        self.assertTrue(isinstance(service_args, list), "Service args is a list")
+        self.assertEquals(len(service_args), 1, "Service args property has 1 member")
+        self.assertEquals(
+            service_args[0], 
+            "--cookies-file=foo.txt", 
+            "Service args is what we set it to be"
+        )

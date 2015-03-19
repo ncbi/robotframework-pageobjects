@@ -229,8 +229,9 @@ class BaseTestCase(unittest.TestCase):
         returncode = run.returncode
         is_robot = "pybot" in run.cmd
         self.assertEquals(expected_returncode, returncode,
-                          "Return code was %s, expecting %s with the command: '%s'" % (
-                              returncode, expected_returncode, run.cmd))
+                          "Return code was %s, expecting %s with the command: '%s'\n"
+                          "The message was:\n%s\n" % (
+                              returncode, expected_returncode, run.cmd, run.output))
         if expected_tests_ran:
             self.assertTrue("Ran %s test" % expected_tests_ran in run.output, "Didn't get %s tests ran when "
                                                                               "running '%s'" % (
