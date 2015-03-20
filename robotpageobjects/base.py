@@ -542,9 +542,8 @@ class _BaseActions(_S2LWrapper):
 
     def _end_test(self, name, attrs):
         self.log("Tag sauce job, %s with %s" %(self.session_id, attrs["status"]))
-        status = attrs["status"] == "PASS"
-        self.log(status)
-        self._saucerest.update_job(self.session_id, dict(passed=status))
+        passed = attrs["status"] == "PASS"
+        self._saucerest.update_job(self.session_id, dict(passed=passed))
 
     def _end_keyword(self, name, attrs):
         """ Called after every keyword is called in Robot test.
