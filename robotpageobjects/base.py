@@ -525,6 +525,23 @@ class _BaseActions(_S2LWrapper):
     _abstracted_logger = abstractedlogger.Logger()
     ROBOT_LISTENER_API_VERSION = 2
 
+    def _start_test(self, name, attrs):
+        self._current_test = name
+
+    def _end_keyword(self, name, attrs):
+        """ Called after every keyword is called in Robot test.
+        We need to get the session ID here, because the browser must
+        have been open. Also, we only have a session ID when we use
+        Remote WebDriver (Sauce).
+        """
+        session_id = None
+        try:
+            session_id = self.session_id
+        except AttributeError:
+            return
+
+        self.log("Tag sauce job %s with %s" %(session_id, self._current_test))
+
     def __init__(self, *args, **kwargs):
         """
         Initializes the options used by the actions defined in this class.
@@ -533,6 +550,9 @@ class _BaseActions(_S2LWrapper):
         #_SelectorsManager.__init__(self, *args, **kwargs)
         super(_BaseActions, self).__init__(*args, **kwargs)
 
+        # Make this library a listener so we can
+        # centralize robot listener hooks, esp. for
+        # sauce.
         self.ROBOT_LIBRARY_LISTENER = self
         self._option_handler = OptionHandler()
         self._is_robot = Context.in_robot()
