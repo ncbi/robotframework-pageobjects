@@ -547,19 +547,28 @@ class _BaseActions(_S2LWrapper):
 
     def _end_keyword(self, name, attrs):
         """ Called after every keyword is called in Robot test.
-        We need to get the session ID here, because the browser must
-        have been open. Also, we only have a session ID when we use
-        Remote WebDriver (Sauce).
+        We need to get the session ID here, and initialize sauce tagging 
+        here because the browser must
+        first be open to get a session ID, and thus be able to tag a
+        sauce job. We can only be assured of this once we've called
+        a keyword that's ultimately called SE2Lib's Open Browser
+        keyword.
         """
         session_id = None
+        
+        # Wait until we have a session ID
         try:
             session_id = self.session_id
             
         except AttributeError:
             return
 
+        # If we haven't tagged this job then,
+        # initialize a sauce rest object and tag.
         if not self._sauce_job_registered:
             self.log("Tag sauce job %s with %s" %(session_id, self._current_test))
+
+            # Have we initialized a saucerest object already?
             try:
                 self._saucerest
             except AttributeError:
@@ -568,12 +577,15 @@ class _BaseActions(_S2LWrapper):
                     password=self.sauce_apikey
                 )
 
+            # We should have a saucerest object by now
+            # so go ahead and tag the job with the name of
+            # the Robot test.
             self._saucerest.update_job(
                 session_id, 
                 dict(name=self._current_test)
             )
 
-            # Reports whether we've already tagged this job
+            # Sets the flag whether we've already tagged this job
             self._register_sauce_job()
 
     def __init__(self, *args, **kwargs):
