@@ -555,16 +555,20 @@ class _BaseActions(_S2LWrapper):
         session_id = None
         try:
             session_id = self.session_id
-            self._saucerest = saucerest.SauceRest(
-                username=self.sauce_username,
-                password=self.sauce_apikey
-            )
-
+            
         except AttributeError:
             return
 
         if not self._sauce_job_registered:
             self.log("Tag sauce job %s with %s" %(session_id, self._current_test))
+            try:
+                self._saucerest
+            except AttributeError:
+                self._saucerest = saucerest.SauceRest(
+                    username=self.sauce_username,
+                    password=self.sauce_apikey
+                )
+
             data = dict(
                 name = self._current_test
             )

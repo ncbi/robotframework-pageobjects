@@ -11,6 +11,7 @@ Test 1
 
 Test 2
     Open MyPage        
+    Location Should Be  foo
     [teardown]  Close MyPage
 
 
