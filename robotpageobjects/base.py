@@ -16,6 +16,7 @@ from . import abstractedlogger
 from . import exceptions
 from .context import Context
 from .optionhandler import OptionHandler
+import saucelabs.saucerest as saucerest
 
 
 class _Keywords(object):
@@ -541,6 +542,9 @@ class _BaseActions(_S2LWrapper):
 
     def _end_test(self, name, attrs):
         self.log("Tag sauce job, %s with %s" %(self.session_id, attrs["status"]))
+        status = attrs["status"] == "PASS"
+        self.log(status)
+        self._saucerest.update_job(self.session_id, dict(passed=status))
 
     def _end_keyword(self, name, attrs):
         """ Called after every keyword is called in Robot test.
@@ -551,11 +555,20 @@ class _BaseActions(_S2LWrapper):
         session_id = None
         try:
             session_id = self.session_id
+            self._saucerest = saucerest.SauceRest(
+                username=self.sauce_username,
+                password=self.sauce_apikey
+            )
+
         except AttributeError:
             return
 
         if not self._sauce_job_registered:
             self.log("Tag sauce job %s with %s" %(session_id, self._current_test))
+            data = dict(
+                name = self._current_test
+            )
+            self._saucerest.update_job(session_id, data)
             self._register_sauce_job()
 
     def __init__(self, *args, **kwargs):
