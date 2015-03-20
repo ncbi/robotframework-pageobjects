@@ -525,8 +525,22 @@ class _BaseActions(_S2LWrapper):
     _abstracted_logger = abstractedlogger.Logger()
     ROBOT_LISTENER_API_VERSION = 2
 
+    # For keeping track if we've tagged a sauce
+    # job.
+    _session_to_test_hash = {}
+
+    @property
+    def _sauce_job_registered(self):
+        return self.session_id in self._session_to_test_hash 
+
+    def _register_sauce_job(self):
+        self._session_to_test_hash[self.session_id] = self._current_test
+
     def _start_test(self, name, attrs):
         self._current_test = name
+
+    def _end_test(self, name, attrs):
+        self.log("Tag sauce job, %s with %s" %(self.session_id, attrs["status"]))
 
     def _end_keyword(self, name, attrs):
         """ Called after every keyword is called in Robot test.
@@ -540,7 +554,9 @@ class _BaseActions(_S2LWrapper):
         except AttributeError:
             return
 
-        self.log("Tag sauce job %s with %s" %(session_id, self._current_test))
+        if not self._sauce_job_registered:
+            self.log("Tag sauce job %s with %s" %(session_id, self._current_test))
+            self._register_sauce_job()
 
     def __init__(self, *args, **kwargs):
         """
