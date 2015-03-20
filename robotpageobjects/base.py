@@ -568,10 +568,12 @@ class _BaseActions(_S2LWrapper):
                     password=self.sauce_apikey
                 )
 
-            data = dict(
-                name = self._current_test
+            self._saucerest.update_job(
+                session_id, 
+                dict(name=self._current_test)
             )
-            self._saucerest.update_job(session_id, data)
+
+            # Reports whether we've already tagged this job
             self._register_sauce_job()
 
     def __init__(self, *args, **kwargs):
