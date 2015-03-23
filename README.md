@@ -787,6 +787,9 @@ Simply set at least the `sauce_apikey`, `sauce_username`, `sauce_platform` and t
 built-in IFT options. See the Built-in options section [above](#built-in-options-for-page) for options
 related to running tests in Sauce. 
 
+Your page objects will automatically tag your Robot Sauce jobs with the test name and 
+test status. 
+
 ## Logging Reporting & Debugging
 
 ### Robot
