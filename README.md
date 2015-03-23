@@ -778,6 +778,15 @@ which follows the example of Robot assertions and makes it obvious that the meth
 Page object assertion methods shouldn't change the state of the page (eg. clicking links, navigating back etc.) and minimal computation, looping etc. State change and computation should be done in page object action/helper methods. In your test, 
 you should get the page to the state where you want it to be using other page object methods, and call the assert method.
 
+## Sauce Labs Cloud Testing Service Integration
+
+robotframework-pageobjects integrates seamlessly with
+[Sauce Labs](http://saucelabs.com/), a cloud service allowing you to run Selenium-based
+jobs on a [multitude of browsers and platforms](https://docs.saucelabs.com/reference/platforms-configurator/#/).  
+Simply set at least the `sauce_apikey`, `sauce_username`, `sauce_platform` and the `browser`
+built-in IFT options. See the Built-in options section [above](#built-in-options-for-page) for options
+related to running tests in Sauce. 
+
 ## Logging Reporting & Debugging
 
 ### Robot
