@@ -16,6 +16,7 @@ from . import abstractedlogger
 from . import exceptions
 from .context import Context
 from .optionhandler import OptionHandler
+import saucelabs.saucerest as saucerest
 
 
 class _Keywords(object):
@@ -523,6 +524,69 @@ class _BaseActions(_S2LWrapper):
     """
 
     _abstracted_logger = abstractedlogger.Logger()
+    ROBOT_LISTENER_API_VERSION = 2
+
+    # For keeping track if we've tagged a sauce
+    # job.
+    _session_to_test_hash = {}
+
+    @property
+    def _sauce_job_registered(self):
+        return self.session_id in self._session_to_test_hash 
+
+    def _register_sauce_job(self):
+        self._session_to_test_hash[self.session_id] = self._current_test
+
+    def _start_test(self, name, attrs):
+        self._current_test = name
+
+    def _end_test(self, name, attrs):
+        self.log("Tag sauce job, %s with %s" %(self.session_id, attrs["status"]))
+        passed = attrs["status"] == "PASS"
+        self._saucerest.update_job(self.session_id, dict(passed=passed))
+
+    def _end_keyword(self, name, attrs):
+        """ Called after every keyword is called in Robot test.
+        We need to get the session ID here, and initialize sauce tagging 
+        here because the browser must
+        first be open to get a session ID, and thus be able to tag a
+        sauce job. We can only be assured of this once we've called
+        a keyword that's ultimately called SE2Lib's Open Browser
+        keyword.
+        """
+        session_id = None
+        
+        # Wait until we have a session ID
+        try:
+            session_id = self.session_id
+            
+        except AttributeError:
+            return
+
+        # If we haven't tagged this job then,
+        # initialize a sauce rest object and tag.
+        if not self._sauce_job_registered:
+            self.log("Tag sauce job %s with %s" %(session_id, self._current_test))
+
+            # Have we initialized a saucerest object already?
+            try:
+                self._saucerest
+            except AttributeError:
+                self._saucerest = saucerest.SauceRest(
+                    username=self.sauce_username,
+                    password=self.sauce_apikey
+                )
+
+            # We should have a saucerest object by now
+            # so go ahead and tag the job with the name of
+            # the Robot test.
+            self._saucerest.update_job(
+                session_id, 
+                dict(name=self._current_test)
+            )
+
+            # Sets the flag whether we've already tagged this job
+            self._register_sauce_job()
 
     def __init__(self, *args, **kwargs):
         """
@@ -532,6 +596,10 @@ class _BaseActions(_S2LWrapper):
         #_SelectorsManager.__init__(self, *args, **kwargs)
         super(_BaseActions, self).__init__(*args, **kwargs)
 
+        # Make this library a listener so we can
+        # centralize robot listener hooks, esp. for
+        # sauce.
+        self.ROBOT_LIBRARY_LISTENER = self
         self._option_handler = OptionHandler()
         self._is_robot = Context.in_robot()
         self.selenium_speed = self._option_handler.get("selenium_speed") or 0

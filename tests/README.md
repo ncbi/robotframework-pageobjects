@@ -6,6 +6,7 @@ scenarios directory. In general each functional test is executed both in the Rob
 unittest context. Functional tests are found in functional.py. They run actual browsers. Unittests are found in unit
 .py and test simple inputs and outputs of critical page object methods and helpers.
 
+- Install nose with `$ pip install nose`, then run tests: $ nosetests -vs tests/test_unit.py tests/test_functional.py`.
 - The `scenarios` directory contains the unittests and robot tests which the page object framework tests call in a
 subprocess.
 - The `site` directory contains the sample site under test
