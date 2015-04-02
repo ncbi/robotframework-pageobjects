@@ -2,11 +2,11 @@ import json
 import os
 import re
 import unittest
-from nose.tools import raises
 import requests
+import xml.etree.ElementTree as ET
 
+from nose.tools import raises
 from robotpageobjects import Page, exceptions
-
 from scenarios.po.result_component import ResultPage, ResultPageWithDOMStrategyLocator, HomePage, \
     HomePageWithDOMAdvancedToggler, TwoComponentsPage, ParaComponent, TwoComponentsSubPage
 from scenarios.po.loggingpage import LoggingPage
@@ -468,34 +468,6 @@ class WaitingTestCase(BaseTestCase):
         run = self.run_scenario("test_wait_until_not_visible.py")
         self.assert_run(run, expected_returncode=0)
 
-class ServiceArgsTestCase(BaseTestCase):
-    cookies_file_name = "service-args-cookies.txt"
-
-    def _remove_file_if_exists(self, file_path):
-        try:
-            os.remove(file_path)
-        except OSError:
-            pass
-
-    def setUp(self):
-        self.cookies_file_path = os.path.join(self.scenario_dir, self.cookies_file_name)
-        self._remove_file_if_exists(self.cookies_file_path)
-
-
-    def test_can_set_service_args(self):
-        self.set_baseurl_env()
-
-        # Use the cookies-file argument to PhantomJS as a test for PO_SERVICE_ARGS.
-        run = self.run_scenario("test_service_args_cookie_file.py", env={"PO_SERVICE_ARGS": "--cookies-file=%s" % self.cookies_file_path})
-
-        # Assert that the test passed and that the file exists.
-        self.assert_run(run, expected_returncode=0)
-        self.assertTrue(os.path.isfile(self.cookies_file_path), "File %s specified as cookies-file in service_args does not exist." % self.cookies_file_name)
-
-    def tearDown(self):
-        self._remove_file_if_exists(self.cookies_file_path)
-
-
 
 class LoggingTestCase(BaseTestCase):
     """
@@ -600,3 +572,30 @@ class LoggingTestCase(BaseTestCase):
     @raises(ValueError)
     def test_log_at_invalid_level_python(self):
         LoggingPage().log_invalid()
+
+class LibdocTestCase(BaseTestCase):
+
+    def test_gen_doc(self):
+        # generate libdoc xml
+        outxml = 'libdoc.xml'
+        run = self.run_program("python", ".", "robotpageobjects.page.Page %s" % outxml, **{"m": "robot.libdoc"})
+        self.assert_run(run, expected_returncode=0, search_output=outxml)
+
+        root = ET.parse(outxml).getroot()
+        kwentry = root.findall(".//kw[@name='Log']")
+        if len(kwentry) == 0:
+            raise AssertionError('Expected to find entry for "Log" in %s' % outxml)
+        kwentry = kwentry[0]
+        kwargs = kwentry.findall('./arguments/arg')
+        if len(kwargs) != 3:
+            raise AssertionError('Expected to find 3 arguments for "Log" in %s' % outxml)
+        doc = kwentry.findall('./doc')[0]
+        if 'DEBUG' not in doc.text:
+            raise AssertionError('Expected to find "DEBUG" in docmentation for "Log" in %s' % outxml)
+
+class MultipleSuiteLibraryImport(BaseTestCase):
+
+    def test_libraries_stay_imported(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_s2l_imported_multiple_a.robot test_s2l_imported_multiple_b.robot")
+        self.assert_run(run, expected_returncode=0)

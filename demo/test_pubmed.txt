@@ -1,0 +1,14 @@
+*** Settings ***
+Documentation  My first IFT tests
+...
+Library  pubmed.PubmedHomePage
+Library  pubmed.PubmedDocsumPage 
+Library  pubmed.PubmedArticlePage
+
+*** Test Cases ***
+When a user searches Pubmed for a term, the first result page's body should contain the search term
+    Open Pubmed
+    Search For  cat
+    Click Result On Pubmed Docsum Page  1
+    Pubmed Article Page Body Should Contain  cat
+    [Teardown]  Close Pubmed Article Page

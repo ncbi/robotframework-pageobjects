@@ -8,6 +8,8 @@ import warnings
 from robot.utils import asserts
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.remote.webelement import WebElement
 from Selenium2Library import Selenium2Library
 from Selenium2Library.keywords.keywordgroup import KeywordGroupMetaClass
 from . import abstractedlogger
@@ -676,6 +678,9 @@ class _BaseActions(_S2LWrapper):
             self.uri_vars = uri_vars
             return uritemplate.expand(self.baseurl + self.uri, uri_vars)
         else:
+            if uri_type == 'template':
+                raise exceptions.UriResolutionError('%s has uri template %s , but no arguments were given to resolve it' %
+                                                    (pageobj_name, self.uri))
             # the user wants to open the default uri
             return self.baseurl + self.uri
 
@@ -752,10 +757,13 @@ class _BaseActions(_S2LWrapper):
     def _generic_make_browser(self, webdriver_type, desired_cap_type, remote_url, desired_caps):
         """Override Selenium2Library's _generic_make_browser to allow for extra params
         to driver constructor."""
+        kwargs = {}
         if not remote_url:
-            browser = webdriver_type(service_args=self.service_args)
+            if 'service_args' in inspect.getargspec(webdriver_type.__init__).args:
+                kwargs['service_args'] = self.service_args
+            browser = webdriver_type(**kwargs)
         else:
-            browser = self._create_remote_web_driver(desired_cap_type,remote_url , desired_caps)
+            browser = self._create_remote_web_driver(desired_cap_type, remote_url, desired_caps)
         return browser
 
     def _make_browser(self, browser_name, desired_capabilities=None, profile_dir=None, remote=None):
@@ -814,7 +822,7 @@ class _BaseActions(_S2LWrapper):
 
             try:
                 self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
-            except urllib2.HTTPError:
+            except (urllib2.HTTPError, WebDriverException):
                 raise exceptions.SauceConnectionError("Unable to connect to sauce labs. Check your username and "
                                                       "apikey")
 
@@ -858,16 +866,18 @@ class _BaseActions(_S2LWrapper):
                 return error or "Element locator '%s' was still matched after %s" % (locator, self._format_timeout(timeout))
         self._wait_until_no_error(timeout, check_visibility)
 
-    def wait_for(self, condition):
+    def wait_for(self, condition, timeout=None, message=''):
         """
         Waits for a condition defined by the passed function to become True.
         :param condition: The condition to wait for
         :type condition: callable
+        :param timeout: How long to wait for the condition, defaults to the selenium implicit wait
+        :type condition: number
+        :param message: Message to show if the wait times out
+        :type condition: string
         :returns: None
         """
-        timeout = 10
-        wait = WebDriverWait(self.get_current_browser(),
-                             timeout)  #TODO: move to default config, allow parameter to this function too
+        wait = WebDriverWait(self.get_current_browser(), timeout or self.selenium_implicit_wait)
 
         def wait_fnc(driver):
             try:
@@ -877,7 +887,7 @@ class _BaseActions(_S2LWrapper):
             else:
                 return ret
 
-        wait.until(wait_fnc)
+        wait.until(wait_fnc, message)
         return self
 
     @robot_alias("get_hash_on__name__")
@@ -915,11 +925,18 @@ class _BaseActions(_S2LWrapper):
 
         Try to use _element_find with the
         locator as is, then if a selector exists, try that.
-        :param locator: The Selenium2Library-style locator, or IFT selector.
-        :type locator: str
+
+        ``locator`` can also be a WebElement if an element has been identified already
+        and it is desired to perform actions on that element
+
+        :param locator: The Selenium2Library-style locator, or IFT selector
+                        or WebElement (if the element has already been identified).
+        :type locator: str or WebElement
         :returns: WebElement or list
         """
 
+        if isinstance(locator, WebElement):
+            return locator
 
         our_wait = self.selenium_implicit_wait if kwargs.get("wait") is None else kwargs["wait"]
 
@@ -1034,8 +1051,8 @@ class _BaseActions(_S2LWrapper):
 
     def location_should_be(self, expected_url):
         """
-        Override Selenium2Library's location_should_be() method and intelligently
-        determine if the current browser url matches with the ending url or full url passed in the method.
+        Wrapper for Selenium2Library's location_should_be() method.  Allows matching against the
+        baseurl if a partial url is given.
 
         :param url: Either complete url or partial url to be validated against
         :type url: str

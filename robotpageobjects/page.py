@@ -30,6 +30,10 @@ from . import exceptions
 from .base import _ComponentsManagerMeta, not_keyword, robot_alias, _BaseActions, _Keywords, Override, _SelectorsManager, _ComponentsManager
 
 
+# determine if libdoc is running to avoid generating docs for automatically generated aliases
+ld = 'libdoc'
+in_ld = any([ld in str(x) for x in inspect.stack()])
+
 class _PageMeta(_ComponentsManagerMeta):
     """Meta class that allows decorating of all page object methods
     with must_return decorator. This ensures that all page object
@@ -111,26 +115,23 @@ class _PageMeta(_ComponentsManagerMeta):
 
 class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     """
-    Base RF page object.
-
-    This class inherits from _BaseActions (which inherits from _S2LWrapper).
-    These helper classes define the base actions and browser-wrapping behavior
+    This is the base Page Object from which all other Page Objects should inherit.
+    It contains all base Selenium2Library actions and browser-wrapping behavior
     used by this class and its descendents.
-    
-    This class then provides the behavior used by the RF's dynamic API.
-    Optional constructor arguments:
+
+    It is a robotframework library which implements the dynamic API.
     """
     __metaclass__ = _PageMeta
+    ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
 
-
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         """
         Initializes the pageobject_name variable, which is used by the _Keywords class
         for determining aliases.
         """
         #super(Page, self).__init__(*args, **kwargs)
         for base in Page.__bases__:
-            base.__init__(self, *args, **kwargs)
+            base.__init__(self)
 
         # If a name is not explicitly set with the name attribute,
         # get it from the class name.
@@ -146,13 +147,19 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     @staticmethod
     @not_keyword
     def _titleize(str):
-        return re.sub(r"(\w)([A-Z])", r"\1 \2", str)
+        """
+        Converts camel case to title case
+        :param str: camel case string
+        :return: title case string
+        """
+        return  re.sub('([a-z0-9])([A-Z])', r'\1 \2', re.sub(r"(.)([A-Z][a-z]+)", r'\1 \2', str))
 
     @staticmethod
     @not_keyword
     def _underscore(str):
         return re.sub(r"\s+", "_", str)
 
+    @not_keyword
     def get_keyword_names(self):
         """
         RF Dynamic API hook implementation that provides a list of all keywords defined by
@@ -192,17 +199,28 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                             if name in base.__dict__.keys():
                                 in_s2l_base = True
                 # Don't add methods belonging to S2L to the exposed keywords.
-                if in_s2l_base and _Keywords.has_registered_s2l_keywords:
+                if in_ld or (in_s2l_base and _Keywords.has_registered_s2l_keywords):
                     continue
                 elif inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
                     # Add all methods that don't start with an underscore and were not marked with the
                     # @not_keyword decorator.
-                    keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
+                    if not in_ld:
+                        keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
+                    else:
+                        keywords.append(name)
         _Keywords.has_registered_s2l_keywords = True
 
         return keywords
 
-    def run_keyword(self, alias, args):
+    def _attempt_screenshot(self):
+            try:
+                self.capture_page_screenshot()
+            except Exception, e:
+                if e.message.find("No browser is open") != -1:
+                    pass
+
+    @not_keyword
+    def run_keyword(self, alias, args, kwargs):
         """
         RF Dynamic API hook implementation that maps method aliases to their actual functions.
         :param alias: The alias to look up
@@ -214,7 +232,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         # Translate back from Robot Framework alias to actual method
         meth = getattr(self, _Keywords.get_funcname_from_robot_alias(alias, self._underscore(self.name)))
         try:
-            ret = meth(*args)
+            ret = meth(*args, **kwargs)
         except:
             # Pass up the stack, so we see complete stack trace in Robot trace logs
             raise
@@ -257,3 +275,53 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                         ret = self
                         break
         return ret
+
+    @not_keyword
+    def get_keyword_documentation(self, kwname):
+        """
+        RF Dynamic API hook implementation that exposes keyword documentation to the libdoc tool
+
+        :param kwname: a keyword name
+        :return: a documentation string for kwname
+        """
+        if kwname == '__intro__':
+            docstring = self.__doc__ if self.__doc__ else ''
+            s2l_link = """\n
+            All keywords listed in the Selenium2Library documentation are also available in this Page Object.
+            See http://rtomac.github.io/robotframework-selenium2library/doc/Selenium2Library.html
+            """
+            return docstring + s2l_link
+        kw = getattr(self, kwname, None)
+        alias = ''
+        if kwname in _Keywords._aliases:
+            alias = '*Alias: %s*\n\n' % _Keywords.get_robot_aliases(kwname, self._underscore(self.name))[0].replace('_', ' ').title()
+        docstring = kw.__doc__ if kw.__doc__ else ''
+        docstring = re.sub(r'(wrapper)', r'*\1*', docstring, flags=re.I)
+        return alias + docstring
+
+    @not_keyword
+    def get_keyword_arguments(self, kwname):
+        """
+        RF Dynamic API hook implementation that exposes keyword argspecs to the libdoc tool
+
+        :param kwname: a keyword name
+        :return: a list of strings describing the argspec
+        """
+        kw = getattr(self, kwname, None)
+        if kw:
+            args, varargs, keywords, defaults = inspect.getargspec(kw)
+            defaults = dict(zip(args[-len(defaults):], defaults)) if defaults else {}
+            arglist = []
+            for arg in args:
+                if arg != 'self':
+                    argstring = arg
+                    if arg in defaults:
+                        argstring += '=%s' % defaults[arg]
+                    arglist.append(argstring)
+            if varargs:
+                arglist.append('*args')
+            if keywords:
+                arglist.append('**keywords')
+            return arglist
+        else:
+            return ['*args']
