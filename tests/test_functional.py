@@ -207,17 +207,13 @@ class ActionsTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
 class SelectorsTestCase(BaseTestCase):
-    """
-    @unittest.skip("NOT IMPLEMENTED YET: See DCLT-728")
-    def test_s2l_keyword_with_selector(self):
-        run = self.run_scenario("test_s2l_keyword_with_selector.robot", variable="baseurl:%s" % self.base_file_url)
-        self.assert_run(run, expected_returncode=0, search_output="PASS")
-    """
-
-
     def setUp(self):
         super(SelectorsTestCase, self).setUp()
         self.set_baseurl_env()
+
+    def test_s2l_keyword_with_selector(self):
+        run = self.run_scenario("test_s2l_keyword_with_selector.robot", variable="baseurl:%s" % self.base_file_url)
+        self.assert_run(run, expected_returncode=0, search_output="PASS")
 
     def test_find_elements_with_selector(self):
         #self.set_baseurl_env()
@@ -258,10 +254,6 @@ class SelectorsTestCase(BaseTestCase):
 
     def robot_importing_se2lib_before_page_object_should_work(self):
         run = self.run_scenario("test_se2lib_imported_before_po.robot")
-        self.assert_run(run, expected_returncode=0, search_output="PASS")
-
-    def test_selector_in_se2lib_method(self):
-        run = self.run_scenario("test_se2lib_using_selector.robot", variable="baseurl:%s" % self.base_file_url)
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
 
