@@ -216,32 +216,26 @@ class SelectorsTestCase(BaseTestCase):
         self.assert_run(run, expected_returncode=0, search_output="PASS")
 
     def test_find_elements_with_selector(self):
-        #self.set_baseurl_env()
         run = self.run_scenario("test_find_elements_with_selector.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_bad_selector_raises_exception(self):
-        #self.set_baseurl_env()
         run = self.run_scenario("test_bad_selector.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_no_selector_raises_exception(self):
-        #self.set_baseurl_env()
         run = self.run_scenario("test_no_selector.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_selector_template(self):
-        #self.set_baseurl_env()
         run = self.run_scenario("test_templated_selector.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_selector_self_ref(self):
-        #self.set_baseurl_env()
         run = self.run_scenario("test_selector_self_ref.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
     def test_no_robot_action_failing_should_not_warn_about_screenshot(self):
-        #self.set_baseurl_env()
         run = self.run_scenario("test_fail.py")
         self.assertFalse("warn" in run.output.lower(), "No warning should be issued when a method fails outside "
                                                        "robot")

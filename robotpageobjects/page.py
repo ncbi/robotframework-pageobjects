@@ -199,7 +199,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                             if name in base.__dict__.keys():
                                 in_s2l_base = True
                 # Don't add methods belonging to S2L to the exposed keywords.
-                if in_ld or (in_s2l_base and _Keywords.has_registered_s2l_keywords):
+                if in_s2l_base and (in_ld or _Keywords.has_registered_s2l_keywords):
                     continue
                 elif inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
                     # Add all methods that don't start with an underscore and were not marked with the
