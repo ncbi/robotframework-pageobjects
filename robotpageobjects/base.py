@@ -551,6 +551,7 @@ class _BaseActions(_S2LWrapper):
             "sauce_platform",
             "sauce_browserversion",
             "sauce_device_orientation",
+            "sauce_screenresolution",
         ]
         for sauce_opt in self._sauce_options:
             setattr(
@@ -820,6 +821,8 @@ class _BaseActions(_S2LWrapper):
                 caps["version"] = self.sauce_browserversion
             if self.sauce_device_orientation:
                 caps["device_orientation"] = self.sauce_device_orientation
+            if self.sauce_screenresolution:
+                caps["screenResolution"] = self.sauce_screenresolution
 
             try:
                 self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
