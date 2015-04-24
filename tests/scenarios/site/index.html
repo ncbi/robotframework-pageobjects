@@ -26,10 +26,10 @@
         </div>
 
         <br><hr>
-        <div class="ct-to-be-removed">
-            <p id="disappear">I am another paragraph added to test remove button</p>
+        <div class="ct-to-be-hidden">
+            <p id="disappear">I am another paragraph added to test hide button</p>
         </div>
-        <button id="remove-content">Click to remove content</button>
+        <button id="hide-content">Click to hide content</button>
 
 
     </form>
@@ -63,10 +63,10 @@
         });
 
         // clicking on remove me button removes the delayed content
-        jQuery("#remove-content").click( function(e) {
+        jQuery("#hide-content").click( function(e) {
             e.preventDefault();
             setTimeout( function() {
-                jQuery(".ct-to-be-removed").remove();
+                jQuery(".ct-to-be-hidden").hide();
             }, 5000);
         });
 

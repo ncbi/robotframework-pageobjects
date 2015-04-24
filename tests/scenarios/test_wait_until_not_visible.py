@@ -8,19 +8,19 @@ class WaitUntilNotVisibleTestCase(unittest.TestCase):
         self.p.open()
 
     def test_wait_until_element_not_visible(self):
-        self.p.click_element("remove-button")
-        self.p.wait_until_element_is_not_visible("para-to-be-removed")
-        self.p.page_should_not_contain_element("para-to-be-removed")
+        self.p.click_element("hide-button")
+        self.p.wait_until_element_is_not_visible("para-to-be-hidden")
+        self.p.page_should_not_contain_element("para-to-be-hidden")
 
     def test_wait_for_element_not_visible(self):
-        self.p.click_element("remove-button")
-        self.p.wait_for(lambda: not self.p.is_visible("para-to-be-removed"))
-        self.p.page_should_not_contain_element("para-to-be-removed")
+        self.p.click_element("hide-button")
+        self.p.wait_for(lambda: not self.p.is_visible("para-to-be-hidden"))
+        self.p.page_should_not_contain_element("para-to-be-hidden")
 
     def test_wait_until_element_not_visible_throws_exception(self):
         try:
             self.p.click_element("delayed-content-button")
-            self.p.wait_until_element_is_not_visible("para-to-be-removed", 8)
+            self.p.wait_until_element_is_not_visible("para-to-be-hidden", 8)
         except Exception, e:
             self.assertTrue(isinstance(e, AssertionError))
             self.assertIn("still matched after", e.message)
@@ -28,7 +28,7 @@ class WaitUntilNotVisibleTestCase(unittest.TestCase):
     def test_wait_for_element_not_visible_throws_exception(self):
         try:
             self.p.click_element("delayed-content-button")
-            self.p.wait_for(lambda: not self.p.is_visible("para-to-be-removed"), 8, 'Element did not disappear')
+            self.p.wait_for(lambda: not self.p.is_visible("para-to-be-hidden"), 8, 'Element did not disappear')
         except Exception, e:
             self.assertIn("Element did not disappear", e.msg)
 

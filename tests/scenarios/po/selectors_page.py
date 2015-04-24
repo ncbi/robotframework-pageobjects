@@ -6,7 +6,7 @@ class Page(RobotPage):
     selectors = {
         "search-button": "css=#go",
         "inputs": "css=input",
-        "remove-button": "css=button#remove-content",
-        "para-to-be-removed": "css=p#disappear",
+        "hide-button": "css=button#hide-content",
+        "para-to-be-hidden": "css=p#disappear",
         "delayed-content-button":"css=button#delayed-content"
     }
