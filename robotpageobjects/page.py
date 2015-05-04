@@ -144,6 +144,9 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         # Allow setting of uri_template or uri, but make them the same internally
         if hasattr(self, 'uri_template'):
             self.uri = self.uri_template
+        # Set a default uri in case one is not set in the Page
+        elif not hasattr(self, 'uri'):
+            self.uri = '/'
 
     @staticmethod
     @not_keyword

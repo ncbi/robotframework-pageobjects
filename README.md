@@ -332,7 +332,7 @@ There are two types of page objects: singular and templated.
 
 ### Singular Page Objects
 
-A singular page object models a page with only one URL. For example, `GoogleHomePage` is singular, because there's only one URI: “/“. Singular page objects should have a `uri` attribute in their class definitions:
+A singular page object models a page with only one URL. For example, `GoogleHomePage` is singular, because there's only one URI: “/“. Singular page objects should have a `uri` attribute (defaults to '/') in their class definitions:
 
 	...
 	class MyAppHomePage(EntrezPage):
