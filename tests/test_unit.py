@@ -213,13 +213,6 @@ class ResolveUrlTestCase(BaseTestCase):
         self.PO()._resolve_url("bar")
 
     @raises(exceptions.UriResolutionError)
-    def test_baseurl_set_no_uri_attr_set(self):
-        """A baseurl is set, but no variables were passed in and no "uri" was set."""
-
-        self.set_baseurl_env()
-        self.PO()._resolve_url()
-
-    @raises(exceptions.UriResolutionError)
     def test_baseurl_set_abs_uri_attr(self):
         """An absolute url (with scheme) was set as the uri."""
 
@@ -339,6 +332,12 @@ class ResolveUrlTestCase(BaseTestCase):
         pid = p.uri_vars["pid"]
         self.assertEquals("123", pid)
         self.assertEquals("http://www.ncbi.nlm.nih.gov/pubmed/123", url)
+
+    def test_baseurl_set_no_uri_attr_set(self):
+        """A baseurl is set, but no variables were passed in and no "uri" was set."""
+
+        self.set_baseurl_env()
+        self.PO()._resolve_url()
 
 
 class SelectorsTestCase(BaseTestCase):
