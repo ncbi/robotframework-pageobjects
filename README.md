@@ -90,53 +90,11 @@ To run, set the baseurl option with an environment variable:
 
     OK
 
-To run with Firefox, you'd have to set the `browser` environment variable::
+To run with Firefox, you'd have to set the `browser` environment variable:
 
     $ export PO_BROWSER=firefox
     $ python test.py
 
-Here's an example of a very minimally
-abstracted page object, where we're using a few page object assertions (`title_should_be`, `element_should_be_visible`).
-
-    # mytest.py
-    from robotpageobjects import Page
-    import unittest
-
-    class MyPage(Page):
-        uri = "/some/path"
-        selectors = {
-            "the portlet": "xpath://some/complicated/xpath"
-        }
-
-    class MyTestCase(unittest.TestCase):
-        def setUp(self):
-            self.page = Page()
-            self.page.open()
-
-        def tearDown(self):
-            self.page.close()
-
-        def test_title(self):
-            self.page.title_should_be("My Page")
-
-        def test_portlet_renders(self):
-            self.page.element_should_be_visible("the portlet")
-
-    unittest.main()
-
-
-We could run this test on a local Firefox installation like so (you could, of course,
-persist these settings using your `.bash_profile` file):
-
-    $ export PO_BASEURL=http://qa.mydomain.com 
-    $ export PO_BROWSER=firefox
-    $ export PO_SELENIUM_SPEED=1 # Slow the whole test down for debugging
-    $ python mytest.py
-
-Notice, we did not factor out all page implementation details from the test itself. But
-we still can leverage many of the package's features in our tests. If we need to model the page
-further, nothing stops us from doing so in the future. 
-We'll learn how to do this in a bit.
 
 ## More on page objects
 The main point of using page objects is to factor out page implementation details (element locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
