@@ -59,7 +59,12 @@ To run it::
     1 test total, 1 passed, 0 failed
     ==============================================================================
 
-Now in Python::
+By default, the test runs in PhantomJS, but you could run it in Firefox (if it's set up locally)
+like this::
+
+    $ pybot -vbaseurl:http://www.google.com -vbrowser:firefox test.robot
+
+Now the same test in Python::
 
     import unittest
     from robotpageobjects import Page
@@ -75,7 +80,7 @@ Now in Python::
     if __name__ == "__main__":
         unittest.main()
 
-To run:
+To run, set the baseurl option with an environment variable:
 
     $ export PO_BASEURL=http://www.google.com
     $ python test.py
@@ -84,6 +89,11 @@ To run:
     Ran 1 test in 1.411s
 
     OK
+
+To run with Firefox, you'd have to set the `browser` environment variable::
+
+    $ export PO_BROWSER=firefox
+    $ python test.py
 
 Here's an example of a very minimally
 abstracted page object, where we're using a few page object assertions (`title_should_be`, `element_should_be_visible`).
