@@ -619,6 +619,7 @@ class _BaseActions(_S2LWrapper):
             "sauce_platform",
             "sauce_browserversion",
             "sauce_device_orientation",
+            "sauce_screenresolution",
         ]
         for sauce_opt in self._sauce_options:
             setattr(
@@ -888,6 +889,8 @@ class _BaseActions(_S2LWrapper):
                 caps["version"] = self.sauce_browserversion
             if self.sauce_device_orientation:
                 caps["device_orientation"] = self.sauce_device_orientation
+            if self.sauce_screenresolution:
+                caps["screenResolution"] = self.sauce_screenresolution
 
             try:
                 self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
@@ -935,16 +938,18 @@ class _BaseActions(_S2LWrapper):
                 return error or "Element locator '%s' was still matched after %s" % (locator, self._format_timeout(timeout))
         self._wait_until_no_error(timeout, check_visibility)
 
-    def wait_for(self, condition):
+    def wait_for(self, condition, timeout=None, message=''):
         """
         Waits for a condition defined by the passed function to become True.
         :param condition: The condition to wait for
         :type condition: callable
+        :param timeout: How long to wait for the condition, defaults to the selenium implicit wait
+        :type condition: number
+        :param message: Message to show if the wait times out
+        :type condition: string
         :returns: None
         """
-        timeout = 10
-        wait = WebDriverWait(self.get_current_browser(),
-                             timeout)  #TODO: move to default config, allow parameter to this function too
+        wait = WebDriverWait(self.get_current_browser(), timeout or self.selenium_implicit_wait)
 
         def wait_fnc(driver):
             try:
@@ -954,7 +959,7 @@ class _BaseActions(_S2LWrapper):
             else:
                 return ret
 
-        wait.until(wait_fnc)
+        wait.until(wait_fnc, message)
         return self
 
     @robot_alias("get_hash_on__name__")

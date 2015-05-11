@@ -215,6 +215,7 @@ like `sauce_platform` etc. can be gotten from Sauce's [configuration app](https:
 - `sauce_browserversion` : The version of the sauce browser. Defaults to the latest available version for the given browser.
 - `sauce_device_orientation` : Defaults to "portrait". For mobile devices, tells the page object what orientation to run the test in.
 - `sauce_platform` : A platform Sauce Labs supports.
+- 'sauce_screenresolution' : This controls the screen resolution used during the saucelabs test. See https://docs.saucelabs.com/reference/test-configuration/#specifying-the-screen-resolution for the limitations on the screen resolutions per OS.
 - `sauce_username`: The user name of your Sauce account. Never hard-code this in anything, and never commit the repository. If you need to store it somewhere, store it as an environment variable.
 - `selenium_implicit_wait` : A global setting that sets the maximum time to wait before raising an ValueError. Default is 10 seconds. For example, for a call to click_element, Selenium will poll the page for the existence of the passed element at an interval of 200 ms until 10 seconds before raising an ElementNotFoundException.
 - `selenium_speed` : The time in seconds between each Selenium API call issued. This should only be used for debugging to slow down your tests so you can see what the browser is doing. Default is 0 seconds. eg. $ pybot -v selenium_speed:1 mytest.robot
@@ -331,7 +332,7 @@ There are two types of page objects: singular and templated.
 
 ### Singular Page Objects
 
-A singular page object models a page with only one URL. For example, `GoogleHomePage` is singular, because there's only one URI: “/“. Singular page objects should have a `uri` attribute in their class definitions:
+A singular page object models a page with only one URL. For example, `GoogleHomePage` is singular, because there's only one URI: “/“. Singular page objects should have a `uri` attribute (defaults to '/') in their class definitions:
 
 	...
 	class MyAppHomePage(EntrezPage):
