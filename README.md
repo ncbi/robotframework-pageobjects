@@ -34,7 +34,7 @@ can still benefit from the above listed features.
 
 ## Some Examples
 Here's an example of about the simplest Robot test case you could write using this package. You don't even have
-to model a page object...you could just write a test using the base `Page` class that comes with this package::
+to model a page object...you could just write a test using the base `Page` class that comes with this package:
 
     *** Settings *** 
     Library  robotpageobjects.Page
@@ -46,7 +46,7 @@ to model a page object...you could just write a test using the base `Page` class
         Close
 
 
-To run it::
+To run it:
 
     $ pybot -vbaseurl:http://www.google.com test.robot 
     ==============================================================================
@@ -60,11 +60,11 @@ To run it::
     ==============================================================================
 
 By default, the test runs in PhantomJS, but you could run it in Firefox (if it's set up locally)
-like this::
+like this:
 
     $ pybot -vbaseurl:http://www.google.com -vbrowser:firefox test.robot
 
-Now the same test in Python::
+Now the same test in Python:
 
     import unittest
     from robotpageobjects import Page
