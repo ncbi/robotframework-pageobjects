@@ -104,7 +104,8 @@ To run with Firefox, use the `PO_BROWSER` environment variable:
 
 
 ## More on page objects
-The main point of using page objects is to factor out page implementation details (element locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
+Though you could write very simple tests using this package, it allows you to heavily model your applications-under-test using
+your own subclasses of `Page`. You can factor out page implementation details (element locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
 
 ## How it works
 Each page object you create is simply an object that inherits from this package's base `Page` class. In the context of a Robot test, the object is a Robot library. Since these classes are *plain old Python classes* they can work independently of Robot
@@ -112,7 +113,7 @@ Framework, even though they ultimately inherit their base methods from Robot Fra
 
 ## Demo
 
-Check out and run the [demo](https://github.com/ncbi/robotframework-pageobjects/tree/master/demo). 
+To see some more complex page objects, Check out and run the [demo](https://github.com/ncbi/robotframework-pageobjects/tree/master/demo). 
 
 ## How the demo works
 
