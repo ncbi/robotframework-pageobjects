@@ -44,6 +44,20 @@ to model a page object...you could just write a test using the base `Page` class
         Location Should Be  http://www.google.com/
         Close
 
+
+To run it::
+
+    $ pybot -vbaseurl:http://www.google.com test.robot 
+    ==============================================================================
+    Test                                                                          
+    ==============================================================================
+    Can Open Google                                                       | PASS |
+    ------------------------------------------------------------------------------
+    Test                                                                  | PASS |
+    1 critical test, 1 passed, 0 failed
+    1 test total, 1 passed, 0 failed
+    ==============================================================================
+
 Here's an example of a very minimally
 abstracted page object, where we're using a few page object assertions (`title_should_be`, `element_should_be_visible`).
 
