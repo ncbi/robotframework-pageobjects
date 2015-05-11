@@ -35,7 +35,7 @@ can still benefit from the above listed features.
 ## Some Examples
 Here's some examples of about the simplest Robot test case you could write using this package. You don't even have
 to model a page object...you could just write a test using the base `Page` class that comes with this package, yet by
-simply using the base `Page` object that comes with this package you get some things for free, like the ability to:
+simply using `Page` you get some things for free, like the ability to:
 
 - pass in test options such as `baseurl`, `browser` etc. to both Robot tests and Python tests (see [Setting Options](#setting-options) for more
 built-in options you can use)
