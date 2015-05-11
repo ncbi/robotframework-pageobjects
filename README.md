@@ -30,7 +30,39 @@ Like we said, the package is very flexible: it doesn't force you to use Robot, n
 to do heavy page object modeling up front. This is great for convicing your organization to move toward
 BDD and page object development because you can approach those ideals iteratively. Even
 with light modeling, and use of a non-BDD framework, your test suites
-can still benefit from the above listed features. Here's an example of a very minimally
+can still benefit from the above listed features. 
+
+## Some Examples
+Here's an example of about the simplest Robot test case you could write using this package. You don't even have
+to model a page object...you could just write a test using the base `Page` class that comes with this package::
+
+    *** Settings *** 
+    Library  robotpageobjects.Page
+
+    *** Test Cases *** 
+    Can Open Google
+        Open
+        Location Should Be  http://www.google.com/
+        Close
+
+
+To run it::
+
+    $ pybot -vbaseurl:http://www.google.com test.robot 
+    ==============================================================================
+    Test                                                                          
+    ==============================================================================
+    Can Open Google                                                       | PASS |
+    ------------------------------------------------------------------------------
+    Test                                                                  | PASS |
+    1 critical test, 1 passed, 0 failed
+    1 test total, 1 passed, 0 failed
+    ==============================================================================
+
+Now in Python:
+
+
+Here's an example of a very minimally
 abstracted page object, where we're using a few page object assertions (`title_should_be`, `element_should_be_visible`).
 
     # mytest.py
@@ -61,7 +93,7 @@ abstracted page object, where we're using a few page object assertions (`title_s
 
 
 We could run this test on a local Firefox installation like so (you could, of course,
-persist these settings using your `.bash_profile` file:
+persist these settings using your `.bash_profile` file):
 
     $ export PO_BASEURL=http://qa.mydomain.com 
     $ export PO_BROWSER=firefox
@@ -778,6 +810,19 @@ which follows the example of Robot assertions and makes it obvious that the meth
 
 Page object assertion methods shouldn't change the state of the page (eg. clicking links, navigating back etc.) and minimal computation, looping etc. State change and computation should be done in page object action/helper methods. In your test, 
 you should get the page to the state where you want it to be using other page object methods, and call the assert method.
+
+## Sauce Labs Cloud Testing Service Integration
+
+robotframework-pageobjects integrates seamlessly with
+[Sauce Labs](http://saucelabs.com/), a cloud service allowing you to run Selenium-based
+jobs on a [multitude of browsers and platforms](https://docs.saucelabs.com/reference/platforms-configurator/#/).  
+Simply set at least the `sauce_apikey`, `sauce_username`, `sauce_platform` and the `browser`
+built-in IFT options. See the Built-in options section [above](#built-in-options-for-page) for options
+related to running tests in Sauce. 
+
+Your page objects will automatically tag your Robot Sauce jobs with their 
+associated test names and 
+test status. 
 
 ## Logging Reporting & Debugging
 
