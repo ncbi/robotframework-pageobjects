@@ -59,7 +59,21 @@ To run it::
     1 test total, 1 passed, 0 failed
     ==============================================================================
 
-Now in Python:
+Now in Python::
+
+    import unittest
+    from robotpageobjects import Page
+
+
+    class MyTestCase(unittest.TestCase):
+        def test_can_open_google(self):
+            p = Page()
+            p.open()
+            p.location_should_be("http://www.google.com/")
+            p.close()
+
+    if __name__ == "__main__":
+        unittest.main()
 
 
 Here's an example of a very minimally
