@@ -30,7 +30,21 @@ Like we said, the package is very flexible: it doesn't force you to use Robot, n
 to do heavy page object modeling up front. This is great for convicing your organization to move toward
 BDD and page object development because you can approach those ideals iteratively. Even
 with light modeling, and use of a non-BDD framework, your test suites
-can still benefit from the above listed features. Here's an example of a very minimally
+can still benefit from the above listed features. 
+
+Here's an example of about the simplest Robot test case you could write using this package. You don't even have
+to model a page object...you could just write a test using the base `Page` class that comes with this package::
+
+    *** Settings *** 
+    Library  robotpageobjects.Page
+
+    *** Test Cases *** 
+    Can Open Google
+        Open
+        Location Should Be  http://www.google.com/
+        Close
+
+Here's an example of a very minimally
 abstracted page object, where we're using a few page object assertions (`title_should_be`, `element_should_be_visible`).
 
     # mytest.py
