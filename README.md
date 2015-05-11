@@ -75,6 +75,15 @@ Now in Python::
     if __name__ == "__main__":
         unittest.main()
 
+To run:
+
+    $ export PO_BASEURL=http://www.google.com
+    $ python test.py
+    .
+    ----------------------------------------------------------------------
+    Ran 1 test in 1.411s
+
+    OK
 
 Here's an example of a very minimally
 abstracted page object, where we're using a few page object assertions (`title_should_be`, `element_should_be_visible`).
