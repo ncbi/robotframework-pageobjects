@@ -97,7 +97,7 @@ To run, set the baseurl option with an environment variable:
 
     OK
 
-To run with Firefox, you'd have to set the `browser` environment variable:
+To run with Firefox, use the `PO_BROWSER` environment variable:
 
     $ export PO_BROWSER=firefox
     $ python test.py
