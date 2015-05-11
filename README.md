@@ -30,59 +30,93 @@ Like we said, the package is very flexible: it doesn't force you to use Robot, n
 to do heavy page object modeling up front. This is great for convicing your organization to move toward
 BDD and page object development because you can approach those ideals iteratively. Even
 with light modeling, and use of a non-BDD framework, your test suites
-can still benefit from the above listed features. Here's an example of a very minimally
-abstracted page object, where we're using a few page object assertions (`title_should_be`, `element_should_be_visible`).
+can still benefit from the above listed features. 
 
-    # mytest.py
-    from robotpageobjects import Page
+## Some Examples
+Here's some examples of about the simplest Robot test case you could write using this package. You don't even have
+to model a page object...you could just write a test using the base `Page` class that comes with this package, yet by
+simply using `Page` you get some things for free, like the ability to:
+
+- pass in test options such as `baseurl`, `browser` etc. to both Robot tests and Python tests (see [Setting Options](#setting-options) for more
+built-in options you can use)
+- use of Selenium2Library keywords/methods in both Robot and Python tests 
+
+This is a very simple Robot test using `Page`:
+
+    *** Settings *** 
+    Library  robotpageobjects.Page
+
+    *** Test Cases *** 
+    Can Open Google
+        Open
+        Location Should Be  http://www.google.com/
+        Close
+
+
+To run it:
+
+    $ pybot -vbaseurl:http://www.google.com test.robot 
+    ==============================================================================
+    Test                                                                          
+    ==============================================================================
+    Can Open Google                                                       | PASS |
+    ------------------------------------------------------------------------------
+    Test                                                                  | PASS |
+    1 critical test, 1 passed, 0 failed
+    1 test total, 1 passed, 0 failed
+    ==============================================================================
+
+By default, the test runs in PhantomJS, but you could run it in Firefox (if it's set up locally)
+like this:
+
+    $ pybot -vbaseurl:http://www.google.com -vbrowser:firefox test.robot
+
+Now the same test in Python:
+
     import unittest
+    from robotpageobjects import Page
 
-    class MyPage(Page):
-        uri = "/some/path"
-        selectors = {
-            "the portlet": "xpath://some/complicated/xpath"
-        }
 
     class MyTestCase(unittest.TestCase):
-        def setUp(self):
-            self.page = Page()
-            self.page.open()
+        def test_can_open_google(self):
+            p = Page()
+            p.open()
+            p.location_should_be("http://www.google.com/")
+            p.close()
 
-        def tearDown(self):
-            self.page.close()
+    if __name__ == "__main__":
+        unittest.main()
 
-        def test_title(self):
-            self.page.title_should_be("My Page")
+To run, set the baseurl option with an environment variable:
 
-        def test_portlet_renders(self):
-            self.page.element_should_be_visible("the portlet")
+    $ export PO_BASEURL=http://www.google.com
+    $ python test.py
+    .
+    ----------------------------------------------------------------------
+    Ran 1 test in 1.411s
 
-    unittest.main()
+    OK
 
+To run with Firefox, use the `PO_BROWSER` environment variable:
 
-We could run this test on a local Firefox installation like so (you could, of course,
-persist these settings using your `.bash_profile` file:
-
-    $ export PO_BASEURL=http://qa.mydomain.com 
     $ export PO_BROWSER=firefox
-    $ export PO_SELENIUM_SPEED=1 # Slow the whole test down for debugging
-    $ python mytest.py
+    $ python test.py
 
-Notice, we did not factor out all page implementation details from the test itself. But
-we still can leverage many of the package's features in our tests. If we need to model the page
-further, nothing stops us from doing so in the future. 
-We'll learn how to do this in a bit.
 
 ## More on page objects
-The main point of using page objects is to factor out page implementation details (element locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
+Though you could write very simple tests using this package, it allows you to heavily model your applications-under-test using
+your own subclasses of `Page`. You can factor out page implementation details (element locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
 
 ## How it works
 Each page object you create is simply an object that inherits from this package's base `Page` class. In the context of a Robot test, the object is a Robot library. Since these classes are *plain old Python classes* they can work independently of Robot
-Framework, even though they ultimately inherit their base methods from Robot Framework's Selenium2Library. This  allows you to encapsulate page logic in Robot libraries, but still leverage those classes in any testing framework. 
+Framework, even though they ultimately inherit their base methods from Robot Framework's Selenium2Library. This  allows you to encapsulate page logic in Robot libraries, but still leverage those classes in any testing framework if need be. Thus the brunt
+of your coding can go in the page objects, not the test suites. Your tests become more declarative, deferring the work
+to the page objects. Since the page objects are written in Python you are less tied to a particular testing framework, though of
+course we are partial to Robot! 
 
 ## Demo
 
-Check out and run the [demo](https://github.com/ncbi/robotframework-pageobjects/tree/master/demo). 
+To see some more complex page objects, Check out and run the [demo](https://github.com/ncbi/robotframework-pageobjects/tree/master/demo). 
 
 ## How the demo works
 
@@ -778,6 +812,19 @@ which follows the example of Robot assertions and makes it obvious that the meth
 
 Page object assertion methods shouldn't change the state of the page (eg. clicking links, navigating back etc.) and minimal computation, looping etc. State change and computation should be done in page object action/helper methods. In your test, 
 you should get the page to the state where you want it to be using other page object methods, and call the assert method.
+
+## Sauce Labs Cloud Testing Service Integration
+
+robotframework-pageobjects integrates seamlessly with
+[Sauce Labs](http://saucelabs.com/), a cloud service allowing you to run Selenium-based
+jobs on a [multitude of browsers and platforms](https://docs.saucelabs.com/reference/platforms-configurator/#/).  
+Simply set at least the `sauce_apikey`, `sauce_username`, `sauce_platform` and the `browser`
+built-in IFT options. See the Built-in options section [above](#built-in-options-for-page) for options
+related to running tests in Sauce. 
+
+Your page objects will automatically tag your Robot Sauce jobs with their 
+associated test names and 
+test status. 
 
 ## Logging Reporting & Debugging
 
