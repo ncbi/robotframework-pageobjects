@@ -109,7 +109,10 @@ your own subclasses of `Page`. You can factor out page implementation details (e
 
 ## How it works
 Each page object you create is simply an object that inherits from this package's base `Page` class. In the context of a Robot test, the object is a Robot library. Since these classes are *plain old Python classes* they can work independently of Robot
-Framework, even though they ultimately inherit their base methods from Robot Framework's Selenium2Library. This  allows you to encapsulate page logic in Robot libraries, but still leverage those classes in any testing framework. 
+Framework, even though they ultimately inherit their base methods from Robot Framework's Selenium2Library. This  allows you to encapsulate page logic in Robot libraries, but still leverage those classes in any testing framework if need be. Thus the brunt
+of your coding can go in the page objects, not the test suites. Your tests become more declarative, deferring the work
+to the page objects. Since the page objects are written in Python you are less tied to a particular testing framework, though of
+course we are partial to Robot! 
 
 ## Demo
 
