@@ -61,7 +61,7 @@ abstracted page object, where we're using a few page object assertions (`title_s
 
 
 We could run this test on a local Firefox installation like so (you could, of course,
-persist these settings using your `.bash_profile` file:
+persist these settings using your `.bash_profile` file):
 
     $ export PO_BASEURL=http://qa.mydomain.com 
     $ export PO_BROWSER=firefox
