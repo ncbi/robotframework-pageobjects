@@ -2,17 +2,15 @@ from Selenium2Library.keywords import _browsermanagement
 import re
 import importlib
 import inspect
-import uritemplate
-import urllib2
 import warnings
+
 from robot.utils import asserts
-from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.remote.webelement import WebElement
 from Selenium2Library import Selenium2Library
 from Selenium2Library.keywords.keywordgroup import KeywordGroupMetaClass
+
 from . import abstractedlogger
 from . import exceptions
 from .context import Context
@@ -793,20 +791,6 @@ class _BaseActions(_S2LWrapper):
         finder = self._element_finder
         prefix = finder._parse_locator(locator)[0]
         return prefix is not None or locator.startswith("//")
-
-    @staticmethod
-    def _vars_match_template(template, vars):
-        """Validates that the provided variables match the template.
-        :param template: The template
-        :type template: str
-        :param vars: The variables to match against the template
-        :type vars: tuple or list
-        :returns: bool"""
-        keys = vars.keys()
-        keys.sort()
-        template_vars = list(uritemplate.variables(template))
-        template_vars.sort()
-        return template_vars == keys
 
     def location_should_be(self, expected_url):
         """

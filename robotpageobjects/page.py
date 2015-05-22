@@ -21,13 +21,18 @@
 from __future__ import print_function
 import inspect
 import re
+import urllib2
+
 import decorator
 from Selenium2Library import Selenium2Library
+from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
+import uritemplate
 
-from sig import get_method_sig
-from .context import Context
-from . import exceptions
 from .base import _ComponentsManagerMeta, not_keyword, robot_alias, _BaseActions, _Keywords, Override, _SelectorsManager, _ComponentsManager
+from . import exceptions
+from .context import Context
+from .sig import get_method_sig
 
 
 # determine if libdoc is running to avoid generating docs for automatically generated aliases
@@ -372,6 +377,20 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         # attempt to use sauce and that all needed sauce options are
         # at least set.
         return at_least_one_sauce_opt_set
+
+    @staticmethod
+    def _vars_match_template(template, vars):
+        """Validates that the provided variables match the template.
+        :param template: The template
+        :type template: str
+        :param vars: The variables to match against the template
+        :type vars: tuple or list
+        :returns: bool"""
+        keys = vars.keys()
+        keys.sort()
+        template_vars = list(uritemplate.variables(template))
+        template_vars.sort()
+        return template_vars == keys
 
     @not_keyword
     def _resolve_url(self, *args):
