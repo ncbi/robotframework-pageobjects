@@ -39,54 +39,57 @@ class InheritFromSe2LibTestCase(BaseTestCase):
         except AttributeError:
             self.fail("SE2Lib methods are not exposed as direct page object attributes")
 
+class MockPage(object):
+        pass
 
 class OptionHandlerTestCase(BaseTestCase):
+
     path_to_var_file = os.path.join(BaseTestCase.test_dir, "vars.py")
 
     def test_is_singleton(self):
         ids = []
         for i in range(3):
-            ids.append(id(OptionHandler()))
+            ids.append(id(OptionHandler(MockPage())))
         self.assertTrue(all(x == ids[0] for x in ids), "All OptionHandler instances should refer to the same instance")
 
     def test_no_robot_get_env_var(self):
         os.environ["PO_FOO"] = "bar"
-        handler = OptionHandler()
+        handler = OptionHandler(MockPage())
         self.assertEquals(handler.get("foo"), "bar")
 
     def test_no_robot_env_not_set_is_none(self):
-        handler = OptionHandler()
+        handler = OptionHandler(MockPage())
         self.assertIsNone(handler.get("fasdfasdfasdfsadf"))
 
     @skipUnless(os.name == "posix", "Skipping Windows, since environment variables are not case sensitive")
     def test_no_robot_ignore_lowercase_env_vars(self):
         os.environ["PO_BROWSEr"] = "firefox"
-        handler = OptionHandler()
+        handler = OptionHandler(MockPage())
         self.assertIsNone(handler.get("browser"), "Mixed case environment variables should not be set")
 
     @raises(exceptions.VarFileImportErrorError)
     def test_var_file_import_exception(self):
         os.environ["PO_VAR_FILE"] = "foo/bar/asdfsadf/asdf"
-        handler = OptionHandler()
+        handler = OptionHandler(MockPage())
         handler.get("PO_VAR_FILE")
 
     def test_no_robot_var_file(self):
         os.environ["PO_VAR_FILE"] = self.path_to_var_file
-        handler = OptionHandler()
+        handler = OptionHandler(MockPage())
         self.assertEquals(handler.get("author"), "Dickens")
         self.assertEquals(handler.get("dynamic"), "Python")
 
     @patch.object(BuiltIn, "get_variables")
     def test_robot(self, mock_get_variables):
         mock_get_variables.return_value = {"${browser}": "foobar"}
-        handler = OptionHandler()
+        handler = OptionHandler(MockPage())
         self.assertEquals(handler.get("browser"), "foobar")
 
     @patch.object(BuiltIn, "get_variables")
     def test_robot_can_get_vars_from_env(self, mock_get_variables):
         os.environ["PO_BROWSER"] = "opera"
         try:
-            handler = OptionHandler()
+            handler = OptionHandler(MockPage())
             self.assertEquals(handler.get("browser"), "opera")
         except Exception, e:
             raise e
@@ -98,7 +101,7 @@ class OptionHandlerTestCase(BaseTestCase):
         os.environ["PO_AUTHOR"] = "Twain"
         os.environ["PO_VAR_FILE"] = self.path_to_var_file
         try:
-            handler = OptionHandler()
+            handler = OptionHandler(MockPage())
             self.assertEquals(handler.get("author"), "Twain")
         except Exception, e:
             raise e
@@ -111,7 +114,7 @@ class OptionHandlerTestCase(BaseTestCase):
         os.environ["PO_BROWSER"] = "firefox"
         mock_get_variables.return_value = {"${browser}": "chrome"}
         try:
-            handler = OptionHandler()
+            handler = OptionHandler(MockPage())
             self.assertEquals(handler.get("browser"), "chrome")
         except Exception, e:
             raise e
@@ -123,12 +126,18 @@ class OptionHandlerTestCase(BaseTestCase):
         mock_get_variables.return_value = {"${author}": "Twain"}
         os.environ["PO_VAR_FILE"] = self.path_to_var_file
         try:
-            handler = OptionHandler()
+            handler = OptionHandler(MockPage())
             self.assertEquals(handler.get("author"), "Twain")
         except Exception, e:
             raise e
         finally:
             del os.environ["PO_VAR_FILE"]
+            
+    def test_get_options_from_page_object(self):
+        p = MockPage()
+        p.options = {'author': 'Twain'}
+        handler = OptionHandler(p)
+        self.assertEquals(handler.get("author"), "Twain")
 
 
 class SauceTestCase(BaseTestCase):
