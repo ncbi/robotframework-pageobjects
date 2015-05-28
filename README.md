@@ -828,13 +828,14 @@ you should get the page to the state where you want it to be using other page ob
 robotframework-pageobjects integrates seamlessly with
 [Sauce Labs](http://saucelabs.com/), a cloud service allowing you to run Selenium-based
 jobs on a [multitude of browsers and platforms](https://docs.saucelabs.com/reference/platforms-configurator/#/).  
-Simply set at least the `sauce_apikey`, `sauce_username`, `sauce_platform` and the `browser`
-built-in IFT options. See the Built-in options section [above](#built-in-options-for-page) for options
-related to running tests in Sauce. 
+To use Sauce:
 
-Your page objects will automatically tag your Robot Sauce jobs with their 
-associated test names and 
-test status. 
+1. Make sure you have an account with a valid username, API key and web login. 
+1. Set the `sauce_apikey`, `sauce_username`, `sauce_platform` and the `browser` option to a browser
+other than phantomjs.
+
+See the Built-in options section [above](#built-in-options-for-page) for options
+related to running tests in Sauce. 
 
 ## Logging Reporting & Debugging
 
