@@ -831,8 +831,8 @@ jobs on a [multitude of browsers and platforms](https://docs.saucelabs.com/refer
 To use Sauce:
 
 1. Make sure you have an account with a valid username, API key and web login. 
-1. Set the `sauce_apikey`, `sauce_username`, `sauce_platform` and the `browser` option to a browser
-other than phantomjs.
+1. Set the `sauce_apikey`, `sauce_username`, and the `sauce_platform` options. 
+1. Set the `browser` option to a browser other than phantomjs.
 
 See the Built-in options section [above](#built-in-options-for-page) for options
 related to running tests in Sauce. 
