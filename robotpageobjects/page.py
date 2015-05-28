@@ -142,12 +142,13 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         self.service_args = self._parse_service_args(self._option_handler.get("service_args", ""))
 
         self._sauce_options = [
-            "sauce_username",
             "sauce_apikey",
-            "sauce_platform",
             "sauce_browserversion",
+            "sauce_device",
             "sauce_device_orientation",
+            "sauce_platform",
             "sauce_screenresolution",
+            "sauce_username",
         ]
         for sauce_opt in self._sauce_options:
             setattr(self, sauce_opt, self._option_handler.get(sauce_opt))
@@ -566,9 +567,11 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             if self.sauce_browserversion:
                 caps["version"] = self.sauce_browserversion
             if self.sauce_device_orientation:
-                caps["device_orientation"] = self.sauce_device_orientation
+                caps["device-orientation"] = self.sauce_device_orientation
             if self.sauce_screenresolution:
                 caps["screenResolution"] = self.sauce_screenresolution
+            if self.sauce_device:
+                caps["deviceName"] = self.sauce_device
 
             try:
                 self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
