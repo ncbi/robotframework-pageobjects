@@ -150,11 +150,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             "sauce_screenresolution",
         ]
         for sauce_opt in self._sauce_options:
-            setattr(
-                self,
-                sauce_opt,
-                self._option_handler.get(sauce_opt)
-            )
+            setattr(self, sauce_opt, self._option_handler.get(sauce_opt))
 
         self._attempt_sauce = self._validate_sauce_options()
 
@@ -358,25 +354,28 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         return [arg.strip() for arg in service_args.split(" ") if arg.strip() != ""]
 
     def _validate_sauce_options(self):
+        """
+        Check if user wants to use sauce and make sure all required options are given
+        :return: bool (does user want to use sauce?)
+        """
+        trigger_opts = {'platform': None, 'browserversion': None, 'device_orientation': None}
+        for trigger_opt in trigger_opts.keys():
+            trigger_opts[trigger_opt] = getattr(self, 'sauce_' + trigger_opt)
+        sauce_desired = any(trigger_opts.values())
 
-        # If any sauce options are set, at least
-        # username, apikey, and platform must be set, the rest are optional
-        sauce = {}
-        for attr in dir(self):
-            if attr.startswith("sauce_"):
-                sauce[attr] = getattr(self, attr)
+        if sauce_desired:
+            required_opts = {'username': None, 'apikey': None, 'platform': None}
+            for required_opt in required_opts.keys():
+                required_opts[required_opt] = getattr(self, 'sauce_' + required_opt)
+            have_all_required = all(required_opts.values())
 
-        at_least_one_sauce_opt_set = any(sauce.values())
-        if at_least_one_sauce_opt_set and (not sauce["sauce_username"] or
-                                               not sauce["sauce_apikey"] or not sauce["sauce_platform"]):
-            raise exceptions.MissingSauceOptionError("When running Sauce, need at " +
-                                                     "least sauce-username, sauce-apikey, and sauce-platform " +
-                                                     "options set.")
+            if not have_all_required:
+                raise exceptions.MissingSauceOptionError(
+                    "When running Sauce, need at least sauce_username, sauce_apikey, and sauce_platform options set.")
+            if self.browser == 'phantomjs':
+                raise exceptions.MissingSauceOptionError("When running Sauce, browser option should not be phantomjs.")
 
-        # If we get here, tell the object that it's going to
-        # attempt to use sauce and that all needed sauce options are
-        # at least set.
-        return at_least_one_sauce_opt_set
+        return sauce_desired
 
     @staticmethod
     def _vars_match_template(template, vars):

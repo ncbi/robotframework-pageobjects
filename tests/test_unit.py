@@ -152,6 +152,7 @@ class SauceTestCase(BaseTestCase):
     @raises(exceptions.MissingSauceOptionError)
     def test_missing_sauce_apikey_should_raise_missing_sauce_option_error(self):
         self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
+        os.environ["PO_SAUCE_PLATFORM"] = "Windows 8.1"
         os.environ["PO_SAUCE_USERNAME"] = "abc"
         self.PO.uri = "/foo"
         self.PO()
@@ -159,6 +160,17 @@ class SauceTestCase(BaseTestCase):
     @raises(exceptions.MissingSauceOptionError)
     def test_missing_sauce_username_should_raise_missing_sauce_option_error(self):
         self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
+        os.environ["PO_SAUCE_PLATFORM"] = "Windows 8.1"
+        os.environ["PO_SAUCE_APIKEY"] = "abc"
+        self.PO.uri = "/foo"
+        self.PO()
+
+    @raises(exceptions.MissingSauceOptionError)
+    def test_missing_sauce_platform_should_raise_missing_sauce_option_error(self):
+        self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
+        os.environ["PO_BROWSER"] = "Firefox"
+        os.environ["PO_SAUCE_BROWSERVERSION"] = "37"
+        os.environ["PO_SAUCE_USERNAME"] = "abc"
         os.environ["PO_SAUCE_APIKEY"] = "abc"
         self.PO.uri = "/foo"
         self.PO()
