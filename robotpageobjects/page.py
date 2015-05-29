@@ -62,7 +62,7 @@ class _PageMeta(_ComponentsManagerMeta):
     @classmethod
     def must_return(cls, f):
         # Use decorator module to preserve docstings and signatures for Sphinx
-        return decorator.decorator(_PageMeta._must_return, f)
+        return decorator.decorator(cls._must_return, f)
 
     @classmethod
     def _fix_docstrings(cls, bases):
@@ -108,12 +108,11 @@ class _PageMeta(_ComponentsManagerMeta):
                 base._fixed_docstring = True
 
     def __new__(cls, name, bases, classdict):
-
         # Don't do inspect.getmembers since it will try to evaluate functions
         # that are decorated as properties.
         for member_name, obj in classdict.iteritems():
             if _Keywords.is_obj_keyword(obj):
-                classdict[member_name] = _PageMeta.must_return(classdict[member_name])
+                classdict[member_name] = cls.must_return(classdict[member_name])
 
         cls._fix_docstrings(bases)
         return _ComponentsManagerMeta.__new__(cls, name, bases, classdict)
@@ -204,7 +203,6 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
         # Look through our methods and identify which ones are Selenium2Library's
         # (by checking it and its base classes).
-
         for name in dir(self):
             is_keyword = _Keywords.is_obj_keyword_by_name(name, self)
             if is_keyword:
@@ -216,17 +214,18 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                     # ignore static methods included in libraries
                     continue
                 # Check if that function is defined in Selenium2Library
-                if func in Selenium2Library.__dict__.values():
-                    in_s2l_base = True
-                else:
-                    # Check if the function is defined in any of Selenium2Library's direct base classes.
-                    # Note that this will not check those classes' ancestors.
-                    # TODO: Check all S2L's ancestors. DCLT-
-                    for base in Selenium2Library.__bases__:
-                        if func in base.__dict__.values():
-                            in_s2l_base = True
+                if func not in self.__class__.__dict__.values():
+                    if name in Selenium2Library.__dict__.keys():
+                        in_s2l_base = True
+                    else:
+                        # Check if the function is defined in any of Selenium2Library's direct base classes.
+                        # Note that this will not check those classes' ancestors.
+                        # TODO: Check all S2L's ancestors. DCLT-
+                        for base in Selenium2Library.__bases__:
+                            if name in base.__dict__.keys():
+                                in_s2l_base = True
                 # Don't add methods belonging to S2L to the exposed keywords.
-                if in_s2l_base:
+                if in_s2l_base and (in_ld or _Keywords.has_registered_s2l_keywords):
                     continue
                 elif inspect.ismethod(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
                     # Add all methods that don't start with an underscore and were not marked with the
@@ -235,6 +234,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                         keywords += _Keywords.get_robot_aliases(name, self._underscore(self.name))
                     else:
                         keywords.append(name)
+        _Keywords.has_registered_s2l_keywords = True
+
         return keywords
 
     def _attempt_screenshot(self):
@@ -259,18 +260,6 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         try:
             ret = meth(*args, **kwargs)
         except:
-            # Try to take a screenshot. If it fails due to no browser being open,
-            # just raise the original exception. A failed screenshot is just noise here.
-            # QAR-47920
-
-            # Hardcode capture_page_screenshot. This is because run_on_failure
-            # is being set to "Nothing" (DCLT-659 and DCLT-726).
-            # TODO: After DCLT-827 is addressed, we can use run_on_failure again.
-
-            # Walling off nested try/except in separate method to simplify scope issues with nested
-            # try/excepts. Mess with at your own risk.
-            self._attempt_screenshot()
-
             # Pass up the stack, so we see complete stack trace in Robot trace logs
             raise
 
@@ -298,6 +287,19 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         # by Page's meta class, because we need to raise this exception for Robot and
         # outside Robot.
 
+        # If nothing was returned and the method was defined in Selenium2Library,
+        # just return self. That way, we exempt Selenium2Library from the "must_return"
+        # requirement, but still know what page we're on. (For Selenium2Library keywords
+        # that go to another page, we'll just assume we're using the same PO.)
+        if ret is None:
+            func = meth.__func__
+            if meth in Selenium2Library.__dict__.values():
+                ret = self
+            else:
+                for base in Selenium2Library.__bases__:
+                    if meth.__func__ in base.__dict__.values():
+                        ret = self
+                        break
         return ret
 
     @not_keyword

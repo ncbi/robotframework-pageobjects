@@ -8,40 +8,7 @@ from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 
 def do_monkeypatches():
-    """
-    DCLT-659 and DCLT-726, DCLT-827 (Solve Issue of Screenshot...):
-    Add get_keyword_names and run_keyword to Se2Lib, so that we
-    can use run_keyword to capture a page screenshot on failure,
-    instead of a decorator and metaclass (which were causing
-    duplicate screenshots).
-    """
-    __old_init = Selenium2Library.__init__.__func__
-    def __new_init(self, *args, **kwargs):
-        kwargs["run_on_failure"] = "Nothing"
-        return __old_init(self, *args, **kwargs)
-
-    Selenium2Library.__init__ = __new_init
-
-    def get_keyword_names(self):
-        import inspect
-        ret = []
-        methods = inspect.getmembers(self, inspect.ismethod)
-        for name, meth in methods:
-            if not name.startswith("_"):
-                ret.append(name)
-        return ret
-
-    Selenium2Library.get_keyword_names = get_keyword_names
-
-    def run_keyword(self, alias, args):
-        meth = getattr(self, re.sub(r"\s+", "_", alias))
-        try:
-            return meth(*args)
-        except Exception, err:
-            self.capture_page_screenshot()
-            raise
-
-    Selenium2Library.run_keyword = run_keyword
+    """"""
 
     def _make_phantomjs(self , remote , desired_capabilities , profile_dir):
         browser = None
