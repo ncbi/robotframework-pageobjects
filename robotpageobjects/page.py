@@ -359,7 +359,12 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         Check if user wants to use sauce and make sure all required options are given
         :return: bool (does user want to use sauce?)
         """
-        trigger_opts = {'platform': None, 'browserversion': None, 'device_orientation': None}
+        trigger_opts = {
+            'browserversion': None, 
+            'device',
+            'device_orientation': None,
+            'platform': None, 
+        }
         for trigger_opt in trigger_opts.keys():
             trigger_opts[trigger_opt] = getattr(self, 'sauce_' + trigger_opt)
         sauce_desired = any(trigger_opts.values())
