@@ -29,7 +29,8 @@ class OptionHandler(object):
 
         return cls._instance
 
-    def __init__(self):
+    def __init__(self, parent_page):
+        self.parent_page = parent_page
         self._opts = {}
         self._in_robot = Context().in_robot()
         if self._new_called == 1:
@@ -39,29 +40,17 @@ class OptionHandler(object):
         return "<robotpageobjects.optionhandler.OptionHandler object at %s: %s>" % (id(self), self._opts)
 
     def _populate_opts(self, robot=True):
+        self._opts.update(getattr(self.parent_page, 'options', {}))
         self._opts.update(self._get_opts_from_var_file())
         self._opts.update(self._get_opts_from_env_vars())
         if robot:
-            self._opts.update(BuiltIn().get_variables())
+            self._opts.update(self._get_opts_from_robot())
 
-    def _get_vars_from_file(self):
+    def _get_opts_from_robot(self):
         ret = {}
-        var_file_path = os.environ.get("PO_VAR_FILE", None)
-        if var_file_path:
-            abs_var_file_path = os.path.abspath(var_file_path)
-            try:
-                vars_mod = imp.load_source("vars", abs_var_file_path)
-
-            except (ImportError, IOError), e:
-                raise exceptions.VarFileImportErrorError("Couldn't import variable file: %s. Ensure it exists and "
-                                                           "is "
-                                                       "importable." % var_file_path)
-
-            var_file_attrs = vars_mod.__dict__
-            for vars_mod_attr_name in var_file_attrs:
-                if not vars_mod_attr_name.startswith("_"):
-                    vars_file_var_value = var_file_attrs[vars_mod_attr_name]
-                    ret[self._normalize(vars_mod_attr_name)] = vars_file_var_value
+        robot_vars = BuiltIn().get_variables()
+        for var, val in robot_vars.iteritems():
+            ret[self._normalize(var)] = val
         return ret
 
     def _get_opts_from_var_file(self):
@@ -73,9 +62,8 @@ class OptionHandler(object):
                 vars_mod = imp.load_source("vars", abs_var_file_path)
 
             except (ImportError, IOError), e:
-                raise exceptions.VarFileImportErrorError("Couldn't import variable file: %s. Ensure it exists and "
-                                                           "is "
-                                                       "importable." % var_file_path)
+                raise exceptions.VarFileImportErrorError(
+                    "Couldn't import variable file: %s. Ensure it exists and is importable." % var_file_path)
 
             var_file_attrs = vars_mod.__dict__
             for vars_mod_attr_name in var_file_attrs:
@@ -99,7 +87,8 @@ class OptionHandler(object):
         """
         if isinstance(opts, basestring):
             name = opts.lower()
-            return name if re.match("\$\{.+\}", name) else "${%s}" % name
+            rmatch = re.search("\$\{(.+)\}", name)
+            return rmatch.group(1) if rmatch else name
         else:
             # We're dealing with a dict
             return {self._normalize(key): val for (key, val) in opts.iteritems()}
@@ -117,6 +106,5 @@ class OptionHandler(object):
                 ret = self._opts[self._normalize(name.replace(" ", "_"))]
         except KeyError:
             pass
-
         return ret
 

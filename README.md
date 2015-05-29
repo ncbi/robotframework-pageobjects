@@ -30,59 +30,93 @@ Like we said, the package is very flexible: it doesn't force you to use Robot, n
 to do heavy page object modeling up front. This is great for convicing your organization to move toward
 BDD and page object development because you can approach those ideals iteratively. Even
 with light modeling, and use of a non-BDD framework, your test suites
-can still benefit from the above listed features. Here's an example of a very minimally
-abstracted page object, where we're using a few page object assertions (`title_should_be`, `element_should_be_visible`).
+can still benefit from the above listed features. 
 
-    # mytest.py
-    from robotpageobjects import Page
+## Some Examples
+Here's some examples of about the simplest Robot test case you could write using this package. You don't even have
+to model a page object...you could just write a test using the base `Page` class that comes with this package, yet by
+simply using `Page` you get some things for free, like the ability to:
+
+- pass in test options such as `baseurl`, `browser` etc. to both Robot tests and Python tests (see [Setting Options](#setting-options) for more
+built-in options you can use)
+- use of Selenium2Library keywords/methods in both Robot and Python tests 
+
+This is a very simple Robot test using `Page`:
+
+    *** Settings *** 
+    Library  robotpageobjects.Page
+
+    *** Test Cases *** 
+    Can Open Google
+        Open
+        Location Should Be  http://www.google.com/
+        Close
+
+
+To run it:
+
+    $ pybot -vbaseurl:http://www.google.com test.robot 
+    ==============================================================================
+    Test                                                                          
+    ==============================================================================
+    Can Open Google                                                       | PASS |
+    ------------------------------------------------------------------------------
+    Test                                                                  | PASS |
+    1 critical test, 1 passed, 0 failed
+    1 test total, 1 passed, 0 failed
+    ==============================================================================
+
+By default, the test runs in PhantomJS, but you could run it in Firefox (if it's set up locally)
+like this:
+
+    $ pybot -vbaseurl:http://www.google.com -vbrowser:firefox test.robot
+
+Now the same test in Python:
+
     import unittest
+    from robotpageobjects import Page
 
-    class MyPage(Page):
-        uri = "/some/path"
-        selectors = {
-            "the portlet": "xpath://some/complicated/xpath"
-        }
 
     class MyTestCase(unittest.TestCase):
-        def setUp(self):
-            self.page = Page()
-            self.page.open()
+        def test_can_open_google(self):
+            p = Page()
+            p.open()
+            p.location_should_be("http://www.google.com/")
+            p.close()
 
-        def tearDown(self):
-            self.page.close()
+    if __name__ == "__main__":
+        unittest.main()
 
-        def test_title(self):
-            self.page.title_should_be("My Page")
+To run, set the baseurl option with an environment variable:
 
-        def test_portlet_renders(self):
-            self.page.element_should_be_visible("the portlet")
+    $ export PO_BASEURL=http://www.google.com
+    $ python test.py
+    .
+    ----------------------------------------------------------------------
+    Ran 1 test in 1.411s
 
-    unittest.main()
+    OK
 
+To run with Firefox, use the `PO_BROWSER` environment variable:
 
-We could run this test on a local Firefox installation like so (you could, of course,
-persist these settings using your `.bash_profile` file:
-
-    $ export PO_BASEURL=http://qa.mydomain.com 
     $ export PO_BROWSER=firefox
-    $ export PO_SELENIUM_SPEED=1 # Slow the whole test down for debugging
-    $ python mytest.py
+    $ python test.py
 
-Notice, we did not factor out all page implementation details from the test itself. But
-we still can leverage many of the package's features in our tests. If we need to model the page
-further, nothing stops us from doing so in the future. 
-We'll learn how to do this in a bit.
 
 ## More on page objects
-The main point of using page objects is to factor out page implementation details (element locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
+Though you could write very simple tests using this package, it allows you to heavily model your applications-under-test using
+your own subclasses of `Page`. You can factor out page implementation details (element locators, UI details etc.) from the actual test suites. This makes the tests read more about the services a page offers and what's being tested instead of the internals of the page. It also makes your tests much more maintainable. For example, if a developer changes an element ID, you only need make that change once--in the appropriate page object.
 
 ## How it works
 Each page object you create is simply an object that inherits from this package's base `Page` class. In the context of a Robot test, the object is a Robot library. Since these classes are *plain old Python classes* they can work independently of Robot
-Framework, even though they ultimately inherit their base methods from Robot Framework's Selenium2Library. This  allows you to encapsulate page logic in Robot libraries, but still leverage those classes in any testing framework. 
+Framework, even though they ultimately inherit their base methods from Robot Framework's Selenium2Library. This  allows you to encapsulate page logic in Robot libraries, but still leverage those classes in any testing framework if need be. Thus the brunt
+of your coding can go in the page objects, not the test suites. Your tests become more declarative, deferring the work
+to the page objects. Since the page objects are written in Python you are less tied to a particular testing framework, though of
+course we are partial to Robot! 
 
 ## Demo
 
-Check out and run the [demo](https://github.com/ncbi/robotframework-pageobjects/tree/master/demo). 
+To see some more complex page objects, Check out and run the [demo](https://github.com/ncbi/robotframework-pageobjects/tree/master/demo). 
 
 ## How the demo works
 
@@ -203,7 +237,7 @@ The rest of this README explains many more details around writing page objects a
 
 ### Built-in options for `Page`
 
-Test-runs always require at least the setting of one option external to the test case: `baseurl`. Setting `baseurl` allows the page object to define its `uri` independent of the host. This allows you to easily run your tests on a dev/qa/production host without having to change your page object. You can set a default `baseurl` by setting a `baseurl` property on your page object class. The base `Page` class defines several other built-in options relevant whether using your page objects in Robot or plain, Python tests. **Note**: Sauce option values
+Test-runs always require at least the setting of one option external to the test case: `baseurl`. Setting `baseurl` allows the page object to define its `uri` independent of the host. This allows you to easily run your tests on a dev/qa/production host without having to change your page object.  The base `Page` class defines several other built-in options relevant whether using your page objects in Robot or plain, Python tests. **Note**: Sauce option values
 like `sauce_platform` etc. can be gotten from Sauce's [configuration app](https://docs.saucelabs.com/reference/platforms-configurator/?_ga=1.167969697.126382613.1414715829#/). The bult-in options are:
 
 - `baseurl`: The host for any tests you run. This facilitates test portability between different environments instead of hardcoding the test environment into the test.
@@ -215,6 +249,7 @@ like `sauce_platform` etc. can be gotten from Sauce's [configuration app](https:
 - `sauce_browserversion` : The version of the sauce browser. Defaults to the latest available version for the given browser.
 - `sauce_device_orientation` : Defaults to "portrait". For mobile devices, tells the page object what orientation to run the test in.
 - `sauce_platform` : A platform Sauce Labs supports.
+- 'sauce_screenresolution' : This controls the screen resolution used during the saucelabs test. See https://docs.saucelabs.com/reference/test-configuration/#specifying-the-screen-resolution for the limitations on the screen resolutions per OS.
 - `sauce_username`: The user name of your Sauce account. Never hard-code this in anything, and never commit the repository. If you need to store it somewhere, store it as an environment variable.
 - `selenium_implicit_wait` : A global setting that sets the maximum time to wait before raising an ValueError. Default is 10 seconds. For example, for a call to click_element, Selenium will poll the page for the existence of the passed element at an interval of 200 ms until 10 seconds before raising an ElementNotFoundException.
 - `selenium_speed` : The time in seconds between each Selenium API call issued. This should only be used for debugging to slow down your tests so you can see what the browser is doing. Default is 0 seconds. eg. $ pybot -v selenium_speed:1 mytest.robot
@@ -226,8 +261,6 @@ The rest of this page explains the various ways you can set these options, and e
 
 ### Setting options/data with environment variables
 
-#### Setting individual options/data
-
 Both Robot and Python tests using page objects support setting options/data via environment variables. For example, you can change the local browser from phantomjs (default) to Firefox by setting the browser option via the PO_BROWSER environment variable:
 
 	$ export PO_BROWSER=firefox
@@ -238,7 +271,7 @@ These options are only set until the next time you log out of your Unix terminal
 
 	$ source ~/.bash_profile
 
-#### Setting options/data en masse
+### Setting options/data with a variable file
 
 For both Robot and non-Robot tests, you can set multiple options by using a variable file. Create a Python module and set variables to the values you want. The values can be resolved however you like, with arbitrary complexity, as long as the variables are accessible at the module level. For example:
 
@@ -258,13 +291,25 @@ Then set the `PO_VAR_FILE` environment variable to the path of the variable file
 
 Remember, to make the setting persistent you must add this export statement to your ~/.bash_profile file and source it.
 
-### Setting options/data in Robot via pybot and the command-line
+### Setting options/data in Robot with the pybot command-line
 
 In Robot tests, you can also pass in options, like browser, baseurl etc. from the command-line via pybot using the `—variable` or `-v` options. For example, you can set the browser and baseurl like this:
 
 	$ pybot -v browser:firefox -v baseurl:http://mydomain.com mytests/
 
 This is the same as setting `PO_BROWSER` and `PO_BASEURL` as environment variables. You can also set options *en masse* from pybot using the `—variablefile` or `-V` options. Note that setting options/data via pybot overrides the values set as environment variables.
+
+### Setting options/data in the Page Object class
+
+Options can also be set in the Page Object class implementation by creating a class-level dict variable `options`.
+
+in `pubmed.py`:
+
+     class PubmedHomePage(Page):
+
+         options = {
+             'baseurl': 'http://www.ncbi.nlm.nih.gov',
+         }
 
 ## Robot Keyword Mapping
 
@@ -331,7 +376,7 @@ There are two types of page objects: singular and templated.
 
 ### Singular Page Objects
 
-A singular page object models a page with only one URL. For example, `GoogleHomePage` is singular, because there's only one URI: “/“. Singular page objects should have a `uri` attribute in their class definitions:
+A singular page object models a page with only one URL. For example, `GoogleHomePage` is singular, because there's only one URI: “/“. Singular page objects should have a `uri` attribute (defaults to '/') in their class definitions:
 
 	...
 	class MyAppHomePage(EntrezPage):
@@ -777,6 +822,20 @@ which follows the example of Robot assertions and makes it obvious that the meth
 
 Page object assertion methods shouldn't change the state of the page (eg. clicking links, navigating back etc.) and minimal computation, looping etc. State change and computation should be done in page object action/helper methods. In your test, 
 you should get the page to the state where you want it to be using other page object methods, and call the assert method.
+
+## Sauce Labs Cloud Testing Service Integration
+
+robotframework-pageobjects integrates seamlessly with
+[Sauce Labs](http://saucelabs.com/), a cloud service allowing you to run Selenium-based
+jobs on a [multitude of browsers and platforms](https://docs.saucelabs.com/reference/platforms-configurator/#/).  
+To use Sauce:
+
+1. Make sure you have an account with a valid username, API key and web login. 
+1. Set the `sauce_apikey`, `sauce_username`, and the `sauce_platform` options. 
+1. Set the `browser` option to a browser other than phantomjs.
+
+See the Built-in options section [above](#built-in-options-for-page) for options
+related to running tests in Sauce. 
 
 ## Logging Reporting & Debugging
 

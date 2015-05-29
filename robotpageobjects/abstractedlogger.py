@@ -41,7 +41,7 @@ class Logger(object):
 
     @staticmethod
     def get_threshold_level_as_str():
-        ret = OptionHandler().get("log_level") or "INFO"
+        ret = OptionHandler(object()).get("log_level") or "INFO"
         return ret.upper()
 
     @staticmethod

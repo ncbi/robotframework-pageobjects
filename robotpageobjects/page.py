@@ -21,13 +21,18 @@
 from __future__ import print_function
 import inspect
 import re
+import urllib2
+
 import decorator
 from Selenium2Library import Selenium2Library
+from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
+import uritemplate
 
-from sig import get_method_sig
-from .context import Context
-from . import exceptions
 from .base import _ComponentsManagerMeta, not_keyword, robot_alias, _BaseActions, _Keywords, Override, _SelectorsManager, _ComponentsManager
+from . import exceptions
+from .context import Context
+from .sig import get_method_sig
 
 
 # determine if libdoc is running to avoid generating docs for automatically generated aliases
@@ -129,9 +134,27 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         Initializes the pageobject_name variable, which is used by the _Keywords class
         for determining aliases.
         """
-        #super(Page, self).__init__(*args, **kwargs)
         for base in Page.__bases__:
             base.__init__(self)
+
+        self.browser = self._option_handler.get("browser") or "phantomjs"
+        self.service_args = self._parse_service_args(self._option_handler.get("service_args", ""))
+
+        self._sauce_options = [
+            "sauce_username",
+            "sauce_apikey",
+            "sauce_platform",
+            "sauce_browserversion",
+            "sauce_device_orientation",
+            "sauce_screenresolution",
+        ]
+        for sauce_opt in self._sauce_options:
+            setattr(self, sauce_opt, self._option_handler.get(sauce_opt))
+
+        self._attempt_sauce = self._validate_sauce_options()
+
+        # There's only a session ID when using a remote webdriver (Sauce, for example)
+        self.session_id = None
 
         # If a name is not explicitly set with the name attribute,
         # get it from the class name.
@@ -143,6 +166,9 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         # Allow setting of uri_template or uri, but make them the same internally
         if hasattr(self, 'uri_template'):
             self.uri = self.uri_template
+        # Set a default uri in case one is not set in the Page
+        elif not hasattr(self, 'uri'):
+            self.uri = '/'
 
     @staticmethod
     @not_keyword
@@ -325,3 +351,258 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             return arglist
         else:
             return ['*args']
+
+    def _parse_service_args(self, service_args):
+        return [arg.strip() for arg in service_args.split(" ") if arg.strip() != ""]
+
+    def _validate_sauce_options(self):
+        """
+        Check if user wants to use sauce and make sure all required options are given
+        :return: bool (does user want to use sauce?)
+        """
+        trigger_opts = {'platform': None, 'browserversion': None, 'device_orientation': None}
+        for trigger_opt in trigger_opts.keys():
+            trigger_opts[trigger_opt] = getattr(self, 'sauce_' + trigger_opt)
+        sauce_desired = any(trigger_opts.values())
+
+        if sauce_desired:
+            required_opts = {'username': None, 'apikey': None, 'platform': None}
+            for required_opt in required_opts.keys():
+                required_opts[required_opt] = getattr(self, 'sauce_' + required_opt)
+            have_all_required = all(required_opts.values())
+
+            if not have_all_required:
+                raise exceptions.MissingSauceOptionError(
+                    "When running Sauce, need at least sauce_username, sauce_apikey, and sauce_platform options set.")
+            if self.browser == 'phantomjs':
+                raise exceptions.MissingSauceOptionError("When running Sauce, browser option should not be phantomjs.")
+
+        return sauce_desired
+
+    @staticmethod
+    def _vars_match_template(template, vars):
+        """Validates that the provided variables match the template.
+        :param template: The template
+        :type template: str
+        :param vars: The variables to match against the template
+        :type vars: tuple or list
+        :returns: bool"""
+        keys = vars.keys()
+        keys.sort()
+        template_vars = list(uritemplate.variables(template))
+        template_vars.sort()
+        return template_vars == keys
+
+    @not_keyword
+    def _resolve_url(self, *args):
+
+        """
+        Figures out the URL that a page object should open at.
+
+        Called by open().
+        """
+        pageobj_name = self.__class__.__name__
+
+        # determine type of uri attribute
+        if hasattr(self, 'uri'):
+            uri_type = 'template' if re.search('{.+}', self.uri) else 'plain'
+        else:
+            raise exceptions.UriResolutionError("Page object \"%s\" must have a \"uri\" attribute set." % pageobj_name)
+
+        # Don't allow absolute uri attribute.
+        if self._is_url_absolute(self.uri):
+            raise exceptions.UriResolutionError(
+                "Page object \"%s\" must not have an absolute \"uri\" attribute set. Use a relative URL "
+                "instead." % pageobj_name)
+
+        # We always need a baseurl set. This enforces parameterization of the
+        # domain under test.
+
+        if self.baseurl is None:
+            raise exceptions.UriResolutionError("To open page object, \"%s\" you must set a baseurl." % pageobj_name)
+
+        elif len(args) > 0 and hasattr(self, "uri") and self._is_url_absolute(self.uri):
+            # URI template variables are being passed in, so the page object encapsulates
+            # a page that follows some sort of URL pattern. Eg, /pubmed/SOME_ARTICLE_ID.
+
+            raise exceptions.UriResolutionError("The URI Template \"%s\" in \"%s\" is an absolute URL. "
+                                                "It should be relative and used with baseurl" %
+                                                (self.uri, pageobj_name))
+
+        if len(args) > 0:
+            # the user wants to open a non-default uri
+            uri_vars = {}
+
+            first_arg = args[0]
+            if not self._is_robot:
+                if isinstance(first_arg, basestring):
+                    # In Python, if the first argument is a string and not a dict, it's a url or path.
+                    arg_type = "url"
+                else:
+                    arg_type = "dict"
+            elif self._is_robot:
+                # We'll always get string args in Robot
+                if self._is_url_absolute(first_arg) or first_arg.startswith("/"):
+                    arg_type = "url"
+                else:
+                    arg_type = "robot"
+
+            if arg_type != "url" and hasattr(self, "uri") and uri_type == 'plain':
+                raise exceptions.UriResolutionError(
+                    "URI %s is set for page object %s. It is not a template, so no arguments are allowed." %
+                    (self.uri, pageobj_name))
+
+            if arg_type == "url":
+                if self._is_url_absolute(first_arg):
+                    # In Robot, the first argument is always a string, so we need to check if it starts with "/" or a scheme.
+                    # (We're not allowing relative paths right now._
+                    return first_arg
+                elif first_arg.startswith("//"):
+                    raise exceptions.UriResolutionError("%s is neither a URL with a scheme nor a relative path"
+                                                        % first_arg)
+                else:  # starts with "/"
+                    # so it doesn't need resolution, except for appending to baseurl and stripping leading slash
+                    # if it needed: i.e., if the base url ends with "/" and the url starts with "/".
+
+                    return re.sub("\/$", "", self.baseurl) + first_arg
+            elif arg_type == "robot":
+                # Robot args need to be parsed as "arg1=123", "arg2=foo", etc.
+                for arg in args:
+                    split_arg = arg.split("=")
+                    uri_vars[split_arg[0]] = "=".join(split_arg[1:])
+            else:
+                # dict just contains the args as keys and values
+                uri_vars = args[0]
+
+            # Check that variables are correct and match template.
+            if not self._vars_match_template(self.uri, uri_vars):
+                raise exceptions.UriResolutionError(
+                    "The variables %s do not match template %s for page object %s"
+                    % (uri_vars, self.uri, pageobj_name)
+                )
+            self.uri_vars = uri_vars
+            return uritemplate.expand(self.baseurl + self.uri, uri_vars)
+        else:
+            if uri_type == 'template':
+                raise exceptions.UriResolutionError('%s has uri template %s , but no arguments were given to resolve it' %
+                                                    (pageobj_name, self.uri))
+            # the user wants to open the default uri
+            return self.baseurl + self.uri
+
+    @staticmethod
+    def _is_url_absolute(url):
+        """
+        We're making the scheme mandatory, because webdriver can't handle just "//".
+        """
+        return re.match("^(\w+:(\d+)?)\/\/", url) is not None
+
+    def go_to(self, *args):
+        """
+        Wrapper to make go_to method support uri templates.
+        """
+        resolved_url = self._resolve_url(*args)
+        super(_BaseActions, self).go_to(resolved_url)
+        return self
+
+    def _generic_make_browser(self, webdriver_type, desired_cap_type, remote_url, desired_caps):
+        """Override Selenium2Library's _generic_make_browser to allow for extra params
+        to driver constructor."""
+        kwargs = {}
+        if not remote_url:
+            if 'service_args' in inspect.getargspec(webdriver_type.__init__).args:
+                kwargs['service_args'] = self.service_args
+            browser = webdriver_type(**kwargs)
+        else:
+            browser = self._create_remote_web_driver(desired_cap_type, remote_url, desired_caps)
+        return browser
+
+    def _make_browser(self, browser_name, desired_capabilities=None, profile_dir=None, remote=None):
+        creation_func = self._get_browser_creation_function(browser_name)
+
+        if not creation_func:
+            raise ValueError(browser_name + " is not a supported browser.")
+
+        browser = creation_func(remote, desired_capabilities, profile_dir)
+        browser.set_speed(self._speed_in_secs)
+        browser.set_script_timeout(self._timeout_in_secs)
+        browser.implicitly_wait(self._implicit_wait_in_secs)
+        return browser
+
+    def open(self, *args):
+        """
+        Wrapper for Selenium2Library's open_browser() that calls resolve_url for url logic and self.browser.
+        It also deletes cookies after opening the browser.
+
+        :param *args: A list or dictionary of variables mapping to a page object's uri template. For example given a
+        template like this::
+
+                class MyPageObject(PageObject):
+                    uri = "category/{category}"
+
+                    ...
+
+        calling in Python::
+
+            ...
+            my_page_object.open({"category": "home-and-garden"})
+
+        or in Robot Framework::
+
+           ...
+           Open My Page Object  category=home-and-garden
+
+        ...would open the browser at: `/category/home-and-garden`
+
+        If no `uri_var` is passed the page object tries to open the browser at its uri attribute.
+
+
+        :param delete_cookies: If set to True, deletes browser's cookies when called.
+        :type delete_cookies: Boolean
+        :returns: _BaseActions instance
+        """
+        resolved_url = self._resolve_url(*args)
+        if self._attempt_sauce:
+            remote_url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (self.sauce_username, self.sauce_apikey)
+            caps = getattr(webdriver.DesiredCapabilities, self.browser.upper())
+            caps["platform"] = self.sauce_platform
+            if self.sauce_browserversion:
+                caps["version"] = self.sauce_browserversion
+            if self.sauce_device_orientation:
+                caps["device_orientation"] = self.sauce_device_orientation
+            if self.sauce_screenresolution:
+                caps["screenResolution"] = self.sauce_screenresolution
+
+            try:
+                self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
+            except (urllib2.HTTPError, WebDriverException), e:
+                raise exceptions.SauceConnectionError("Unable to run Sauce job.\n%s\n"
+                                                      "Sauce variables were:\n"
+                                                      "sauce_platform: %s\n"
+                                                      "sauce_browserversion: %s\n"
+                                                      "sauce_device_orientation: %s\n"
+                                                      "sauce_screenresolution: %s"
+
+                                                      % (str(e), self.sauce_platform,
+                                                        self.sauce_browserversion, self.sauce_device_orientation,
+                                                        self.sauce_screenresolution)
+                )
+
+            self.session_id = self.get_current_browser().session_id
+            self.log("session ID: %s" % self.session_id)
+
+        else:
+            self.open_browser(resolved_url, self.browser)
+
+        self.set_window_size(1920, 1080)
+
+        self.log("PO_BROWSER: %s" % (str(self.get_current_browser())), is_console=False)
+
+        return self
+
+    def close(self):
+        """
+        Wrapper for Selenium2Library's close_browser.
+        :returns: None
+        """
+        self.close_browser()
+        return self
