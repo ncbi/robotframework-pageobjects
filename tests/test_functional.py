@@ -69,11 +69,6 @@ class SmokeTestCase(BaseTestCase):
         run = self.run_scenario("test_template_passed.robot")
         self.assert_run(run, expected_returncode=1, search_output="must set a baseurl")
 
-    def test_enlarge_browser_on_open(self):
-        self.set_baseurl_env()
-        run = self.run_scenario("test_enlarge_browser_on_open.py")
-        self.assert_run(run, expected_returncode=0, search_output="OK")
-
     def stack_trace_in_robot_log(self):
         self.set_baseurl_env()
         run = self.run_scenario("test_stack_trace.robot", v="baseurl:%s" % self.base_file_url, L="TRACE")
