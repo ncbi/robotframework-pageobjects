@@ -14,7 +14,7 @@ class NCBITestCase(unittest.TestCase):
         os.environ["PO_SAUCE_APIKEY"] = os.getenv("SAUCE_APIKEY")
         self.p = NCBIPage()
         self.p.open({"path": "pubmed"})
-        self.p.title_should_be("Home - PubMed - NCBI")
+        self.p.title_should_be("PubMed - NCBI")
 
         # This should fail, so we test that we get
         # assertions failures when running remotely.

@@ -126,6 +126,20 @@ class SauceTestCase(BaseTestCase):
 
     @unittest.skipUnless(BaseTestCase.are_sauce_creds_set_for_testing(),
                          "Must set 'SAUCE_USERNAME' and 'SAUCE_APIKEY' ("
+                         "not PO_SAUCE."
+                         ".) "
+                         "as an env "
+                         "variables to run this test")
+    def test_sauce_mobile_unittest(self):
+        self.assertFalse(os.path.exists(self.get_log_path()))
+        run = self.run_scenario("test_sauce_mobile.py")
+        job_data = self.get_job_data(self.get_sid_from_log())
+
+        # Just check an arbitrary entry in the job data returned from sauce.
+        self.assertEquals(job_data["browser"], "iphone", "The job ran in Sauce on iphone")
+
+    @unittest.skipUnless(BaseTestCase.are_sauce_creds_set_for_testing(),
+                         "Must set 'SAUCE_USERNAME' and 'SAUCE_APIKEY' ("
                          "not "
                          "PO_SAUCE..) "
                          "as an env "

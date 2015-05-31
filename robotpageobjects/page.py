@@ -361,7 +361,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         """
         trigger_opts = {
             'browserversion': None, 
-            'device',
+            'device': None,
             'device_orientation': None,
             'platform': None, 
         }
