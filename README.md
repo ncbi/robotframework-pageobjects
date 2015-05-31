@@ -247,6 +247,7 @@ like `sauce_platform` etc. can be gotten from Sauce's [configuration app](https:
 - `log_level` : Default is "INFO". Sets the logging threshold for what's logged from the log method. Currently you have to set -L or --loglevel in Robot, not -vloglevel:LEVEL. See  and Logging, Reporting & Debugging.
 - `sauce_apikey` : The API key (password) for your [Sauce](http://www.saucelabs.com) account. Never hard-code this in anything, and never commit the repository. If you need to store it somewhere, store it as an environment variable.
 - `sauce_browserversion` : The version of the sauce browser. Defaults to the latest available version for the given browser.
+- `sauce_device` : The device (usually used for mobile testing)
 - `sauce_device_orientation` : Defaults to "portrait". For mobile devices, tells the page object what orientation to run the test in.
 - `sauce_platform` : A platform Sauce Labs supports.
 - 'sauce_screenresolution' : This controls the screen resolution used during the saucelabs test. See https://docs.saucelabs.com/reference/test-configuration/#specifying-the-screen-resolution for the limitations on the screen resolutions per OS.
