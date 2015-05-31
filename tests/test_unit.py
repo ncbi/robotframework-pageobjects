@@ -189,7 +189,7 @@ class SauceTestCase(BaseTestCase):
 
     @skipUnless(BaseTestCase.are_sauce_creds_set_for_testing(),
                 "SAUCE_USERNAME and SAUCE_APIKEY env vars must be set to test")
-    @raises(selenium.common.exceptions.WebDriverException)
+    @raises(exceptions.SauceConnectionError)
     def test_sauce_invalid_browser(self):
         self.set_baseurl_env(base_file=False, arbitrary_base="http://www.ncbi.nlm.nih.gov")
         os.environ["PO_BROWSER"] = "Firefox"
