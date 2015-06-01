@@ -156,10 +156,10 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         self._attempt_sauce = self._validate_sauce_options()
 
         self._Capabilities = getattr(webdriver.DesiredCapabilities, self.browser.upper())
-        for grid_cap in self._Capabilities:
-            grid_new_cap = self._option_handler.get(grid_cap)
-            if grid_new_cap is not None:
-                self._Capabilities[grid_cap] = grid_new_cap
+        for cap in self._Capabilities:
+            new_cap = self._option_handler.get(cap)
+            if new_cap is not None:
+                self._Capabilities[cap] = new_cap
 
     # There's only a session ID when using a remote webdriver (Sauce, for example)
         self.session_id = None
