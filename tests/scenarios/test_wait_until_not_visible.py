@@ -10,12 +10,12 @@ class WaitUntilNotVisibleTestCase(unittest.TestCase):
     def test_wait_until_element_not_visible(self):
         self.p.click_element("hide-button")
         self.p.wait_until_element_is_not_visible("para-to-be-hidden")
-        self.p.page_should_not_contain_element("para-to-be-hidden")
+        self.p.element_should_not_be_visible("para-to-be-hidden")
 
     def test_wait_for_element_not_visible(self):
         self.p.click_element("hide-button")
         self.p.wait_for(lambda: not self.p.is_visible("para-to-be-hidden"))
-        self.p.page_should_not_contain_element("para-to-be-hidden")
+        self.p.element_should_not_be_visible("para-to-be-hidden")
 
     def test_wait_until_element_not_visible_throws_exception(self):
         try:
