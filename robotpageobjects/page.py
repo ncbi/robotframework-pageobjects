@@ -593,8 +593,6 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         else:
             self.open_browser(resolved_url, self.browser)
 
-        self.set_window_size(1920, 1080)
-
         self.log("PO_BROWSER: %s" % (str(self.get_current_browser())), is_console=False)
 
         return self
