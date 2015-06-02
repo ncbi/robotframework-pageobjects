@@ -6,6 +6,30 @@ from Selenium2Library.locators.tableelementfinder import TableElementFinder
 from Selenium2Library.keywords._tableelement import _TableElementKeywords
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
+from Selenium2Library.keywords import keywordgroup
+
+def __new_run_on_failure_decorator(method, *args, **kwargs):
+    self = args[0]
+    already_in_keyword = getattr(self, "_already_in_keyword", False) # If False, we are in the outermost keyword (or in `run_keyword`, if it's a dynamic library)
+    self._already_in_keyword = True # Set a flag on the instance so that as we call keywords inside this call and this gets run again, we know we're at least one level in.
+    if not hasattr(self, "_has_run_on_failure"):
+        self._has_run_on_failure = False
+    try:
+        return method(*args, **kwargs)
+    except Exception, err:
+        if hasattr(self, "_run_on_failure") and not self._has_run_on_failure:
+            # If we're in an inner keyword, track the fact that we've already run on failure once
+            self._has_run_on_failure = True
+            self._run_on_failure()
+        raise
+    finally:
+        if not already_in_keyword:
+            # If we are in the outer call, reset the flags.
+            self._already_in_keyword = False
+            self._has_run_on_failure = False
+
+keywordgroup._run_on_failure_decorator = __new_run_on_failure_decorator
+
 
 def do_monkeypatches():
     """"""
