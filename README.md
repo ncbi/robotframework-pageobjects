@@ -254,6 +254,9 @@ like `sauce_platform` etc. can be gotten from Sauce's [configuration app](https:
 - `selenium_implicit_wait` : A global setting that sets the maximum time to wait before raising an ValueError. Default is 10 seconds. For example, for a call to click_element, Selenium will poll the page for the existence of the passed element at an interval of 200 ms until 10 seconds before raising an ElementNotFoundException.
 - `selenium_speed` : The time in seconds between each Selenium API call issued. This should only be used for debugging to slow down your tests so you can see what the browser is doing. Default is 0 seconds. eg. $ pybot -v selenium_speed:1 mytest.robot
 - `service_args` : Additional command-line arguments (such as "--ignore-ssl-errors=yes") to pass to the browser (any browser) when it is run. Arguments are space-separated. Example: PO_SERVICE_ARGS="--ignore-ssl-errors=yes --ssl-protocol=TLSv1" python mytest.py
+- `remote_url` : Address of remote grid server eg.: http://127.0.0.1:4444/wd/hub
+- `version` : Browser version to use on grid. Don't set if any.
+- `platform` : Platform on which test should be executed eg.: ANY.
 
 Once set, these option values are available as attributes on the page object. For example, self.baseurl.
 
@@ -835,6 +838,18 @@ related to running tests in Sauce.
 Your page objects will automatically tag your Robot Sauce jobs with their 
 associated test names and 
 test status. 
+
+## Selenium Grid Integration
+
+Selenium-Grid allows you run multiple tests at the same time against different machines running different browsers and operating systems.
+
+You can read more about Selenium Grid [here](http://www.seleniumhq.org/docs/07_selenium_grid.jsp). 
+You have to set up your own Selenium Grid environment as described [here](https://code.google.com/p/selenium/wiki/Grid2).
+
+    *** Variables ***
+    ${remote_url}   http://127.0.0.1:4444/wd/hub
+    ${browser}      Firefox
+    ${platform}     ANY
 
 ## Logging Reporting & Debugging
 
