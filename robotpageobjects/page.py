@@ -568,9 +568,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         if self._attempt_sauce:
             remote_url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (self.sauce_username, self.sauce_apikey)
             #caps = getattr(webdriver.DesiredCapabilities, self.browser.upper())
-            caps = {"browserName": self.browser }
+            caps = {"browserName": self.browser}
             caps["platform"] = self.sauce_platform
-            self.log(self.browser)
             if self.sauce_browserversion:
                 caps["version"] = self.sauce_browserversion
             if self.sauce_device_orientation:
