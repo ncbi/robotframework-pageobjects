@@ -140,6 +140,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
         self.browser = self._option_handler.get("browser") or "phantomjs"
         self.service_args = self._parse_service_args(self._option_handler.get("service_args", ""))
+        self.remote_url = self._option_handler.get("remote_url")
 
         self._sauce_options = [
             "sauce_username",
@@ -154,7 +155,13 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
         self._attempt_sauce = self._validate_sauce_options()
 
-        # There's only a session ID when using a remote webdriver (Sauce, for example)
+        self._Capabilities = getattr(webdriver.DesiredCapabilities, self.browser.upper())
+        for cap in self._Capabilities:
+            new_cap = self._option_handler.get(cap)
+            if new_cap is not None:
+                self._Capabilities[cap] = new_cap
+
+    # There's only a session ID when using a remote webdriver (Sauce, for example)
         self.session_id = None
 
         # If a name is not explicitly set with the name attribute,
@@ -558,6 +565,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         :type delete_cookies: Boolean
         :returns: _BaseActions instance
         """
+        caps = None
+        remote_url = False
         resolved_url = self._resolve_url(*args)
         if self._attempt_sauce:
             remote_url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (self.sauce_username, self.sauce_apikey)
@@ -570,9 +579,13 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             if self.sauce_screenresolution:
                 caps["screenResolution"] = self.sauce_screenresolution
 
-            try:
-                self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
-            except (urllib2.HTTPError, WebDriverException), e:
+        if self.remote_url is not None:
+            remote_url = self.remote_url
+            caps = self._Capabilities
+
+        try:
+            self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
+        except (urllib2.HTTPError, WebDriverException), e:
                 raise exceptions.SauceConnectionError("Unable to run Sauce job.\n%s\n"
                                                       "Sauce variables were:\n"
                                                       "sauce_platform: %s\n"
@@ -585,11 +598,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                                                         self.sauce_screenresolution)
                 )
 
-            self.session_id = self.get_current_browser().session_id
-            self.log("session ID: %s" % self.session_id)
-
-        else:
-            self.open_browser(resolved_url, self.browser)
+        self.session_id = self.get_current_browser().session_id
+        self.log("session ID: %s" % self.session_id)
 
         self.log("PO_BROWSER: %s" % (str(self.get_current_browser())), is_console=False)
 
