@@ -245,6 +245,8 @@ like `sauce_platform` etc. can be gotten from Sauce's [configuration app](https:
 - `browser` : Default is phantomjs. Sets the type of browser used. Values can be: firefox, phantomjs (default). Eg: (ift-env) $ pybot -v browser:firefox mytest.robot, or any browser that Sauce Labs supports.
 
 - `log_level` : Default is "INFO". Sets the logging threshold for what's logged from the log method. Currently you have to set -L or --loglevel in Robot, not -vloglevel:LEVEL. See  and Logging, Reporting & Debugging.
+- `platform`: If using Selenium Grid, platform on which tests should be executed.
+- `remote_url`: If using Selenium Grid, address of remote grid server eg.: http://127.0.0.1:4444/wd/hub
 - `sauce_apikey` : The API key (password) for your [Sauce](http://www.saucelabs.com) account. Never hard-code this in anything, and never commit the repository. If you need to store it somewhere, store it as an environment variable.
 - `sauce_browserversion` : The version of the sauce browser. Defaults to the latest available version for the given browser.
 - `sauce_device_orientation` : Defaults to "portrait". For mobile devices, tells the page object what orientation to run the test in.
@@ -254,9 +256,7 @@ like `sauce_platform` etc. can be gotten from Sauce's [configuration app](https:
 - `selenium_implicit_wait` : A global setting that sets the maximum time to wait before raising an ValueError. Default is 10 seconds. For example, for a call to click_element, Selenium will poll the page for the existence of the passed element at an interval of 200 ms until 10 seconds before raising an ElementNotFoundException.
 - `selenium_speed` : The time in seconds between each Selenium API call issued. This should only be used for debugging to slow down your tests so you can see what the browser is doing. Default is 0 seconds. eg. $ pybot -v selenium_speed:1 mytest.robot
 - `service_args` : Additional command-line arguments (such as "--ignore-ssl-errors=yes") to pass to the browser (any browser) when it is run. Arguments are space-separated. Example: PO_SERVICE_ARGS="--ignore-ssl-errors=yes --ssl-protocol=TLSv1" python mytest.py
-- `remote_url` : Address of remote grid server eg.: http://127.0.0.1:4444/wd/hub
-- `version` : Browser version to use on grid. Don't set if any.
-- `platform` : Platform on which test should be executed eg.: ANY.
+- `version`: Browser version to use on grid. Don't set if any.
 
 Once set, these option values are available as attributes on the page object. For example, self.baseurl.
 
