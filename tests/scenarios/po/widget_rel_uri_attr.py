@@ -8,8 +8,9 @@ class Page(Page):
     uri = "/site/index.html"
 
     selectors = {
-        "search-button": "go",
-        "another-paragraph": "css=div.{klass} p#{id}",
+        "search button": "go",
+        "search box": "q",
+        "another paragraph": "css=div.{klass} p#{id}",
         "delayed content button": "id=delayed-content",
         "delayed content holder": "id=delayed-content-holder",
         "delayed content": "css=#delayed-content-holder > p",
@@ -19,8 +20,8 @@ class Page(Page):
 
     @robot_alias("search__name__for")
     def search(self, term):
-        self.input_text("q", "search term")
-        self.click_element("search-button")
+        self.input_text("search box", "search term")
+        self.click_element("search button")
         return SearchResultPage()
 
     def click_delayed_content_button(self):
@@ -46,8 +47,11 @@ class Page(Page):
         return self
 
     def get_templated_selector_element_text(self):
-        loc = self.resolve_selector("another-paragraph", klass="ct", id="foo" )
+        loc = self.resolve_selector("another paragraph", klass="ct", id="foo" )
         return self.get_text(loc)
+
+    def title_should_be(self, title):
+        return super(Page, self).title_should_be(title)
 
 
 class SearchResultPage(Page):

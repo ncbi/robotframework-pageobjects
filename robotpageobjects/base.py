@@ -30,6 +30,8 @@ class _Keywords(object):
     _aliases = {}
     _alias_delimiter = "__name__"
 
+    has_registered_s2l_keywords = False
+
     @classmethod
     def is_obj_keyword(cls, obj):
         """ Determines whether the given object is a keyword.
@@ -41,7 +43,7 @@ class _Keywords(object):
         except AttributeError:
             return False
 
-        if inspect.isroutine(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name):
+        if inspect.isroutine(obj) and not name.startswith("_") and not _Keywords.is_method_excluded(name) and name not in ("get_keyword_names", "run_keyword"):
             return True
 
         else:
@@ -252,11 +254,8 @@ class _S2LWrapper(Selenium2Library):
             # S2L checks if its "run_on_failure" keyword is "Nothing". If it is, it won't do anything on failure.
             # We need this to prevent S2L from attempting to take a screenshot outside Robot.
         else:
-            # If in Robot, we want to make sure Selenium2Library is imported so its keywords are available,
-            # and so we can share its cache. When outside Robot, we won't share the cache with any import
-            # of Selenium2Library. This could be done with a monkey-patch,
-            # but we are punting until and unless this becomes an issue. See DCLT-708.
-            Context.import_s2l()
+            # This is for disambiguating keywords that are defined in multiple libraries.
+            Context.set_current_page("Selenium2Library")
 
         # Use Selenium2Library's cache for our page objects. That way you can run a keyword from any page object,
         # or from Selenium2Library, and not have to open a separate browser.
