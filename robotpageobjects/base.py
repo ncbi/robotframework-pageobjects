@@ -50,14 +50,31 @@ class _Keywords(object):
             return False
 
     @classmethod
-    def is_obj_keyword_by_name(cls, name, klass):
-        """ Determines whether a given name from the given class is a keyword
+    def is_obj_keyword_by_name(cls, name, inst):
+        """ Determines whether a given name from the given class instance is a keyword.
+        This is used by `get_keyword_names` in `robotpageobjects.page.Page` to decide
+        what keyword names to report.
+        :param name: The name of the member to check
+        :type name: str
+        :param inst: The class instance to check (such as a page object)
+        :type inst: object
         """
         obj = None
+        # If obj is a @property as oppose to a regular method or attribute,
+        # its method will be called immediately. This could cause an attempt
+        # to retrieve an element via webdriver, but when this method is called
+        # no browser is open, so that will cause Selenium2Library's decorator
+        # to attempt a screenshot - which will fail, because no browser is open.
+        # To prevent this, we temporarily set inst._has_run_on_failure to True.
+        # (_has_run_on_failure is used by Selenium2Library's decorator to prevent
+        # redundant screenshot attempts.)
+        inst._has_run_on_failure = True
         try:
-            obj = getattr(klass, name)
+            obj = getattr(inst, name)
         except Exception:
+            inst._has_run_on_failure = False
             return False
+        inst._has_run_on_failure = False
 
         return cls.is_obj_keyword(obj)
 
@@ -690,7 +707,6 @@ class _BaseActions(_S2LWrapper):
         :type locator: str or WebElement
         :returns: WebElement or list
         """
-
         if isinstance(locator, WebElement):
             return locator
 
@@ -700,7 +716,9 @@ class _BaseActions(_S2LWrapper):
         if "wait" in kwargs:
             del kwargs["wait"]
 
+
         self.driver.implicitly_wait(our_wait)
+        
 
         if locator in self.selectors:
             locator = self.resolve_selector(locator)
