@@ -332,8 +332,7 @@ class _ComponentsManagerMeta(KeywordGroupMetaClass):
             # Update the return dict with this class's selectors, overriding the bases
             all_components.merge(own_components, from_subclass=True)
             return all_components
-        ret = get_components(classdict, bases)
-        return ret
+        return get_components(classdict, bases)
 
     @classmethod
     def _set_components(cls, components, classdict):
@@ -370,8 +369,7 @@ class _ComponentsManagerMeta(KeywordGroupMetaClass):
     def __new__(cls, name, bases, classdict):
         components = cls._get_class_components(bases, classdict)
         cls._set_components(components, classdict)
-        ret = KeywordGroupMetaClass.__new__(cls, name, bases, classdict)
-        return ret
+        return KeywordGroupMetaClass.__new__(cls, name, bases, classdict)
 
 
 class _ComponentsManager(object):
