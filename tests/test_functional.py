@@ -74,6 +74,12 @@ class SmokeTestCase(BaseTestCase):
         run = self.run_scenario("test_stack_trace.robot", v="baseurl:%s" % self.base_file_url, L="TRACE")
         self.assert_run(run, expected_returncode=1, search_output_xml="in raise_division_by_zero")
 
+    def test_no_screenshot_attempt_on_initializing_page_with_component(self):
+        self.set_baseurl_env()
+        run = self.run_scenario("test_page_with_component.robot")
+        self.assert_run(run, expected_returncode=0, search_output="PASS",
+                        not_in_output="Capture Page Screenshot")
+
 
 
 class SauceTestCase(BaseTestCase):
