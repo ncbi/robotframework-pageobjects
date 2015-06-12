@@ -521,6 +521,32 @@ This means you can pass selectors instead of locators to all Se2Lib methods that
 locators *and* selectors.
 - You can also pass an instance of a selenium WebElement to Se2Lib methods instead of a selector or locator
 
+Here is an example of a Robot test using a selector defined in a page object:
+
+    class MyPage(NCBIPage):
+        uri = "/somewhere"
+	  
+        selectors = {
+	    "first name": "css=#myform input[name=firstname]",
+	    "last name": "css=#myform input[name=lastname]",
+	    "form submit": "css=#myform input[type=submit]"
+	}
+					   
+    ....
+			    
+    *** Settings ***
+    Library  MyPage
+					     
+    *** Test Cases ***
+    Form Should Submit
+        [Setup]  Open My Page
+	Input Text  first name  Fleagle
+        Input Text  last name  Smith
+        Click Element  form submit
+	Page Should Contain  Thank you. Your form was submitted.
+	[Teardown]  Close
+
+
 #### Looking up elements from the end of a list
 
 It can be helpful to look up elements from the end of a list. It especially helps when the number of elements is 
