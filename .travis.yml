@@ -16,5 +16,6 @@ deploy:
   on:
     tags: true
     all_branches: true
+  distributions: "sdist bdist_wheel"
 after_success:
   - python deploy-ghpages.py
