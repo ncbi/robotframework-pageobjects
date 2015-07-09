@@ -6,6 +6,18 @@
 Currently `Robot Framework Page Objects` is developed and tested on Linux systems only. 
 Windows compatibility is unknown and probably broken. Pull requests are welcome.
 
+## Developing
+This package is developed by a core group of folks at [NCBI](http://www.ncbi.nlm.nih.gov) for our own use. We figured it might be useful for others so we open-sourced it. We are always willing to look at issues and even address them (sometimes). Please, though, understand that we only have cycles to address those issues that directly impact our testing. Otherwise, we are likely to ask you to fork, try to address the issue yourself, then issue a pull request. We are very willing to help you with that process. Whatever you do, create an issue in github, and we will try our best to answer your questions, address the issue ourself, or ask you to try.
+
+All branches in this repo are tied to the [Travis continuous integration system](https://travis-ci.org/ncbi/robotframework-pageobjects). Whenever we push a branch from our repo the build gets kicked off there and tests are run. When you fork a branch you should run tests locally. To run tests:
+
+1. `$ virtualenv env`
+2. `source env/bin/activate`
+3. `(env)$ pip install nose`
+4. `(env)$ nosetests -vs tests/test_*.py`
+
+Again, please feel free to ask for help.
+
 ## What it is 
 This Python package adds support for the [Page Object](http://martinfowler.com/bliki/PageObject.html) pattern with [Robot Framework](http://robotframework.org/) and Robot Framework's [Selenium2Library](https://github.com/rtomac/robotframework-selenium2library). Though this
 package is a [Robot library](http://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#extending-robot-framework), it's usable outside the Robot context and facilitates use of the page object pattern independently of any Python testing framework. This means you can use it to create
