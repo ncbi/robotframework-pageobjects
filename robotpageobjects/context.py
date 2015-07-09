@@ -1,12 +1,5 @@
-import re
-import logging
 from robot.libraries.BuiltIn import BuiltIn
 from robot.running.context import EXECUTION_CONTEXTS
-from robot import api as robot_api
-from robot.conf import RobotSettings
-from robot.variables import init_global_variables
-from robot.errors import DataError
-from Selenium2Library import Selenium2Library
 from monkeypatches import do_monkeypatches
 
 do_monkeypatches()
@@ -62,12 +55,3 @@ class Context(object):
     @classmethod
     def get_libraries(cls):
         return [lib.name for lib in EXECUTION_CONTEXTS.current.namespace.libraries]
-
-# Set up Robot's global variables so we get all the built-in default settings when we're outside Robot.
-# We need this for Selenium2Library's _get_log_dir() method, among other things.
-# TODO: DCLT-693: Put this handling in some other place.
-# TODO: DCLT-659: Write test, confirm we're not breaking anything inside Robot, and that we are
-#  not preventing the setting of certain CL options. We shouldn't be, since we use _get_opts_no_robot() below,
-#  and then fall back if needed to GLOBAL_VARIABLES, which will always have Robot's default values.
-if not Context.in_robot():
-    init_global_variables(RobotSettings())

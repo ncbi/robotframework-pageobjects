@@ -574,7 +574,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
             try:
                 self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
-            except (urllib2.HTTPError, WebDriverException), e:
+            except (urllib2.HTTPError, WebDriverException, ValueError), e:
                 raise exceptions.SauceConnectionError("Unable to run Sauce job.\n%s\n"
                                                       "Sauce variables were:\n"
                                                       "sauce_platform: %s\n"
