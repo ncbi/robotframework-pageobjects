@@ -4,7 +4,6 @@ import importlib
 import inspect
 import warnings
 
-from robot.utils import asserts
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.webelement import WebElement
@@ -679,7 +678,7 @@ class _BaseActions(_S2LWrapper):
     @robot_alias("hash_on__name__should_be")
     def hash_should_be(self, expected_value):
         hash = self.get_hash()
-        asserts.assert_equal(hash, expected_value)
+        assert hash == expected_value
         return self
 
     def is_visible(self, selector):

@@ -1,11 +1,14 @@
 import re
 import logging
-from robot.libraries.BuiltIn import BuiltIn
-from robot.running.context import EXECUTION_CONTEXTS
-from robot import api as robot_api
-from robot.conf import RobotSettings
-from robot.variables import init_global_variables
-from robot.errors import DataError
+try:
+    from robot.libraries.BuiltIn import BuiltIn
+    from robot.running.context import EXECUTION_CONTEXTS
+    from robot import api as robot_api
+    from robot.conf import RobotSettings
+    from robot.variables import init_global_variables
+    from robot.errors import DataError
+except ImportError:
+    pass
 from Selenium2Library import Selenium2Library
 from monkeypatches import do_monkeypatches
 
@@ -69,5 +72,5 @@ class Context(object):
 # TODO: DCLT-659: Write test, confirm we're not breaking anything inside Robot, and that we are
 #  not preventing the setting of certain CL options. We shouldn't be, since we use _get_opts_no_robot() below,
 #  and then fall back if needed to GLOBAL_VARIABLES, which will always have Robot's default values.
-if not Context.in_robot():
-    init_global_variables(RobotSettings())
+#if not Context.in_robot():
+#    init_global_variables(RobotSettings())

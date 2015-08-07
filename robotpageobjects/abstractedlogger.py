@@ -1,7 +1,10 @@
 import logging
 import sys
-import robot.api.logger
-import robot.output.pyloggingconf as robot_logging_conf
+try:
+    import robot.api.logger
+    import robot.output.pyloggingconf as robot_logging_conf
+except ImportError:
+    pass
 
 from optionhandler import OptionHandler
 from context import Context
