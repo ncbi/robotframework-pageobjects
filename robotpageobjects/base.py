@@ -4,7 +4,6 @@ import importlib
 import inspect
 import warnings
 
-from robot.utils import asserts
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.webelement import WebElement
@@ -266,13 +265,10 @@ class _S2LWrapper(Selenium2Library):
     """
 
     def __init__(self, *args, **kwargs):
-        if not Context.in_robot():
-            kwargs["run_on_failure"] = "Nothing"
-            # S2L checks if its "run_on_failure" keyword is "Nothing". If it is, it won't do anything on failure.
-            # We need this to prevent S2L from attempting to take a screenshot outside Robot.
-        else:
-            # This is for disambiguating keywords that are defined in multiple libraries.
-            Context.set_current_page("Selenium2Library")
+        kwargs["run_on_failure"] = "Nothing"
+        # S2L checks if its "run_on_failure" keyword is "Nothing". If it is, it won't do anything on failure.
+        # We need this to prevent S2L from attempting to take a screenshot outside Robot.
+        
 
         # Use Selenium2Library's cache for our page objects. That way you can run a keyword from any page object,
         # or from Selenium2Library, and not have to open a separate browser.
@@ -679,7 +675,7 @@ class _BaseActions(_S2LWrapper):
     @robot_alias("hash_on__name__should_be")
     def hash_should_be(self, expected_value):
         hash = self.get_hash()
-        asserts.assert_equal(hash, expected_value)
+        assert hash == expected_value
         return self
 
     def is_visible(self, selector):
