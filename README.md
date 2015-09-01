@@ -1,4 +1,10 @@
 # Robot Framework Page Objects 
+
+**NOTE**: Though support was never guaranteed, NCBI is no longer able to maintain this project. We've moved
+off of Robot Framework due to lack of timely Python3 support in Robot Framework and the fact that the majority of our developers/test-writers prefer to write
+tests in Python. You are free to either fork the project to address any issues or to adopt the project.
+Please comment on [this issue](https://github.com/ncbi/robotframework-pageobjects/issues/61) if you'd like to adopt it. 
+
 ## Installing
 
     $ pip install robotframework-pageobjects
