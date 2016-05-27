@@ -1,5 +1,5 @@
 import unittest
-from po import widget_template
+from .po import widget_template
 
 
 class TestWidgetItem(unittest.TestCase):

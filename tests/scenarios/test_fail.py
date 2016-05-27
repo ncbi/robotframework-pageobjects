@@ -1,5 +1,5 @@
 import unittest
-from po import widget_rel_uri_attr
+from .po import widget_rel_uri_attr
 
 
 class TestWidgetSearch(unittest.TestCase):

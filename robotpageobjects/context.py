@@ -1,8 +1,9 @@
 from robot.libraries.BuiltIn import BuiltIn
 from robot.running.context import EXECUTION_CONTEXTS
-from monkeypatches import do_monkeypatches
+from .monkeypatches import do_monkeypatches
 
 do_monkeypatches()
+
 
 class Context(object):
     """
@@ -39,11 +40,11 @@ class Context(object):
     @classmethod
     def set_keywords_exposed(cls):
         cls._keywords_exposed = True
-        
+
     @classmethod
     def set_cache(cls, cache):
         cls._cache = cache
-        
+
     @classmethod
     def get_cache(cls):
         return cls._cache

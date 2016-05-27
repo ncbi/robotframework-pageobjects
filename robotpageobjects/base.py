@@ -2,6 +2,7 @@ from Selenium2Library.keywords import _browsermanagement
 import re
 import importlib
 import inspect
+import six
 import warnings
 
 from robot.utils import asserts
@@ -124,7 +125,7 @@ class _Keywords(object):
         """
         # Look for a stub matching the alias in the aliases dict.
         # If we find one, return the original func name.
-        for fname, stub in cls._aliases.iteritems():
+        for fname, stub in six.iteritems(cls._aliases):
             if alias == stub.replace(cls._alias_delimiter, "_" + pageobject_name + "_"):
                 return fname
                 # We didn't find a match, so take the class name off the end.
@@ -240,7 +241,7 @@ class KeyUniquenessDict(dict):
         :type other_dict: dict
         :returns: None
         """
-        for key, value in other_dict.iteritems():
+        for key, value in six.iteritems(other_dict):
             overridden = False
             if isinstance(key, Override):
                 key = key.obj
@@ -718,7 +719,7 @@ class _BaseActions(_S2LWrapper):
 
 
         self.driver.implicitly_wait(our_wait)
-        
+
 
         if locator in self.selectors:
             locator = self.resolve_selector(locator)

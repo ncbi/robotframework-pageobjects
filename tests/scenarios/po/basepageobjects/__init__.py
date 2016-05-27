@@ -1,2 +1,2 @@
-from homepage import BaseHomePage
-from resultspage import BaseResultsPage
+from .homepage import BaseHomePage
+from .resultspage import BaseResultsPage

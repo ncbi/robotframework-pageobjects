@@ -3,8 +3,8 @@ import sys
 import robot.api.logger
 import robot.output.pyloggingconf as robot_logging_conf
 
-from optionhandler import OptionHandler
-from context import Context
+from .optionhandler import OptionHandler
+from .context import Context
 
 
 class Logger(object):

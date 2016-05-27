@@ -1,5 +1,5 @@
 import unittest
-from po import selectors_page
+from .po import selectors_page
 
 class WaitUntilNotVisibleTestCase(unittest.TestCase):
 

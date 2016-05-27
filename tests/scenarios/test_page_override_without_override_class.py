@@ -1,4 +1,4 @@
 import os
-from result_component import ParaComponent, TwoComponentsPage
-class TwoComponentsSubPageWithoutOverride(TwoComponentsPage):
-    components = {ParaComponent: "css=p:last-child"}
+from . import po
+class TwoComponentsSubPageWithoutOverride(po.result_component.TwoComponentsPage):
+    components = {po.ParaComponent: "css=p:last-child"}

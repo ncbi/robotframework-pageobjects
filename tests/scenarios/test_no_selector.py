@@ -1,4 +1,4 @@
-from po import selectors_page
+from .po import selectors_page
 import unittest
 
 class NoSelectorTestCase(unittest.TestCase):

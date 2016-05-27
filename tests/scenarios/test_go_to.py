@@ -1,5 +1,5 @@
 import unittest
-from po import widget_template
+from .po import widget_template
 from robotpageobjects import Page
 
 

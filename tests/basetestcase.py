@@ -5,6 +5,7 @@ from xml.dom.minidom import parse
 import re
 import os
 import glob
+import six
 from nose.tools import nottest
 
 
@@ -102,7 +103,7 @@ class BaseTestCase(unittest.TestCase):
         for key in self.original_env_vars:
             os.environ[key] = self.original_env_vars[key]
 
-        for key in os.environ.keys():
+        for key in list(os.environ):
             if key not in self.original_env_vars:
                 del os.environ[key]
 
@@ -135,7 +136,7 @@ class BaseTestCase(unittest.TestCase):
         if "env" in kwargs:
             env_vars = kwargs["env"]
             del kwargs["env"]
-            for var, val in env_vars.iteritems():
+            for var, val in six.iteritems(env_vars):
                 self.set_env(var, val)
 
         if scenario.endswith(".py"):
@@ -180,14 +181,14 @@ class BaseTestCase(unittest.TestCase):
             else:
                 dash = "-" if len(name) == 1 else "--"
                 opt_str += dash + name.replace("_", "-") + " " + val + " "
-        cmd = ' '.join([base_cmd, opt_str, target])
+        cmd = str.join(six.u(' '), [base_cmd, opt_str, target])
 
         # execute command
         p = subprocess.Popen(cmd, cwd=working_dir, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         com = p.communicate()
         code = p.wait()
         # Out is either stdout, or stderr
-        out = " ".join(com)
+        out = str.join(six.u(" "), [str(x) for x in com])
         # Splice out trailing new line
         out = out[:-1]
         return Ret(cmd, code, out)
@@ -287,7 +288,7 @@ class BaseTestCase(unittest.TestCase):
             for i in kwargs:
                 line = "%s = '%s'\n" % (i, kwargs[i])
                 f.write(line)
-        except Exception, e:
+        except Exception as e:
             raise Exception("Problem creating vars file: %s" % e)
         finally:
             if f:

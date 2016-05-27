@@ -1,4 +1,4 @@
-from po import selectors_page
+from . import po
 import unittest
 from nose.tools import raises
 from robotpageobjects.exceptions import SelectorError
@@ -6,7 +6,7 @@ from robotpageobjects.exceptions import SelectorError
 
 class FindElementsTestCase(unittest.TestCase):
     def setUp(self):
-        self.page = selectors_page.Page()
+        self.page = po.selectors_page.Page()
         self.page.open()
 
     def test_find_elements(self):
