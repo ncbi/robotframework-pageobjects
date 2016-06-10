@@ -1,4 +1,5 @@
 decorator
+six
 mock==1.0.1
 requests==2.1.0
 robotframework-selenium2library
