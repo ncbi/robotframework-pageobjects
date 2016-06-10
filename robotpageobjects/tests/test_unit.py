@@ -8,7 +8,7 @@ from unittest import skipUnless
 import selenium
 from selenium import webdriver
 
-from basetestcase import BaseTestCase
+from robotpageobjects.tests.basetestcase import BaseTestCase
 from robotpageobjects import exceptions
 from robotpageobjects.page import Page, _Keywords, Override, not_keyword
 from robotpageobjects.optionhandler import OptionHandler

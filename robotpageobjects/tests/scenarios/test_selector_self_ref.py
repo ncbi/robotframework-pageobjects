@@ -1,5 +1,5 @@
 import unittest
-from .po.widget_rel_uri_attr import Page
+from robotpageobjects.tests.scenarios.po.widget_rel_uri_attr import Page
 
 
 class SelectorSelfRefTestCase(unittest.TestCase):

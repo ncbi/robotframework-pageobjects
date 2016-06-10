@@ -1,4 +1,4 @@
-from .po import selectors_page
+from robotpageobjects.tests.scenarios.po import selectors_page
 from robotpageobjects import exceptions
 import unittest
 
@@ -11,7 +11,7 @@ class BadSelectorTestCase(unittest.TestCase):
         found = False
         try:
             self.page.find_element("foobar")
-        except exceptions.SelectorError, e:
+        except exceptions.SelectorError as e:
             msg_found = e.message.find("not a valid locator") != -1
         self.assertTrue(msg_found,
                         "ValueError should detect that the locator looks like a selector.")

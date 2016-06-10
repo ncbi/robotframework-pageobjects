@@ -1,5 +1,5 @@
 import unittest
-from . import po
+from robotpageobjects.tests.scenarios import po
 
 
 class TestWidgetItem(unittest.TestCase):

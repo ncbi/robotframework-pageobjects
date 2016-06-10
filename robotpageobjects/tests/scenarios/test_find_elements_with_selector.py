@@ -1,4 +1,4 @@
-from . import po
+from robotpageobjects.tests.scenarios import po
 import unittest
 from nose.tools import raises
 from robotpageobjects.exceptions import SelectorError
