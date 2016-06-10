@@ -7,7 +7,7 @@ python:
 install:
   - pip install .
 script:
-  - nosetests -vs --with-xunit tests/test_unit.py tests/test_functional.py
+  - nosetests -vs --with-xunit robotpageobjects/tests/test_unit.py robotpageobjects/tests/test_functional.py
 deploy:
   provider: pypi
   user: hellmanj
