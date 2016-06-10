@@ -241,7 +241,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     def _attempt_screenshot(self):
             try:
                 self.capture_page_screenshot()
-            except Exception, e:
+            except Exception as e:
                 if e.message.find("No browser is open") != -1:
                     pass
 

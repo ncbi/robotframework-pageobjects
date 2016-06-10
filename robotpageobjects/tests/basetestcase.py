@@ -287,7 +287,7 @@ class BaseTestCase(unittest.TestCase):
             for i in kwargs:
                 line = "%s = '%s'\n" % (i, kwargs[i])
                 f.write(line)
-        except Exception, e:
+        except Exception as e:
             raise Exception("Problem creating vars file: %s" % e)
         finally:
             if f:
