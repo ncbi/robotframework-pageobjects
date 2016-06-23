@@ -1,5 +1,5 @@
-env: 
-  global: 
+env:
+  global:
     secure: aStjr7/mZJDdPqJ210HPRZygxXA36SzXyBraK9x6eqaDR+yqZpGJBIYMlRzqV1Fwlh1BUFbOYNczmLEQs+Sf3uPxyEWhFc5L0qKlvUE98fsf6IJuFJdwfwBG1/vrJTNm0JviBI/6lPlB2/EYtJJBWmYQGsrXXoP5Cc38T+z/a0s=
 language: python
 python:
@@ -9,13 +9,15 @@ matrix:
   allow_failures:
     - python: 3.5
 install:
+  # for Python 3 we need robotframework-selenium2library 1.8.x
+  - if [ $TRAVIS_PYTHON_VERSION == 3.5 ]; then pip install -U https://github.com/HelioGuilherme66/robotframework-selenium2library/archive/v1.8.0b3.tar.gz; fi
   - pip install .
 script:
   - nosetests -vs --with-xunit robotpageobjects/tests/test_unit.py robotpageobjects/tests/test_functional.py
 deploy:
   provider: pypi
   user: hellmanj
-  password: 
+  password:
     secure: D5T3Wo8DGHxxU5+7kE+y6uVVrxoOhLfiCZl9q3BEE9OrbnGmzFngRfP1o37ulk78v7PQGNqtn+95nWOWthJcp4897eB6YhKsa1Q8+HSlNynsf/7WW2cgTEgSWppZNaMoUF+my1NW2baKbmcgwRt3Hsxz9HkOvoFfQAR0ZovUy1U=
   on:
     tags: true
