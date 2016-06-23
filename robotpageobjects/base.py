@@ -2,6 +2,7 @@ from Selenium2Library.keywords import _browsermanagement
 import re
 import importlib
 import inspect
+import six
 import warnings
 
 from robot.utils import asserts

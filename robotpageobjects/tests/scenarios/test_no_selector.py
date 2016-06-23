@@ -10,7 +10,7 @@ class NoSelectorTestCase(unittest.TestCase):
         msg_found = False
         try:
             self.page.find_element("xpath=asdf")
-        except ValueError, e:
+        except ValueError as e:
             msg_found = e.message.find("did not match any elements") != -1
         self.assertTrue(msg_found, "ValueError should detect that the locator looks like a locator.")
 

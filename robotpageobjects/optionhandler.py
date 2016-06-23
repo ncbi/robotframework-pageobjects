@@ -24,7 +24,8 @@ class OptionHandler(object):
 
         # Singleton pattern...
         if cls._instance is None:
-            cls._instance = super(OptionHandler, cls).__new__(cls, *args, **kwargs)
+            # PY27ONLY: cls._instance = super(OptionHandler, cls).__new__(cls, *args, **kwargs)
+            cls._instance = super().__new__(cls)
             cls._new_called += 1
 
         return cls._instance
@@ -85,7 +86,7 @@ class OptionHandler(object):
         Convert an option keyname to lower-cased robot format, or convert
         all the keys in a dictionary to robot format.
         """
-        if isinstance(opts, basestring):
+        if isinstance(opts, str):
             name = opts.lower()
             rmatch = re.search("\$\{(.+)\}", name)
             return rmatch.group(1) if rmatch else name
