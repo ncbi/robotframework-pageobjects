@@ -31,7 +31,7 @@ def do_monkeypatches():
     ### BEGIN QAR-48165 monkey patch
     ### This adds consistent support for negative indexes in Robot keywords.
 
-    __old_tef_init = TableElementFinder.__init__.__func__
+    __old_tef_init = TableElementFinder.__init__
     def __new_tef_init(self, *args, **kwargs):
         """
         The _locator_suffixes data attribute is used at the end of built-in
