@@ -25,7 +25,10 @@ class OptionHandler(object):
 
         # Singleton pattern...
         if cls._instance is None:
-            cls._instance = super(OptionHandler, cls).__new__(cls, *args, **kwargs)
+            if six.PY2:
+                cls._instance = super(OptionHandler, cls).__new__(cls, *args, **kwargs)
+            else:
+                cls._instance = super().__new__(cls)
             cls._new_called += 1
 
         return cls._instance
