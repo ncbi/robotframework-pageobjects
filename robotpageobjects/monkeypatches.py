@@ -18,7 +18,7 @@ def do_monkeypatches():
                 browser = self._generic_make_browser(webdriver.PhantomJS,
                         webdriver.DesiredCapabilities.PHANTOMJS, remote, desired_capabilities)
             except WebDriverException as e:
-                print "Couldn't connect to webdriver. WebDriverException was: " + str(e)
+                print("Couldn't connect to webdriver. WebDriverException was: " + str(e))
                 browser = None
                 tries += 1
         if browser:

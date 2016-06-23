@@ -1,4 +1,4 @@
-from .base import _BaseActions, _SelectorsManager, _ComponentsManager, not_keyword
+from robotpageobjects.base import _BaseActions, _SelectorsManager, _ComponentsManager, not_keyword
 from Selenium2Library.locators.elementfinder import ElementFinder
 
 

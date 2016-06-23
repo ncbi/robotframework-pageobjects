@@ -29,10 +29,10 @@ from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 import uritemplate
 
-from .base import _ComponentsManagerMeta, not_keyword, robot_alias, _BaseActions, _Keywords, Override, _SelectorsManager, _ComponentsManager
-from . import exceptions
-from .context import Context
-from .sig import get_method_sig
+from robotpageobjects.base import _ComponentsManagerMeta, not_keyword, robot_alias, _BaseActions, _Keywords, Override, _SelectorsManager, _ComponentsManager
+from robotpageobjects import exceptions
+from robotpageobjects.context import Context
+from robotpageobjects.sig import get_method_sig
 
 
 # determine if libdoc is running to avoid generating docs for automatically generated aliases

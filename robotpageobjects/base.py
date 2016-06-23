@@ -11,10 +11,10 @@ from selenium.webdriver.remote.webelement import WebElement
 from Selenium2Library import Selenium2Library
 from Selenium2Library.keywords.keywordgroup import KeywordGroupMetaClass
 
-from . import abstractedlogger
-from . import exceptions
-from .context import Context
-from .optionhandler import OptionHandler
+from robotpageobjects.abstractedlogger import Logger
+from robotpageobjects import exceptions
+from robotpageobjects.context import Context
+from robotpageobjects.optionhandler import OptionHandler
 
 
 class _Keywords(object):
@@ -537,7 +537,7 @@ class _BaseActions(_S2LWrapper):
     Helper class that defines actions for PageObjectLibrary.
     """
 
-    _abstracted_logger = abstractedlogger.Logger()
+    _abstracted_logger = Logger()
 
     def __init__(self, *args, **kwargs):
         """
@@ -718,7 +718,7 @@ class _BaseActions(_S2LWrapper):
 
 
         self.driver.implicitly_wait(our_wait)
-        
+
 
         if locator in self.selectors:
             locator = self.resolve_selector(locator)

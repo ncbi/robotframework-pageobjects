@@ -2,8 +2,8 @@ import re
 import os
 import imp
 
-from context import Context
-import exceptions
+from robotpageobjects.context import Context
+from robotpageobjects import exceptions
 
 
 from robot.libraries.BuiltIn import BuiltIn
@@ -61,7 +61,7 @@ class OptionHandler(object):
             try:
                 vars_mod = imp.load_source("vars", abs_var_file_path)
 
-            except (ImportError, IOError), e:
+            except (ImportError, IOError) as e:
                 raise exceptions.VarFileImportErrorError(
                     "Couldn't import variable file: %s. Ensure it exists and is importable." % var_file_path)
 
