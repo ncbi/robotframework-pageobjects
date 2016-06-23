@@ -1,7 +1,6 @@
 import re
 import os
 import imp
-import six
 
 from robotpageobjects.context import Context
 from robotpageobjects import exceptions
@@ -25,10 +24,8 @@ class OptionHandler(object):
 
         # Singleton pattern...
         if cls._instance is None:
-            if six.PY2:
-                cls._instance = super(OptionHandler, cls).__new__(cls, *args, **kwargs)  # noqa
-            else:
-                cls._instance = super().__new__(cls)
+            # PY27ONLY: cls._instance = super(OptionHandler, cls).__new__(cls, *args, **kwargs)
+            cls._instance = super().__new__(cls)
             cls._new_called += 1
 
         return cls._instance
