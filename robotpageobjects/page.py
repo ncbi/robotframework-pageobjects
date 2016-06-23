@@ -21,7 +21,7 @@
 from __future__ import print_function
 import inspect
 import re
-import six
+import urllib2
 
 import decorator
 from Selenium2Library import Selenium2Library
@@ -33,11 +33,6 @@ from robotpageobjects.base import _ComponentsManagerMeta, not_keyword, robot_ali
 from robotpageobjects import exceptions
 from robotpageobjects.context import Context
 from robotpageobjects.sig import get_method_sig
-
-try:
-    import urllib.request as urllib2
-except ImportError:
-    import urllib2
 
 
 # determine if libdoc is running to avoid generating docs for automatically generated aliases
@@ -440,7 +435,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
             first_arg = args[0]
             if not self._is_robot:
-                if isinstance(first_arg, str):
+                if isinstance(first_arg, basestring):
                     # In Python, if the first argument is a string and not a dict, it's a url or path.
                     arg_type = "url"
                 else:
@@ -579,7 +574,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
             try:
                 self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
-            except (urllib2.HTTPError, WebDriverException, ValueError) as e:
+            except (urllib2.HTTPError, WebDriverException, ValueError), e:
                 raise exceptions.SauceConnectionError("Unable to run Sauce job.\n%s\n"
                                                       "Sauce variables were:\n"
                                                       "sauce_platform: %s\n"
