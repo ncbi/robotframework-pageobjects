@@ -7,9 +7,10 @@ import xml.etree.ElementTree as ET
 
 from nose.tools import raises
 from robotpageobjects import Page, exceptions
-from robotpageobjects.tests.scenarios.po.result_component import ResultPage, ResultPageWithDOMStrategyLocator, HomePage, HomePageWithDOMAdvancedToggler, TwoComponentsPage, ParaComponent, TwoComponentsSubPage
-from robotpageobjects.tests.scenarios.po.loggingpage import LoggingPage
-from robotpageobjects.tests.basetestcase import BaseTestCase
+from scenarios.po.result_component import ResultPage, ResultPageWithDOMStrategyLocator, HomePage, \
+    HomePageWithDOMAdvancedToggler, TwoComponentsPage, ParaComponent, TwoComponentsSubPage
+from scenarios.po.loggingpage import LoggingPage
+from basetestcase import BaseTestCase
 
 
 class SmokeTestCase(BaseTestCase):
