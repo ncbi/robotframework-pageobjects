@@ -1,6 +1,7 @@
 import re
 import os
 import imp
+import six
 
 from robotpageobjects.context import Context
 from robotpageobjects import exceptions
@@ -85,7 +86,7 @@ class OptionHandler(object):
         Convert an option keyname to lower-cased robot format, or convert
         all the keys in a dictionary to robot format.
         """
-        if isinstance(opts, basestring):
+        if isinstance(opts, six.string_types):
             name = opts.lower()
             rmatch = re.search("\$\{(.+)\}", name)
             return rmatch.group(1) if rmatch else name

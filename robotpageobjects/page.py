@@ -22,6 +22,7 @@ from __future__ import print_function
 import inspect
 import re
 import urllib2
+import six
 
 import decorator
 from Selenium2Library import Selenium2Library
@@ -435,7 +436,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
             first_arg = args[0]
             if not self._is_robot:
-                if isinstance(first_arg, basestring):
+                if isinstance(first_arg, six.string_types):
                     # In Python, if the first argument is a string and not a dict, it's a url or path.
                     arg_type = "url"
                 else:
