@@ -18,7 +18,7 @@ scenario_dir = os.path.join(test_dir, "scenarios")
 po_dir = os.path.join(scenario_dir, "po")
 sys.path.append(po_dir)
 
-from basepageobjects import BaseHomePage, BaseResultsPage
+from robotpageobjects.tests.scenarios.po.basepageobjects import BaseHomePage, BaseResultsPage
 
 
 class InheritFromSe2LibTestCase(BaseTestCase):
