@@ -137,8 +137,10 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         for base in Page.__bases__:
             base.__init__(self)
 
+
         self.browser = self._option_handler.get("browser") or "phantomjs"
         self.service_args = self._parse_service_args(self._option_handler.get("service_args", ""))
+        self.remote_url = self._option_handler.get("remote_url")
 
         self._sauce_options = [
             "sauce_username",
@@ -152,6 +154,12 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             setattr(self, sauce_opt, self._option_handler.get(sauce_opt))
 
         self._attempt_sauce = self._validate_sauce_options()
+
+        self._Capabilities = getattr(webdriver.DesiredCapabilities, self.browser.upper())
+        for cap in self._Capabilities:
+            new_cap = self._option_handler.get(cap)
+            if new_cap is not None:
+                self._Capabilities[cap] = new_cap
 
         # There's only a session ID when using a remote webdriver (Sauce, for example)
         self.session_id = None
@@ -560,6 +568,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         :type delete_cookies: Boolean
         :returns: _BaseActions instance
         """
+        caps = None
+        remote_url = False
         resolved_url = self._resolve_url(*args)
         if self._attempt_sauce:
             remote_url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (self.sauce_username, self.sauce_apikey)
@@ -571,6 +581,10 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                 caps["device_orientation"] = self.sauce_device_orientation
             if self.sauce_screenresolution:
                 caps["screenResolution"] = self.sauce_screenresolution
+
+            if self.remote_url is not None:
+                remote_url = self.remote_url
+                caps = self._Capabilities
 
             try:
                 self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
