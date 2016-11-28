@@ -3,14 +3,19 @@
 
 ## Installation and Setup
 Clone this repository to a Linux system, open a terminal in the cloned directory
-Verify python is available
+
+Verify python is available.
+
 Using pip, install from the requirement.txt file in this directory with:
 `$ pip install -r requirements.txt`
+
 Find and download [chromedriver](https://sites.google.com/a/chromium.org/chromedriver/downloads), make sure it is in your path:
 `$ which chromedriver`
 `/home/aaronpa/chromedriver/chromedriver`
+
 ## Running an example
 `$ pybot -v baseurl:http://www.conversica.com open_capture.robot`
+
 ## Video of Setup and Running
 [Screencast video demo](http://screencast.com/t/jhf74SbtYv5) - Note: browser activity not picked up by screen capture, but can be seen live instead of white canvas areas seen in this screen capture.
 
