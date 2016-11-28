@@ -6,7 +6,7 @@ Clone this repository to a Linux system, open a terminal in the cloned directory
 
 Verify python is available.
 
-Using pip, install from the requirement.txt file in this directory with:
+Using pip, install from the requirements.txt file in this directory with:
 `$ pip install -r requirements.txt`
 
 Find and download [chromedriver](https://sites.google.com/a/chromium.org/chromedriver/downloads), make sure it is in your path:
