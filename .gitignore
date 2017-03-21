@@ -2,6 +2,7 @@ RELEASE-VERSION
 .idea
 *.pyc
 *.egg-info
+*.egg
 *.log
 report.html
 log.html
@@ -10,3 +11,5 @@ output.xml
 *~
 nosetests.xml
 po_log.txt
+libdoc.xml
+

@@ -1,9 +1,10 @@
 import re
 import os
 import imp
+import six
 
-from context import Context
-import exceptions
+from robotpageobjects.context import Context
+from robotpageobjects import exceptions
 
 
 from robot.libraries.BuiltIn import BuiltIn
@@ -24,7 +25,10 @@ class OptionHandler(object):
 
         # Singleton pattern...
         if cls._instance is None:
-            cls._instance = super(OptionHandler, cls).__new__(cls, *args, **kwargs)
+            if six.PY2:
+                cls._instance = super(OptionHandler, cls).__new__(cls, *args, **kwargs)
+            else:
+                cls._instance = super().__new__(cls)
             cls._new_called += 1
 
         return cls._instance
@@ -61,7 +65,7 @@ class OptionHandler(object):
             try:
                 vars_mod = imp.load_source("vars", abs_var_file_path)
 
-            except (ImportError, IOError), e:
+            except (ImportError, IOError) as e:
                 raise exceptions.VarFileImportErrorError(
                     "Couldn't import variable file: %s. Ensure it exists and is importable." % var_file_path)
 
@@ -85,7 +89,7 @@ class OptionHandler(object):
         Convert an option keyname to lower-cased robot format, or convert
         all the keys in a dictionary to robot format.
         """
-        if isinstance(opts, basestring):
+        if isinstance(opts, six.string_types):
             name = opts.lower()
             rmatch = re.search("\$\{(.+)\}", name)
             return rmatch.group(1) if rmatch else name

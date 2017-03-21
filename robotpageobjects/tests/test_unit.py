@@ -8,7 +8,7 @@ from unittest import skipUnless
 import selenium
 from selenium import webdriver
 
-from basetestcase import BaseTestCase
+from robotpageobjects.tests.basetestcase import BaseTestCase
 from robotpageobjects import exceptions
 from robotpageobjects.page import Page, _Keywords, Override, not_keyword
 from robotpageobjects.optionhandler import OptionHandler
@@ -18,7 +18,7 @@ scenario_dir = os.path.join(test_dir, "scenarios")
 po_dir = os.path.join(scenario_dir, "po")
 sys.path.append(po_dir)
 
-from basepageobjects import BaseHomePage, BaseResultsPage
+from robotpageobjects.tests.scenarios.po.basepageobjects import BaseHomePage, BaseResultsPage
 
 
 class InheritFromSe2LibTestCase(BaseTestCase):
@@ -91,7 +91,7 @@ class OptionHandlerTestCase(BaseTestCase):
         try:
             handler = OptionHandler(MockPage())
             self.assertEquals(handler.get("browser"), "opera")
-        except Exception, e:
+        except Exception as e:
             raise e
         finally:
             del os.environ["PO_BROWSER"]
@@ -103,7 +103,7 @@ class OptionHandlerTestCase(BaseTestCase):
         try:
             handler = OptionHandler(MockPage())
             self.assertEquals(handler.get("author"), "Twain")
-        except Exception, e:
+        except Exception as e:
             raise e
         finally:
             del os.environ["PO_AUTHOR"]
@@ -116,7 +116,7 @@ class OptionHandlerTestCase(BaseTestCase):
         try:
             handler = OptionHandler(MockPage())
             self.assertEquals(handler.get("browser"), "chrome")
-        except Exception, e:
+        except Exception as e:
             raise e
         finally:
             del os.environ["PO_BROWSER"]
@@ -128,11 +128,11 @@ class OptionHandlerTestCase(BaseTestCase):
         try:
             handler = OptionHandler(MockPage())
             self.assertEquals(handler.get("author"), "Twain")
-        except Exception, e:
+        except Exception as e:
             raise e
         finally:
             del os.environ["PO_VAR_FILE"]
-            
+
     def test_get_options_from_page_object(self):
         p = MockPage()
         p.options = {'author': 'Twain'}
@@ -609,7 +609,7 @@ class ServiceArgsTestCase(BaseTestCase):
         self.assertTrue(isinstance(service_args, list), "Service args is a list")
         self.assertEquals(len(service_args), 1, "Service args property has 1 member")
         self.assertEquals(
-            service_args[0], 
-            "--cookies-file=foo.txt", 
+            service_args[0],
+            "--cookies-file=foo.txt",
             "Service args is what we set it to be"
         )
