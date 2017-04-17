@@ -141,12 +141,13 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         self.service_args = self._parse_service_args(self._option_handler.get("service_args", ""))
 
         self._sauce_options = [
-            "sauce_username",
             "sauce_apikey",
-            "sauce_platform",
             "sauce_browserversion",
+            "sauce_device",
             "sauce_device_orientation",
+            "sauce_platform",
             "sauce_screenresolution",
+            "sauce_username",
         ]
         for sauce_opt in self._sauce_options:
             setattr(self, sauce_opt, self._option_handler.get(sauce_opt))
@@ -360,7 +361,12 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         Check if user wants to use sauce and make sure all required options are given
         :return: bool (does user want to use sauce?)
         """
-        trigger_opts = {'platform': None, 'browserversion': None, 'device_orientation': None}
+        trigger_opts = {
+            'browserversion': None, 
+            'device',
+            'device_orientation': None,
+            'platform': None, 
+        }
         for trigger_opt in trigger_opts.keys():
             trigger_opts[trigger_opt] = getattr(self, 'sauce_' + trigger_opt)
         sauce_desired = any(trigger_opts.values())
@@ -568,9 +574,11 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             if self.sauce_browserversion:
                 caps["version"] = self.sauce_browserversion
             if self.sauce_device_orientation:
-                caps["device_orientation"] = self.sauce_device_orientation
+                caps["device-orientation"] = self.sauce_device_orientation
             if self.sauce_screenresolution:
                 caps["screenResolution"] = self.sauce_screenresolution
+            if self.sauce_device:
+                caps["deviceName"] = self.sauce_device
 
             try:
                 self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
