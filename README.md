@@ -651,7 +651,7 @@ we don't actually need a reference to the WebElement because all page objects gi
 so from within your page object you can call them on `self`.
 
 If, for some reason, you need a direct reference to a WebElement you can get it by passing a locator/selector to 
-`find_element` or `find_element`,  which is also on every page object.  You can then use this reference when 
+`find_element` or `find_elements`,  which is also on every page object.  You can then use this reference when 
 invoking Se2Lib keywords instead of a locator/selector.  When at all possible, however, 
 work at the Selenium2Library level, not at the WebElement level. For example:
 

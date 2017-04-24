@@ -18,7 +18,7 @@ class _ComponentElementFinder(ElementFinder):
 
     def find(self, browser, locator, tag=None):
         prefix = self._parse_locator(locator)[0]
-        if prefix == "dom":
+        if prefix == "dom" or prefix == "sizzle" or prefix == "jquery":
             return super(_ComponentElementFinder, self).find(browser, locator, tag=tag)
         else:
             return super(_ComponentElementFinder, self).find(self._reference_webelement, locator, tag=tag)

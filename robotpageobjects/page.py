@@ -19,21 +19,22 @@
 
 """
 from __future__ import print_function
+
 import inspect
 import re
 import urllib2
 
 import decorator
+import uritemplate
 from Selenium2Library import Selenium2Library
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
-import uritemplate
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 
-from .base import _ComponentsManagerMeta, not_keyword, robot_alias, _BaseActions, _Keywords, Override, _SelectorsManager, _ComponentsManager
 from . import exceptions
+from .base import _ComponentsManagerMeta, not_keyword, _BaseActions, _Keywords, _SelectorsManager, _ComponentsManager
 from .context import Context
 from .sig import get_method_sig
-
 
 # determine if libdoc is running to avoid generating docs for automatically generated aliases
 ld = 'libdoc'
@@ -139,32 +140,43 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         for base in Page.__bases__:
             base.__init__(self)
 
-
         self.browser = self._option_handler.get("browser") or "phantomjs"
         self.service_args = self._parse_service_args(self._option_handler.get("service_args", ""))
         self.remote_url = self._option_handler.get("remote_url")
 
-        if self.remote_url.find('saucelabs.com') > -1:
-            self._sauce_options = [
-                "sauce_username",
-                "sauce_apikey",
-                "sauce_platform",
-                "sauce_browserversion",
-                "sauce_device_orientation",
-                "sauce_screenresolution",
-            ]
-            for sauce_opt in self._sauce_options:
-                setattr(self, sauce_opt, self._option_handler.get(sauce_opt))
+        if self.remote_url != None:
+            if self.remote_url.find('saucelabs.com') > -1:
+                self._sauce_options = [
+                    "sauce_username",
+                    "sauce_apikey",
+                    "sauce_platform",
+                    "sauce_browserversion",
+                    "sauce_device_orientation",
+                    "sauce_screenresolution",
+                ]
+                for sauce_opt in self._sauce_options:
+                    setattr(self, sauce_opt, self._option_handler.get(sauce_opt))
 
-            self._attempt_sauce = self._validate_sauce_options()
-        else:
-            self._attempt_remote = True
+                self._attempt_sauce = self._validate_sauce_options()
+            else:
+                self._attempt_remote = True
 
         self._Capabilities = getattr(webdriver.DesiredCapabilities, self.browser.upper())
         for cap in self._Capabilities:
             new_cap = self._option_handler.get(cap)
             if new_cap is not None:
                 self._Capabilities[cap] = new_cap
+
+        if self.browser == "chrome":
+            opts = ChromeOptions()
+            opts.add_argument("--disable-infobars")
+            opts.add_argument("--disable-popups")
+            opts.add_argument("--disable-save-password-bubble")
+            opts.add_argument("--disable-extensions")
+            opts.add_experimental_option('prefs', {'credentials_enable_service': False,
+                                                   'profile': {'password_manager_enabled': False}})
+            opts.add_experimental_option("excludeSwitches", ["enable-automation"])
+            self._Capabilities.update(opts.to_capabilities())
 
         # There's only a session ID when using a remote webdriver (Sauce, for example)
         self.session_id = None
@@ -573,6 +585,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         :type delete_cookies: Boolean
         :returns: _BaseActions instance
         """
+
         caps = None
         remote_url = False
         resolved_url = self._resolve_url(*args)
