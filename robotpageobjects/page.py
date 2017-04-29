@@ -608,17 +608,20 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             try:
                 self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
             except (urllib2.HTTPError, WebDriverException, ValueError), e:
-                raise exceptions.SauceConnectionError("Unable to run Sauce job.\n%s\n"
-                                                      "Sauce variables were:\n"
-                                                      "sauce_platform: %s\n"
-                                                      "sauce_browserversion: %s\n"
-                                                      "sauce_device_orientation: %s\n"
-                                                      "sauce_screenresolution: %s"
+                if self._attempt_sauce:
+                    raise exceptions.SauceConnectionError("Unable to run Sauce job.\n%s\n"
+                                                          "Sauce variables were:\n"
+                                                          "sauce_platform: %s\n"
+                                                          "sauce_browserversion: %s\n"
+                                                          "sauce_device_orientation: %s\n"
+                                                          "sauce_screenresolution: %s"
 
-                                                      % (str(e), self.sauce_platform,
-                                                        self.sauce_browserversion, self.sauce_device_orientation,
-                                                        self.sauce_screenresolution)
-                )
+                                                          % (str(e), self.sauce_platform,
+                                                            self.sauce_browserversion, self.sauce_device_orientation,
+                                                            self.sauce_screenresolution)
+                    )
+                else:
+                    raise e
 
             self.session_id = self.get_current_browser().session_id
             self.log("session ID: %s" % self.session_id)
