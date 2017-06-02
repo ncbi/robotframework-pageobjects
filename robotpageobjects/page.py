@@ -21,10 +21,12 @@
 from __future__ import print_function
 
 import inspect
+import json
 import re
 import urllib2
 
 import decorator
+import requests
 import uritemplate
 from Selenium2Library import Selenium2Library
 from selenium import webdriver
@@ -143,6 +145,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         self.browser = self._option_handler.get("browser") or "phantomjs"
         self.service_args = self._parse_service_args(self._option_handler.get("service_args", ""))
         self.remote_url = self._option_handler.get("remote_url")
+        self.rest_url = None
 
         if self.remote_url != None:
             if self.remote_url.find('saucelabs.com') > -1:
@@ -600,6 +603,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                     caps["device_orientation"] = self.sauce_device_orientation
                 if self.sauce_screenresolution:
                     caps["screenResolution"] = self.sauce_screenresolution
+                caps["name"] = self._option_handler.get('suite_name')
 
             if self.remote_url is not None:
                 remote_url = self.remote_url
@@ -607,18 +611,26 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
             try:
                 self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
-            except (urllib2.HTTPError, WebDriverException, ValueError), e:
-                raise exceptions.SauceConnectionError("Unable to run Sauce job.\n%s\n"
-                                                      "Sauce variables were:\n"
-                                                      "sauce_platform: %s\n"
-                                                      "sauce_browserversion: %s\n"
-                                                      "sauce_device_orientation: %s\n"
-                                                      "sauce_screenresolution: %s"
+                if self._attempt_sauce:
+                    # username, apikey = self.get_sauce_creds()
+                    self.rest_url = "https://%s:%s@saucelabs.com/rest/v1/%s/jobs/%s" \
+                               % (self.sauce_username, self.sauce_apikey, self.sauce_username, self.driver.session_id)
 
-                                                      % (str(e), self.sauce_platform,
-                                                        self.sauce_browserversion, self.sauce_device_orientation,
-                                                        self.sauce_screenresolution)
-                )
+            except (urllib2.HTTPError, WebDriverException, ValueError), e:
+                if self._attempt_sauce:
+                    raise exceptions.SauceConnectionError("Unable to run Sauce job.\n%s\n"
+                                                          "Sauce variables were:\n"
+                                                          "sauce_platform: %s\n"
+                                                          "sauce_browserversion: %s\n"
+                                                          "sauce_device_orientation: %s\n"
+                                                          "sauce_screenresolution: %s"
+
+                                                          % (str(e), self.sauce_platform,
+                                                            self.sauce_browserversion, self.sauce_device_orientation,
+                                                            self.sauce_screenresolution)
+                    )
+                else:
+                    raise e
 
             self.session_id = self.get_current_browser().session_id
             self.log("session ID: %s" % self.session_id)
@@ -635,5 +647,25 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         Wrapper for Selenium2Library's close_browser.
         :returns: None
         """
+        if self._attempt_sauce:
+            self._report_sauce_status(self._option_handler.get('suite_name'),
+                                      self._option_handler.get('suite status'),
+                                      ['test-tag', 'page.py', 'close'],
+                                      self.rest_url)
         self.close_browser()
         return self
+
+    def _report_sauce_status(self, name, status, tags=[], rest_url=None):
+        # Parse username and access_key from the remote_url
+        payload = {'name': name,
+                   'passed': status == 'PASS',
+                   'tags': tags}
+
+        response = requests.put(rest_url, data=json.dumps(payload))
+        assert response.status_code == 200, response.text
+
+        # Log video url from the response
+        video_url = json.loads(response.text).get('video_url')
+        if video_url:
+            self.log('<a href="{0}">video.flv</a>'.format(video_url))
+
