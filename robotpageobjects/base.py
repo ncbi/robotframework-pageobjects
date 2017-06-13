@@ -540,7 +540,7 @@ class _BaseActions(_S2LWrapper):
     _abstracted_logger = abstractedlogger.Logger()
 
     def __init__(self, *args, **kwargs):
-        """
+        self.class__ = """
         Initializes the options used by the actions defined in this class.
         """
         #_ComponentsManager.__init__(self, *args, **kwargs)
@@ -553,8 +553,6 @@ class _BaseActions(_S2LWrapper):
         self.set_selenium_speed(self.selenium_speed)
         siw_opt = self._option_handler.get("selenium_implicit_wait")
         self.selenium_implicit_wait = siw_opt if siw_opt is not None else 10
-        self.set_selenium_implicit_wait(self.selenium_implicit_wait)
-        self.set_selenium_timeout(self.selenium_implicit_wait)
 
         self.baseurl = self._option_handler.get("baseurl")
 
@@ -710,15 +708,9 @@ class _BaseActions(_S2LWrapper):
         if isinstance(locator, WebElement):
             return locator
 
-        our_wait = self.selenium_implicit_wait if kwargs.get("wait") is None else kwargs["wait"]
-
         # If wait is set, don't pass it along to the super classe's implementation, since it has none.
         if "wait" in kwargs:
             del kwargs["wait"]
-
-
-        self.driver.implicitly_wait(our_wait)
-        
 
         if locator in self.selectors:
             locator = self.resolve_selector(locator)
@@ -732,8 +724,6 @@ class _BaseActions(_S2LWrapper):
                     "\"%s\" is not a valid locator. If this is a selector name, make sure it is spelled correctly." % locator)
             else:
                 raise
-        finally:
-            self.driver.implicitly_wait(self.selenium_implicit_wait)
 
     @not_keyword
     def find_element(self, locator, required=True, wait=None, **kwargs):
