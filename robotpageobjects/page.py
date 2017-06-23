@@ -24,11 +24,14 @@ import inspect
 import json
 import re
 import urllib2
+from uuid import uuid4
 
 import decorator
 import requests
 import uritemplate
 from Selenium2Library import Selenium2Library
+from applitools.eyes import Eyes
+from applitools.eyes import StitchMode
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.options import Options as ChromeOptions
@@ -133,6 +136,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
     _attempt_sauce = False
     _attempt_remote = False
+    _attempt_eyes = False
+    eyes = Eyes()
 
     def __init__(self):
         """
@@ -145,6 +150,10 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         self.browser = self._option_handler.get("browser") or "phantomjs"
         self.service_args = self._parse_service_args(self._option_handler.get("service_args", ""))
         self.remote_url = self._option_handler.get("remote_url")
+        self.eyes_apikey = self._option_handler.get("eyes_apikey")
+        self.eyes_name = self._option_handler.get("eyes_name")
+        self.suite_name = self._option_handler.get('suite_name')
+
         self.rest_url = None
 
         if self.remote_url != None:
@@ -164,6 +173,9 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             else:
                 self._attempt_remote = True
 
+        if self.eyes_apikey != None:
+            self._attempt_eyes = True
+
         self._Capabilities = getattr(webdriver.DesiredCapabilities, self.browser.upper())
         for cap in self._Capabilities:
             new_cap = self._option_handler.get(cap)
@@ -178,7 +190,6 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             opts.add_argument("--disable-extensions")
             opts.add_experimental_option('prefs', {'credentials_enable_service': False,
                                                    'profile': {'password_manager_enabled': False}})
-            opts.add_experimental_option("excludeSwitches", ["enable-automation"])
             self._Capabilities.update(opts.to_capabilities())
 
         # There's only a session ID when using a remote webdriver (Sauce, for example)
@@ -532,6 +543,20 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         super(_BaseActions, self).go_to(resolved_url)
         return self
 
+    def set_window_size(self, width, height, *args):
+        """
+        Wrapper to make set_window_size method support applitools eyes resize.
+        """
+        resolved_url = self._resolve_url(*args)
+        super(_BaseActions, self).set_window_size(width, height, *args)
+        if self._attempt_eyes:
+            self.eyes.set_viewport_size(
+                super(_BaseActions, self).driver
+                ,viewport_size={'width': int(width), 'height': int(height)})
+        else:
+            super(_BaseActions, self).set_window_size(width, height, *args)
+        return self
+
     def _generic_make_browser(self, webdriver_type, desired_cap_type, remote_url, desired_caps):
         """Override Selenium2Library's _generic_make_browser to allow for extra params
         to driver constructor."""
@@ -592,6 +617,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         caps = None
         remote_url = False
         resolved_url = self._resolve_url(*args)
+
         if self._attempt_sauce | self._attempt_remote:
             if self._attempt_sauce:
                 self.remote_url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (self.sauce_username, self.sauce_apikey)
@@ -616,6 +642,16 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                     self.rest_url = "https://%s:%s@saucelabs.com/rest/v1/%s/jobs/%s" \
                                % (self.sauce_username, self.sauce_apikey, self.sauce_username, self.driver.session_id)
 
+                if self._attempt_eyes:
+                    self.eyes.api_key = self.eyes_apikey
+                    self.eyes.force_full_page_screenshot = True
+                    self.eyes.stitch_mode = StitchMode.CSS
+                    if self.eyes_name == None: self.eyes_name = self.suite_name
+                    # size = self.driver.get_window_size()
+                    self.eyes.open(driver=self.driver, app_name='Robot Page - spike',
+                                   test_name=self.eyes_name,)
+                                   # viewport_size={'width': size['width'], 'height': size['height']})
+
             except (urllib2.HTTPError, WebDriverException, ValueError), e:
                 if self._attempt_sauce:
                     raise exceptions.SauceConnectionError("Unable to run Sauce job.\n%s\n"
@@ -636,7 +672,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             self.log("session ID: %s" % self.session_id)
 
         else:
-            self.open_browser(resolved_url, self.browser)
+            self.open_browser(resolved_url, self.browser, desired_capabilities=caps)
 
         self.log("PO_BROWSER: %s" % (str(self.get_current_browser())), is_console=False)
 
@@ -652,7 +688,13 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                                       self._option_handler.get('suite status'),
                                       ['test-tag', 'page.py', 'close'],
                                       self.rest_url)
+
+        if self._attempt_eyes:
+            self._attempt_eyes = False
+            self.eyes.close()
+
         self.close_browser()
+
         return self
 
     def _report_sauce_status(self, name, status, tags=[], rest_url=None):
