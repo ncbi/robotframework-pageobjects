@@ -31,6 +31,7 @@ import requests
 import uritemplate
 from Selenium2Library import Selenium2Library
 from applitools.eyes import Eyes
+from applitools.eyes import BatchInfo
 from applitools.eyes import StitchMode
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
@@ -151,7 +152,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         self.service_args = self._parse_service_args(self._option_handler.get("service_args", ""))
         self.remote_url = self._option_handler.get("remote_url")
         self.eyes_apikey = self._option_handler.get("eyes_apikey")
-        self.eyes_name = self._option_handler.get("eyes_name")
+        self.eyes_batch = self._option_handler.get("eyes_batch")
         self.suite_name = self._option_handler.get('suite_name')
 
         self.rest_url = None
@@ -646,11 +647,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                     self.eyes.api_key = self.eyes_apikey
                     self.eyes.force_full_page_screenshot = True
                     self.eyes.stitch_mode = StitchMode.CSS
-                    if self.eyes_name == None: self.eyes_name = self.suite_name
-                    # size = self.driver.get_window_size()
-                    self.eyes.open(driver=self.driver, app_name='Robot Page - spike',
-                                   test_name=self.eyes_name,)
-                                   # viewport_size={'width': size['width'], 'height': size['height']})
+                    if self.eyes_batch == None: self.eyes_batch = self.suite_name
+                    self.eyes.batch = BatchInfo(self.eyes_batch)
 
             except (urllib2.HTTPError, WebDriverException, ValueError), e:
                 if self._attempt_sauce:
@@ -676,6 +674,16 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
         self.log("PO_BROWSER: %s" % (str(self.get_current_browser())), is_console=False)
 
+        return self
+
+    def eyes_open(self,test_name):
+        if self._attempt_eyes:
+            self.eyes.open(driver=self.driver, app_name='Robot Page - spike', test_name=test_name,)
+        return self
+
+    def eyes_close(self):
+        if self._attempt_eyes:
+            self.eyes.close()
         return self
 
     def close(self):
