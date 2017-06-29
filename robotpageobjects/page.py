@@ -678,11 +678,13 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
     def eyes_open(self,test_name):
         if self._attempt_eyes:
+            self.log("eyes.open test_name={}".format(test_name))
             self.eyes.open(driver=self.driver, app_name='Robot Page - spike', test_name=test_name,)
         return self
 
     def eyes_close(self):
         if self._attempt_eyes:
+            self.log("eyes.close")
             self.eyes.close()
         return self
 
@@ -699,7 +701,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
         if self._attempt_eyes:
             self._attempt_eyes = False
-            self.eyes.close()
+            self.eyes_close()
 
         self.close_browser()
 
