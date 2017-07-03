@@ -33,6 +33,7 @@ from Selenium2Library import Selenium2Library
 from applitools.eyes import Eyes
 from applitools.eyes import BatchInfo
 from applitools.eyes import StitchMode
+from applitools.errors import TestFailedError
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.options import Options as ChromeOptions
@@ -176,6 +177,12 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
         if self.eyes_apikey != None:
             self._attempt_eyes = True
+            self.eyes.api_key = self.eyes_apikey
+            self.eyes.force_full_page_screenshot = True
+            self.eyes.stitch_mode = StitchMode.CSS
+            if self.eyes_batch == None: self.eyes_batch = self.suite_name
+            if self.eyes.batch == None:
+                self.eyes.batch = BatchInfo(self.eyes_batch)
 
         self._Capabilities = getattr(webdriver.DesiredCapabilities, self.browser.upper())
         for cap in self._Capabilities:
@@ -218,7 +225,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         :param str: camel case string
         :return: title case string
         """
-        return  re.sub('([a-z0-9])([A-Z])', r'\1 \2', re.sub(r"(.)([A-Z][a-z]+)", r'\1 \2', str))
+        return re.sub('([a-z0-9])([A-Z])', r'\1 \2', re.sub(r"(.)([A-Z][a-z]+)", r'\1 \2', str))
 
     @staticmethod
     @not_keyword
@@ -238,7 +245,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
         # Return all method names on the class to expose keywords to Robot Framework
         keywords = []
-        #members = inspect.getmembers(self, inspect.ismethod)
+        # members = inspect.getmembers(self, inspect.ismethod)
 
 
         # Look through our methods and identify which ones are Selenium2Library's
@@ -279,11 +286,11 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         return keywords
 
     def _attempt_screenshot(self):
-            try:
-                self.capture_page_screenshot()
-            except Exception, e:
-                if e.message.find("No browser is open") != -1:
-                    pass
+        try:
+            self.capture_page_screenshot()
+        except Exception, e:
+            if e.message.find("No browser is open") != -1:
+                pass
 
     @not_keyword
     def run_keyword(self, alias, args, kwargs):
@@ -360,7 +367,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         kw = getattr(self, kwname, None)
         alias = ''
         if kwname in _Keywords._aliases:
-            alias = '*Alias: %s*\n\n' % _Keywords.get_robot_aliases(kwname, self._underscore(self.name))[0].replace('_', ' ').title()
+            alias = '*Alias: %s*\n\n' % _Keywords.get_robot_aliases(kwname, self._underscore(self.name))[0].replace('_',
+                                                                                                                    ' ').title()
         docstring = kw.__doc__ if kw.__doc__ else ''
         docstring = re.sub(r'(wrapper)', r'*\1*', docstring, flags=re.I)
         return alias + docstring
@@ -524,8 +532,9 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             return uritemplate.expand(self.baseurl + self.uri, uri_vars)
         else:
             if uri_type == 'template':
-                raise exceptions.UriResolutionError('%s has uri template %s , but no arguments were given to resolve it' %
-                                                    (pageobj_name, self.uri))
+                raise exceptions.UriResolutionError(
+                    '%s has uri template %s , but no arguments were given to resolve it' %
+                    (pageobj_name, self.uri))
             # the user wants to open the default uri
             return self.baseurl + self.uri
 
@@ -553,7 +562,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         if self._attempt_eyes:
             self.eyes.set_viewport_size(
                 super(_BaseActions, self).driver
-                ,viewport_size={'width': int(width), 'height': int(height)})
+                , viewport_size={'width': int(width), 'height': int(height)})
         else:
             super(_BaseActions, self).set_window_size(width, height, *args)
         return self
@@ -621,7 +630,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
         if self._attempt_sauce | self._attempt_remote:
             if self._attempt_sauce:
-                self.remote_url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (self.sauce_username, self.sauce_apikey)
+                self.remote_url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (
+                self.sauce_username, self.sauce_apikey)
                 caps = getattr(webdriver.DesiredCapabilities, self.browser.upper())
                 caps["platform"] = self.sauce_platform
                 if self.sauce_browserversion:
@@ -641,14 +651,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                 if self._attempt_sauce:
                     # username, apikey = self.get_sauce_creds()
                     self.rest_url = "https://%s:%s@saucelabs.com/rest/v1/%s/jobs/%s" \
-                               % (self.sauce_username, self.sauce_apikey, self.sauce_username, self.driver.session_id)
-
-                if self._attempt_eyes:
-                    self.eyes.api_key = self.eyes_apikey
-                    self.eyes.force_full_page_screenshot = True
-                    self.eyes.stitch_mode = StitchMode.CSS
-                    if self.eyes_batch == None: self.eyes_batch = self.suite_name
-                    self.eyes.batch = BatchInfo(self.eyes_batch)
+                                    % (
+                                    self.sauce_username, self.sauce_apikey, self.sauce_username, self.driver.session_id)
 
             except (urllib2.HTTPError, WebDriverException, ValueError), e:
                 if self._attempt_sauce:
@@ -660,9 +664,9 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                                                           "sauce_screenresolution: %s"
 
                                                           % (str(e), self.sauce_platform,
-                                                            self.sauce_browserversion, self.sauce_device_orientation,
-                                                            self.sauce_screenresolution)
-                    )
+                                                             self.sauce_browserversion, self.sauce_device_orientation,
+                                                             self.sauce_screenresolution)
+                                                          )
                 else:
                     raise e
 
@@ -676,16 +680,19 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
         return self
 
-    def eyes_open(self,test_name):
+    def eyes_open(self, test_name):
         if self._attempt_eyes:
             self.log("eyes.open test_name={}".format(test_name))
-            self.eyes.open(driver=self.driver, app_name='Robot Page - spike', test_name=test_name,)
+            self.eyes.open(driver=self.driver, app_name='Robot Page - spike', test_name=test_name, )
         return self
 
     def eyes_close(self):
         if self._attempt_eyes:
             self.log("eyes.close")
-            self.eyes.close()
+            try:
+                self.eyes.close()
+            except TestFailedError as e:
+                self.log("Applitools Eyes error detected: {}".format(e.message), level="WARNING")
         return self
 
     def close(self):
@@ -720,4 +727,3 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         video_url = json.loads(response.text).get('video_url')
         if video_url:
             self.log('<a href="{0}">video.flv</a>'.format(video_url))
-
