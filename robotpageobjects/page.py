@@ -148,15 +148,12 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         """
         for base in Page.__bases__:
             base.__init__(self)
-
         self.browser = self._option_handler.get("browser") or "phantomjs"
         self.service_args = self._parse_service_args(self._option_handler.get("service_args", ""))
         self.remote_url = self._option_handler.get("remote_url")
         self.eyes_apikey = self._option_handler.get("eyes_apikey")
         self.eyes_batch = self._option_handler.get("eyes_batch")
         self.suite_name = self._option_handler.get('suite_name')
-
-        self.rest_url = None
 
         if self.remote_url != None:
             if self.remote_url.find('saucelabs.com') > -1:
@@ -701,6 +698,12 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         :returns: None
         """
         if self._attempt_sauce:
+            try:
+                self.rest_url
+            except AttributeError:
+                self.rest_url = "https://%s:%s@saucelabs.com/rest/v1/%s/jobs/%s" \
+                                % (
+                                    self.sauce_username, self.sauce_apikey, self.sauce_username, self.driver.session_id)
             self._report_sauce_status(self._option_handler.get('suite_name'),
                                       self._option_handler.get('suite status'),
                                       ['test-tag', 'page.py', 'close'],
