@@ -164,6 +164,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                     "sauce_browserversion",
                     "sauce_device_orientation",
                     "sauce_screenresolution",
+                    "sauce_tunnel_id",
+                    "sauce_parent_tunnel",
                 ]
                 for sauce_opt in self._sauce_options:
                     setattr(self, sauce_opt, self._option_handler.get(sauce_opt))
@@ -637,6 +639,10 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                     caps["device_orientation"] = self.sauce_device_orientation
                 if self.sauce_screenresolution:
                     caps["screenResolution"] = self.sauce_screenresolution
+                if self.sauce_tunnel_id:
+                    caps["tunnelIdentifier"] = self.sauce_tunnel_id
+                if self.sauce_parent_tunnel:
+                    caps["parentTunnel"] = self.sauce_parent_tunnel
                 caps["name"] = self._option_handler.get('suite_name')
 
             if self.remote_url is not None:
