@@ -153,6 +153,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         self.remote_url = self._option_handler.get("remote_url")
         self.eyes_apikey = self._option_handler.get("eyes_apikey")
         self.eyes_batch = self._option_handler.get("eyes_batch")
+        self.eyes_id = self._option_handler.get("eyes_id")
         self.suite_name = self._option_handler.get('suite_name')
 
         if self.remote_url != None:
@@ -180,8 +181,10 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             self.eyes.force_full_page_screenshot = True
             self.eyes.stitch_mode = StitchMode.CSS
             if self.eyes_batch == None: self.eyes_batch = self.suite_name
+            if self.eyes_id == None: self.eyes_id = uuid4().__str__()
             if self.eyes.batch == None:
                 self.eyes.batch = BatchInfo(self.eyes_batch)
+                self.eyes.batch.id_ = self.eyes_id
 
         self._Capabilities = getattr(webdriver.DesiredCapabilities, self.browser.upper())
         for cap in self._Capabilities:
