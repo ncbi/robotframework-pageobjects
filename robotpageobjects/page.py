@@ -202,6 +202,14 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                                                    'profile': {'password_manager_enabled': False}})
             self._Capabilities.update(opts.to_capabilities())
 
+        if self.browser == "internetexplorer":
+            self._Capabilities.update(
+                {
+                    "seleniumVersion":"3.5.3",
+                    "requireWindowFocus": True,
+                }
+            )
+
         # There's only a session ID when using a remote webdriver (Sauce, for example)
         self.session_id = None
 
