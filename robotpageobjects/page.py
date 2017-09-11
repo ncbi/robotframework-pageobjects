@@ -178,8 +178,9 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         if self.eyes_apikey != None:
             self._attempt_eyes = True
             self.eyes.api_key = self.eyes_apikey
-            self.eyes.force_full_page_screenshot = True
-            self.eyes.stitch_mode = StitchMode.CSS
+            if not(self._attempt_sauce and self.browser == "internetexplorer"):
+                self.eyes.force_full_page_screenshot = True
+                self.eyes.stitch_mode = StitchMode.CSS
             if self.eyes_batch == None: self.eyes_batch = self.suite_name
             if self.eyes_id == None: self.eyes_id = uuid4().__str__()
             if self.eyes.batch == None:
