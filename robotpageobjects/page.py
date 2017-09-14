@@ -207,6 +207,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             self._Capabilities.update(
                 {
                     "seleniumVersion":"3.5.3",
+                    "iedriverVersion": "3.4.0",
                     "requireWindowFocus": True,
                 }
             )
