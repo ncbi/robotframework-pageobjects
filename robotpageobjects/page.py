@@ -24,16 +24,17 @@ import inspect
 import json
 import re
 import urllib2
+import time
 from uuid import uuid4
 
 import decorator
 import requests
 import uritemplate
 from Selenium2Library import Selenium2Library
-from applitools.eyes import Eyes
-from applitools.eyes import BatchInfo
-from applitools.eyes import StitchMode
 from applitools.errors import TestFailedError
+from applitools.eyes import BatchInfo
+from applitools.eyes import Eyes
+from applitools.eyes import StitchMode
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.options import Options as ChromeOptions
@@ -140,6 +141,9 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     _attempt_remote = False
     _attempt_eyes = False
     eyes = Eyes()
+    _total_eyes_elapsed = 0
+    _min_eyes_elapsed = 999999
+    _max_eyes_elapsed = 0
 
     def __init__(self):
         """
@@ -186,6 +190,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             if self.eyes.batch == None:
                 self.eyes.batch = BatchInfo(self.eyes_batch)
                 self.eyes.batch.id_ = self.eyes_id
+
+            self.eyes.match_level = MatchLevel.LAYOUT2
 
         self._Capabilities = getattr(webdriver.DesiredCapabilities, self.browser.upper())
         for cap in self._Capabilities:
@@ -706,7 +712,11 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         if self._attempt_eyes:
             self.log("eyes.close")
             try:
+                start = time.time()
                 self.eyes.close()
+                done = time.time()
+                elapsed = done - start
+                self.log("   duration: {}".format(elapsed))
             except TestFailedError as e:
                 self.log("Applitools Eyes error detected: {}".format(e.message), level="WARNING")
         return self
