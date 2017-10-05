@@ -35,6 +35,7 @@ from applitools.errors import TestFailedError
 from applitools.eyes import BatchInfo
 from applitools.eyes import Eyes
 from applitools.eyes import StitchMode
+from applitools.eyes import MatchLevel
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.options import Options as ChromeOptions
