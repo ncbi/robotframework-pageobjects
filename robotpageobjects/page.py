@@ -192,7 +192,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                 self.eyes.batch = BatchInfo(self.eyes_batch)
                 self.eyes.batch.id_ = self.eyes_id
 
-            self.eyes.match_level = MatchLevel.LAYOUT2
+            self.eyes.match_level = MatchLevel.STRICT
 
         self._Capabilities = getattr(webdriver.DesiredCapabilities, self.browser.upper())
         for cap in self._Capabilities:
