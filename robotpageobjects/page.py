@@ -49,6 +49,7 @@ from .sig import get_method_sig
 ld = 'libdoc'
 in_ld = any([ld in str(x) for x in inspect.stack()])
 
+
 class _PageMeta(_ComponentsManagerMeta):
     """Meta class that allows decorating of all page object methods
     with must_return decorator. This ensures that all page object
@@ -183,7 +184,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         if self.eyes_apikey != None:
             self._attempt_eyes = True
             self.eyes.api_key = self.eyes_apikey
-            if not(self._attempt_sauce and self.browser == "internetexplorer"):
+            if not (self._attempt_sauce and self.browser == "internetexplorer"):
                 self.eyes.force_full_page_screenshot = True
                 self.eyes.stitch_mode = StitchMode.CSS
             if self.eyes_batch == None: self.eyes_batch = self.suite_name
@@ -191,8 +192,6 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             if self.eyes.batch == None:
                 self.eyes.batch = BatchInfo(self.eyes_batch)
                 self.eyes.batch.id_ = self.eyes_id
-
-            self.eyes.match_level = MatchLevel.LAYOUT2
 
         self._Capabilities = getattr(webdriver.DesiredCapabilities, self.browser.upper())
         for cap in self._Capabilities:
@@ -213,7 +212,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         if self.browser == "internetexplorer":
             self._Capabilities.update(
                 {
-                    "seleniumVersion":"3.5.3",
+                    "seleniumVersion": "3.5.3",
                     "iedriverVersion": "3.4.0",
                     "requireWindowFocus": True,
                 }
@@ -265,7 +264,6 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         # Return all method names on the class to expose keywords to Robot Framework
         keywords = []
         # members = inspect.getmembers(self, inspect.ismethod)
-
 
         # Look through our methods and identify which ones are Selenium2Library's
         # (by checking it and its base classes).
@@ -650,7 +648,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         if self._attempt_sauce | self._attempt_remote:
             if self._attempt_sauce:
                 self.remote_url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (
-                self.sauce_username, self.sauce_apikey)
+                    self.sauce_username, self.sauce_apikey)
                 caps = getattr(webdriver.DesiredCapabilities, self.browser.upper())
                 caps["platform"] = self.sauce_platform
                 if self.sauce_browserversion:
@@ -675,7 +673,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                     # username, apikey = self.get_sauce_creds()
                     self.rest_url = "https://%s:%s@saucelabs.com/rest/v1/%s/jobs/%s" \
                                     % (
-                                    self.sauce_username, self.sauce_apikey, self.sauce_username, self.driver.session_id)
+                                        self.sauce_username, self.sauce_apikey, self.sauce_username,
+                                        self.driver.session_id)
 
             except (urllib2.HTTPError, WebDriverException, ValueError), e:
                 if self._attempt_sauce:
@@ -703,9 +702,23 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
         return self
 
-    def eyes_open(self, test_name):
+    def eyes_open(self, test_name, eyes_match_level=None):
         if self._attempt_eyes:
-            self.log("eyes.open test_name={}".format(test_name))
+            if eyes_match_level == None:
+                self.eyes.match_level = MatchLevel.LAYOUT
+            elif eyes_match_level.lower == 'layout':
+                self.eyes.match_level = MatchLevel.LAYOUT
+            elif eyes_match_level.lower == 'content':
+                self.eyes.match_level = MatchLevel.CONTENT
+            elif eyes_match_level.lower == 'exact':
+                self.eyes.match_level = MatchLevel.EXACT
+            elif eyes_match_level.lower == 'strict':
+                self.eyes.match_level = MatchLevel.STRICT
+            else:
+                self.eyes.match_level = MatchLevel.STRICT
+            self.log(
+                "eyes.open test_name={}, batch={}, id={}, match={}".format(test_name, self.eyes_batch, self.eyes_id,
+                                                                           self.eyes.match_level))
             self.eyes.open(driver=self.driver, app_name='Robot Page - spike', test_name=test_name, )
         return self
 
