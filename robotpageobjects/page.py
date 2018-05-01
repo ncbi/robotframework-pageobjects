@@ -212,8 +212,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         if self.browser == "internetexplorer":
             self._Capabilities.update(
                 {
-                    "seleniumVersion": "3.5.3",
-                    "iedriverVersion": "3.4.0",
+                    "seleniumVersion": "3.11.0",
+                    "iedriverVersion": "3.11.1",
                     "requireWindowFocus": True,
                 }
             )
