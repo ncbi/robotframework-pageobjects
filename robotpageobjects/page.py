@@ -733,6 +733,14 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
                 self.log("Applitools Eyes error detected: {}".format(e.message), level="WARNING")
         return self
 
+    def check_javascript_error(self, throw=False):
+        browser_errors = self.driver.get_log("browser")
+        for some_error in browser_errors:
+            self.log("Browser error detected: {}".format(some_error),level="ERROR")
+        if throw == True or throw.lower() == 'true':
+            assert len(browser_errors)==0,"Non-zero Javascript error count"
+        return self
+
     def close(self):
         """
         Wrapper for Selenium2Library's close_browser.
