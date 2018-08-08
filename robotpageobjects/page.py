@@ -19,25 +19,36 @@
 
 """
 from __future__ import print_function
+
 import inspect
+import json
 import re
 import urllib2
+import time
+from uuid import uuid4
 
 import decorator
+import requests
+import uritemplate
 from Selenium2Library import Selenium2Library
+from applitools.errors import TestFailedError
+from applitools.eyes import BatchInfo
+from applitools.eyes import Eyes
+from applitools.eyes import StitchMode
+from applitools.eyes import MatchLevel
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
-import uritemplate
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 
-from .base import _ComponentsManagerMeta, not_keyword, robot_alias, _BaseActions, _Keywords, Override, _SelectorsManager, _ComponentsManager
 from . import exceptions
+from .base import _ComponentsManagerMeta, not_keyword, _BaseActions, _Keywords, _SelectorsManager, _ComponentsManager
 from .context import Context
 from .sig import get_method_sig
-
 
 # determine if libdoc is running to avoid generating docs for automatically generated aliases
 ld = 'libdoc'
 in_ld = any([ld in str(x) for x in inspect.stack()])
+
 
 class _PageMeta(_ComponentsManagerMeta):
     """Meta class that allows decorating of all page object methods
@@ -128,6 +139,13 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
     """
     __metaclass__ = _PageMeta
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
+    _attempt_sauce = False
+    _attempt_remote = False
+    _attempt_eyes = False
+    eyes = Eyes()
+    _total_eyes_elapsed = 0
+    _min_eyes_elapsed = 999999
+    _max_eyes_elapsed = 0
 
     def __init__(self):
         """
@@ -136,22 +154,67 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         """
         for base in Page.__bases__:
             base.__init__(self)
-
         self.browser = self._option_handler.get("browser") or "phantomjs"
         self.service_args = self._parse_service_args(self._option_handler.get("service_args", ""))
+        self.remote_url = self._option_handler.get("remote_url")
+        self.eyes_apikey = self._option_handler.get("eyes_apikey")
+        self.eyes_batch = self._option_handler.get("eyes_batch")
+        self.eyes_id = self._option_handler.get("eyes_id")
+        self.suite_name = self._option_handler.get('suite_name')
 
-        self._sauce_options = [
-            "sauce_username",
-            "sauce_apikey",
-            "sauce_platform",
-            "sauce_browserversion",
-            "sauce_device_orientation",
-            "sauce_screenresolution",
-        ]
-        for sauce_opt in self._sauce_options:
-            setattr(self, sauce_opt, self._option_handler.get(sauce_opt))
+        if self.remote_url != None:
+            if self.remote_url.find('saucelabs.com') > -1:
+                self._sauce_options = [
+                    "sauce_username",
+                    "sauce_apikey",
+                    "sauce_platform",
+                    "sauce_browserversion",
+                    "sauce_device_orientation",
+                    "sauce_screenresolution",
+                    "sauce_tunnel_id",
+                    "sauce_parent_tunnel",
+                ]
+                for sauce_opt in self._sauce_options:
+                    setattr(self, sauce_opt, self._option_handler.get(sauce_opt))
 
-        self._attempt_sauce = self._validate_sauce_options()
+                self._attempt_sauce = self._validate_sauce_options()
+            else:
+                self._attempt_remote = True
+
+        if self.eyes_apikey != None:
+            self._attempt_eyes = True
+            self.eyes.api_key = self.eyes_apikey
+            if not (self._attempt_sauce and self.browser == "internetexplorer"):
+                self.eyes.force_full_page_screenshot = True
+                self.eyes.stitch_mode = StitchMode.CSS
+            if self.eyes_batch == None: self.eyes_batch = self.suite_name
+            if self.eyes_id == None: self.eyes_id = uuid4().__str__()
+            if self.eyes.batch == None:
+                self.eyes.batch = BatchInfo(self.eyes_batch)
+                self.eyes.batch.id_ = self.eyes_id
+
+        self._Capabilities = getattr(webdriver.DesiredCapabilities, self.browser.upper())
+        for cap in self._Capabilities:
+            new_cap = self._option_handler.get(cap)
+            if new_cap is not None:
+                self._Capabilities[cap] = new_cap
+
+        if self.browser == "chrome":
+            opts = ChromeOptions()
+            opts.add_argument("--disable-infobars")
+            opts.add_argument("--disable-popups")
+            opts.add_argument("--disable-save-password-bubble")
+            opts.add_argument("--disable-extensions")
+            opts.add_experimental_option('prefs', {'credentials_enable_service': False,
+                                                   'profile': {'password_manager_enabled': False}})
+            self._Capabilities.update(opts.to_capabilities())
+
+        if self.browser == "internetexplorer":
+            self._Capabilities.update(
+                {
+                    "requireWindowFocus": True,
+                }
+            )
 
         # There's only a session ID when using a remote webdriver (Sauce, for example)
         self.session_id = None
@@ -178,7 +241,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         :param str: camel case string
         :return: title case string
         """
-        return  re.sub('([a-z0-9])([A-Z])', r'\1 \2', re.sub(r"(.)([A-Z][a-z]+)", r'\1 \2', str))
+        return re.sub('([a-z0-9])([A-Z])', r'\1 \2', re.sub(r"(.)([A-Z][a-z]+)", r'\1 \2', str))
 
     @staticmethod
     @not_keyword
@@ -198,8 +261,7 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
 
         # Return all method names on the class to expose keywords to Robot Framework
         keywords = []
-        #members = inspect.getmembers(self, inspect.ismethod)
-
+        # members = inspect.getmembers(self, inspect.ismethod)
 
         # Look through our methods and identify which ones are Selenium2Library's
         # (by checking it and its base classes).
@@ -239,11 +301,11 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         return keywords
 
     def _attempt_screenshot(self):
-            try:
-                self.capture_page_screenshot()
-            except Exception, e:
-                if e.message.find("No browser is open") != -1:
-                    pass
+        try:
+            self.capture_page_screenshot()
+        except Exception, e:
+            if e.message.find("No browser is open") != -1:
+                pass
 
     @not_keyword
     def run_keyword(self, alias, args, kwargs):
@@ -320,7 +382,8 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         kw = getattr(self, kwname, None)
         alias = ''
         if kwname in _Keywords._aliases:
-            alias = '*Alias: %s*\n\n' % _Keywords.get_robot_aliases(kwname, self._underscore(self.name))[0].replace('_', ' ').title()
+            alias = '*Alias: %s*\n\n' % _Keywords.get_robot_aliases(kwname, self._underscore(self.name))[0].replace('_',
+                                                                                                                    ' ').title()
         docstring = kw.__doc__ if kw.__doc__ else ''
         docstring = re.sub(r'(wrapper)', r'*\1*', docstring, flags=re.I)
         return alias + docstring
@@ -484,8 +547,9 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
             return uritemplate.expand(self.baseurl + self.uri, uri_vars)
         else:
             if uri_type == 'template':
-                raise exceptions.UriResolutionError('%s has uri template %s , but no arguments were given to resolve it' %
-                                                    (pageobj_name, self.uri))
+                raise exceptions.UriResolutionError(
+                    '%s has uri template %s , but no arguments were given to resolve it' %
+                    (pageobj_name, self.uri))
             # the user wants to open the default uri
             return self.baseurl + self.uri
 
@@ -502,6 +566,20 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         """
         resolved_url = self._resolve_url(*args)
         super(_BaseActions, self).go_to(resolved_url)
+        return self
+
+    def set_window_size(self, width, height, *args):
+        """
+        Wrapper to make set_window_size method support applitools eyes resize.
+        """
+        resolved_url = self._resolve_url(*args)
+        super(_BaseActions, self).set_window_size(width, height, *args)
+        if self._attempt_eyes:
+            self.eyes.set_viewport_size(
+                super(_BaseActions, self).driver
+                , viewport_size={'width': int(width), 'height': int(height)})
+        else:
+            super(_BaseActions, self).set_window_size(width, height, *args)
         return self
 
     def _generic_make_browser(self, webdriver_type, desired_cap_type, remote_url, desired_caps):
@@ -560,41 +638,107 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         :type delete_cookies: Boolean
         :returns: _BaseActions instance
         """
+
+        caps = None
+        remote_url = False
         resolved_url = self._resolve_url(*args)
-        if self._attempt_sauce:
-            remote_url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (self.sauce_username, self.sauce_apikey)
-            caps = getattr(webdriver.DesiredCapabilities, self.browser.upper())
-            caps["platform"] = self.sauce_platform
-            if self.sauce_browserversion:
-                caps["version"] = self.sauce_browserversion
-            if self.sauce_device_orientation:
-                caps["device_orientation"] = self.sauce_device_orientation
-            if self.sauce_screenresolution:
-                caps["screenResolution"] = self.sauce_screenresolution
+
+        if self._attempt_sauce | self._attempt_remote:
+            if self._attempt_sauce:
+                self.remote_url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (
+                    self.sauce_username, self.sauce_apikey)
+                caps = getattr(webdriver.DesiredCapabilities, self.browser.upper())
+                caps["platform"] = self.sauce_platform
+                if self.sauce_browserversion:
+                    caps["version"] = self.sauce_browserversion
+                if self.sauce_device_orientation:
+                    caps["device_orientation"] = self.sauce_device_orientation
+                if self.sauce_screenresolution:
+                    caps["screenResolution"] = self.sauce_screenresolution
+                if self.sauce_tunnel_id:
+                    caps["tunnelIdentifier"] = self.sauce_tunnel_id
+                if self.sauce_parent_tunnel:
+                    caps["parentTunnel"] = self.sauce_parent_tunnel
+                caps["name"] = self._option_handler.get('suite_name')
+
+            if self.remote_url is not None:
+                remote_url = self.remote_url
+                caps = self._Capabilities
 
             try:
                 self.open_browser(resolved_url, self.browser, remote_url=remote_url, desired_capabilities=caps)
-            except (urllib2.HTTPError, WebDriverException, ValueError), e:
-                raise exceptions.SauceConnectionError("Unable to run Sauce job.\n%s\n"
-                                                      "Sauce variables were:\n"
-                                                      "sauce_platform: %s\n"
-                                                      "sauce_browserversion: %s\n"
-                                                      "sauce_device_orientation: %s\n"
-                                                      "sauce_screenresolution: %s"
+                if self._attempt_sauce:
+                    # username, apikey = self.get_sauce_creds()
+                    self.rest_url = "https://%s:%s@saucelabs.com/rest/v1/%s/jobs/%s" \
+                                    % (
+                                        self.sauce_username, self.sauce_apikey, self.sauce_username,
+                                        self.driver.session_id)
 
-                                                      % (str(e), self.sauce_platform,
-                                                        self.sauce_browserversion, self.sauce_device_orientation,
-                                                        self.sauce_screenresolution)
-                )
+            except (urllib2.HTTPError, WebDriverException, ValueError), e:
+                if self._attempt_sauce:
+                    raise exceptions.SauceConnectionError("Unable to run Sauce job.\n%s\n"
+                                                          "Sauce variables were:\n"
+                                                          "sauce_platform: %s\n"
+                                                          "sauce_browserversion: %s\n"
+                                                          "sauce_device_orientation: %s\n"
+                                                          "sauce_screenresolution: %s"
+
+                                                          % (str(e), self.sauce_platform,
+                                                             self.sauce_browserversion, self.sauce_device_orientation,
+                                                             self.sauce_screenresolution)
+                                                          )
+                else:
+                    raise e
 
             self.session_id = self.get_current_browser().session_id
             self.log("session ID: %s" % self.session_id)
 
         else:
-            self.open_browser(resolved_url, self.browser)
+            self.open_browser(resolved_url, self.browser, desired_capabilities=caps)
 
         self.log("PO_BROWSER: %s" % (str(self.get_current_browser())), is_console=False)
 
+        return self
+
+    def eyes_open(self, test_name, eyes_match_level=None):
+        if self._attempt_eyes:
+            if eyes_match_level == None:
+                self.eyes.match_level = MatchLevel.LAYOUT
+            elif eyes_match_level.lower == 'layout':
+                self.eyes.match_level = MatchLevel.LAYOUT
+            elif eyes_match_level.lower == 'content':
+                self.eyes.match_level = MatchLevel.CONTENT
+            elif eyes_match_level.lower == 'exact':
+                self.eyes.match_level = MatchLevel.EXACT
+            elif eyes_match_level.lower == 'strict':
+                self.eyes.match_level = MatchLevel.STRICT
+            else:
+                self.eyes.match_level = MatchLevel.STRICT
+            self.log(
+                "eyes.open test_name={}, batch={}, id={}, match={}".format(test_name, self.eyes_batch, self.eyes_id,
+                                                                           self.eyes.match_level))
+            self.eyes.open(driver=self.driver, app_name='Robot Page - spike', test_name=test_name, )
+        return self
+
+    def eyes_close(self):
+        if self._attempt_eyes:
+            self.log("eyes.close")
+            try:
+                start = time.time()
+                self.eyes.close()
+                done = time.time()
+                elapsed = done - start
+                self.log("   duration: {}".format(elapsed))
+            except TestFailedError as e:
+                self.log("Applitools Eyes error detected: {}".format(e.message), level="WARNING")
+        return self
+
+    def check_javascript_error(self, throw=False):
+        browser_errors = self.driver.get_log("browser")
+        for some_error in browser_errors:
+            self.log("Browser error detected: {}".format(some_error),level="ERROR")
+        if throw == True or throw.lower() == 'true':
+            assert len(browser_errors)==0,"Non-zero Javascript error count"
         return self
 
     def close(self):
@@ -602,5 +746,36 @@ class Page(_BaseActions, _SelectorsManager, _ComponentsManager):
         Wrapper for Selenium2Library's close_browser.
         :returns: None
         """
+        if self._attempt_sauce:
+            try:
+                self.rest_url
+            except AttributeError:
+                self.rest_url = "https://%s:%s@saucelabs.com/rest/v1/%s/jobs/%s" \
+                                % (
+                                    self.sauce_username, self.sauce_apikey, self.sauce_username, self.driver.session_id)
+            self._report_sauce_status(self._option_handler.get('suite_name'),
+                                      self._option_handler.get('suite status'),
+                                      ['test-tag', 'page.py', 'close'],
+                                      self.rest_url)
+
+        if self._attempt_eyes:
+            self._attempt_eyes = False
+            self.eyes_close()
+
         self.close_browser()
+
         return self
+
+    def _report_sauce_status(self, name, status, tags=[], rest_url=None):
+        # Parse username and access_key from the remote_url
+        payload = {'name': name,
+                   'passed': status == 'PASS',
+                   'tags': tags}
+
+        response = requests.put(rest_url, data=json.dumps(payload))
+        assert response.status_code == 200, response.text
+
+        # Log video url from the response
+        video_url = json.loads(response.text).get('video_url')
+        if video_url:
+            self.log('<a href="{0}">video.flv</a>'.format(video_url))
