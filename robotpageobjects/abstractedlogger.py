@@ -23,7 +23,7 @@ class Logger(object):
 
             # Stream handler is attached from log() since
             # that must be decided at run-time, but here we might as well
-            # do the setup to keep log() clean.
+            # do the client_setup to keep log() clean.
             self.stream_handler = logging.StreamHandler(sys.stdout)
             self.stream_handler.setFormatter(self.formatter)
 

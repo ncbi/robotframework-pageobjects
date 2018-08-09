@@ -1,6 +1,6 @@
+robotframework-selenium2library
+robotframework-pageobjects
 decorator
 mock==1.0.1
 requests==2.1.0
-robotframework<3
-robotframework-selenium2library==1.7.2
 uritemplate==0.6
