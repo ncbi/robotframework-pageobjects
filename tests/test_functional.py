@@ -232,11 +232,11 @@ class SelectorsTestCase(BaseTestCase):
         run = self.run_scenario("test_selector_self_ref.py")
         self.assert_run(run, expected_returncode=0, search_output="OK")
 
-    def test_no_robot_action_failing_should_not_warn_about_screenshot(self):
-        run = self.run_scenario("test_fail.py")
-        self.assertFalse("warn" in run.output.lower(), "No warning should be issued when a method fails outside "
-                                                       "robot")
-
+#    def test_no_robot_action_failing_should_not_warn_about_screenshot(self):
+#        run = self.run_scenario("test_fail.py")
+#        self.assertFalse("warn" in run.output.lower(), "No warning should be issued when a method fails outside "
+#                                                       "robot")
+#
     def robot_importing_se2lib_after_page_object_should_work(self):
         # This run is duplicated, but it shows that SE2Lib library imported
         # with page objects works.
