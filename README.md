@@ -9,7 +9,7 @@ Please comment on [this issue](https://github.com/ncbi/robotframework-pageobject
 [![Build Status](https://travis-ci.org/ncbi/robotframework-pageobjects.svg?branch=master)](https://travis-ci.org/ncbi/robotframework-pageobjects)
 
 ## Installing
-
+    $ pip install robotframework
     $ pip install robotframework-pageobjects
     
 ## Compatibility
